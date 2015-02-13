@@ -1,0 +1,26 @@
+#%RAML 0.8
+title: My Api
+baseUri: /
+securedBy: [oauth_2_0]
+securitySchemes:
+  - oauth_2_0:
+      type: OAuth 2.0
+      describedBy:
+        headers:
+          bearer:
+            type: string
+            required: true
+      settings:
+        accessTokenUri: http://localhost:11625/OAuth/Token
+        authorizationUri: http://localhost:11625/OAuth/Authorize
+        authorizationGrants: [code]
+        scopes:
+          - all
+/api/me:
+  get:
+    description:  (Me.Get)
+    securedBy: [oauth_2_0 ]
+    responses:
+      200:
+        body:
+          application/json:
