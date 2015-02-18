@@ -49,8 +49,9 @@
     <Reference Include="Newtonsoft.JsonV4">
       <HintPath>..\lib\Newtonsoft.JsonV4.dll</HintPath>
     </Reference>
-    <Reference Include="Raml.Parser">
-      <HintPath>..\packages\Raml.Parser.0.8.1\lib\net45\Raml.Parser.dll</HintPath>
+    <Reference Include="Raml.Parser, Version=0.8.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Raml.Parser.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
