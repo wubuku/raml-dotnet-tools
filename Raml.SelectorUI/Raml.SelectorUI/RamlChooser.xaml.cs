@@ -25,7 +25,7 @@ namespace Raml.Common
 	public partial class RamlChooser : INotifyPropertyChanged
 	{
 		private const string RamlFileExtension = ".raml";
-		// action to execute when clicking Ok button (add RAML Reference, Scaffold Web Api, etc)
+		// action to execute when clicking Ok button (add RAML Reference, Scaffold Web Api, etc.)
 		private readonly Action<RamlChooserActionParams> action;
 		private bool isContractUseCase;
 		private readonly RamlIncludesManager includesManager = new RamlIncludesManager();
