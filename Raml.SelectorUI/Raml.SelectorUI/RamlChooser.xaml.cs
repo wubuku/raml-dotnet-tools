@@ -28,6 +28,7 @@ namespace Raml.Common
 		// action to execute when clicking Ok button (add RAML Reference, Scaffold Web Api, etc)
 		private readonly Action<RamlChooserActionParams> action;
 		private bool isContractUseCase;
+		private readonly RamlIncludesManager includesManager = new RamlIncludesManager();
 		public string RamlTempFilePath { get; private set; }
 		public string RamlOriginalSource { get; set; }
 
@@ -90,8 +91,9 @@ namespace Raml.Common
 
 			try
 			{
+				var result = includesManager.Manage(RamlTempFilePath, Path.GetTempPath());
 				var parser = new RamlParser();
-				var document = await parser.LoadAsync(RamlTempFilePath);
+				var document = await parser.LoadRamlAsync(result.ModifiedContents);
 
 				SetPreview(document);
 			}
@@ -227,14 +229,13 @@ namespace Raml.Common
 
 			try
 			{
-				var includesManager = new RamlIncludesManager();
 				var url = addressText.Text;
 				var result = includesManager.Manage(url, Path.GetTempPath());
 
 				var raml = result.ModifiedContents;
 				var parser = new RamlParser();
 
-				var ramlDocument = await parser.LoadRamlAsync(raml, Path.GetTempPath());
+				var ramlDocument = await parser.LoadRamlAsync(raml);
 
 				var filename = Path.GetFileName(url);
 

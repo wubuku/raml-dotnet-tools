@@ -94,8 +94,7 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Raml.Parser, Version=0.8.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Raml.Parser">
       <HintPath>..\packages\Raml.Parser.0.8.1\lib\net45\Raml.Parser.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -225,15 +224,15 @@
     <Content Include="node_modules\raml-parser\node_modules\inflection\component.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="node_modules\raml-parser\node_modules\inflection\History.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <None Include="node_modules\raml-parser\node_modules\inflection\History.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="node_modules\raml-parser\node_modules\inflection\package.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="node_modules\raml-parser\node_modules\inflection\Readme.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <None Include="node_modules\raml-parser\node_modules\inflection\Readme.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="node_modules\raml-parser\node_modules\json-lint\package.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -276,33 +275,33 @@
     <None Include="node_modules\raml-parser\node_modules\json-lint\test\src\files\invalid\string.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Content Include="node_modules\raml-parser\node_modules\q\CONTRIBUTING.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <None Include="node_modules\raml-parser\node_modules\q\CONTRIBUTING.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="node_modules\raml-parser\node_modules\q\package.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="node_modules\raml-parser\node_modules\q\README.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\own-testcases.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <None Include="node_modules\raml-parser\node_modules\q\README.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="node_modules\raml-parser\node_modules\uritemplate\own-testcases.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="node_modules\raml-parser\node_modules\uritemplate\package.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\README.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <None Include="node_modules\raml-parser\node_modules\uritemplate\README.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="node_modules\raml-parser\node_modules\xmlhttprequest\autotest.watchr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\package.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\README.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <None Include="node_modules\raml-parser\node_modules\xmlhttprequest\README.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="node_modules\raml-parser\package.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
