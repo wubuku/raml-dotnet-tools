@@ -732,6 +732,10 @@
     <Content Include="node_modules\raml-parser\test\specs\validator.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\MuleSoft-Logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Templates\RAMLWebApi2Scaffolder\ApiBaseControllerTemplate.t4">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
