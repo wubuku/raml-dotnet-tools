@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using MuleSoft.RAML.Tools.Properties;
 using Raml.Common;
@@ -41,6 +42,75 @@ namespace MuleSoft.RAML.Tools
 			else
 				AddContractFromFile(parameters.RamlFilePath, parameters.TargetNamespace, parameters.RamlSource,
 					parameters.DoNotScaffold, folderItem, generatedFolderPath, parameters.TargetFileName);
+		}
+
+		public void Scaffold(string ramlSource, string targetNamespace, string ramlFileName)
+		{
+			var data = RamlScaffolderHelper.GetRamlData(ramlSource, targetNamespace);
+			if (data == null || data.Model == null)
+				return;
+
+			var model = data.Model;
+
+			var dte = serviceProvider.GetService(typeof(SDTE)) as DTE;
+			var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+
+			var folderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, folderName);
+			var ramlItem = folderItem.ProjectItems.Cast<ProjectItem>().First(i => i.Name == ramlFileName);
+			var generatedFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + folderName + Path.DirectorySeparatorChar;
+
+			var vsixPath = Path.GetDirectoryName(GetType().Assembly.Location) + Path.DirectorySeparatorChar;
+			var templatesPath = vsixPath + "Templates" + Path.DirectorySeparatorChar + "RAMLWebApi2Scaffolder" + Path.DirectorySeparatorChar;
+
+			// Add / Update model objects
+			ReplaceTemplateValues(templatesPath, vsixPath, ObjectTemplateName + ".t4", targetNamespace);
+			GenerateCodeFromTemplate(Path.Combine(templatesPath, ObjectTemplateName + ".cs.t4"), ramlItem,
+				"apiObject", model.Objects.Values, generatedFolderPath, folderItem);
+
+			// Add / Update controllers definition
+			ReplaceTemplateValues(templatesPath, vsixPath, ControllerDeclarationTemplateName + ".t4", targetNamespace);
+			GenerateCodeFromTemplate(Path.Combine(templatesPath, ControllerDeclarationTemplateName + ".cs.t4"), ramlItem,
+				"controllerObject", model.Controllers, generatedFolderPath, folderItem, "Controller");
+
+			// Add / Update controllers interface
+			ReplaceTemplateValues(templatesPath, vsixPath, ControllerInterfaceTemplateName + ".t4", targetNamespace);
+			GenerateCodeFromTemplate(Path.Combine(templatesPath, ControllerInterfaceTemplateName + ".cs.t4"), ramlItem,
+				"controllerObject", model.Controllers, generatedFolderPath, folderItem, "Controller", true, "I");
+
+			// Add controllers implementation
+			var controllersFolderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, "Controllers");
+			var controllersFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + "Controllers" + Path.DirectorySeparatorChar;
+			ReplaceTemplateValues(templatesPath, vsixPath, ControllerImplementationTemplateName + ".t4", targetNamespace);
+			GenerateCodeFromTemplate(Path.Combine(templatesPath, ControllerImplementationTemplateName + ".cs.t4"), controllersFolderItem,
+				"controllerObject", model.Controllers, controllersFolderPath, folderItem, "Controller", false);
+		}
+
+		public void UpdateRaml(string ramlFilePath)
+		{
+			var refFilePath = InstallerServices.GetRefFilePath(ramlFilePath);
+			var ramlSource = RamlReferenceReader.GetRamlSource(refFilePath);
+			var contents = GetRamlContentsFromSource(ramlSource);
+
+			File.WriteAllText(ramlFilePath, contents);
+		}
+
+		private static string GetRamlContentsFromSource(string ramlSource)
+		{
+			if (ramlSource.StartsWith("http"))
+				return RamlContentsFromWebSource(ramlSource);
+			
+			return File.ReadAllText(ramlSource);
+		}
+
+		private static string RamlContentsFromWebSource(string ramlSource)
+		{
+			Uri uri;
+			if (Uri.TryCreate(ramlSource, UriKind.Absolute, out uri))
+				return Downloader.GetContents(uri);
+
+			var errorMessage = "Invalid Url specified: " + uri.AbsoluteUri;
+			ActivityLog.LogError(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, errorMessage);
+			throw new UriFormatException(errorMessage);
 		}
 
 		private void AddContractFromFile(string ramlFilePath, string targetNamespace, string ramlSource, bool? doNotScaffold, ProjectItem folderItem, string folderPath, string targetFilename)
@@ -136,47 +206,6 @@ namespace MuleSoft.RAML.Tools
 			var contents = "#%RAML " + RamlSpecVersion + Environment.NewLine +
 			               "title: " + title + Environment.NewLine;
 			return contents;
-		}
-
-		public void Scaffold(string ramlSource, string targetNamespace, string ramlFileName)
-		{
-			var data = RamlScaffolderHelper.GetRamlData(ramlSource, targetNamespace);
-			if(data == null || data.Model == null)
-				return;
-
-			var model = data.Model;
-
-			var dte = serviceProvider.GetService(typeof(SDTE)) as DTE;
-			var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
-
-			var folderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, folderName);
-			var ramlItem = folderItem.ProjectItems.Cast<ProjectItem>().First(i => i.Name == ramlFileName);
-			var generatedFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + folderName + Path.DirectorySeparatorChar;
-
-			var vsixPath = Path.GetDirectoryName(GetType().Assembly.Location) + Path.DirectorySeparatorChar;
-			var templatesPath = vsixPath + "Templates" + Path.DirectorySeparatorChar + "RAMLWebApi2Scaffolder" + Path.DirectorySeparatorChar;
-
-			// Add / Update model objects
-			ReplaceTemplateValues(templatesPath, vsixPath, ObjectTemplateName + ".t4", targetNamespace);
-			GenerateCodeFromTemplate(Path.Combine(templatesPath, ObjectTemplateName + ".cs.t4"), ramlItem, 
-				"apiObject", model.Objects.Values, generatedFolderPath, folderItem);
-
-			// Add / Update controllers definition
-			ReplaceTemplateValues(templatesPath, vsixPath, ControllerDeclarationTemplateName + ".t4", targetNamespace);
-			GenerateCodeFromTemplate(Path.Combine(templatesPath, ControllerDeclarationTemplateName + ".cs.t4"), ramlItem,
-				"controllerObject", model.Controllers, generatedFolderPath, folderItem, "Controller");
-
-			// Add / Update controllers interface
-			ReplaceTemplateValues(templatesPath, vsixPath, ControllerInterfaceTemplateName + ".t4", targetNamespace);
-			GenerateCodeFromTemplate(Path.Combine(templatesPath, ControllerInterfaceTemplateName + ".cs.t4"), ramlItem,
-				"controllerObject", model.Controllers, generatedFolderPath, folderItem, "Controller", true, "I");
-
-			// Add controllers implementation
-			var controllersFolderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, "Controllers");
-			var controllersFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + "Controllers" + Path.DirectorySeparatorChar;
-			ReplaceTemplateValues(templatesPath, vsixPath, ControllerImplementationTemplateName + ".t4", targetNamespace);
-			GenerateCodeFromTemplate(Path.Combine(templatesPath, ControllerImplementationTemplateName + ".cs.t4"), controllersFolderItem,
-				"controllerObject", model.Controllers, controllersFolderPath, folderItem, "Controller", false);
 		}
 
 		private void GenerateCodeFromTemplate<T>(string templatePath, ProjectItem projItem, string parameterName, IEnumerable<T> parameterCollection, 

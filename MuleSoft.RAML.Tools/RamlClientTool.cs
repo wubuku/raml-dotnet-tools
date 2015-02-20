@@ -73,7 +73,7 @@ namespace MuleSoft.RAML.Tools
 					throw new ArgumentNullException("bstrInputFileContents");
 
 				var containingFolder = Path.GetDirectoryName(wszInputFilePath);
-				var refFilePath = GetRefFilePath(wszInputFilePath, containingFolder);
+				var refFilePath = InstallerServices.GetRefFilePath(wszInputFilePath);
 				var ramlSource = RamlReferenceReader.GetRamlSource(refFilePath);
 
 				var globalProvider = Microsoft.VisualStudio.Shell.ServiceProvider.GlobalProvider;
@@ -161,13 +161,6 @@ namespace MuleSoft.RAML.Tools
 			new FileInfo(ramlFilePath).IsReadOnly = true;
 		}
 
-		private static string GetRefFilePath(string wszInputFilePath, string containingFolder)
-		{
-			var refFileName = Path.GetFileNameWithoutExtension(wszInputFilePath) + ".ref";
-
-			var refFilePath = Path.Combine(containingFolder, refFileName);
-			return refFilePath;
-		}
 
 
 		private static ProjectItem GetDestinationFolderItem(string wszInputFilePath, System.IServiceProvider globalProvider)

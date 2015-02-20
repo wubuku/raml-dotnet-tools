@@ -25,16 +25,17 @@ namespace MuleSoft.RAML.Tools
     {
 	    private CommandID updateReferenceCmdId;
 	    private CommandID implementContractCommandId;
+	    private CommandID updateRAMLContractCommandId;
 
 	    public MuleSoft_RAML_ToolsPackage()
 	    {
-		    var message = string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this.ToString());
+		    var message = string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this);
 		    Debug.WriteLine(message);
 	    }
 
         protected override void Initialize()
         {
-	        var message = string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString());
+	        var message = string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this);
 	        Debug.WriteLine (message);
             base.Initialize();
 
@@ -65,7 +66,31 @@ namespace MuleSoft.RAML.Tools
 	        var implementContractCommand = new OleMenuCommand(ImplementContractCallback, implementContractCommandId);
 			implementContractCommand.BeforeQueryStatus += ImplementContractCommandOnBeforeQueryStatus;
 			mcs.AddCommand(implementContractCommand);
+
+			// Update RAML from source (Contract/Server) command
+			updateRAMLContractCommandId = new CommandID(GuidList.guidMuleSoft_RAML_CmdUpdateRAMLContract, (int)PkgCmdIDList.cmdUpdateRAMLContract);
+			var updateRAMLCommand = new OleMenuCommand(UpdateRAMLContractCallback, updateRAMLContractCommandId);
+			updateRAMLCommand.BeforeQueryStatus += UpdateRAMLCommandOnBeforeQueryStatus;
+			mcs.AddCommand(updateRAMLCommand);
+
         }
+
+	    private void UpdateRAMLContractCallback(object sender, EventArgs e)
+	    {
+			ChangeCommandStatus(updateRAMLContractCommandId, false);
+
+			// Get the file path
+			uint itemid;
+			IVsHierarchy hierarchy;
+			if (!IsSingleProjectItemSelection(out hierarchy, out itemid)) return;
+			string ramlFilePath;
+			((IVsProject)hierarchy).GetMkDocument(itemid, out ramlFilePath);
+
+			var ramlScaffoldUpdater = new RamlScaffoldService(new T4Service(ServiceProvider.GlobalProvider), ServiceProvider.GlobalProvider);
+			ramlScaffoldUpdater.UpdateRaml(ramlFilePath);
+
+			ChangeCommandStatus(updateRAMLContractCommandId, true);
+	    }
 
 	    private void AddRamlContractCallback(object sender, EventArgs e)
 	    {
@@ -78,7 +103,7 @@ namespace MuleSoft.RAML.Tools
 
 	    private void ImplementContractCallback(object sender, EventArgs e)
 		{
-			ChangeImplementContractCommandStatus(false);
+			ChangeCommandStatus(implementContractCommandId, false);
 
 			// Get the file path
 			uint itemid;
@@ -101,7 +126,7 @@ namespace MuleSoft.RAML.Tools
 			    MessageBox.Show(ex.Message, "Error");
 		    }
 
-		    ChangeImplementContractCommandStatus(true);
+			ChangeCommandStatus(implementContractCommandId, true);
 		}
 
 		private void AddRamlReferenceCallback(object sender, EventArgs e)
@@ -113,14 +138,18 @@ namespace MuleSoft.RAML.Tools
 
 		private void UpdateRamlRefCallback(object sender, EventArgs e)
 		{
-			ChangeUpdateRefCommandStatus(false);
+			ChangeCommandStatus(updateReferenceCmdId, false);
 
 			var dte = (DTE2)GetService(typeof(SDTE));
 			dte.ExecuteCommand("Project.RunCustomTool");
 
-			ChangeUpdateRefCommandStatus(true);
+			ChangeCommandStatus(updateReferenceCmdId, true);
 		}
 
+		private void UpdateRAMLCommandOnBeforeQueryStatus(object sender, EventArgs e)
+		{
+			ShowOrHideCommandContract(sender);
+		}
 
 	    private void ImplementContractCommandOnBeforeQueryStatus(object sender, EventArgs eventArgs)
 	    {
@@ -155,21 +184,12 @@ namespace MuleSoft.RAML.Tools
 			ShowOrHideCommand(sender, RamlReferenceService.ApiReferencesFolderName);
 		}
 
-		private void ChangeImplementContractCommandStatus(bool enable)
+		private void ChangeCommandStatus(CommandID commandId, bool enable)
 		{
 			var mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
 			if (mcs == null) return;
 
-			var menuCmd = mcs.FindCommand(implementContractCommandId);
-			if (menuCmd != null) menuCmd.Enabled = enable;
-		}
-
-		private void ChangeUpdateRefCommandStatus(bool enable)
-		{
-			var mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
-			if (mcs == null) return;
-
-			var menuCmd = mcs.FindCommand(updateReferenceCmdId);
+			var menuCmd = mcs.FindCommand(commandId);
 			if (menuCmd != null) menuCmd.Enabled = enable;
 		}
 

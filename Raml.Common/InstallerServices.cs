@@ -26,6 +26,17 @@ namespace Raml.Common
 			new FileInfo(refFilePath).IsReadOnly = true;
 		}
 
+		public static string GetRefFilePath(string ramlFilePath)
+		{
+			var containingFolder = Path.GetDirectoryName(ramlFilePath);
+			if (containingFolder == null) throw new InvalidOperationException("Could not get folder of RAML file " + ramlFilePath);
+
+			var refFileName = Path.GetFileNameWithoutExtension(ramlFilePath) + ".ref";
+
+			var refFilePath = Path.Combine(containingFolder, refFileName);
+			return refFilePath;
+		}
+
 		public static void RemoveSubItemsAndAssociatedFiles(ProjectItem parentItem)
 		{
 			if (parentItem == null) return;

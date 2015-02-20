@@ -111,6 +111,19 @@
           <ButtonText>Add RAML Contract...</ButtonText>
         </Strings>
       </Button>
+	  
+	  <Button guid="guidMuleSoft_RAML_CmdUpdateRAMLContract" id="cmdUpdateRAMLContract" priority="0x0100" type="Button">
+        <Parent guid="guidMuleSoft_RAML_FileNode" id="FileNodeGroup" />
+        <Icon guid="guidImages" id="bmpPic1" />
+		<!-- the 2 lines below set the default visibility-->
+		
+		<CommandFlag>DynamicVisibility</CommandFlag>
+		
+        <Strings>
+		  <CommandName>cmdUpdateRAMLContract</CommandName>
+          <ButtonText>Update RAML Contract from source</ButtonText>
+        </Strings>
+      </Button>
 	
     </Buttons>
 
@@ -156,6 +169,12 @@
 	  <IDSymbol name="ProjectNodeGroup" value="0x1020"/>
 	  <IDSymbol name="cmdAddContract" value="0x0400" />
 	</GuidSymbol>
+	
+	<GuidSymbol name="guidMuleSoft_RAML_CmdUpdateRAMLContract" value="{14c03645-17a8-49ae-b301-6a619f3942d9}">
+	  <IDSymbol name="FileNodeGroup" value="0x1020"/>
+	  <IDSymbol name="cmdUpdateRAMLContract" value="0x0500" />
+	</GuidSymbol>
+	
 
     <GuidSymbol name="guidImages" value="{59571131-f5d7-4e0a-b2da-973f343a7e28}" >
       <IDSymbol name="bmpPic1" value="1" />
