@@ -29,64 +29,75 @@ namespace Raml.Tools.Tests
 		[Test]
 		public void ShouldPluralize()
 		{
-			var actual = schemaParameterParser.Parse("<<resourcePathName | !pluralize>>", searchResource, searchResource.Methods.First());
+			var actual = schemaParameterParser.Parse("<<resourcePathName | !pluralize>>", searchResource, searchResource.Methods.First(), searchResource.RelativeUri);
 			Assert.AreEqual("searches", actual);
 		}
 
 		[Test]
 		public void ShouldPluralize_WhenNoSpace()
 		{
-			var actual = schemaParameterParser.Parse("<<resourcePathName|!pluralize>>", searchResource, searchResource.Methods.First());
+			var actual = schemaParameterParser.Parse("<<resourcePathName|!pluralize>>", searchResource, searchResource.Methods.First(), searchResource.RelativeUri);
 			Assert.AreEqual("searches", actual);
 		}
 
 		[Test]
 		public void ShouldSingularize_WhenIrregular()
 		{
-			var actual = schemaParameterParser.Parse("<<resourcePathName | !singularize>>", deliveriesResource, deliveriesResource.Methods.First());
+			var actual = schemaParameterParser.Parse("<<resourcePathName | !singularize>>", deliveriesResource, deliveriesResource.Methods.First(), deliveriesResource.RelativeUri);
 			Assert.AreEqual("delivery", actual);
 		}
 
 		[Test]
 		public void ShouldSingularize_WhenRegular()
 		{
-			var actual = schemaParameterParser.Parse("<<resourcePathName | !singularize>>", foldersResource, deliveriesResource.Methods.First());
+			var actual = schemaParameterParser.Parse("<<resourcePathName | !singularize>>", foldersResource, deliveriesResource.Methods.First(), deliveriesResource.RelativeUri);
 			Assert.AreEqual("folder", actual);
 		}
 
 		[Test]
 		public void ShouldSingularize_WhenNoSpace()
 		{
-			var actual = schemaParameterParser.Parse("<<resourcePathName|!singularize>>", deliveriesResource, deliveriesResource.Methods.First());
+			var actual = schemaParameterParser.Parse("<<resourcePathName|!singularize>>", deliveriesResource, deliveriesResource.Methods.First(), deliveriesResource.RelativeUri);
 			Assert.AreEqual("delivery", actual);
 		}
 
 		[Test]
 		public void ShouldGetResourcePathName()
 		{
-			var actual = schemaParameterParser.Parse("<<resourcePathName>>", deliveriesResource, deliveriesResource.Methods.First());
+			var actual = schemaParameterParser.Parse("<<resourcePathName>>", deliveriesResource, deliveriesResource.Methods.First(), deliveriesResource.RelativeUri);
 			Assert.AreEqual("deliveries", actual);
 		}
 
 		[Test]
 		public void ShouldGetResourcePath()
 		{
-			var actual = schemaParameterParser.Parse("<<resourcePath>>", deliveriesResource, deliveriesResource.Methods.First());
+			var actual = schemaParameterParser.Parse("<<resourcePath>>", deliveriesResource, deliveriesResource.Methods.First(), deliveriesResource.RelativeUri);
 			Assert.AreEqual("/deliveries", actual);
 		}
 
 		[Test]
 		public void ShouldGetMethod()
 		{
-			var actual = schemaParameterParser.Parse("<<methodName>>", deliveriesResource, deliveriesResource.Methods.First());
+			var actual = schemaParameterParser.Parse("<<methodName>>", deliveriesResource, deliveriesResource.Methods.First(), deliveriesResource.RelativeUri);
 			Assert.AreEqual("get", actual);
 		}
 
 		[Test]
 		public void ShouldGetMixedParameter()
 		{
-			var actual = schemaParameterParser.Parse("<<methodName>>new<<resourcePathName | !singularize>>", deliveriesResource, deliveriesResource.Methods.First());
+			var actual = schemaParameterParser.Parse("<<methodName>>new<<resourcePathName | !singularize>>", deliveriesResource, deliveriesResource.Methods.First(), deliveriesResource.RelativeUri);
 			Assert.AreEqual("getnewdelivery", actual);
+		}
+
+		[Test]
+		public void ShouldGetParameter_WhenChildResource()
+		{
+			var resource = new Resource
+			               {
+				               RelativeUri = "/{songId}",
+			               };
+			var actual = schemaParameterParser.Parse("<<resourcePathName | !singularize>>", resource, new Method(), "/songs");
+			Assert.AreEqual("song", actual);
 		}
 	}
 }

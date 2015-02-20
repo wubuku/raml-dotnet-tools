@@ -13,11 +13,23 @@ namespace Raml.Tools
 			this.pluralizationService = pluralizationService;
 		}
 
-		public string Parse(string schema, Resource resource, Method method)
+		public string Parse(string schema, Resource resource, Method method, string fullUrl)
 		{
-			var res = schema.Replace("<<resourcePathName>>", resource.RelativeUri.Substring(1));
-			res = res.Replace("<<resourcePath>>", resource.RelativeUri);
-			res = res.Replace("<<methodName>>", method.Verb.ToLower());
+			var url = resource.RelativeUri;
+			url = ReplaceUriParameters(url);
+
+			if (string.IsNullOrWhiteSpace(url) || url.Trim() == "/")
+			{
+				fullUrl = ReplaceUriParameters(fullUrl);
+				url = fullUrl;
+			}
+
+			url = url.TrimEnd('/');
+
+			var res = schema.Replace("<<resourcePathName>>", url.Substring(1));
+			res = res.Replace("<<resourcePath>>", url);
+			if(method != null && method.Verb != null)
+				res = res.Replace("<<methodName>>", method.Verb.ToLower());
 
 			var regex = new Regex(@"\<\<(resourcePathName|resourcePath|methodName)\s?\|\s?\!(pluralize|singularize)\>\>", RegexOptions.IgnoreCase);
 			var matchCollection = regex.Matches(res);
@@ -27,13 +39,13 @@ namespace Raml.Tools
 				switch (match.Groups[1].Value)
 				{
 					case "resourcePathName":
-						replacementWord = resource.RelativeUri.Substring(1);
+						replacementWord = url.Substring(1);
 						break;
 					case "resourcePath":
-						replacementWord = resource.RelativeUri.Substring(1);
+						replacementWord = url.Substring(1);
 						break;
 					case "methodName":
-						replacementWord = resource.RelativeUri.Substring(1);
+						replacementWord = url.Substring(1);
 						break;
 					default:
 						continue;
@@ -50,6 +62,13 @@ namespace Raml.Tools
 			}
 
 			return res;
+		}
+
+		private static string ReplaceUriParameters(string fullUrl)
+		{
+			var regexParams = new Regex(@"\{[^\}]+\}");
+			fullUrl = regexParams.Replace(fullUrl, string.Empty);
+			return fullUrl;
 		}
 
 		public string Singularize(string input)

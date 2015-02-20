@@ -301,7 +301,6 @@ namespace Raml.Tools.Tests
 			Assert.AreEqual(95, model.UriParameterObjects.Count());
 		}
 
-
 		private static async Task<ClientGeneratorModel> GetTestGeneratedModel()
 		{
             var raml = await new RamlParser().LoadAsync("test.raml");
@@ -378,5 +377,12 @@ namespace Raml.Tools.Tests
 			return model;
 		}
 
+		private static async Task<ClientGeneratorModel> GetDarsGeneratedModel()
+		{
+			var raml = await new RamlParser().LoadAsync("darsparam.raml");
+			var model = new ClientGeneratorService(raml, "DarsApi").BuildModel();
+
+			return model;
+		}
 	}
 }
