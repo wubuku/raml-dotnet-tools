@@ -99,5 +99,16 @@ namespace Raml.Tools.Tests
 			var actual = schemaParameterParser.Parse("<<resourcePathName | !singularize>>", resource, new Method(), "/songs");
 			Assert.AreEqual("song", actual);
 		}
+
+		[Test]
+		public void ShouldGetParameter_WhenChildResourceAddSlash()
+		{
+			var resource = new Resource
+			{
+				RelativeUri = "/{songId}",
+			};
+			var actual = schemaParameterParser.Parse("<<resourcePathName | !singularize>>", resource, new Method(), "songs");
+			Assert.AreEqual("song", actual);
+		}
 	}
 }

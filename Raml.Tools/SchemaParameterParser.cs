@@ -25,6 +25,8 @@ namespace Raml.Tools
 			}
 
 			url = url.TrimEnd('/');
+			if (!url.StartsWith("/"))
+				url = "/" + url;
 
 			var res = schema.Replace("<<resourcePathName>>", url.Substring(1));
 			res = res.Replace("<<resourcePath>>", url);
