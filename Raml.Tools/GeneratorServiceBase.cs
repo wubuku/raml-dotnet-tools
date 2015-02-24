@@ -18,7 +18,8 @@ namespace Raml.Tools
 		protected readonly SchemaParameterParser schemaParameterParser = new SchemaParameterParser(new EnglishPluralizationService());
 		protected IDictionary<string, ApiObject> schemaRequestObjects = new Dictionary<string, ApiObject>();
 		protected IDictionary<string, ApiObject> schemaResponseObjects = new Dictionary<string, ApiObject>();
-		
+
+		protected readonly ApiObjectsCleaner apiObjectsCleaner;		
 
 		protected IDictionary<string, string> warnings;
 		protected readonly RamlDocument raml;
@@ -32,6 +33,7 @@ namespace Raml.Tools
 		protected GeneratorServiceBase(RamlDocument raml)
 		{
 			this.raml = raml;
+			apiObjectsCleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects);
 		}
 
 

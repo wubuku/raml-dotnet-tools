@@ -57,6 +57,8 @@ namespace Raml.Tools.ClientGenerator
 	        var apiRequestObjects = apiRequestGenerator.Generate(classObjects);
 			var apiResponseObjects = apiResponseGenerator.Generate(classObjects);
 
+			CleanNotUsedObjects(classObjects);
+
             return new ClientGeneratorModel
                    {
                        Namespace = NetNamingMapper.GetNamespace(raml.Title),
@@ -79,7 +81,12 @@ namespace Raml.Tools.ClientGenerator
         }
 
 
+		private void CleanNotUsedObjects(IEnumerable<ClassObject> classes)
+		{
+			apiObjectsCleaner.CleanObjects(classes, schemaRequestObjects, apiObjectsCleaner.IsUsedAsParameterInAnyMethod);
 
+			apiObjectsCleaner.CleanObjects(classes, schemaResponseObjects, apiObjectsCleaner.IsUsedAsResponseInAnyMethod);
+		}
 
 
 	    private ICollection<ClassObject> GetClasses(IEnumerable<Resource> resources, Resource parent, ClassObject parentClass, string url)

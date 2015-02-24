@@ -119,6 +119,12 @@
     <None Include="contacts.raml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="dars.raml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="darsparam.raml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="edge\x64\edge.node">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

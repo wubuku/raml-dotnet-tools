@@ -275,7 +275,7 @@ namespace Raml.Tools.Tests
 		public async Task ShouldParseArrays()
 		{
 			var model = await GetTestGeneratedModel();
-			Assert.AreEqual("Sales[]", model.Objects["get-sales"].Properties[1].Type);
+			Assert.AreEqual("Sales[]", model.Objects["/sales-getOKResponseContent"].Properties[1].Type);
 		}
 
 		[Test]
