@@ -130,7 +130,7 @@ namespace Raml.Tools.Tests
 		public async Task ShouldBuildRequestObjects_FromTest()
 		{
 			var model = await GetTestGeneratedModel();
-			Assert.AreEqual(8, model.RequestObjects.Count);
+			Assert.AreEqual(4, model.RequestObjects.Count);
 		}
 
 		[Test]
@@ -144,7 +144,7 @@ namespace Raml.Tools.Tests
 		public async Task ShouldBuildResponseObjects_FromInstagram()
 		{
 			var model = await GetInstagramGeneratedModel();
-			Assert.AreEqual(8, model.ResponseObjects.Count);
+			Assert.AreEqual(7, model.ResponseObjects.Count);
 		}
 
 		[Test]
@@ -244,14 +244,14 @@ namespace Raml.Tools.Tests
 		public async Task ShouldBuildResponseObjects_FromTwitter()
 		{
 			var model = await GetTwitterGeneratedModel();
-			Assert.AreEqual(56, model.ResponseObjects.Count);
+			Assert.AreEqual(53, model.ResponseObjects.Count);
 		}
 
 		[Test]
 		public async Task ShouldBuildRequestObjects_FromGitHub()
 		{
 			var model = await GetGitHubGeneratedModel();
-			Assert.AreEqual(34, model.RequestObjects.Count);
+			Assert.AreEqual(24, model.RequestObjects.Count);
 		}
 
 		[Test]
@@ -265,7 +265,7 @@ namespace Raml.Tools.Tests
 		public async Task ShouldBuildResponseObjects_FromGitHub()
 		{
 			var model = await GetGitHubGeneratedModel();
-			Assert.AreEqual(55, model.ResponseObjects.Count);
+			Assert.AreEqual(44, model.ResponseObjects.Count);
 		}
 
 
@@ -291,7 +291,7 @@ namespace Raml.Tools.Tests
 		{
 			var model = await GetCongoGeneratedModel();
 			Assert.AreEqual(9, model.Classes.SelectMany(c => c.Methods).Count());
-			Assert.AreEqual(25, model.Objects.Count());
+			Assert.AreEqual(11, model.Objects.Count());
 		}
 
 		[Test]
