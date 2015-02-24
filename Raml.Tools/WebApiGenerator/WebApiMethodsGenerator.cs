@@ -52,9 +52,9 @@ namespace Raml.Tools
 			return new ControllerMethod
 			{
 				Name = NetNamingMapper.GetMethodName(method.Verb ?? "Get" + resource.RelativeUri),
-				Parameter = GetParameter(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, schemaRequestObjects),
+				Parameter = GetParameter(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, schemaRequestObjects, url),
 				UriParameters = uriParametersGenerator.GetUriParameters(resource, url),
-				ReturnType = GetReturnType(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, schemaResponseObjects),
+				ReturnType = GetReturnType(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, schemaResponseObjects, url),
 				Comment = GetComment(resource, method),
 				Url = relativeUri,
 				Verb = NetNamingMapper.Capitalize(method.Verb),

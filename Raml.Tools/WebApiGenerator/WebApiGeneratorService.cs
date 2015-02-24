@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Raml.Parser.Expressions;
 
 namespace Raml.Tools.WebApiGenerator
@@ -23,7 +25,9 @@ namespace Raml.Tools.WebApiGenerator
 			CleanProperties(schemaRequestObjects);
 			CleanProperties(schemaResponseObjects);
 
-			var controllers = GetControllers();
+			var controllers = GetControllers().ToArray();
+
+			CleanNotUsedObjects(controllers);
 
 			return new WebApiGeneratorModel
 			       {
@@ -33,6 +37,13 @@ namespace Raml.Tools.WebApiGenerator
 					   ResponseObjects = schemaResponseObjects,
 					   Warnings = warnings
 			       };
+		}
+
+		private void CleanNotUsedObjects(IEnumerable<ControllerObject> controllers)
+		{
+			apiObjectsCleaner.CleanObjects(controllers, schemaRequestObjects, apiObjectsCleaner.IsUsedAsParameterInAnyMethod);
+
+			apiObjectsCleaner.CleanObjects(controllers, schemaResponseObjects, apiObjectsCleaner.IsUsedAsResponseInAnyMethod);
 		}
 
 		private IEnumerable<ControllerObject> GetControllers()

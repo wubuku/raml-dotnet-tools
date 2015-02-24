@@ -79,6 +79,21 @@ namespace Raml.Tools.Tests
 			Assert.AreEqual(16, model.Controllers.Count());
 		}
 
+		[Test]
+		public async void Should_Remove_Not_Used_Objects_Dars()
+		{
+			var model = await GetDarsGeneratedModel();
+			Assert.AreEqual(2, model.Objects.Count());
+		}
+
+		[Test]
+		public async void Should_Not_Remove_Used_Objects_Twitter()
+		{
+			var model = await GetTwitterGeneratedModel();
+			Assert.IsTrue(model.Objects.Any(o => o.Value.Name == "ContainedWithin"));
+			Assert.AreEqual(53, model.Objects.Count());
+		}
+
 		private static async Task<WebApiGeneratorModel> GetTestGeneratedModel()
 		{
 			var raml = await new RamlParser().LoadAsync("test.raml");
@@ -155,6 +170,13 @@ namespace Raml.Tools.Tests
 			return model;
 		}
 
+		private static async Task<WebApiGeneratorModel> GetDarsGeneratedModel()
+		{
+			var raml = await new RamlParser().LoadAsync("dars.raml");
+			var model = new WebApiGeneratorService(raml).BuildModel();
+
+			return model;
+		}
 
 	}
 }

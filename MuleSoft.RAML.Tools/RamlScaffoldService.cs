@@ -139,7 +139,7 @@ namespace MuleSoft.RAML.Tools
 			InstallerServices.RemoveSubItemsAndAssociatedFiles(ramlProjItem);
 
 			if (doNotScaffold == null || !doNotScaffold.Value)
-				Scaffold(ramlSource, targetNamespace, Path.GetFileName(ramlFilePath));
+				Scaffold(ramlProjItem.FileNames[0], targetNamespace, Path.GetFileName(ramlFilePath));
 		}
 
 		private static ProjectItem AddOrUpdateRamlFile(string modifiedContents, ProjectItem folderItem, string folderPath, string ramlFileName)

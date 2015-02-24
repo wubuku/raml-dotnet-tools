@@ -68,8 +68,8 @@ namespace Raml.Tools.ClientGenerator
 			var generatedMethod = new ClientGeneratorMethod
 			{
 				Name = NetNamingMapper.GetMethodName(method.Verb ?? "Get" + resource.RelativeUri),
-				ReturnType = GetReturnType(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, schemaResponseObjects),
-				Parameter = GetParameter(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, schemaRequestObjects),
+				ReturnType = GetReturnType(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, schemaResponseObjects, url),
+				Parameter = GetParameter(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, schemaRequestObjects, url),
 				Comment = GetComment(resource, method),
 				Url = url,
 				Verb = NetNamingMapper.Capitalize(method.Verb),
