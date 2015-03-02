@@ -331,8 +331,10 @@ namespace Raml.Tools
 				return body.First(b => b.Key.ToLowerInvariant().Contains("json") && !string.IsNullOrWhiteSpace(b.Value.Schema)).Value.Schema;
 
 			var isDefaultMediaTypeDefined = !string.IsNullOrWhiteSpace(raml.MediaType);
-			var hasSchemaWithDefaultMediaType = body.Any(b => b.Key.ToLowerInvariant() == raml.MediaType.ToLowerInvariant()
+			var hasSchemaWithDefaultMediaType = raml.MediaType != null &&
+			                                    body.Any(b => b.Key.ToLowerInvariant() == raml.MediaType.ToLowerInvariant()
 			                                                  && !string.IsNullOrWhiteSpace(b.Value.Schema));
+
 			if (isDefaultMediaTypeDefined && hasSchemaWithDefaultMediaType)
 				return body.First(b => b.Key.ToLowerInvariant() == raml.MediaType.ToLowerInvariant() && !string.IsNullOrWhiteSpace(b.Value.Schema)).Value.Schema;
 
