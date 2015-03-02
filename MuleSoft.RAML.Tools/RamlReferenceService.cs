@@ -22,8 +22,9 @@ namespace MuleSoft.RAML.Tools
 		private readonly string webApiClientPackageVersion = Settings.Default.WebApiClientPackageVersion;
 		private readonly string ramlClientCommonPackageId = Settings.Default.RAMLClientCommonPackageId;
 		private readonly string ramlClientCommonPackageVersion = Settings.Default.RAMLClientCommonPackageVersion;
-
 		public readonly static string ApiReferencesFolderName = Settings.Default.ApiReferencesFolderName;
+
+		private readonly TemplatesManager templatesManager = new TemplatesManager();
 
 		public RamlReferenceService(IServiceProvider serviceProvider)
 		{
@@ -96,9 +97,11 @@ namespace MuleSoft.RAML.Tools
 
 			var ramlProjItem = InstallerServices.AddOrUpdateRamlFile(ramlSourceFile, destFolderPath, destFolderItem, targetFileName);
 
+			templatesManager.CopyClientTemplateToProjectFolder(apiRefsFolderPath);
 
 			ramlProjItem.Properties.Item("CustomTool").Value = string.Empty; // to cause a refresh when file already exists
 			ramlProjItem.Properties.Item("CustomTool").Value = "RamlClientTool";
 		}
+
 	}
 }

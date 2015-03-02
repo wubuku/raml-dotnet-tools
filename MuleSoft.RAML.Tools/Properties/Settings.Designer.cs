@@ -103,5 +103,32 @@ namespace MuleSoft.RAML.Tools.Properties {
                 return ((string)(this["ApiReferencesFolderName"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("GeneratedModel.t4")]
+        public string ClientT4TemplateName {
+            get {
+                return ((string)(this["ClientT4TemplateName"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.0")]
+        public string ServerTemplatesVersion {
+            get {
+                return ((string)(this["ServerTemplatesVersion"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.1")]
+        public string ClientTemplatesVersion {
+            get {
+                return ((string)(this["ClientTemplatesVersion"]));
+            }
+        }
     }
 }

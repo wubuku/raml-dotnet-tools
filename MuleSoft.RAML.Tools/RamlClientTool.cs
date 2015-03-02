@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.Designer.Interfaces;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using MuleSoft.RAML.Tools.Properties;
 using Raml.Common;
 using Raml.Tools;
 using Raml.Tools.ClientGenerator;
@@ -28,6 +29,8 @@ namespace MuleSoft.RAML.Tools
 		private object site;
 		private CodeDomProvider codeDomProvider;
 		private ServiceProvider serviceProvider;
+		private readonly string ClientT4TemplateName = Settings.Default.ClientT4TemplateName;
+		private readonly TemplatesManager templatesManager = new TemplatesManager();
 
 		private CodeDomProvider CodeProvider
 		{
@@ -80,6 +83,13 @@ namespace MuleSoft.RAML.Tools
 				var destFolderItem = GetDestinationFolderItem(wszInputFilePath, globalProvider);
 				UpdateRamlAndIncludedFiles(wszInputFilePath, destFolderItem, ramlSource, containingFolder);
 
+				var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
+				var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+				var apiRefsFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar +
+				                        RamlReferenceService.ApiReferencesFolderName + Path.DirectorySeparatorChar;
+
+				templatesManager.EnsureClientVersionCompatibility(apiRefsFolderPath);
+
 				var ramlInfo = RamlInfoService.GetRamlInfo(wszInputFilePath);
 				if (ramlInfo.HasErrors)
 				{
@@ -123,12 +133,19 @@ namespace MuleSoft.RAML.Tools
 			string refFilePath)
 		{
 			var model = GetGeneratorModel(wszInputFilePath, ramlInfo);
-			var vsixPath = Path.GetDirectoryName(GetType().Assembly.Location) + Path.DirectorySeparatorChar;
-			var templateFileName = Path.Combine(vsixPath, "GeneratedModel.t4");
+			var templateFolder = GetTemplateFolder(wszInputFilePath);
+			var templateFilePath = Path.Combine(templateFolder, ClientT4TemplateName);
+			var extensionPath = Path.GetDirectoryName(GetType().Assembly.Location) + Path.DirectorySeparatorChar;
 			var t4Service = new T4Service(globalProvider);
 			var targetNamespace = RamlReferenceReader.GetRamlNamespace(refFilePath);
-			var res = t4Service.TransformText(templateFileName, model, vsixPath, wszInputFilePath, targetNamespace);
+			var res = t4Service.TransformText(templateFilePath, model, extensionPath, wszInputFilePath, targetNamespace);
 			return res;
+		}
+
+		private static string GetTemplateFolder(string wszInputFilePath)
+		{
+			var directoryName = Path.GetDirectoryName(wszInputFilePath).TrimEnd(Path.DirectorySeparatorChar);
+			return directoryName.Substring(0, directoryName.LastIndexOf(Path.DirectorySeparatorChar));
 		}
 
 		private static void UpdateRamlAndIncludedFiles(string ramlFilePath, ProjectItem destFolderItem, string ramlSource, string containingFolder)
