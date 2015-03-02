@@ -301,6 +301,14 @@ namespace Raml.Tools.Tests
 			Assert.AreEqual(95, model.UriParameterObjects.Count());
 		}
 
+		[Test]
+		public async Task ShouldBuildClasses_Epi()
+		{
+			var model = await GetEpiGeneratedModel();
+			Assert.AreEqual(2, model.Classes.Count());
+		}
+
+
 
 		private static async Task<ClientGeneratorModel> GetTestGeneratedModel()
 		{
@@ -374,6 +382,14 @@ namespace Raml.Tools.Tests
 		{
 			var raml = await new RamlParser().LoadAsync("movies.raml");
 			var model = new ClientGeneratorService(raml, "MoviesApi").BuildModel();
+
+			return model;
+		}
+
+		private static async Task<ClientGeneratorModel> GetEpiGeneratedModel()
+		{
+			var raml = await new RamlParser().LoadAsync("epi.raml");
+			var model = new ClientGeneratorService(raml, "EpiApi").BuildModel();
 
 			return model;
 		}
