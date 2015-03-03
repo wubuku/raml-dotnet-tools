@@ -302,9 +302,31 @@ namespace Raml.Tools.Tests
 		}
 
 		[Test]
-		public async Task ShouldBuildClasses_FromTEpi()
+		public async Task ShouldBuildClasses_FromDars()
+		{
+			var model = await GetDarsGeneratedModel();
+			Assert.AreEqual(2, model.ResponseObjects.Count());
+		}
+
+		[Test]
+		public async Task ShouldBuildClasses_FromDarsWithParams()
+		{
+			var model = await GetDarsWithParamsGeneratedModel();
+			Assert.AreEqual(2, model.ResponseObjects.Count());
+		}
+
+
+		[Test]
+		public async Task ShouldBuildClasses_FromEpi()
 		{
 			var model = await GetEpiGeneratedModel();
+			Assert.AreEqual(2, model.Classes.Count());
+		}
+
+		[Test]
+		public async Task ShouldBuildClasses_FromFoo()
+		{
+			var model = await GetFooGeneratedModel();
 			Assert.AreEqual(2, model.Classes.Count());
 		}
 
@@ -386,6 +408,14 @@ namespace Raml.Tools.Tests
 
 		private static async Task<ClientGeneratorModel> GetDarsGeneratedModel()
 		{
+			var raml = await new RamlParser().LoadAsync("dars.raml");
+			var model = new ClientGeneratorService(raml, "DarsApi").BuildModel();
+
+			return model;
+		}
+
+		private static async Task<ClientGeneratorModel> GetDarsWithParamsGeneratedModel()
+		{
 			var raml = await new RamlParser().LoadAsync("darsparam.raml");
 			var model = new ClientGeneratorService(raml, "DarsApi").BuildModel();
 
@@ -396,6 +426,14 @@ namespace Raml.Tools.Tests
 		{
 			var raml = await new RamlParser().LoadAsync("epi.raml");
 			var model = new ClientGeneratorService(raml, "DarsApi").BuildModel();
+
+			return model;
+		}
+
+		private static async Task<ClientGeneratorModel> GetFooGeneratedModel()
+		{
+			var raml = await new RamlParser().LoadAsync("foo.raml");
+			var model = new ClientGeneratorService(raml, "FooApi").BuildModel();
 
 			return model;
 		}
