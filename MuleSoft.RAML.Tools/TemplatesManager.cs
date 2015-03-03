@@ -37,7 +37,11 @@ namespace MuleSoft.RAML.Tools
 
 		private void CopyTemplateToProjectFolder(string generatedFolderPath, string templateName, string templatesSourceFolder, string version)
 		{
-			var destTemplateFilePath = Path.Combine(generatedFolderPath, templateName);
+			var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
+			if (!Directory.Exists(templatesFolder))
+				Directory.CreateDirectory(templatesFolder);
+
+			var destTemplateFilePath = Path.Combine(templatesFolder, templateName);
 			var sourceTemplateFilePath = Path.Combine(templatesSourceFolder, templateName);
 
 			if (File.Exists(destTemplateFilePath))
@@ -206,21 +210,6 @@ namespace MuleSoft.RAML.Tools
 			
 			File.WriteAllLines(templateFilePath, lines);
 		}
-
-		public void EnsureClientVersionCompatibility(string templateFolder)
-		{
-			var templateFilePath = Path.Combine(templateFolder, Settings.Default.ClientT4TemplateName);
-			if (!IsVersionCompatible(templateFilePath, ClientTemplatesVersion))
-				CopyClientTemplateToProjectFolder(templateFolder);
-		}
-
-		public void EnsureServerVersionCompatibility(string templateFolder, string templateName)
-		{
-			var templateFilePath = Path.Combine(templateFolder, templateName);
-			if (!IsVersionCompatible(templateFilePath, ServerTemplatesVersion))
-				CopyServerTemplateToProjectFolder(templateFolder, templateName);
-		}
-
 
 		private static string GetMd5Hash(HashAlgorithm md5Hash, string input)
 		{
