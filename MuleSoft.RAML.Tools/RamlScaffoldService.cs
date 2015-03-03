@@ -38,11 +38,6 @@ namespace MuleSoft.RAML.Tools
 			var folderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, ContractsFolderName);
 			var generatedFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + ContractsFolderName + Path.DirectorySeparatorChar;
 
-			templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ControllerInterfaceTemplateName);
-			templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ControllerDeclarationTemplateName);
-			templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ControllerImplementationTemplateName);
-			templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ObjectTemplateName);
-
 			if (string.IsNullOrWhiteSpace(parameters.RamlSource) && !string.IsNullOrWhiteSpace(parameters.RamlTitle))
 				AddEmptyContract(parameters.TargetFileName, parameters.RamlTitle, folderItem, generatedFolderPath, parameters.TargetNamespace, parameters.TargetFileName);
 			else
@@ -70,22 +65,22 @@ namespace MuleSoft.RAML.Tools
 
 			
 			// Add / Update model objects
-			templatesManager.EnsureServerVersionCompatibility(generatedFolderPath, ObjectTemplateName);
+			templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ObjectTemplateName);
 			GenerateCodeFromTemplate(Path.Combine(generatedFolderPath, ObjectTemplateName), ramlItem,
 				"apiObject", model.Objects.Values, generatedFolderPath, folderItem, extensionPath, targetNamespace);
 
 			// Add / Update controllers definition
-			templatesManager.EnsureServerVersionCompatibility(generatedFolderPath, ControllerDeclarationTemplateName);
+			templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ControllerDeclarationTemplateName);
 			GenerateCodeFromTemplate(Path.Combine(generatedFolderPath, ControllerDeclarationTemplateName), ramlItem,
 				"controllerObject", model.Controllers, generatedFolderPath, folderItem, extensionPath, targetNamespace, "Controller");
 
 			// Add / Update controllers interface
-			templatesManager.EnsureServerVersionCompatibility(generatedFolderPath, ControllerInterfaceTemplateName);
+			templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ControllerInterfaceTemplateName);
 			GenerateCodeFromTemplate(Path.Combine(generatedFolderPath, ControllerInterfaceTemplateName), ramlItem,
 				"controllerObject", model.Controllers, generatedFolderPath, folderItem, extensionPath, targetNamespace, "Controller", true, "I");
 
 			// Add controllers implementation
-			templatesManager.EnsureServerVersionCompatibility(generatedFolderPath, ControllerImplementationTemplateName);
+			templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ControllerImplementationTemplateName);
 			var controllersFolderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, "Controllers");
 			var controllersFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + "Controllers" + Path.DirectorySeparatorChar;
 			GenerateCodeFromTemplate(Path.Combine(generatedFolderPath, ControllerImplementationTemplateName), controllersFolderItem,

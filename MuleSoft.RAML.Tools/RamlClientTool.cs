@@ -88,7 +88,7 @@ namespace MuleSoft.RAML.Tools
 				var apiRefsFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar +
 				                        RamlReferenceService.ApiReferencesFolderName + Path.DirectorySeparatorChar;
 
-				templatesManager.EnsureClientVersionCompatibility(apiRefsFolderPath);
+				templatesManager.CopyClientTemplateToProjectFolder(apiRefsFolderPath);
 
 				var ramlInfo = RamlInfoService.GetRamlInfo(wszInputFilePath);
 				if (ramlInfo.HasErrors)

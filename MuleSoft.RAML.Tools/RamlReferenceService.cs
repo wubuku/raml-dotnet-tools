@@ -97,8 +97,6 @@ namespace MuleSoft.RAML.Tools
 
 			var ramlProjItem = InstallerServices.AddOrUpdateRamlFile(ramlSourceFile, destFolderPath, destFolderItem, targetFileName);
 
-			templatesManager.CopyClientTemplateToProjectFolder(apiRefsFolderPath);
-
 			ramlProjItem.Properties.Item("CustomTool").Value = string.Empty; // to cause a refresh when file already exists
 			ramlProjItem.Properties.Item("CustomTool").Value = "RamlClientTool";
 		}
