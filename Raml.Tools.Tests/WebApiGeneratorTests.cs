@@ -94,6 +94,16 @@ namespace Raml.Tools.Tests
 			Assert.AreEqual(53, model.Objects.Count());
 		}
 
+		[Test]
+		public async void Should_Name_Schemas_Using_Keys()
+		{
+			var model = await GetSchemaTestsGeneratedModel();
+			Assert.IsTrue(model.Objects.Any(o => o.Value.Name == "Thing"));
+			Assert.IsTrue(model.Objects.Any(o => o.Value.Name == "Things"));
+			Assert.AreEqual(4, model.Objects.Count());
+		}
+
+
 		private static async Task<WebApiGeneratorModel> GetTestGeneratedModel()
 		{
 			var raml = await new RamlParser().LoadAsync("test.raml");
@@ -173,6 +183,14 @@ namespace Raml.Tools.Tests
 		private static async Task<WebApiGeneratorModel> GetDarsGeneratedModel()
 		{
 			var raml = await new RamlParser().LoadAsync("dars.raml");
+			var model = new WebApiGeneratorService(raml).BuildModel();
+
+			return model;
+		}
+
+		private static async Task<WebApiGeneratorModel> GetSchemaTestsGeneratedModel()
+		{
+			var raml = await new RamlParser().LoadAsync("schematests.raml");
 			var model = new WebApiGeneratorService(raml).BuildModel();
 
 			return model;
