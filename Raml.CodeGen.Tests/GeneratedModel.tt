@@ -1,7 +1,7 @@
 ﻿<#@ template debug="true" hostspecific="true" language="C#" #>
-<#@ assembly name="$(SolutionDir)RAML.Parser\bin\Debug\RAML.Parser.dll" #>
-<#@ assembly name="$(SolutionDir)Raml.VisualStudio.Tools\bin\Debug\RAML.Tools.dll" #>
-<#@ assembly name="$(SolutionDir)RAML.Parser\bin\Debug\EdgeJs.dll" #>
+<#@ assembly name="$(SolutionDir)MuleSoft.RAML.Tools\bin\Debug\RAML.Parser.dll" #>
+<#@ assembly name="$(SolutionDir)MuleSoft.RAML.Tools\bin\Debug\RAML.Tools.dll" #>
+<#@ assembly name="$(SolutionDir)MuleSoft.RAML.Tools\bin\Debug\EdgeJs.dll" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="Raml.Parser" #>
 <#@ import namespace="Raml.Tools" #>

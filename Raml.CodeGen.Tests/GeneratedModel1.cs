@@ -1,4 +1,15 @@
 ﻿
+
+
+
+
+
+
+
+
+
+
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +26,11 @@ using Raml.Common;
 
 namespace Movies
 {
+
     /// <summary>
     /// rent a movie
     /// </summary>
+
     public partial class Rent
     {
         private readonly MoviesApi proxy;
@@ -27,6 +40,8 @@ namespace Movies
             this.proxy = proxy;
         }
 
+
+
         /// <summary>
 		/// rent a movie
 		/// </summary>
@@ -36,23 +51,32 @@ namespace Movies
         {
 
             var url = "movies/{id}/rent";
+
             url = url.Replace("{id}", id.ToString());
+
             var req = new HttpRequestMessage(HttpMethod.Put, url);
+
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
+
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
+
             req.Content = new StringContent(json);
+
 	        var response = await proxy.Client.SendAsync(req);
+
 
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
 
         }
+
 
         /// <summary>
 		/// rent a movie
@@ -62,18 +86,24 @@ namespace Movies
         {
 
             var url = "movies/{id}/rent";
+
 			if(request.UriParameters == null)
 				throw new InvalidOperationException("Uri Parameters cannot be null");               
+
 
 			if(request.UriParameters.Id == null)
 				throw new InvalidOperationException("Uri Parameter Id cannot be null");
 
             url = url.Replace("{id}", request.UriParameters.Id.ToString());
+
             var req = new HttpRequestMessage(HttpMethod.Put, url);
+
 
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
+
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
+
             if(request.RawHeaders != null)
             {
                 foreach(var header in request.RawHeaders)
@@ -81,22 +111,31 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
+
             req.Content = request.Content;
+
 	        var response = await proxy.Client.SendAsync(req);
+
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers,
+
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
+
         }
 
+
     }
+
 
     /// <summary>
     /// return a movie
     /// </summary>
+
     public partial class Return
     {
         private readonly MoviesApi proxy;
@@ -105,6 +144,8 @@ namespace Movies
         {
             this.proxy = proxy;
         }
+
+
 
         /// <summary>
 		/// return a movie
@@ -115,23 +156,32 @@ namespace Movies
         {
 
             var url = "movies/{id}/return";
+
             url = url.Replace("{id}", id.ToString());
+
             var req = new HttpRequestMessage(HttpMethod.Put, url);
+
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
+
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
+
             req.Content = new StringContent(json);
+
 	        var response = await proxy.Client.SendAsync(req);
+
 
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
 
         }
+
 
         /// <summary>
 		/// return a movie
@@ -141,18 +191,24 @@ namespace Movies
         {
 
             var url = "movies/{id}/return";
+
 			if(request.UriParameters == null)
 				throw new InvalidOperationException("Uri Parameters cannot be null");               
+
 
 			if(request.UriParameters.Id == null)
 				throw new InvalidOperationException("Uri Parameter Id cannot be null");
 
             url = url.Replace("{id}", request.UriParameters.Id.ToString());
+
             var req = new HttpRequestMessage(HttpMethod.Put, url);
+
 
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
+
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
+
             if(request.RawHeaders != null)
             {
                 foreach(var header in request.RawHeaders)
@@ -160,18 +216,26 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
+
             req.Content = request.Content;
+
 	        var response = await proxy.Client.SendAsync(req);
+
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers,
+
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
+
         }
 
+
     }
+
 
     public partial class Wishlist
     {
@@ -182,6 +246,8 @@ namespace Movies
             this.proxy = proxy;
         }
 
+
+
         /// <summary>
 		/// gets the current user movies wishlist
 		/// </summary>
@@ -189,21 +255,28 @@ namespace Movies
         {
 
             var url = "movies/wishlist";
+
             var req = new HttpRequestMessage(HttpMethod.Get, url);
+
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
+
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
+
 	        var response = await proxy.Client.SendAsync(req);
+
 
             return new Models.WishlistGetResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
 
         }
+
 
         /// <summary>
 		/// gets the current user movies wishlist
@@ -214,11 +287,15 @@ namespace Movies
         {
 
             var url = "movies/wishlist";
+
             var req = new HttpRequestMessage(HttpMethod.Get, url);
+
 
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
+
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
+
             if(request.RawHeaders != null)
             {
                 foreach(var header in request.RawHeaders)
@@ -226,16 +303,23 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
+
 	        var response = await proxy.Client.SendAsync(req);
+
             return new Models.WishlistGetResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers,
+
 	                                            Formatters = responseFormatters,
+
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
+
         }
+
 
         /// <summary>
 		/// add a movie to the current user movies wishlist
@@ -246,23 +330,32 @@ namespace Movies
         {
 
             var url = "movies/wishlist/{id}";
+
             url = url.Replace("{id}", id.ToString());
+
             var req = new HttpRequestMessage(HttpMethod.Post, url);
+
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
+
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
+
             req.Content = new StringContent(json);
+
 	        var response = await proxy.Client.SendAsync(req);
+
 
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
 
         }
+
 
         /// <summary>
 		/// add a movie to the current user movies wishlist
@@ -272,18 +365,24 @@ namespace Movies
         {
 
             var url = "movies/wishlist/{id}";
+
 			if(request.UriParameters == null)
 				throw new InvalidOperationException("Uri Parameters cannot be null");               
+
 
 			if(request.UriParameters.Id == null)
 				throw new InvalidOperationException("Uri Parameter Id cannot be null");
 
             url = url.Replace("{id}", request.UriParameters.Id.ToString());
+
             var req = new HttpRequestMessage(HttpMethod.Post, url);
+
 
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
+
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
+
             if(request.RawHeaders != null)
             {
                 foreach(var header in request.RawHeaders)
@@ -291,16 +390,23 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
+
             req.Content = request.Content;
+
 	        var response = await proxy.Client.SendAsync(req);
+
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers,
+
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
+
         }
+
 
         /// <summary>
 		/// removes a movie from the current user movies wishlist
@@ -310,22 +416,30 @@ namespace Movies
         {
 
             var url = "movies/wishlist/{id}";
+
             url = url.Replace("{id}", id.ToString());
+
             var req = new HttpRequestMessage(HttpMethod.Delete, url);
+
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
+
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
+
 	        var response = await proxy.Client.SendAsync(req);
+
 
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
 
         }
+
 
         /// <summary>
 		/// removes a movie from the current user movies wishlist
@@ -335,18 +449,24 @@ namespace Movies
         {
 
             var url = "movies/wishlist/{id}";
+
 			if(request.UriParameters == null)
 				throw new InvalidOperationException("Uri Parameters cannot be null");               
+
 
 			if(request.UriParameters.Id == null)
 				throw new InvalidOperationException("Uri Parameter Id cannot be null");
 
             url = url.Replace("{id}", request.UriParameters.Id.ToString());
+
             var req = new HttpRequestMessage(HttpMethod.Delete, url);
+
 
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
+
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
+
             if(request.RawHeaders != null)
             {
                 foreach(var header in request.RawHeaders)
@@ -354,17 +474,24 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
+
 	        var response = await proxy.Client.SendAsync(req);
+
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers,
+
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
+
         }
 
+
     }
+
 
     public partial class Rented
     {
@@ -375,6 +502,8 @@ namespace Movies
             this.proxy = proxy;
         }
 
+
+
         /// <summary>
 		/// gets the user rented movies
 		/// </summary>
@@ -382,18 +511,23 @@ namespace Movies
         {
 
             var url = "movies/rented";
+
             var req = new HttpRequestMessage(HttpMethod.Get, url);
+
 	        var response = await proxy.Client.SendAsync(req);
+
 
             return new Models.RentedGetResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
 
         }
+
 
         /// <summary>
 		/// gets the user rented movies
@@ -404,7 +538,9 @@ namespace Movies
         {
 
             var url = "movies/rented";
+
             var req = new HttpRequestMessage(HttpMethod.Get, url);
+
 
             if(request.RawHeaders != null)
             {
@@ -413,18 +549,26 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
+
 	        var response = await proxy.Client.SendAsync(req);
+
             return new Models.RentedGetResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers,
+
 	                                            Formatters = responseFormatters,
+
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
+
         }
 
+
     }
+
 
     public partial class Available
     {
@@ -435,6 +579,8 @@ namespace Movies
             this.proxy = proxy;
         }
 
+
+
         /// <summary>
 		/// get all movies that are not currently rented
 		/// </summary>
@@ -442,18 +588,23 @@ namespace Movies
         {
 
             var url = "movies/available";
+
             var req = new HttpRequestMessage(HttpMethod.Get, url);
+
 	        var response = await proxy.Client.SendAsync(req);
+
 
             return new Models.AvailableGetResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
 
         }
+
 
         /// <summary>
 		/// get all movies that are not currently rented
@@ -464,7 +615,9 @@ namespace Movies
         {
 
             var url = "movies/available";
+
             var req = new HttpRequestMessage(HttpMethod.Get, url);
+
 
             if(request.RawHeaders != null)
             {
@@ -473,18 +626,26 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
+
 	        var response = await proxy.Client.SendAsync(req);
+
             return new Models.AvailableGetResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers,
+
 	                                            Formatters = responseFormatters,
+
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
+
         }
 
+
     }
+
 
     public partial class Movies
     {
@@ -494,18 +655,23 @@ namespace Movies
         {
             this.proxy = proxy;
         }
+
         public virtual Wishlist Wishlist
         {
             get { return new Wishlist(proxy); }
         }
+
         public virtual Rented Rented
         {
             get { return new Rented(proxy); }
         }
+
         public virtual Available Available
         {
             get { return new Available(proxy); }
         }
+
+
 
         /// <summary>
 		/// gets all movies in the catalogue
@@ -514,18 +680,23 @@ namespace Movies
         {
 
             var url = "movies";
+
             var req = new HttpRequestMessage(HttpMethod.Get, url);
+
 	        var response = await proxy.Client.SendAsync(req);
+
 
             return new Models.MoviesGetResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
 
         }
+
 
         /// <summary>
 		/// gets all movies in the catalogue
@@ -536,7 +707,9 @@ namespace Movies
         {
 
             var url = "movies";
+
             var req = new HttpRequestMessage(HttpMethod.Get, url);
+
 
             if(request.Headers != null)
             {
@@ -545,41 +718,56 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, header.Value);
                 }
             }
+
 	        var response = await proxy.Client.SendAsync(req);
+
             return new Models.MoviesGetResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers,
+
 	                                            Formatters = responseFormatters,
+
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
+
         }
+
 
         /// <summary>
 		/// adds a movie to the catalogue
 		/// </summary>
-		/// <param name="json"></param>
-        public virtual async Task<ApiResponse> Post(string json)
+		/// <param name="moviespostrequestcontent"></param>
+        public virtual async Task<ApiResponse> Post(Models.MoviesPostRequestContent moviespostrequestcontent)
         {
 
             var url = "movies";
+
             var req = new HttpRequestMessage(HttpMethod.Post, url);
+
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
+
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-            req.Content = new StringContent(json);
+
+            req.Content = new ObjectContent(typeof(Models.MoviesPostRequestContent), moviespostrequestcontent, new JsonMediaTypeFormatter());
+
 	        var response = await proxy.Client.SendAsync(req);
+
 
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
 
         }
+
 
         /// <summary>
 		/// adds a movie to the catalogue
@@ -589,11 +777,15 @@ namespace Movies
         {
 
             var url = "movies";
+
             var req = new HttpRequestMessage(HttpMethod.Post, url);
+
 
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
+
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
+
             if(request.RawHeaders != null)
             {
                 foreach(var header in request.RawHeaders)
@@ -601,16 +793,26 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
-            req.Content = request.Content;
+
+            if(request.Formatter == null)
+                request.Formatter = new JsonMediaTypeFormatter();
+
+            req.Content = new ObjectContent(typeof(Models.MoviesPostRequestContent), request.Content, request.Formatter);
+
 	        var response = await proxy.Client.SendAsync(req);
+
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers,
+
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
+
         }
+
 
         /// <summary>
 		/// get the info of a movie
@@ -620,22 +822,30 @@ namespace Movies
         {
 
             var url = "movies/{id}";
+
             url = url.Replace("{id}", id.ToString());
+
             var req = new HttpRequestMessage(HttpMethod.Get, url);
+
 	        var response = await proxy.Client.SendAsync(req);
+
 
             var headers = new Models.MultipleGetByIdHeader();
             headers.SetProperties(response.Headers, response.StatusCode);
+
             return new Models.MoviesGetByIdResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 Headers = headers, 
+
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
 
         }
+
 
         /// <summary>
 		/// get the info of a movie
@@ -646,14 +856,18 @@ namespace Movies
         {
 
             var url = "movies/{id}";
+
 			if(request.UriParameters == null)
 				throw new InvalidOperationException("Uri Parameters cannot be null");               
+
 
 			if(request.UriParameters.Id == null)
 				throw new InvalidOperationException("Uri Parameter Id cannot be null");
 
             url = url.Replace("{id}", request.UriParameters.Id.ToString());
+
             var req = new HttpRequestMessage(HttpMethod.Get, url);
+
 
             if(request.RawHeaders != null)
             {
@@ -662,43 +876,59 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
+
 	        var response = await proxy.Client.SendAsync(req);
+
             var headers = new Models.MultipleGetByIdHeader();
             headers.SetProperties(response.Headers, response.StatusCode);
+
             return new Models.MoviesGetByIdResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 Headers = headers, 
+
                                                 RawHeaders = response.Headers,
+
 	                                            Formatters = responseFormatters,
+
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
+
         }
+
 
         /// <summary>
 		/// update the info of a movie
 		/// </summary>
-		/// <param name="json"></param>
+		/// <param name="idputrequestcontent"></param>
 		/// <param name="id"></param>
-        public virtual async Task<ApiResponse> Put(string json, string id)
+        public virtual async Task<ApiResponse> Put(Models.IdPutRequestContent idputrequestcontent, string id)
         {
 
             var url = "movies/{id}";
+
             url = url.Replace("{id}", id.ToString());
+
             var req = new HttpRequestMessage(HttpMethod.Put, url);
-            req.Content = new StringContent(json);
+
+            req.Content = new ObjectContent(typeof(Models.IdPutRequestContent), idputrequestcontent, new JsonMediaTypeFormatter());
+
 	        var response = await proxy.Client.SendAsync(req);
+
 
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
 
         }
+
 
         /// <summary>
 		/// update the info of a movie
@@ -708,14 +938,18 @@ namespace Movies
         {
 
             var url = "movies/{id}";
+
 			if(request.UriParameters == null)
 				throw new InvalidOperationException("Uri Parameters cannot be null");               
+
 
 			if(request.UriParameters.Id == null)
 				throw new InvalidOperationException("Uri Parameter Id cannot be null");
 
             url = url.Replace("{id}", request.UriParameters.Id.ToString());
+
             var req = new HttpRequestMessage(HttpMethod.Put, url);
+
 
             if(request.RawHeaders != null)
             {
@@ -724,16 +958,26 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
-            req.Content = request.Content;
+
+            if(request.Formatter == null)
+                request.Formatter = new JsonMediaTypeFormatter();
+
+            req.Content = new ObjectContent(typeof(Models.IdPutRequestContent), request.Content, request.Formatter);
+
 	        var response = await proxy.Client.SendAsync(req);
+
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers,
+
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
+
         }
+
 
         /// <summary>
 		/// remove a movie from the catalogue
@@ -743,19 +987,25 @@ namespace Movies
         {
 
             var url = "movies/{id}";
+
             url = url.Replace("{id}", id.ToString());
+
             var req = new HttpRequestMessage(HttpMethod.Delete, url);
+
 	        var response = await proxy.Client.SendAsync(req);
+
 
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
 
         }
+
 
         /// <summary>
 		/// remove a movie from the catalogue
@@ -765,14 +1015,18 @@ namespace Movies
         {
 
             var url = "movies/{id}";
+
 			if(request.UriParameters == null)
 				throw new InvalidOperationException("Uri Parameters cannot be null");               
+
 
 			if(request.UriParameters.Id == null)
 				throw new InvalidOperationException("Uri Parameter Id cannot be null");
 
             url = url.Replace("{id}", request.UriParameters.Id.ToString());
+
             var req = new HttpRequestMessage(HttpMethod.Delete, url);
+
 
             if(request.RawHeaders != null)
             {
@@ -781,17 +1035,24 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
+
 	        var response = await proxy.Client.SendAsync(req);
+
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers,
+
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
+
         }
 
+
     }
+
 
     public partial class Search
     {
@@ -802,6 +1063,8 @@ namespace Movies
             this.proxy = proxy;
         }
 
+
+
         /// <summary>
 		/// search movies by name or director
 		/// </summary>
@@ -810,26 +1073,35 @@ namespace Movies
         {
 
             var url = "search";
+
             if(getsearchquery != null)
             {
                 url += "?";
+
                 if(getsearchquery.Name != null)
                     url += "&getsearchquery.Name=" + getsearchquery.Name;
+
                 if(getsearchquery.Director != null)
                     url += "&getsearchquery.Director=" + getsearchquery.Director;
+
             }
+
             var req = new HttpRequestMessage(HttpMethod.Get, url);
+
 	        var response = await proxy.Client.SendAsync(req);
+
 
             return new Models.SearchGetResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
 
         }
+
 
         /// <summary>
 		/// search movies by name or director
@@ -840,15 +1112,21 @@ namespace Movies
         {
 
             var url = "search";
+
             if(request.Query != null)
             {
                 url += "?";
+
                 if(request.Query.Name != null)
                     url += "&Name=" + request.Query.Name;
+
                 if(request.Query.Director != null)
                     url += "&Director=" + request.Query.Director;
+
             }
+
             var req = new HttpRequestMessage(HttpMethod.Get, url);
+
 
             if(request.RawHeaders != null)
             {
@@ -857,18 +1135,26 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
+
 	        var response = await proxy.Client.SendAsync(req);
+
             return new Models.SearchGetResponse  
                                             {
                                                 RawContent = response.Content,
+
                                                 RawHeaders = response.Headers,
+
 	                                            Formatters = responseFormatters,
+
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase
                                             };
+
         }
 
+
     }
+
 
     /// <summary>
     /// Main class for grouping root resources. Nested resources are defined as properties. The constructor can optionally receive an URL and HttpClient instance to override the default ones.
@@ -881,6 +1167,7 @@ namespace Movies
         internal HttpClient Client { get { return client; } }
 
 
+
         public string OAuthAccessToken { get; set; }
 
 		private string oauthAuthorizeUrl = "https://localhost:8081/oauth/authorize";
@@ -888,6 +1175,7 @@ namespace Movies
 
    		private string oauthAccessTokenUrl = "https://localhost:8081/oauth/access_token";
 		public string OAuthAccessTokenUrl { get { return oauthAccessTokenUrl; } set { oauthAccessTokenUrl = value; } }
+
 
         public MoviesApi(string endpointUrl)
         {
@@ -918,26 +1206,31 @@ namespace Movies
         }
 
         
+
         public virtual Movies Movies
         {
             get { return new Movies(this); }
         }
                 
+
         public virtual Rent Rent
         {
             get { return new Rent(this); }
         }
                 
+
         public virtual Return Return
         {
             get { return new Return(this); }
         }
                 
+
         public virtual Search Search
         {
             get { return new Search(this); }
         }
                 
+
 
 
 		public void AddDefaultRequestHeader(string name, string value)
@@ -958,263 +1251,419 @@ namespace Movies
 
 namespace Movies.Models
 {
+
     public partial class MoviesPostRequestContent 
     {
+
         public int Id { get; set; }
+
         public string Name { get; set; }
+
         public string Director { get; set; }
+
         public string Genre { get; set; }
+
         public string Cast { get; set; }
+
         public decimal Duration { get; set; }
+
         public string Storyline { get; set; }
+
         public string Language { get; set; }
 
+
     } // end class
+
 
     public partial class IdPutRequestContent 
     {
+
         public int Id { get; set; }
+
         public string Name { get; set; }
+
         public string Director { get; set; }
+
         public string Genre { get; set; }
+
         public string Cast { get; set; }
+
         public decimal Duration { get; set; }
+
         public string Storyline { get; set; }
+
         public string Language { get; set; }
 
+
     } // end class
+
 
     public partial class MoviesGetOKResponseContent 
     {
+
         public int Id { get; set; }
+
         public string Name { get; set; }
+
         public string Director { get; set; }
+
         public string Genre { get; set; }
+
         public string Cast { get; set; }
+
         public decimal Duration { get; set; }
+
         public string Storyline { get; set; }
+
         public string Language { get; set; }
+
         public bool Rented { get; set; }
 
+
     } // end class
+
 
     public partial class MoviesGetBadRequestResponseContent 
     {
+
         public string Error { get; set; }
+
         public int Code { get; set; }
 
+
     } // end class
+
 
     public partial class IdGetOKResponseContent 
     {
+
         public int Id { get; set; }
+
         public string Name { get; set; }
+
         public string Director { get; set; }
+
         public string Genre { get; set; }
+
         public string Cast { get; set; }
+
         public decimal Duration { get; set; }
+
         public string Storyline { get; set; }
+
         public string Language { get; set; }
+
         public bool Rented { get; set; }
 
+
     } // end class
+
 
     public partial class IdGetBadRequestResponseContent 
     {
+
         public string Error { get; set; }
+
         public int Code { get; set; }
 
+
     } // end class
+
 
     public partial class IdGetNotFoundResponseContent 
     {
+
         public int Id { get; set; }
+
         public string Error { get; set; }
+
         public int Code { get; set; }
 
+
     } // end class
+
 
     public partial class WishlistGetOKResponseContent 
     {
+
         public int Id { get; set; }
+
         public string Name { get; set; }
+
         public string Director { get; set; }
+
         public string Genre { get; set; }
+
         public string Cast { get; set; }
+
         public decimal Duration { get; set; }
+
         public string Storyline { get; set; }
+
         public string Language { get; set; }
+
         public bool Rented { get; set; }
 
+
     } // end class
+
 
     public partial class RentedGetOKResponseContent 
     {
+
         public int Id { get; set; }
+
         public string Name { get; set; }
+
         public string Director { get; set; }
+
         public string Genre { get; set; }
+
         public string Cast { get; set; }
+
         public decimal Duration { get; set; }
+
         public string Storyline { get; set; }
+
         public string Language { get; set; }
+
         public bool Rented { get; set; }
 
+
     } // end class
+
 
     public partial class AvailableGetOKResponseContent 
     {
+
         public int Id { get; set; }
+
         public string Name { get; set; }
+
         public string Director { get; set; }
+
         public string Genre { get; set; }
+
         public string Cast { get; set; }
+
         public decimal Duration { get; set; }
+
         public string Storyline { get; set; }
+
         public string Language { get; set; }
+
         public bool Rented { get; set; }
 
+
     } // end class
+
 
     public partial class SearchGetOKResponseContent 
     {
+
         public int Id { get; set; }
+
         public string Name { get; set; }
+
         public string Director { get; set; }
+
         public string Genre { get; set; }
+
         public string Cast { get; set; }
+
         public decimal Duration { get; set; }
+
         public string Storyline { get; set; }
+
         public string Language { get; set; }
+
         public bool Rented { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Multiple Response Types MoviesGetOKResponseContent, MoviesGetBadRequestResponseContent
     /// </summary>
+
     public partial class MultipleMoviesGet : ApiMultipleResponse
     {
         
         public MultipleMoviesGet()
         {
+
             names.Add(HttpStatusCode.OK, "MoviesGetOKResponseContent");
             types.Add(HttpStatusCode.OK, typeof(MoviesGetOKResponseContent[]));
+
             names.Add(HttpStatusCode.BadRequest, "MoviesGetBadRequestResponseContent");
             types.Add(HttpStatusCode.BadRequest, typeof(MoviesGetBadRequestResponseContent));
+
         }
+
         public MoviesGetOKResponseContent[] MoviesGetOKResponseContent { get; set; }
+
         public MoviesGetBadRequestResponseContent MoviesGetBadRequestResponseContent { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Multiple Response Types IdGetOKResponseContent, IdGetBadRequestResponseContent, IdGetNotFoundResponseContent
     /// </summary>
+
     public partial class MultipleIdGet : ApiMultipleResponse
     {
         
         public MultipleIdGet()
         {
+
             names.Add(HttpStatusCode.OK, "IdGetOKResponseContent");
             types.Add(HttpStatusCode.OK, typeof(IdGetOKResponseContent));
+
             names.Add(HttpStatusCode.BadRequest, "IdGetBadRequestResponseContent");
             types.Add(HttpStatusCode.BadRequest, typeof(IdGetBadRequestResponseContent));
+
             names.Add(HttpStatusCode.NotFound, "IdGetNotFoundResponseContent");
             types.Add(HttpStatusCode.NotFound, typeof(IdGetNotFoundResponseContent));
+
         }
+
         public IdGetOKResponseContent IdGetOKResponseContent { get; set; }
+
         public IdGetBadRequestResponseContent IdGetBadRequestResponseContent { get; set; }
+
         public IdGetNotFoundResponseContent IdGetNotFoundResponseContent { get; set; }
 
+
     } // end class
+
 
     public partial class GetSearchQuery 
     {
+
         /// <summary>
         /// Name of the movie
         /// </summary>
+
         public string Name { get; set; }
+
         /// <summary>
         /// Director of the movie
         /// </summary>
+
         public string Director { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Uri Parameters for resource /{id}
     /// </summary>
+
     public partial class MoviesIdUriParameters 
     {
+
         public string Id { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Uri Parameters for resource /rent
     /// </summary>
+
     public partial class MoviesIdRentUriParameters 
     {
+
         public string Id { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Uri Parameters for resource /return
     /// </summary>
+
     public partial class MoviesIdReturnUriParameters 
     {
+
         public string Id { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Uri Parameters for resource /{id}
     /// </summary>
+
     public partial class MoviesWishlistIdUriParameters 
     {
+
         public string Id { get; set; }
 
+
     } // end class
+
 
     public partial class GetMoviesHeader : ApiHeader
     {
 
+
         public string User { get; set; }
+
         public int? Code { get; set; }
 
+
     } // end class
+
 
     public partial class GetByIdMoviesOKResponseHeader : ApiResponseHeader
     {
+
         public int? Code { get; set; }
+
         public DateTime? Created { get; set; }
 
+
     } // end class
+
 
     public partial class GetByIdMoviesBadRequestResponseHeader : ApiResponseHeader
     {
+
         public int? Code { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Multiple Header Types GetByIdMoviesOKResponseHeader, GetByIdMoviesBadRequestResponseHeader
     /// </summary>
+
     public partial class MultipleGetByIdHeader : ApiMultipleObject
     {
         
         public MultipleGetByIdHeader()
         {
+
             names.Add(HttpStatusCode.OK, "GetByIdMoviesOKResponseHeader");
             types.Add(HttpStatusCode.OK, typeof(GetByIdMoviesOKResponseHeader));
+
             names.Add(HttpStatusCode.BadRequest, "GetByIdMoviesBadRequestResponseHeader");
             types.Add(HttpStatusCode.BadRequest, typeof(GetByIdMoviesBadRequestResponseHeader));
+
         }
 
 		public void SetProperties(HttpResponseHeaders headers, HttpStatusCode statusCode)
 	    {
+
 		    if (statusCode == HttpStatusCode.OK)
 		    {
 				var header = new GetByIdMoviesOKResponseHeader();
@@ -1227,6 +1676,7 @@ namespace Movies.Models
 			    this.GetByIdMoviesOKResponseHeader = header;
 				return;
 		    }
+
 		    if (statusCode == HttpStatusCode.BadRequest)
 		    {
 				var header = new GetByIdMoviesBadRequestResponseHeader();
@@ -1239,233 +1689,337 @@ namespace Movies.Models
 			    this.GetByIdMoviesBadRequestResponseHeader = header;
 				return;
 		    }
+
 	    }
+
         public GetByIdMoviesOKResponseHeader GetByIdMoviesOKResponseHeader { get; set; }
+
         public GetByIdMoviesBadRequestResponseHeader GetByIdMoviesBadRequestResponseHeader { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Request object for method Put of class Rent
     /// </summary>
+
     public partial class RentPutRequest : ApiRequest
     {
         public RentPutRequest(MoviesIdRentUriParameters UriParameters, HttpContent Content = null, MediaTypeFormatter Formatter = null)
         {
+
             this.Content = Content;
+
             this.Formatter = Formatter;
+
             this.UriParameters = UriParameters;
+
         }
+
 
         /// <summary>
         /// Request content
         /// </summary>
+
         public HttpContent Content { get; set; }
+
         /// <summary>
         /// Request formatter
         /// </summary>
+
         public MediaTypeFormatter Formatter { get; set; }
+
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
+
         public MoviesIdRentUriParameters UriParameters { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Request object for method Put of class Return
     /// </summary>
+
     public partial class ReturnPutRequest : ApiRequest
     {
         public ReturnPutRequest(MoviesIdReturnUriParameters UriParameters, HttpContent Content = null, MediaTypeFormatter Formatter = null)
         {
+
             this.Content = Content;
+
             this.Formatter = Formatter;
+
             this.UriParameters = UriParameters;
+
         }
+
 
         /// <summary>
         /// Request content
         /// </summary>
+
         public HttpContent Content { get; set; }
+
         /// <summary>
         /// Request formatter
         /// </summary>
+
         public MediaTypeFormatter Formatter { get; set; }
+
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
+
         public MoviesIdReturnUriParameters UriParameters { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Request object for method Post of class Wishlist
     /// </summary>
+
     public partial class WishlistPostRequest : ApiRequest
     {
         public WishlistPostRequest(MoviesWishlistIdUriParameters UriParameters, HttpContent Content = null, MediaTypeFormatter Formatter = null)
         {
+
             this.Content = Content;
+
             this.Formatter = Formatter;
+
             this.UriParameters = UriParameters;
+
         }
+
 
         /// <summary>
         /// Request content
         /// </summary>
+
         public HttpContent Content { get; set; }
+
         /// <summary>
         /// Request formatter
         /// </summary>
+
         public MediaTypeFormatter Formatter { get; set; }
+
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
+
         public MoviesWishlistIdUriParameters UriParameters { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Request object for method Delete of class Wishlist
     /// </summary>
+
     public partial class WishlistDeleteRequest : ApiRequest
     {
         public WishlistDeleteRequest(MoviesWishlistIdUriParameters UriParameters)
         {
+
             this.UriParameters = UriParameters;
+
         }
+
 
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
+
         public MoviesWishlistIdUriParameters UriParameters { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Request object for method Get of class Movies
     /// </summary>
+
     public partial class MoviesGetRequest : ApiRequest
     {
         public MoviesGetRequest(GetMoviesHeader Headers = null)
         {
+
             this.Headers = Headers;
+
         }
+
 
         /// <summary>
         /// Typed Request headers
         /// </summary>
+
         public GetMoviesHeader Headers { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Request object for method Post of class Movies
     /// </summary>
+
     public partial class MoviesPostRequest : ApiRequest
     {
-        public MoviesPostRequest(HttpContent Content = null, MediaTypeFormatter Formatter = null)
+        public MoviesPostRequest(MoviesPostRequestContent Content = null, MediaTypeFormatter Formatter = null)
         {
+
             this.Content = Content;
+
             this.Formatter = Formatter;
+
         }
+
 
         /// <summary>
         /// Request content
         /// </summary>
-        public HttpContent Content { get; set; }
+
+        public MoviesPostRequestContent Content { get; set; }
+
         /// <summary>
         /// Request formatter
         /// </summary>
+
         public MediaTypeFormatter Formatter { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Request object for method GetById of class Movies
     /// </summary>
+
     public partial class MoviesGetByIdRequest : ApiRequest
     {
         public MoviesGetByIdRequest(MoviesIdUriParameters UriParameters)
         {
+
             this.UriParameters = UriParameters;
+
         }
+
 
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
+
         public MoviesIdUriParameters UriParameters { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Request object for method Put of class Movies
     /// </summary>
+
     public partial class MoviesPutRequest : ApiRequest
     {
-        public MoviesPutRequest(MoviesIdUriParameters UriParameters, HttpContent Content = null, MediaTypeFormatter Formatter = null)
+        public MoviesPutRequest(MoviesIdUriParameters UriParameters, IdPutRequestContent Content = null, MediaTypeFormatter Formatter = null)
         {
+
             this.Content = Content;
+
             this.Formatter = Formatter;
+
             this.UriParameters = UriParameters;
+
         }
+
 
         /// <summary>
         /// Request content
         /// </summary>
-        public HttpContent Content { get; set; }
+
+        public IdPutRequestContent Content { get; set; }
+
         /// <summary>
         /// Request formatter
         /// </summary>
+
         public MediaTypeFormatter Formatter { get; set; }
+
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
+
         public MoviesIdUriParameters UriParameters { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Request object for method Delete of class Movies
     /// </summary>
+
     public partial class MoviesDeleteRequest : ApiRequest
     {
         public MoviesDeleteRequest(MoviesIdUriParameters UriParameters)
         {
+
             this.UriParameters = UriParameters;
+
         }
+
 
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
+
         public MoviesIdUriParameters UriParameters { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Request object for method Get of class Search
     /// </summary>
+
     public partial class SearchGetRequest : ApiRequest
     {
         public SearchGetRequest(GetSearchQuery Query = null)
         {
+
             this.Query = Query;
+
         }
+
 
         /// <summary>
         /// Request query string properties
         /// </summary>
+
         public GetSearchQuery Query { get; set; }
 
+
     } // end class
+
 
     /// <summary>
     /// Response object for method Get of class Wishlist
     /// </summary>
 
+
     public partial class WishlistGetResponse : ApiResponse
     {
+
 
 
 	    private WishlistGetOKResponseContent[] typedContent;
@@ -1488,14 +2042,18 @@ namespace Movies.Models
 	        }
 	    }
 
+
     } // end class
+
 
     /// <summary>
     /// Response object for method Get of class Rented
     /// </summary>
 
+
     public partial class RentedGetResponse : ApiResponse
     {
+
 
 
 	    private RentedGetOKResponseContent[] typedContent;
@@ -1518,14 +2076,18 @@ namespace Movies.Models
 	        }
 	    }
 
+
     } // end class
+
 
     /// <summary>
     /// Response object for method Get of class Available
     /// </summary>
 
+
     public partial class AvailableGetResponse : ApiResponse
     {
+
 
 
 	    private AvailableGetOKResponseContent[] typedContent;
@@ -1548,14 +2110,18 @@ namespace Movies.Models
 	        }
 	    }
 
+
     } // end class
+
 
     /// <summary>
     /// Response object for method Get of class Movies
     /// </summary>
 
+
     public partial class MoviesGetResponse : ApiResponse
     {
+
 
 	    private MultipleMoviesGet typedContent;
         /// <summary>
@@ -1579,19 +2145,25 @@ namespace Movies.Models
 	        }
     	}        
 
+
     } // end class
+
 
     /// <summary>
     /// Response object for method GetById of class Movies
     /// </summary>
 
+
     public partial class MoviesGetByIdResponse : ApiResponse
     {
+
 
         /// <summary>
         /// Typed Response headers (defined in RAML)
         /// </summary>
+
         public Models.MultipleGetByIdHeader Headers { get; set; }
+
 	    private MultipleIdGet typedContent;
         /// <summary>
         /// Typed response content
@@ -1614,14 +2186,18 @@ namespace Movies.Models
 	        }
     	}        
 
+
     } // end class
+
 
     /// <summary>
     /// Response object for method Get of class Search
     /// </summary>
 
+
     public partial class SearchGetResponse : ApiResponse
     {
+
 
 
 	    private SearchGetOKResponseContent[] typedContent;
@@ -1644,7 +2220,9 @@ namespace Movies.Models
 	        }
 	    }
 
+
     } // end class
+
 
 
 } // end Models namespace
