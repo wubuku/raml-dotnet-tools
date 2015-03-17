@@ -56,6 +56,9 @@ namespace Raml.Tools.Tests
 		public async Task ShouldHaveNoWarnings_WhenMovies()
 		{
 			var model = await GetMoviesGeneratedModel();
+
+            var o = model.Objects.Where(p => p.Value.Properties.Any());
+
 			Assert.AreEqual(0, model.Warnings.Count());
 		}
 

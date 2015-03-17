@@ -39,12 +39,12 @@ namespace Movies
 
 
         /// update the info of a movie
-        [HttpPut]
-        [Route("{id}")]
-        public virtual async Task<IHttpActionResult> Put(Models.IdPutRequestContent idputrequestcontent,[FromUri] string id)
-        {
-            return Ok();
-        }
+        //[HttpPut]
+        //[Route("{id}")]
+        //public virtual async Task<IHttpActionResult> Put(Models.IdPutRequestContent idputrequestcontent,[FromUri] string id)
+        //{
+        //    return Ok();
+        //}
 
 
         /// remove a movie from the catalogue

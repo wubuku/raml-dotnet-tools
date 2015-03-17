@@ -14,7 +14,8 @@ namespace Raml.Tools
 			var obj = new ApiObject
 			          {
 				          Name = NetNamingMapper.GetObjectName(key),
-				          Properties = new List<Property>()
+				          Properties = new List<Property>(),
+                          JSONSchema = jsonSchema.Replace("\"", "\\\"").Replace("\n", "")
 			          };
 			JsonSchema schema = null;
 			Newtonsoft.JsonV4.Schema.JsonSchema v4Schema = null;

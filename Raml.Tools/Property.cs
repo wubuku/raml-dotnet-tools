@@ -31,5 +31,7 @@ namespace Raml.Tools
 		public bool Required { get; set; }
 
 		public HttpStatusCode StatusCode { get; set; }
+
+        public string JSONSchema { get; set; }
 	}
 }
