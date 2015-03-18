@@ -11,9 +11,9 @@
 <#
 
 	var parser = new RamlParser();
-	var ramlFile = Host.ResolvePath("contacts.raml");
+	var ramlFile = Host.ResolvePath("movies.raml");
 	var raml = parser.Load(ramlFile);
-	var service = new ClientGeneratorService(raml, "BoxApi");
+	var service = new ClientGeneratorService(raml, "MoviesApi");
 	var model = service.BuildModel();
 
 #>
@@ -155,8 +155,8 @@ namespace <#= model.Namespace #>
 					String.Format("\"{0}\"", method.ReturnTypeObject.JSONSchema) : 
 					method.ResponseType + ".GetSchema(response.StatusCode)";
                 
-				validationWithException = String.Format("SchemaValidator.ValidateWithExceptions({0}, response.Content)", jsonSchema);
-                validationCall = String.Format("new Lazy<bool>(() => SchemaValidator.IsValidJSON({0}, response.Content), true)", jsonSchema);
+				validationWithException = String.Format("await SchemaValidator.ValidateWithExceptionAsync({0}, response.Content)", jsonSchema);
+                validationCall = String.Format("new Lazy<bool>(() => SchemaValidator.IsValid({0}, response.Content), true)", jsonSchema);
 #>
 			
 			if (proxy.SchemaValidation.Enabled)
@@ -384,12 +384,13 @@ namespace <#= model.Namespace #>
     /// </summary>
     public partial class <#= model.Root.Name #>
     {
-		public SchemaValidationSettings SchemaValidation; 
+		
         protected readonly HttpClient client;
         public const string BaseUri = "<#= model.BaseUri #>";
 
         internal HttpClient Client { get { return client; } }
 
+		public SchemaValidationSettings SchemaValidation { get; private set; }
 <#
     if (model.Security != null && !string.IsNullOrWhiteSpace(model.Security.AccessTokenUri))
     {
@@ -439,7 +440,14 @@ namespace <#= model.Namespace #>
             if(httpClient.BaseAddress == null)
                 throw new InvalidOperationException("You must set the BaseAddress property of the HttpClient instance");
 
+
             client = httpClient;
+
+			SchemaValidation = new SchemaValidationSettings
+			{
+				Enabled = true,
+				RaiseExceptions = true
+			};
         }
 
         

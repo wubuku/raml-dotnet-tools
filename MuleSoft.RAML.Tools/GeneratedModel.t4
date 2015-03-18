@@ -134,6 +134,31 @@ namespace $(namespace)
                 }
 #>
 	        var response = await proxy.Client.SendAsync(req);
+<#
+            string validationCall = "new Lazy<bool>(() => true, true)";
+            string validationWithException = "";
+
+            if (method.ResponseType != "ApiResponse")
+			{
+                var jsonSchema = !method.ReturnTypeObject.IsMultiple ? 
+					String.Format("\"{0}\"", method.ReturnTypeObject.JSONSchema) : 
+					method.ResponseType + ".GetSchema(response.StatusCode)";
+                
+				validationWithException = String.Format("await SchemaValidator.ValidateWithExceptionAsync({0}, response.Content)", jsonSchema);
+                validationCall = String.Format("new Lazy<bool>(() => SchemaValidator.IsValid({0}, response.Content), true)", jsonSchema);
+#>
+			
+			if (proxy.SchemaValidation.Enabled)
+		    {
+				if(proxy.SchemaValidation.RaiseExceptions) 
+				{
+					<#= validationWithException #>;
+				}
+					
+			}
+<#
+			}
+#>
 
 <#
 
@@ -161,7 +186,8 @@ namespace $(namespace)
 <#                  } #>
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												IsValid = <#= validationCall #>
                                             };
 
         }
@@ -284,6 +310,19 @@ namespace $(namespace)
 #>
 	        var response = await proxy.Client.SendAsync(req);
 <#
+            if (method.ResponseType != "ApiResponse")
+			{
+#>
+			if (proxy.SchemaValidation.Enabled && proxy.SchemaValidation.RaiseExceptions)
+            {
+				if(proxy.SchemaValidation.RaiseExceptions)
+				{
+					<#= validationWithException #>;
+				}
+				
+            }
+<#
+			}
 
 	            if (method.ResponseHeaders.Count == 1)
 	            {
@@ -312,7 +351,8 @@ namespace $(namespace)
 	                                            Formatters = responseFormatters,
 <#                  }  #>
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												IsValid = <#= validationCall #>
                                             };
 <#
                 
@@ -333,10 +373,15 @@ namespace $(namespace)
     /// </summary>
     public partial class <#= model.Root.Name #>
     {
+
+		public SchemaValidationSettings SchemaValidation { get; private set; } 
+
         protected readonly HttpClient client;
         public const string BaseUri = "<#= model.BaseUri #>";
 
         internal HttpClient Client { get { return client; } }
+
+
 
 <#
     if (model.Security != null && !string.IsNullOrWhiteSpace(model.Security.AccessTokenUri))
@@ -357,7 +402,13 @@ namespace $(namespace)
 
         public <#= model.Root.Name #>(string endpointUrl)
         {
-            if(string.IsNullOrWhiteSpace(endpointUrl))
+            SchemaValidation = new SchemaValidationSettings
+			{
+				Enabled = true,
+				RaiseExceptions = true
+			};
+
+			if(string.IsNullOrWhiteSpace(endpointUrl))
                 throw new ArgumentException("You must specify the endpoint URL", "endpointUrl");
 
 			if (endpointUrl.Contains("{"))
@@ -381,6 +432,12 @@ namespace $(namespace)
                 throw new InvalidOperationException("You must set the BaseAddress property of the HttpClient instance");
 
             client = httpClient;
+
+			SchemaValidation = new SchemaValidationSettings
+			{
+				Enabled = true,
+				RaiseExceptions = true
+			};
         }
 
         
@@ -435,7 +492,24 @@ foreach (var apiObject in model.Objects.Values.Where(o => o.Properties.Any()))
 <#
 	if (apiObject.IsMultiple)
 	{
-#>        
+#>
+        static readonly Dictionary<HttpStatusCode, string> schemas = new Dictionary<HttpStatusCode, string>
+        {
+<#
+		foreach (var property in apiObject.Properties.Where(p => p.Type != null && p.Name != null && p.JSONSchema != null).ToArray())
+		{
+#>
+			{ HttpStatusCode.<#= property.StatusCode #>, "<#= property.JSONSchema #>"},
+<#
+        }
+#>
+		};
+        
+		public static string GetSchema(HttpStatusCode statusCode)
+        {
+            return schemas.ContainsKey(statusCode) ? schemas[statusCode] : string.Empty;
+        }
+        
         public <#= apiObject.Name #>()
         {
 <#
@@ -693,7 +767,12 @@ foreach (var apiObject in model.ApiResponseObjects)
 		        typedContent.SetPropertyByStatusCode(StatusCode, content);
 		        return typedContent;
 	        }
-    	}        
+    	}  
+		
+		public static string GetSchema(HttpStatusCode statusCode)
+        {
+            return <#= body.Type #>.GetSchema(statusCode);
+        }      
 <#		
 		}
 		else
@@ -719,6 +798,9 @@ foreach (var apiObject in model.ApiResponseObjects)
 		        return typedContent;
 	        }
 	    }
+
+		
+
 <#
 		}
 	}

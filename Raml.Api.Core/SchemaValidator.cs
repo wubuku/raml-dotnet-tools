@@ -14,28 +14,52 @@ namespace RAML.Api.Core
 {
     public static class SchemaValidator
     {
-        public static void ValidateWithExceptions(string rawSchema, HttpContent content)
+        public static async Task ValidateWithExceptionAsync(string rawSchema, HttpContent content)
         {
-            if (!IsValidJSON(rawSchema, content))
+            var isValid = await IsValidAsync(rawSchema, content);
+            if (!isValid)
             {
-                throw new SchemaValidationException("The response failed to validate against the schema.");
+                throw new SchemaValidationException("The response is not valid according to the associated schema");
             }
         }
 
-        public static bool IsValidJSON(string rawSchema, HttpContent content)
+        public static async Task<bool> IsValidAsync(string rawSchema, HttpContent content)
         {
-            var stringReader = content.ReadAsStringAsync();
-            stringReader.Wait();
+            if (!content.Headers.ContentType.MediaType.Equals("application/json",
+                StringComparison.InvariantCultureIgnoreCase))
+            {
+                return true;
+            }
 
-            var rawResponse = stringReader.Result;
-            return IsValidJSON(rawSchema, rawResponse);
+            var rawContent = await content.ReadAsStringAsync();
+            return IsValidJSON(rawSchema, rawContent);
         }
 
-        public static bool IsValidJSON(string rawSchema, string responseString)
+        public static bool IsValid(string rawSchema, HttpContent content)
+        {
+            if (!content.Headers.ContentType.MediaType.Equals("application/json",
+                StringComparison.InvariantCultureIgnoreCase))
+            {
+                return true;
+            }
+
+            var readTask = content.ReadAsStringAsync().ConfigureAwait(false);
+            var rawResponse = readTask.GetAwaiter().GetResult();
+
+            return IsValidJSON(rawSchema, rawResponse);
+
+        }
+
+        private static bool IsValidJSON(string rawSchema, string responseString)
         {
             JsonSchema schema;
             v4SchemaNS.JsonSchema v4Schema;
-            var data = JObject.Parse(responseString);
+            
+            JToken data = null;
+            if (responseString.StartsWith("["))
+                data = JArray.Parse(responseString);
+            else
+                data = JObject.Parse(responseString);
 
             try
             {
@@ -51,14 +75,19 @@ namespace RAML.Api.Core
                 try
                 {
                     v4Schema = v4SchemaNS.JsonSchema.Parse(rawSchema);
-                    var datav4 = v4LinqNS.JObject.Parse(responseString);
-
+                    
+                    v4LinqNS.JToken datav4 = null;
+                    if (responseString.StartsWith("["))
+                        datav4 = v4LinqNS.JArray.Parse(responseString);
+                    else
+                        datav4 = v4LinqNS.JObject.Parse(responseString);
+                                        
                     if (!v4SchemaNS.Extensions.IsValid(datav4, v4Schema))
                     {
                         return false;
                     }
                 }
-                catch (Exception exv4)
+                catch (Exception)
                 {
                     return false;
                 }
