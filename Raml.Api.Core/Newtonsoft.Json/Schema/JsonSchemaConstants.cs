@@ -81,6 +81,7 @@ namespace Newtonsoft.JsonV4.Schema
         public const string JsonPointerProtocol = "json-pointer";
         public const string DefaultRequestMethod = "GET";
         public const string SelfRelation = "self";
+        public const string Definitions = "definitions";
 
         public const string OptionValuePropertyName = "value";
         public const string OptionLabelPropertyName = "label";

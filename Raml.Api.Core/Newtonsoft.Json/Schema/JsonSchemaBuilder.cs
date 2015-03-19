@@ -534,6 +534,11 @@ namespace Newtonsoft.JsonV4.Schema
                     case JsonSchemaConstants.PathStartPropertyName:
                         CurrentSchema.PathStart = (string)property.Value;
                         break;
+                    case JsonSchemaConstants.Definitions:
+                        ProcessProperties(property.Value);
+                        
+                        var s = "foo";
+                        break;
                 }
             }
         }
