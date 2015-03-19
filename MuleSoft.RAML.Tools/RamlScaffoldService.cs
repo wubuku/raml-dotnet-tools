@@ -220,8 +220,12 @@ namespace MuleSoft.RAML.Tools
 
 				var result = t4Service.TransformText(templatePath, parameterName, parameter, binPath, targetNamespace);
 				var destinationFile = Path.Combine(folderPath, generatedFileName);
+				var contents = templatesManager.AddServerMetadataHeader(result.Content, Path.GetFileNameWithoutExtension(templatePath));
+				
 				if(ovewrite || !File.Exists(destinationFile))
-					File.WriteAllText(destinationFile, result.Content);
+				{
+					File.WriteAllText(destinationFile, contents);
+				}
 
 				// add file if it does not exist
 				var fileItem = projItem.ProjectItems.Cast<ProjectItem>().FirstOrDefault(i => i.Name == generatedFileName);

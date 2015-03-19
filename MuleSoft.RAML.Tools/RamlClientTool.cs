@@ -108,7 +108,10 @@ namespace MuleSoft.RAML.Tools
 					return VSConstants.E_ABORT;
 				}
 
-				var bytes = Encoding.UTF8.GetBytes(res.Content);
+
+				var content = templatesManager.AddClientMetadataHeader(res.Content);
+
+				var bytes = Encoding.UTF8.GetBytes(content);
 				rgbOutputFileContents[0] = Marshal.AllocCoTaskMem(bytes.Length);
 				Marshal.Copy(bytes, 0, rgbOutputFileContents[0], bytes.Length);
 				pcbOutput = (uint) bytes.Length;

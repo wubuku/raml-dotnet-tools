@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
+using EnvDTE;
 using MuleSoft.RAML.Tools.Properties;
 
 namespace MuleSoft.RAML.Tools
@@ -220,6 +221,26 @@ namespace MuleSoft.RAML.Tools
 				sBuilder.Append(b.ToString("x2"));
 			}
 			return sBuilder.ToString();
+		}
+
+		public string AddServerMetadataHeader(string contents, string templateName)
+		{
+			var header = "/*" + Environment.NewLine;
+			header += "Template: " + templateName;
+			header += "Version: " + ServerTemplatesVersion;
+			header += "*/" + Environment.NewLine;
+			contents = contents.Insert(0, header);
+			return contents;
+		}
+
+		public string AddClientMetadataHeader(string contents)
+		{
+			var header = "/*" + Environment.NewLine;
+			header += "Template: " + Settings.Default.ClientT4TemplateName;
+			header += "Version: " + ClientTemplatesVersion;
+			header += "*/" + Environment.NewLine;
+			contents = contents.Insert(0, header);
+			return contents;
 		}
 
 	}
