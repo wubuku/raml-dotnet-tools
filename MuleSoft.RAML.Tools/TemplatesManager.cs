@@ -5,7 +5,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
-using EnvDTE;
 using MuleSoft.RAML.Tools.Properties;
 
 namespace MuleSoft.RAML.Tools
@@ -13,30 +12,31 @@ namespace MuleSoft.RAML.Tools
 	public class TemplatesManager
 	{
 		private const string DefaultTemplateVersion = "0.1";
-		private const int HashLineIndex = 1;
-		private const int VersionLineIndex = 2;
+		private const int HashLineIndex = 2;
+		private const int VersionLineIndex = 3;
 		private const string HashPrefix = "// hash:";
+        private const string TitlePrefix = "// title:";
 		private const string VersionPrefix = "// version:";
 		private readonly string ServerTemplatesVersion = Settings.Default.ServerTemplatesVersion;
 		private readonly string ClientTemplatesVersion = Settings.Default.ServerTemplatesVersion;
 
-		public void CopyServerTemplateToProjectFolder(string generatedFolderPath, string templateName)
+		public void CopyServerTemplateToProjectFolder(string generatedFolderPath, string templateName, string title)
 		{
 			var extensionPath = Path.GetDirectoryName(GetType().Assembly.Location) + Path.DirectorySeparatorChar;
 			var sourceTemplateFolder = Path.Combine(extensionPath,
 				"Templates" + Path.DirectorySeparatorChar + "RAMLWebApi2Scaffolder" + Path.DirectorySeparatorChar);
 
-			CopyTemplateToProjectFolder(generatedFolderPath, templateName, sourceTemplateFolder, ServerTemplatesVersion);
+			CopyTemplateToProjectFolder(generatedFolderPath, templateName, sourceTemplateFolder, ServerTemplatesVersion, title);
 		}
 
 		public void CopyClientTemplateToProjectFolder(string generatedFolderPath)
 		{
 			var templateName = Settings.Default.ClientT4TemplateName;
 			var extensionPath = Path.GetDirectoryName(GetType().Assembly.Location) + Path.DirectorySeparatorChar;
-			CopyTemplateToProjectFolder(generatedFolderPath, templateName, extensionPath, ClientTemplatesVersion);
+			CopyTemplateToProjectFolder(generatedFolderPath, templateName, extensionPath, ClientTemplatesVersion, Settings.Default.ClientTemplateTitle);
 		}
 
-		private void CopyTemplateToProjectFolder(string generatedFolderPath, string templateName, string templatesSourceFolder, string version)
+		private void CopyTemplateToProjectFolder(string generatedFolderPath, string templateName, string templatesSourceFolder, string version, string title)
 		{
 			var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
 			if (!Directory.Exists(templatesFolder))
@@ -47,55 +47,56 @@ namespace MuleSoft.RAML.Tools
 
 			if (File.Exists(destTemplateFilePath))
 			{
-				ManageExistingTemplate(templateName, destTemplateFilePath, sourceTemplateFilePath, version);
+				ManageExistingTemplate(templateName, destTemplateFilePath, sourceTemplateFilePath, version, title);
 			}
 			else
 			{
-				CopyTemplateAndAddMetadata(sourceTemplateFilePath, destTemplateFilePath, version);
+				CopyTemplateAndAddMetadata(sourceTemplateFilePath, destTemplateFilePath, version, title);
 			}
 		}
 
-		private void ManageExistingTemplate(string templateName, string destTemplateFilePath, string sourceTemplateFilePath, string version)
+		private void ManageExistingTemplate(string templateName, string destTemplateFilePath, string sourceTemplateFilePath, string version, string title)
 		{
 			if (HasMetadata(destTemplateFilePath))
 			{
-				ManageExistingTemplateWithMetadata(templateName, destTemplateFilePath, sourceTemplateFilePath, version);
+				ManageExistingTemplateWithMetadata(templateName, destTemplateFilePath, sourceTemplateFilePath, version, title);
 			}
 			else
 			{
-				CopyTemplateAndAddMetadata(sourceTemplateFilePath, destTemplateFilePath, version);
+				CopyTemplateAndAddMetadata(sourceTemplateFilePath, destTemplateFilePath, version, title);
 			}
 		}
 
 		private void ManageExistingTemplateWithMetadata(string templateName, string destTemplateFilePath,
-			string sourceTemplateFilePath, string version)
+			string sourceTemplateFilePath, string version, string title)
 		{
 			if (HasTemplateChanged(destTemplateFilePath))
 			{
-				ManageTemplateThatWasCustomized(templateName, destTemplateFilePath, sourceTemplateFilePath, version);
+				ManageTemplateThatWasCustomized(templateName, destTemplateFilePath, sourceTemplateFilePath, version, title);
 			}
 			else
 			{
-				CopyTemplateAndAddMetadata(sourceTemplateFilePath, destTemplateFilePath, version);
+				CopyTemplateAndAddMetadata(sourceTemplateFilePath, destTemplateFilePath, version, title);
 			}
 		}
 
 		private void ManageTemplateThatWasCustomized(string templateName, string destTemplateFilePath,
-			string sourceTemplateFilePath, string version)
+			string sourceTemplateFilePath, string version, string title)
 		{
 			if (IsTheSameVersion(destTemplateFilePath, version))
 				return;
 
 			if (!IsVersionCompatible(destTemplateFilePath, version))
 			{
-				MessageBox.Show(
+				var dialogResult = MessageBox.Show(
 					string.Format(
 						"The current tool is not compatible with this version of the template {0}."
-						+ " We need to overwrite it with the new version. You can do a backup before clicking OK.", templateName),
+						+ " We need to overwrite it with the new version. Do you want to proceed?.", templateName),
 					"Warning",
-					MessageBoxButton.OK, MessageBoxImage.Warning);
+					MessageBoxButton.OKCancel, MessageBoxImage.Warning);
 
-				CopyTemplateAndAddMetadata(sourceTemplateFilePath, destTemplateFilePath, version);
+                if (dialogResult == MessageBoxResult.OK)
+				    CopyTemplateAndAddMetadata(sourceTemplateFilePath, destTemplateFilePath, version, title);
 			}
 			else
 			{
@@ -106,7 +107,7 @@ namespace MuleSoft.RAML.Tools
 						MessageBoxButton.YesNo, MessageBoxImage.Question);
 
 				if (dialogResult == MessageBoxResult.Yes)
-					CopyTemplateAndAddMetadata(sourceTemplateFilePath, destTemplateFilePath, version);
+					CopyTemplateAndAddMetadata(sourceTemplateFilePath, destTemplateFilePath, version, title);
 			}
 		}
 
@@ -128,10 +129,10 @@ namespace MuleSoft.RAML.Tools
 			return lines[VersionLineIndex].Replace(VersionPrefix + " ", string.Empty).Trim();
 		}
 
-		private void CopyTemplateAndAddMetadata(string sourceTemplateFilePath, string destTemplateFilePath, string version)
+		private void CopyTemplateAndAddMetadata(string sourceTemplateFilePath, string destTemplateFilePath, string version, string title)
 		{
 			File.Copy(sourceTemplateFilePath, destTemplateFilePath, true);
-			AddTemplateMetadata(version, destTemplateFilePath);
+			AddTemplateMetadata(version, destTemplateFilePath, title);
 		}
 
 		private bool IsTheSameVersion(string templateFilePath, string version)
@@ -171,6 +172,7 @@ namespace MuleSoft.RAML.Tools
 			lines.RemoveAt(0);
 			lines.RemoveAt(0);
 			lines.RemoveAt(0);
+            lines.RemoveAt(0);
 		}
 
 		private bool HasMetadata(string templateFilePath)
@@ -197,7 +199,7 @@ namespace MuleSoft.RAML.Tools
 			return hash;
 		}
 
-		private void AddTemplateMetadata(string version, string templateFilePath)
+		private void AddTemplateMetadata(string version, string templateFilePath, string title)
 		{
 			var lines = File.ReadAllLines(templateFilePath).ToList();
 			if (lines[HashLineIndex].Contains(HashPrefix))
@@ -207,6 +209,7 @@ namespace MuleSoft.RAML.Tools
 			lines.Insert(0, "#>");
 			lines.Insert(0, VersionPrefix + " " + version);
 			lines.Insert(0, HashPrefix + " " + ComputeHash(templateFilePath));
+            lines.Insert(0, TitlePrefix + " " + title);
 			lines.Insert(0, "<#");
 			
 			File.WriteAllLines(templateFilePath, lines);
