@@ -81,6 +81,7 @@
     <Compile Include="ApiResponseObjectsGeneratorTests.cs" />
     <Compile Include="ClientMethodsGeneratorTests.cs" />
     <Compile Include="ClientGeneratorTests.cs" />
+    <Compile Include="ComplexJsonSchemaTests.cs" />
     <Compile Include="HeadersParserTests.cs" />
     <Compile Include="JsonSchemaParserTests.cs" />
     <Compile Include="MultipleHeadersTest.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="ParametersMapperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Proxies\Epi.cs" />
+    <Compile Include="Proxies\Fstab.cs" />
     <Compile Include="Proxies\Movies.cs" />
     <Compile Include="QueryParametersParserTests.cs" />
     <Compile Include="SchemaParameterParserTests.cs" />
