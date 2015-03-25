@@ -16,7 +16,7 @@ namespace MuleSoft.RAML.Tools
 	public class RamlScaffoldService
 	{
 		private const string RamlSpecVersion = "0.8";
-		private const string ControllerDeclarationTemplateName = "ApiControllerBase.t4";
+		private const string ControllerBaseTemplateName = "ApiControllerBase.t4";
 		private const string ControllerInterfaceTemplateName = "ApiControllerInterface.t4";
 		private const string ControllerImplementationTemplateName = "ApiControllerImplementation.t4";
 		private const string ModelTemplateName = "ApiModel.t4";
@@ -62,6 +62,10 @@ namespace MuleSoft.RAML.Tools
 			var ramlItem = folderItem.ProjectItems.Cast<ProjectItem>().First(i => i.Name == ramlFileName);
 			var generatedFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + ContractsFolderName + Path.DirectorySeparatorChar;
 
+            if (!templatesManager.ConfirmWhenIncompatibleServerTemplate(generatedFolderPath, 
+                new[] { ControllerBaseTemplateName, ControllerInterfaceTemplateName, ControllerImplementationTemplateName, ModelTemplateName }))
+                return;
+
 			var extensionPath = Path.GetDirectoryName(GetType().Assembly.Location) + Path.DirectorySeparatorChar;
 
 			
@@ -82,8 +86,9 @@ namespace MuleSoft.RAML.Tools
 	        var controllersFolderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, "Controllers");
 	        var controllersFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + "Controllers" +
 	                                    Path.DirectorySeparatorChar;
+	        var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
 	        var controllerImplementationTemplateParams =
-	            new TemplateParams<ControllerObject>(Path.Combine(generatedFolderPath, ControllerImplementationTemplateName),
+	            new TemplateParams<ControllerObject>(Path.Combine(templatesFolder, ControllerImplementationTemplateName),
 	                controllersFolderItem, "controllerObject", model.Controllers, controllersFolderPath, folderItem,
 	                extensionPath, targetNamespace, "Controller", false);
 	        controllerImplementationTemplateParams.Title = Settings.Default.ControllerImplementationTemplateTitle;
@@ -95,8 +100,9 @@ namespace MuleSoft.RAML.Tools
 	    {
 	        templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ControllerInterfaceTemplateName,
 	            Settings.Default.ControllerInterfaceTemplateTitle);
+            var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
 	        var controllerInterfaceParams =
-	            new TemplateParams<ControllerObject>(Path.Combine(generatedFolderPath, ControllerInterfaceTemplateName),
+	            new TemplateParams<ControllerObject>(Path.Combine(templatesFolder, ControllerInterfaceTemplateName),
 	                ramlItem, "controllerObject", model.Controllers, generatedFolderPath, folderItem, extensionPath,
 	                targetNamespace, "Controller", true, "I");
 	        controllerInterfaceParams.Title = Settings.Default.ControllerInterfaceTemplateTitle;
@@ -106,10 +112,11 @@ namespace MuleSoft.RAML.Tools
 	    private void AddOrUpdateControllerBase(string targetNamespace, string generatedFolderPath, ProjectItem ramlItem,
 	        WebApiGeneratorModel model, ProjectItem folderItem, string extensionPath)
 	    {
-	        templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ControllerDeclarationTemplateName,
+	        templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ControllerBaseTemplateName,
 	            Settings.Default.BaseControllerTemplateTitle);
+            var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
 	        var controllerBaseTemplateParams =
-	            new TemplateParams<ControllerObject>(Path.Combine(generatedFolderPath, ControllerDeclarationTemplateName),
+	            new TemplateParams<ControllerObject>(Path.Combine(templatesFolder, ControllerBaseTemplateName),
 	                ramlItem, "controllerObject", model.Controllers, generatedFolderPath, folderItem, extensionPath,
 	                targetNamespace, "Controller");
 	        controllerBaseTemplateParams.Title = Settings.Default.BaseControllerTemplateTitle;
@@ -121,8 +128,9 @@ namespace MuleSoft.RAML.Tools
 	    {
 	        templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ModelTemplateName,
 	            Settings.Default.ClientTemplateTitle);
+            var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
 	        var apiObjectTemplateParams = new TemplateParams<ApiObject>(
-	            Path.Combine(generatedFolderPath, ModelTemplateName), ramlItem, "apiObject", model.Objects.Values,
+	            Path.Combine(templatesFolder, ModelTemplateName), ramlItem, "apiObject", model.Objects.Values,
 	            generatedFolderPath, folderItem, extensionPath, targetNamespace);
 	        apiObjectTemplateParams.Title = Settings.Default.ModelsTemplateTitle;
 	        GenerateCodeFromTemplate(apiObjectTemplateParams);
@@ -347,7 +355,7 @@ namespace MuleSoft.RAML.Tools
 
 				var result = t4Service.TransformText(templateParams.TemplatePath, templateParams.ParameterName, parameter, templateParams.BinPath, templateParams.TargetNamespace);
 				var destinationFile = Path.Combine(templateParams.FolderPath, generatedFileName);
-				var contents = templatesManager.AddServerMetadataHeader(result.Content, Path.GetFileNameWithoutExtension(templateParams.TemplatePath));
+				var contents = templatesManager.AddServerMetadataHeader(result.Content, Path.GetFileNameWithoutExtension(templateParams.TemplatePath), templateParams.Title);
 				
 				if(templateParams.Ovewrite || !File.Exists(destinationFile))
 				{

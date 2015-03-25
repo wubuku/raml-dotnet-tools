@@ -140,6 +140,19 @@ namespace MuleSoft.RAML.Tools
 		{
 			ChangeCommandStatus(updateReferenceCmdId, false);
 
+            // Get the file path
+            uint itemid;
+            IVsHierarchy hierarchy;
+            if (!IsSingleProjectItemSelection(out hierarchy, out itemid)) return;
+            string ramlFilePath;
+            ((IVsProject)hierarchy).GetMkDocument(itemid, out ramlFilePath);
+
+		    var templatesManager = new TemplatesManager();
+		    var ramlFolder = Path.GetDirectoryName(ramlFilePath).TrimEnd(Path.DirectorySeparatorChar);
+		    var generatedFolderPath = ramlFolder.Substring(0, ramlFolder.LastIndexOf(Path.DirectorySeparatorChar));
+		    if(!templatesManager.ConfirmWhenIncompatibleClientTemplate(generatedFolderPath))
+                return;
+
 			var dte = (DTE2)GetService(typeof(SDTE));
 			dte.ExecuteCommand("Project.RunCustomTool");
 

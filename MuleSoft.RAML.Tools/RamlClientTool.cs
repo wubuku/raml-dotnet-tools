@@ -148,7 +148,7 @@ namespace MuleSoft.RAML.Tools
 		private static string GetTemplateFolder(string wszInputFilePath)
 		{
 			var directoryName = Path.GetDirectoryName(wszInputFilePath).TrimEnd(Path.DirectorySeparatorChar);
-			return directoryName.Substring(0, directoryName.LastIndexOf(Path.DirectorySeparatorChar));
+			return directoryName.Substring(0, directoryName.LastIndexOf(Path.DirectorySeparatorChar)) + Path.DirectorySeparatorChar + "Templates";
 		}
 
 		private static void UpdateRamlAndIncludedFiles(string ramlFilePath, ProjectItem destFolderItem, string ramlSource, string containingFolder)

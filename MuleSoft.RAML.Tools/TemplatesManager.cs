@@ -36,6 +36,36 @@ namespace MuleSoft.RAML.Tools
 			CopyTemplateToProjectFolder(generatedFolderPath, templateName, extensionPath, ClientTemplatesVersion, Settings.Default.ClientTemplateTitle);
 		}
 
+	    public bool ConfirmWhenIncompatibleClientTemplate(string generatodFolderPath)
+	    {
+	        return ConfirmWhenIncompatibleTemplate(generatodFolderPath, Settings.Default.ClientT4TemplateName, ClientTemplatesVersion);
+	    }
+
+        public bool ConfirmWhenIncompatibleServerTemplate(string generatodFolderPath, string[] templates)
+        {
+            return templates.All(template => ConfirmWhenIncompatibleTemplate(generatodFolderPath, template, ServerTemplatesVersion));
+        }
+
+	    private bool ConfirmWhenIncompatibleTemplate(string generatedFolderPath, string templateName, string version)
+        {
+            var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
+            var destTemplateFilePath = Path.Combine(templatesFolder, templateName);
+            if (!File.Exists(destTemplateFilePath) || !HasTemplateChanged(destTemplateFilePath))
+                return true;
+
+            if (IsVersionCompatible(destTemplateFilePath, version))
+                return true;
+
+            var dialogResult = MessageBox.Show(
+                string.Format(
+                    "The current tool is not compatible with this version of the template {0}."
+                    + " We need to overwrite it with the new version. Do you want to proceed?.", templateName),
+                "Warning",
+                MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+            return dialogResult == MessageBoxResult.Yes;
+        }
+
 		private void CopyTemplateToProjectFolder(string generatedFolderPath, string templateName, string templatesSourceFolder, string version, string title)
 		{
 			var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
@@ -80,26 +110,12 @@ namespace MuleSoft.RAML.Tools
 			}
 		}
 
-		private void ManageTemplateThatWasCustomized(string templateName, string destTemplateFilePath,
+	    private void ManageTemplateThatWasCustomized(string templateName, string destTemplateFilePath,
 			string sourceTemplateFilePath, string version, string title)
 		{
 			if (IsTheSameVersion(destTemplateFilePath, version))
 				return;
 
-			if (!IsVersionCompatible(destTemplateFilePath, version))
-			{
-				var dialogResult = MessageBox.Show(
-					string.Format(
-						"The current tool is not compatible with this version of the template {0}."
-						+ " We need to overwrite it with the new version. Do you want to proceed?.", templateName),
-					"Warning",
-					MessageBoxButton.OKCancel, MessageBoxImage.Warning);
-
-                if (dialogResult == MessageBoxResult.OK)
-				    CopyTemplateAndAddMetadata(sourceTemplateFilePath, destTemplateFilePath, version, title);
-			}
-			else
-			{
 				var dialogResult =
 					MessageBox.Show(
 						string.Format("Template {0} has changed. Do you want to override it and loose your changes?", templateName),
@@ -108,7 +124,6 @@ namespace MuleSoft.RAML.Tools
 
 				if (dialogResult == MessageBoxResult.Yes)
 					CopyTemplateAndAddMetadata(sourceTemplateFilePath, destTemplateFilePath, version, title);
-			}
 		}
 
 		private bool IsVersionCompatible(string templateFilePath, string newTemplatesVersion)
@@ -226,22 +241,18 @@ namespace MuleSoft.RAML.Tools
 			return sBuilder.ToString();
 		}
 
-		public string AddServerMetadataHeader(string contents, string templateName)
+		public string AddServerMetadataHeader(string contents, string templateName, string title)
 		{
-			var header = "/*" + Environment.NewLine;
-			header += "Template: " + templateName;
-			header += "Version: " + ServerTemplatesVersion;
-			header += "*/" + Environment.NewLine;
+		    var header = string.Format("// Template: {0} ({1}.t4) version {2}{3}", title, templateName, ServerTemplatesVersion,
+		        Environment.NewLine);
 			contents = contents.Insert(0, header);
 			return contents;
 		}
 
 		public string AddClientMetadataHeader(string contents)
 		{
-			var header = "/*" + Environment.NewLine;
-			header += "Template: " + Settings.Default.ClientT4TemplateName;
-			header += "Version: " + ClientTemplatesVersion;
-			header += "*/" + Environment.NewLine;
+		    var header = string.Format("// Template: {0} ({1}) version {2}{3}", Settings.Default.ClientTemplateTitle,
+		        Settings.Default.ClientT4TemplateName, ClientTemplatesVersion, Environment.NewLine);
 			contents = contents.Insert(0, header);
 			return contents;
 		}
