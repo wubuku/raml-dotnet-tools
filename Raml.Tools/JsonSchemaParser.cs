@@ -64,11 +64,11 @@ namespace Raml.Tools
 				{
 					obj.IsArray = true;
 					if (v4Schema.Items != null && v4Schema.Items.Any())
-						ParseProperties(objects, obj.Properties, v4Schema.Items.First().Properties);
+						ParseProperties(objects, obj.Properties, v4Schema.Items.First());
 				}
 				else
 				{
-					ParseProperties(objects, obj.Properties, v4Schema.Properties);
+					ParseProperties(objects, obj.Properties, v4Schema);
 				}
 			}
 			return obj;
@@ -111,8 +111,10 @@ namespace Raml.Tools
 		}
 
 
-		private void ParseProperties(IDictionary<string, ApiObject> objects, IList<Property> props, IDictionary<string, Newtonsoft.JsonV4.Schema.JsonSchema> properties)
+		private void ParseProperties(IDictionary<string, ApiObject> objects, IList<Property> props, Newtonsoft.JsonV4.Schema.JsonSchema schema)
 		{
+            var properties = schema.Properties;
+
 			foreach (var property in properties)
 			{
 				if (property.Value.Type == null || property.Value.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Null ||
@@ -122,33 +124,60 @@ namespace Raml.Tools
 				var prop = new Property
 				           {
 					           Name = NetNamingMapper.GetPropertyName(property.Key),
-					           Type = NetTypeMapper.Map(property.Value.Type),
+					           Type = (property.Value.OneOf != null && property.Value.OneOf.Count > 0) ? NetNamingMapper.GetObjectName(property.Key) : 
+                                    NetTypeMapper.Map(property.Value.Type),
 					           Description = property.Value.Description
 				           };
 
-				ParseComplexTypes(objects, property.Value, prop, property);
+				ParseComplexTypes(objects, schema, property.Value, prop, property);
 				props.Add(prop);
 			}
 		}
 
-		private void ParseComplexTypes(IDictionary<string, ApiObject> objects, Newtonsoft.JsonV4.Schema.JsonSchema schema, Property prop, KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property)
+		private void ParseComplexTypes(IDictionary<string, ApiObject> objects, Newtonsoft.JsonV4.Schema.JsonSchema schema, Newtonsoft.JsonV4.Schema.JsonSchema propertySchema, Property prop, KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property)
 		{
-			if (schema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Object && schema.Properties != null)
+			if (propertySchema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Object && propertySchema.Properties != null)
 			{
-				ParseObject(property.Key, schema.Properties, objects);
+				ParseObject(property.Key, propertySchema.Properties, objects);
 				prop.Type = NetNamingMapper.GetObjectName(property.Key);
 			}
+            else if (propertySchema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Object && propertySchema.OneOf.Count > 0 && schema.Definitions.Count > 0)
+            {
+                string baseTypeName = NetNamingMapper.GetObjectName(property.Key);
 
-			if (schema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Array)
-				ParseArray(objects, schema, prop, property);
+                if (objects.ContainsKey(baseTypeName))
+                    return;
+
+                objects.Add(baseTypeName,
+                    new ApiObject
+                    {
+                        Name = baseTypeName,
+                        Properties = new List<Property>()
+                    });
+
+                foreach(var innerSchema in propertySchema.OneOf)
+                {
+                    var definition = schema.Definitions.FirstOrDefault(k => k.Value == innerSchema);
+                    ParseObject(property.Key + definition.Key, innerSchema.Properties, objects, baseTypeName);
+                                       
+                }
+
+                prop.Type = baseTypeName;
+            }
+            else if (propertySchema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Array)
+            {
+                ParseArray(objects, propertySchema, prop, property);
+            }
+            
 		}
 
-		private void ParseObject(string key, IDictionary<string, Newtonsoft.JsonV4.Schema.JsonSchema> schema, IDictionary<string, ApiObject> objects)
+		private void ParseObject(string key, IDictionary<string, Newtonsoft.JsonV4.Schema.JsonSchema> schema, IDictionary<string, ApiObject> objects, string baseClass = null)
 		{
 			var obj = new ApiObject
 			          {
 				          Name = NetNamingMapper.GetObjectName(key),
-				          Properties = ParseSchema(schema, objects)
+				          Properties = ParseSchema(schema, objects),
+                          BaseClass = baseClass
 			          };
 
 			// Avoid duplicated keys and names
@@ -169,7 +198,7 @@ namespace Raml.Tools
 					           Type = NetTypeMapper.Map(kv.Value.Type),
 					           Description = kv.Value.Description
 				           };
-				ParseComplexTypes(objects, kv.Value, prop, kv);
+				ParseComplexTypes(objects, null, kv.Value, prop, kv);
 				props.Add(prop);
 			}
 			return props;

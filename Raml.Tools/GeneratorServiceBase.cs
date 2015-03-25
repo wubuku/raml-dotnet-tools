@@ -257,8 +257,8 @@ namespace Raml.Tools
 					if (!NetTypeMapper.IsPrimitiveType(type) && schemaResponseObjects.All(o => o.Value.Name != type) && schemaRequestObjects.All(o => o.Value.Name != type))
 						apiObject.Properties.Remove(prop);
 				}
-				if (!apiObject.Properties.Any())
-					apiObjects.Remove(keys[i]);
+                //if (!apiObject.Properties.Any())
+                //    apiObjects.Remove(keys[i]);
 			}
 		}
 

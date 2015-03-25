@@ -257,19 +257,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Newtonsoft.Json\Newtonsoft.Json.ruleset" />
     <None Include="packages.config" />
     <None Include="RAML.Api.Core.nuspec" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Newtonsoft.Json\Newtonsoft.Json.Net20.csproj" />
-    <Content Include="Newtonsoft.Json\Newtonsoft.Json.Net35.csproj" />
-    <Content Include="Newtonsoft.Json\Newtonsoft.Json.Net40.csproj" />
-    <Content Include="Newtonsoft.Json\Newtonsoft.Json.Portable.csproj" />
-    <Content Include="Newtonsoft.Json\Newtonsoft.Json.Portable40.csproj" />
-    <Content Include="Newtonsoft.Json\Newtonsoft.Json.v4.csproj" />
-    <Content Include="Newtonsoft.Json\Newtonsoft.Json.WinRT.csproj" />
-    <Content Include="Newtonsoft.Json\Newtonsoft.JsonV4.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

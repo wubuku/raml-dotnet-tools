@@ -535,10 +535,9 @@ namespace Newtonsoft.JsonV4.Schema
                         CurrentSchema.PathStart = (string)property.Value;
                         break;
                     case JsonSchemaConstants.Definitions:
-                        ProcessProperties(property.Value);
                         
-                        var s = "foo";
-                        break;
+                        CurrentSchema.Definitions = ProcessDefinitions(property.Value);
+                    break;
                 }
             }
         }
@@ -625,6 +624,24 @@ namespace Newtonsoft.JsonV4.Schema
             }
 
             return properties;
+        }
+
+        private IDictionary<string, JsonSchema> ProcessDefinitions(JToken token)
+        {
+            IDictionary<string, JsonSchema> definitions = new Dictionary<string, JsonSchema>();
+
+            if (token.Type != JTokenType.Object)
+                throw JsonException.Create(token, token.Path, "Expected Object token while parsing schema definitions, got {0}.".FormatWith(CultureInfo.InvariantCulture, token.Type));
+
+            foreach (JProperty propertyToken in token)
+            {
+                if (definitions.ContainsKey(propertyToken.Name))
+                    throw new JsonException("Property {0} has already been defined in schema.".FormatWith(CultureInfo.InvariantCulture, propertyToken.Name));
+
+                definitions.Add(propertyToken.Name, BuildSchema(propertyToken.Value));
+            }
+
+            return definitions;
         }
 
         private IDictionary<string, JsonSchema> ProcessDependencies(JToken token)

@@ -11,9 +11,9 @@
 <#
 
 	var parser = new RamlParser();
-	var ramlFile = Host.ResolvePath("movies.raml");
+	var ramlFile = Host.ResolvePath("fstab.raml");
 	var raml = parser.Load(ramlFile);
-	var service = new ClientGeneratorService(raml, "MoviesApi");
+	var service = new ClientGeneratorService(raml, "FstabApi");
 	var model = service.BuildModel();
 
 #>
@@ -484,7 +484,7 @@ namespace <#= model.Namespace #>
 namespace <#= model.Namespace #>.Models
 {
 <#
-foreach (var apiObject in model.Objects.Values.Where(o => o.Properties.Any()))
+foreach (var apiObject in model.Objects.Values)
 {
 	if (!string.IsNullOrWhiteSpace(apiObject.Description))
 	{
@@ -494,10 +494,20 @@ foreach (var apiObject in model.Objects.Values.Where(o => o.Properties.Any()))
     /// </summary>
 <#
 	}
+
+	if(!apiObject.IsMultiple && apiObject.BaseClass != null) 
+	{
 #>
-    public partial class <#= apiObject.Name #> <#= apiObject.IsMultiple ? ": ApiMultipleResponse" : string.Empty #>
+    public partial class <#= apiObject.Name #> <#= " : " +  apiObject.BaseClass #>
     {
 <#
+	} else {
+#>
+    public <#= (apiObject.Properties.Any()) ? "partial class " : "abstract class " #> <#= apiObject.Name #> <#= apiObject.IsMultiple ? ": ApiMultipleResponse" : string.Empty #>
+    {
+<#
+	} 
+
 	if (apiObject.IsMultiple)
 	{
 #>   

@@ -261,7 +261,7 @@ namespace Newtonsoft.JsonV4.Schema
         /// Gets or sets the list of <see cref="JsonSchema"/> of inlined schemas.
         /// </summary>
         /// <value>The <see cref="JsonSchema"/> list of inlined schemas.</value>
-        public IList<JsonSchema> Definitions { get; set; }
+        public IDictionary<string, JsonSchema> Definitions { get; set; }
 
         /// <summary> 
         /// Gets or sets the List of Links 

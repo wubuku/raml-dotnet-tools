@@ -62,6 +62,28 @@ namespace Raml.Tools.Tests
 			Assert.AreEqual(0, model.Warnings.Count());
 		}
 
+        [Test]
+        public async Task ShouldHaveNoWarnings_WhenFstab()
+        {
+            var model = await GetFstabGeneratedModel();
+
+            var o = model.Objects.Where(p => p.Value.Properties.Any());
+
+            Assert.AreEqual(0, model.Warnings.Count());
+        }
+
+        [Test]
+        public async Task ShouldGetConcreteImplementationsForDefinitions_WhenFstab()
+        {
+            var model = await GetFstabGeneratedModel();
+
+            var baseClass = model.Objects.Where(o => o.Value.Name == "Storage").ToArray();
+            var implementations = model.Objects.Where(o => o.Value.BaseClass == "Storage").ToArray();
+            
+            Assert.AreEqual(1, baseClass.Length);
+            Assert.AreEqual(4, implementations.Length);
+        }
+
 		[Test]
 		public async Task ShouldHaveNoWarnings_WhenContacts()
 		{
@@ -408,6 +430,14 @@ namespace Raml.Tools.Tests
 
 			return model;
 		}
+
+        private static async Task<ClientGeneratorModel> GetFstabGeneratedModel()
+        {
+            var raml = await new RamlParser().LoadAsync("fstab.raml");
+            var model = new ClientGeneratorService(raml, "FstabApi").BuildModel();
+
+            return model;
+        }
 
 		private static async Task<ClientGeneratorModel> GetDarsGeneratedModel()
 		{

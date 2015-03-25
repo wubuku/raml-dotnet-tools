@@ -13,434 +13,56 @@ using Newtonsoft.Json;
 using RAML.Api.Core;
 using Raml.Common;
 
-namespace Movies
+namespace Fstab
 {
-    /// <summary>
-    /// rent a movie
-    /// </summary>
-    public partial class Rent
+    public partial class Entries
     {
-        private readonly MoviesApi proxy;
+        private readonly FstabApi proxy;
 
-        internal Rent(MoviesApi proxy)
+        internal Entries(FstabApi proxy)
         {
             this.proxy = proxy;
         }
 
         /// <summary>
-		/// rent a movie
+		/// Retrieve a list of fstab entries - All fstab entries
 		/// </summary>
-		/// <param name="json"></param>
-		/// <param name="id"></param>
-        public virtual async Task<ApiResponse> Put(string json, string id)
+        public virtual async Task<Models.EntriesGetResponse> Get()
         {
 
-            var url = "movies/{id}/rent";
-            url = url.Replace("{id}", id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Put, url);
-	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
-				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-            req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-            req.Content = new StringContent(json);
-	        var response = await proxy.Client.SendAsync(req);
-
-            return new ApiResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers, 
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => true, true)
-                                            };
-
-        }
-
-        /// <summary>
-		/// rent a movie
-		/// </summary>
-		/// <param name="request">Models.RentPutRequest</param>
-        public virtual async Task<ApiResponse> Put(Models.RentPutRequest request)
-        {
-
-            var url = "movies/{id}/rent";
-			if(request.UriParameters == null)
-				throw new InvalidOperationException("Uri Parameters cannot be null");               
-
-			if(request.UriParameters.Id == null)
-				throw new InvalidOperationException("Uri Parameter Id cannot be null");
-
-            url = url.Replace("{id}", request.UriParameters.Id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Put, url);
-
-	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
-				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-            req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-            if(request.RawHeaders != null)
-            {
-                foreach(var header in request.RawHeaders)
-                {
-                    req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
-                }
-            }
-            req.Content = request.Content;
-	        var response = await proxy.Client.SendAsync(req);
-            return new ApiResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers,
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => true, true)
-                                            };
-        }
-
-    }
-
-    /// <summary>
-    /// return a movie
-    /// </summary>
-    public partial class Return
-    {
-        private readonly MoviesApi proxy;
-
-        internal Return(MoviesApi proxy)
-        {
-            this.proxy = proxy;
-        }
-
-        /// <summary>
-		/// return a movie
-		/// </summary>
-		/// <param name="json"></param>
-		/// <param name="id"></param>
-        public virtual async Task<ApiResponse> Put(string json, string id)
-        {
-
-            var url = "movies/{id}/return";
-            url = url.Replace("{id}", id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Put, url);
-	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
-				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-            req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-            req.Content = new StringContent(json);
-	        var response = await proxy.Client.SendAsync(req);
-
-            return new ApiResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers, 
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => true, true)
-                                            };
-
-        }
-
-        /// <summary>
-		/// return a movie
-		/// </summary>
-		/// <param name="request">Models.ReturnPutRequest</param>
-        public virtual async Task<ApiResponse> Put(Models.ReturnPutRequest request)
-        {
-
-            var url = "movies/{id}/return";
-			if(request.UriParameters == null)
-				throw new InvalidOperationException("Uri Parameters cannot be null");               
-
-			if(request.UriParameters.Id == null)
-				throw new InvalidOperationException("Uri Parameter Id cannot be null");
-
-            url = url.Replace("{id}", request.UriParameters.Id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Put, url);
-
-	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
-				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-            req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-            if(request.RawHeaders != null)
-            {
-                foreach(var header in request.RawHeaders)
-                {
-                    req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
-                }
-            }
-            req.Content = request.Content;
-	        var response = await proxy.Client.SendAsync(req);
-            return new ApiResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers,
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => true, true)
-                                            };
-        }
-
-    }
-
-    public partial class Wishlist
-    {
-        private readonly MoviesApi proxy;
-
-        internal Wishlist(MoviesApi proxy)
-        {
-            this.proxy = proxy;
-        }
-
-        /// <summary>
-		/// gets the current user movies wishlist
-		/// </summary>
-        public virtual async Task<Models.WishlistGetResponse> Get()
-        {
-
-            var url = "movies/wishlist";
+            var url = "entries";
             var req = new HttpRequestMessage(HttpMethod.Get, url);
-	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
-				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-            req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
 	        var response = await proxy.Client.SendAsync(req);
 			
 			if (proxy.SchemaValidation.Enabled)
 		    {
 				if(proxy.SchemaValidation.RaiseExceptions) 
 				{
-					await SchemaValidator.ValidateWithExceptionAsync("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content);
+					await SchemaValidator.ValidateWithExceptionAsync("{    \"id\": \"http://some.site.somewhere/entry-schema#\",    \"$schema\": \"http://json-schema.org/draft-04/schema#\",    \"description\": \"schema for an fstab entry\",    \"type\": \"object\",    \"required\": [ \"storage\" ],    \"properties\": {        \"storage\": {            \"type\": \"object\",            \"oneOf\": [                { \"$ref\": \"#/definitions/diskDevice\" },                { \"$ref\": \"#/definitions/diskUUID\" },                { \"$ref\": \"#/definitions/nfs\" },                { \"$ref\": \"#/definitions/tmpfs\" }            ]        },        \"fstype\": {            \"enum\": [ \"ext3\", \"ext4\", \"btrfs\" ]        },        \"options\": {            \"type\": \"array\",            \"minItems\": 1,            \"items\": { \"type\": \"string\" },            \"uniqueItems\": true        },        \"readonly\": { \"type\": \"boolean\" }    },    \"definitions\": {        \"diskDevice\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"device\": {                    \"type\": \"string\",                    \"pattern\": \"^/dev/[^/]+(/[^/]+)*$\"                }            },            \"required\": [ \"type\", \"device\" ],            \"additionalProperties\": false        },        \"diskUUID\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"label\": {                    \"type\": \"string\",                    \"pattern\": \"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$\"                }            },            \"required\": [ \"type\", \"label\" ],            \"additionalProperties\": false        },        \"nfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"nfs\" ] },                \"remotePath\": {                    \"type\": \"string\",                    \"pattern\": \"^(/[^/]+)+$\"                },                \"server\": {                    \"type\": \"string\",                    \"oneOf\": [                        { \"format\": \"host-name\" },                        { \"format\": \"ipv4\" },                        { \"format\": \"ipv6\" }                    ]                }            },            \"required\": [ \"type\", \"server\", \"remotePath\" ],            \"additionalProperties\": false        },        \"tmpfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"tmpfs\" ] },                \"sizeInMB\": {                    \"type\": \"integer\",                    \"minimum\": 16,                    \"maximum\": 512                }            },            \"required\": [ \"type\", \"sizeInMB\" ],            \"additionalProperties\": false        }    }}", response.Content);
 				}
 					
 			}
 
-            return new Models.WishlistGetResponse  
+            return new Models.EntriesGetResponse  
                                             {
                                                 RawContent = response.Content,
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content), true)
+												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid("{    \"id\": \"http://some.site.somewhere/entry-schema#\",    \"$schema\": \"http://json-schema.org/draft-04/schema#\",    \"description\": \"schema for an fstab entry\",    \"type\": \"object\",    \"required\": [ \"storage\" ],    \"properties\": {        \"storage\": {            \"type\": \"object\",            \"oneOf\": [                { \"$ref\": \"#/definitions/diskDevice\" },                { \"$ref\": \"#/definitions/diskUUID\" },                { \"$ref\": \"#/definitions/nfs\" },                { \"$ref\": \"#/definitions/tmpfs\" }            ]        },        \"fstype\": {            \"enum\": [ \"ext3\", \"ext4\", \"btrfs\" ]        },        \"options\": {            \"type\": \"array\",            \"minItems\": 1,            \"items\": { \"type\": \"string\" },            \"uniqueItems\": true        },        \"readonly\": { \"type\": \"boolean\" }    },    \"definitions\": {        \"diskDevice\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"device\": {                    \"type\": \"string\",                    \"pattern\": \"^/dev/[^/]+(/[^/]+)*$\"                }            },            \"required\": [ \"type\", \"device\" ],            \"additionalProperties\": false        },        \"diskUUID\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"label\": {                    \"type\": \"string\",                    \"pattern\": \"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$\"                }            },            \"required\": [ \"type\", \"label\" ],            \"additionalProperties\": false        },        \"nfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"nfs\" ] },                \"remotePath\": {                    \"type\": \"string\",                    \"pattern\": \"^(/[^/]+)+$\"                },                \"server\": {                    \"type\": \"string\",                    \"oneOf\": [                        { \"format\": \"host-name\" },                        { \"format\": \"ipv4\" },                        { \"format\": \"ipv6\" }                    ]                }            },            \"required\": [ \"type\", \"server\", \"remotePath\" ],            \"additionalProperties\": false        },        \"tmpfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"tmpfs\" ] },                \"sizeInMB\": {                    \"type\": \"integer\",                    \"minimum\": 16,                    \"maximum\": 512                }            },            \"required\": [ \"type\", \"sizeInMB\" ],            \"additionalProperties\": false        }    }}", response.Content), true)
                                             };
 
         }
 
         /// <summary>
-		/// gets the current user movies wishlist
+		/// Retrieve a list of fstab entries - All fstab entries
 		/// </summary>
 		/// <param name="request">ApiRequest</param>
 		/// <param name="responseFormatters">response formmaters</param>
-        public virtual async Task<Models.WishlistGetResponse> Get(ApiRequest request, IEnumerable<MediaTypeFormatter> responseFormatters = null)
+        public virtual async Task<Models.EntriesGetResponse> Get(ApiRequest request, IEnumerable<MediaTypeFormatter> responseFormatters = null)
         {
 
-            var url = "movies/wishlist";
-            var req = new HttpRequestMessage(HttpMethod.Get, url);
-
-	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
-				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-            req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-            if(request.RawHeaders != null)
-            {
-                foreach(var header in request.RawHeaders)
-                {
-                    req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
-                }
-            }
-	        var response = await proxy.Client.SendAsync(req);
-			if (proxy.SchemaValidation.Enabled && proxy.SchemaValidation.RaiseExceptions)
-            {
-				if(proxy.SchemaValidation.RaiseExceptions)
-				{
-					await SchemaValidator.ValidateWithExceptionAsync("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content);
-				}
-				
-            }
-            return new Models.WishlistGetResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers,
-	                                            Formatters = responseFormatters,
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content), true)
-                                            };
-        }
-
-        /// <summary>
-		/// add a movie to the current user movies wishlist
-		/// </summary>
-		/// <param name="json"></param>
-		/// <param name="id"></param>
-        public virtual async Task<ApiResponse> Post(string json, string id)
-        {
-
-            var url = "movies/wishlist/{id}";
-            url = url.Replace("{id}", id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Post, url);
-	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
-				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-            req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-            req.Content = new StringContent(json);
-	        var response = await proxy.Client.SendAsync(req);
-
-            return new ApiResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers, 
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => true, true)
-                                            };
-
-        }
-
-        /// <summary>
-		/// add a movie to the current user movies wishlist
-		/// </summary>
-		/// <param name="request">Models.WishlistPostRequest</param>
-        public virtual async Task<ApiResponse> Post(Models.WishlistPostRequest request)
-        {
-
-            var url = "movies/wishlist/{id}";
-			if(request.UriParameters == null)
-				throw new InvalidOperationException("Uri Parameters cannot be null");               
-
-			if(request.UriParameters.Id == null)
-				throw new InvalidOperationException("Uri Parameter Id cannot be null");
-
-            url = url.Replace("{id}", request.UriParameters.Id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Post, url);
-
-	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
-				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-            req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-            if(request.RawHeaders != null)
-            {
-                foreach(var header in request.RawHeaders)
-                {
-                    req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
-                }
-            }
-            req.Content = request.Content;
-	        var response = await proxy.Client.SendAsync(req);
-            return new ApiResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers,
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => true, true)
-                                            };
-        }
-
-        /// <summary>
-		/// removes a movie from the current user movies wishlist
-		/// </summary>
-		/// <param name="id"></param>
-        public virtual async Task<ApiResponse> Delete(string id)
-        {
-
-            var url = "movies/wishlist/{id}";
-            url = url.Replace("{id}", id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Delete, url);
-	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
-				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-            req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-	        var response = await proxy.Client.SendAsync(req);
-
-            return new ApiResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers, 
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => true, true)
-                                            };
-
-        }
-
-        /// <summary>
-		/// removes a movie from the current user movies wishlist
-		/// </summary>
-		/// <param name="request">Models.WishlistDeleteRequest</param>
-        public virtual async Task<ApiResponse> Delete(Models.WishlistDeleteRequest request)
-        {
-
-            var url = "movies/wishlist/{id}";
-			if(request.UriParameters == null)
-				throw new InvalidOperationException("Uri Parameters cannot be null");               
-
-			if(request.UriParameters.Id == null)
-				throw new InvalidOperationException("Uri Parameter Id cannot be null");
-
-            url = url.Replace("{id}", request.UriParameters.Id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Delete, url);
-
-	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
-				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-            req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-            if(request.RawHeaders != null)
-            {
-                foreach(var header in request.RawHeaders)
-                {
-                    req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
-                }
-            }
-	        var response = await proxy.Client.SendAsync(req);
-            return new ApiResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers,
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => true, true)
-                                            };
-        }
-
-    }
-
-    public partial class Rented
-    {
-        private readonly MoviesApi proxy;
-
-        internal Rented(MoviesApi proxy)
-        {
-            this.proxy = proxy;
-        }
-
-        /// <summary>
-		/// gets the user rented movies
-		/// </summary>
-        public virtual async Task<Models.RentedGetResponse> Get()
-        {
-
-            var url = "movies/rented";
-            var req = new HttpRequestMessage(HttpMethod.Get, url);
-	        var response = await proxy.Client.SendAsync(req);
-			
-			if (proxy.SchemaValidation.Enabled)
-		    {
-				if(proxy.SchemaValidation.RaiseExceptions) 
-				{
-					await SchemaValidator.ValidateWithExceptionAsync("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content);
-				}
-					
-			}
-
-            return new Models.RentedGetResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers, 
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content), true)
-                                            };
-
-        }
-
-        /// <summary>
-		/// gets the user rented movies
-		/// </summary>
-		/// <param name="request">ApiRequest</param>
-		/// <param name="responseFormatters">response formmaters</param>
-        public virtual async Task<Models.RentedGetResponse> Get(ApiRequest request, IEnumerable<MediaTypeFormatter> responseFormatters = null)
-        {
-
-            var url = "movies/rented";
+            var url = "entries";
             var req = new HttpRequestMessage(HttpMethod.Get, url);
 
             if(request.RawHeaders != null)
@@ -455,376 +77,66 @@ namespace Movies
             {
 				if(proxy.SchemaValidation.RaiseExceptions)
 				{
-					await SchemaValidator.ValidateWithExceptionAsync("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content);
+					await SchemaValidator.ValidateWithExceptionAsync("{    \"id\": \"http://some.site.somewhere/entry-schema#\",    \"$schema\": \"http://json-schema.org/draft-04/schema#\",    \"description\": \"schema for an fstab entry\",    \"type\": \"object\",    \"required\": [ \"storage\" ],    \"properties\": {        \"storage\": {            \"type\": \"object\",            \"oneOf\": [                { \"$ref\": \"#/definitions/diskDevice\" },                { \"$ref\": \"#/definitions/diskUUID\" },                { \"$ref\": \"#/definitions/nfs\" },                { \"$ref\": \"#/definitions/tmpfs\" }            ]        },        \"fstype\": {            \"enum\": [ \"ext3\", \"ext4\", \"btrfs\" ]        },        \"options\": {            \"type\": \"array\",            \"minItems\": 1,            \"items\": { \"type\": \"string\" },            \"uniqueItems\": true        },        \"readonly\": { \"type\": \"boolean\" }    },    \"definitions\": {        \"diskDevice\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"device\": {                    \"type\": \"string\",                    \"pattern\": \"^/dev/[^/]+(/[^/]+)*$\"                }            },            \"required\": [ \"type\", \"device\" ],            \"additionalProperties\": false        },        \"diskUUID\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"label\": {                    \"type\": \"string\",                    \"pattern\": \"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$\"                }            },            \"required\": [ \"type\", \"label\" ],            \"additionalProperties\": false        },        \"nfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"nfs\" ] },                \"remotePath\": {                    \"type\": \"string\",                    \"pattern\": \"^(/[^/]+)+$\"                },                \"server\": {                    \"type\": \"string\",                    \"oneOf\": [                        { \"format\": \"host-name\" },                        { \"format\": \"ipv4\" },                        { \"format\": \"ipv6\" }                    ]                }            },            \"required\": [ \"type\", \"server\", \"remotePath\" ],            \"additionalProperties\": false        },        \"tmpfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"tmpfs\" ] },                \"sizeInMB\": {                    \"type\": \"integer\",                    \"minimum\": 16,                    \"maximum\": 512                }            },            \"required\": [ \"type\", \"sizeInMB\" ],            \"additionalProperties\": false        }    }}", response.Content);
 				}
 				
             }
-            return new Models.RentedGetResponse  
+            return new Models.EntriesGetResponse  
                                             {
                                                 RawContent = response.Content,
                                                 RawHeaders = response.Headers,
 	                                            Formatters = responseFormatters,
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content), true)
-                                            };
-        }
-
-    }
-
-    public partial class Available
-    {
-        private readonly MoviesApi proxy;
-
-        internal Available(MoviesApi proxy)
-        {
-            this.proxy = proxy;
-        }
-
-        /// <summary>
-		/// get all movies that are not currently rented
-		/// </summary>
-        public virtual async Task<Models.AvailableGetResponse> Get()
-        {
-
-            var url = "movies/available";
-            var req = new HttpRequestMessage(HttpMethod.Get, url);
-	        var response = await proxy.Client.SendAsync(req);
-			
-			if (proxy.SchemaValidation.Enabled)
-		    {
-				if(proxy.SchemaValidation.RaiseExceptions) 
-				{
-					await SchemaValidator.ValidateWithExceptionAsync("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content);
-				}
-					
-			}
-
-            return new Models.AvailableGetResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers, 
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content), true)
-                                            };
-
-        }
-
-        /// <summary>
-		/// get all movies that are not currently rented
-		/// </summary>
-		/// <param name="request">ApiRequest</param>
-		/// <param name="responseFormatters">response formmaters</param>
-        public virtual async Task<Models.AvailableGetResponse> Get(ApiRequest request, IEnumerable<MediaTypeFormatter> responseFormatters = null)
-        {
-
-            var url = "movies/available";
-            var req = new HttpRequestMessage(HttpMethod.Get, url);
-
-            if(request.RawHeaders != null)
-            {
-                foreach(var header in request.RawHeaders)
-                {
-                    req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
-                }
-            }
-	        var response = await proxy.Client.SendAsync(req);
-			if (proxy.SchemaValidation.Enabled && proxy.SchemaValidation.RaiseExceptions)
-            {
-				if(proxy.SchemaValidation.RaiseExceptions)
-				{
-					await SchemaValidator.ValidateWithExceptionAsync("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content);
-				}
-				
-            }
-            return new Models.AvailableGetResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers,
-	                                            Formatters = responseFormatters,
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content), true)
-                                            };
-        }
-
-    }
-
-    public partial class Movies
-    {
-        private readonly MoviesApi proxy;
-
-        internal Movies(MoviesApi proxy)
-        {
-            this.proxy = proxy;
-        }
-        public virtual Wishlist Wishlist
-        {
-            get { return new Wishlist(proxy); }
-        }
-        public virtual Rented Rented
-        {
-            get { return new Rented(proxy); }
-        }
-        public virtual Available Available
-        {
-            get { return new Available(proxy); }
-        }
-
-        /// <summary>
-		/// gets all movies in the catalogue
-		/// </summary>
-        public virtual async Task<Models.MoviesGetResponse> Get()
-        {
-
-            var url = "movies";
-            var req = new HttpRequestMessage(HttpMethod.Get, url);
-	        var response = await proxy.Client.SendAsync(req);
-			
-			if (proxy.SchemaValidation.Enabled)
-		    {
-				if(proxy.SchemaValidation.RaiseExceptions) 
-				{
-					await SchemaValidator.ValidateWithExceptionAsync(Models.MoviesGetResponse.GetSchema(response.StatusCode), response.Content);
-				}
-					
-			}
-
-            return new Models.MoviesGetResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers, 
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid(Models.MoviesGetResponse.GetSchema(response.StatusCode), response.Content), true)
-                                            };
-
-        }
-
-        /// <summary>
-		/// gets all movies in the catalogue
-		/// </summary>
-		/// <param name="request">Models.MoviesGetRequest</param>
-		/// <param name="responseFormatters">response formmaters</param>
-        public virtual async Task<Models.MoviesGetResponse> Get(Models.MoviesGetRequest request, IEnumerable<MediaTypeFormatter> responseFormatters = null)
-        {
-
-            var url = "movies";
-            var req = new HttpRequestMessage(HttpMethod.Get, url);
-
-            if(request.Headers != null)
-            {
-                foreach(var header in request.Headers.Headers)
-                {
-                    req.Headers.TryAddWithoutValidation(header.Key, header.Value);
-                }
-            }
-	        var response = await proxy.Client.SendAsync(req);
-			if (proxy.SchemaValidation.Enabled && proxy.SchemaValidation.RaiseExceptions)
-            {
-				if(proxy.SchemaValidation.RaiseExceptions)
-				{
-					await SchemaValidator.ValidateWithExceptionAsync(Models.MoviesGetResponse.GetSchema(response.StatusCode), response.Content);
-				}
-				
-            }
-            return new Models.MoviesGetResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers,
-	                                            Formatters = responseFormatters,
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid(Models.MoviesGetResponse.GetSchema(response.StatusCode), response.Content), true)
+												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid("{    \"id\": \"http://some.site.somewhere/entry-schema#\",    \"$schema\": \"http://json-schema.org/draft-04/schema#\",    \"description\": \"schema for an fstab entry\",    \"type\": \"object\",    \"required\": [ \"storage\" ],    \"properties\": {        \"storage\": {            \"type\": \"object\",            \"oneOf\": [                { \"$ref\": \"#/definitions/diskDevice\" },                { \"$ref\": \"#/definitions/diskUUID\" },                { \"$ref\": \"#/definitions/nfs\" },                { \"$ref\": \"#/definitions/tmpfs\" }            ]        },        \"fstype\": {            \"enum\": [ \"ext3\", \"ext4\", \"btrfs\" ]        },        \"options\": {            \"type\": \"array\",            \"minItems\": 1,            \"items\": { \"type\": \"string\" },            \"uniqueItems\": true        },        \"readonly\": { \"type\": \"boolean\" }    },    \"definitions\": {        \"diskDevice\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"device\": {                    \"type\": \"string\",                    \"pattern\": \"^/dev/[^/]+(/[^/]+)*$\"                }            },            \"required\": [ \"type\", \"device\" ],            \"additionalProperties\": false        },        \"diskUUID\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"label\": {                    \"type\": \"string\",                    \"pattern\": \"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$\"                }            },            \"required\": [ \"type\", \"label\" ],            \"additionalProperties\": false        },        \"nfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"nfs\" ] },                \"remotePath\": {                    \"type\": \"string\",                    \"pattern\": \"^(/[^/]+)+$\"                },                \"server\": {                    \"type\": \"string\",                    \"oneOf\": [                        { \"format\": \"host-name\" },                        { \"format\": \"ipv4\" },                        { \"format\": \"ipv6\" }                    ]                }            },            \"required\": [ \"type\", \"server\", \"remotePath\" ],            \"additionalProperties\": false        },        \"tmpfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"tmpfs\" ] },                \"sizeInMB\": {                    \"type\": \"integer\",                    \"minimum\": 16,                    \"maximum\": 512                }            },            \"required\": [ \"type\", \"sizeInMB\" ],            \"additionalProperties\": false        }    }}", response.Content), true)
                                             };
         }
 
         /// <summary>
-		/// adds a movie to the catalogue
+		/// Add an fstab entry - All fstab entries
 		/// </summary>
-		/// <param name="moviespostrequestcontent"></param>
-        public virtual async Task<ApiResponse> Post(Models.MoviesPostRequestContent moviespostrequestcontent)
+		/// <param name="entry"></param>
+        public virtual async Task<Models.EntriesPostResponse> Post(Models.Entry entry)
         {
 
-            var url = "movies";
+            var url = "entries";
             var req = new HttpRequestMessage(HttpMethod.Post, url);
-	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
-				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-            req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-            req.Content = new ObjectContent(typeof(Models.MoviesPostRequestContent), moviespostrequestcontent, new JsonMediaTypeFormatter());
-	        var response = await proxy.Client.SendAsync(req);
-
-            return new ApiResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers, 
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => true, true)
-                                            };
-
-        }
-
-        /// <summary>
-		/// adds a movie to the catalogue
-		/// </summary>
-		/// <param name="request">Models.MoviesPostRequest</param>
-        public virtual async Task<ApiResponse> Post(Models.MoviesPostRequest request)
-        {
-
-            var url = "movies";
-            var req = new HttpRequestMessage(HttpMethod.Post, url);
-
-	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
-				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-            req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-            if(request.RawHeaders != null)
-            {
-                foreach(var header in request.RawHeaders)
-                {
-                    req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
-                }
-            }
-            if(request.Formatter == null)
-                request.Formatter = new JsonMediaTypeFormatter();
-
-            req.Content = new ObjectContent(typeof(Models.MoviesPostRequestContent), request.Content, request.Formatter);
-	        var response = await proxy.Client.SendAsync(req);
-            return new ApiResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers,
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => true, true)
-                                            };
-        }
-
-        /// <summary>
-		/// get the info of a movie
-		/// </summary>
-		/// <param name="id"></param>
-        public virtual async Task<Models.MoviesGetByIdResponse> GetById(string id)
-        {
-
-            var url = "movies/{id}";
-            url = url.Replace("{id}", id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Get, url);
+            req.Content = new ObjectContent(typeof(Models.Entry), entry, new JsonMediaTypeFormatter());
 	        var response = await proxy.Client.SendAsync(req);
 			
 			if (proxy.SchemaValidation.Enabled)
 		    {
 				if(proxy.SchemaValidation.RaiseExceptions) 
 				{
-					await SchemaValidator.ValidateWithExceptionAsync(Models.MoviesGetByIdResponse.GetSchema(response.StatusCode), response.Content);
+					await SchemaValidator.ValidateWithExceptionAsync("{    \"id\": \"http://some.site.somewhere/entry-schema#\",    \"$schema\": \"http://json-schema.org/draft-04/schema#\",    \"description\": \"schema for an fstab entry\",    \"type\": \"object\",    \"required\": [ \"storage\" ],    \"properties\": {        \"storage\": {            \"type\": \"object\",            \"oneOf\": [                { \"$ref\": \"#/definitions/diskDevice\" },                { \"$ref\": \"#/definitions/diskUUID\" },                { \"$ref\": \"#/definitions/nfs\" },                { \"$ref\": \"#/definitions/tmpfs\" }            ]        },        \"fstype\": {            \"enum\": [ \"ext3\", \"ext4\", \"btrfs\" ]        },        \"options\": {            \"type\": \"array\",            \"minItems\": 1,            \"items\": { \"type\": \"string\" },            \"uniqueItems\": true        },        \"readonly\": { \"type\": \"boolean\" }    },    \"definitions\": {        \"diskDevice\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"device\": {                    \"type\": \"string\",                    \"pattern\": \"^/dev/[^/]+(/[^/]+)*$\"                }            },            \"required\": [ \"type\", \"device\" ],            \"additionalProperties\": false        },        \"diskUUID\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"label\": {                    \"type\": \"string\",                    \"pattern\": \"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$\"                }            },            \"required\": [ \"type\", \"label\" ],            \"additionalProperties\": false        },        \"nfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"nfs\" ] },                \"remotePath\": {                    \"type\": \"string\",                    \"pattern\": \"^(/[^/]+)+$\"                },                \"server\": {                    \"type\": \"string\",                    \"oneOf\": [                        { \"format\": \"host-name\" },                        { \"format\": \"ipv4\" },                        { \"format\": \"ipv6\" }                    ]                }            },            \"required\": [ \"type\", \"server\", \"remotePath\" ],            \"additionalProperties\": false        },        \"tmpfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"tmpfs\" ] },                \"sizeInMB\": {                    \"type\": \"integer\",                    \"minimum\": 16,                    \"maximum\": 512                }            },            \"required\": [ \"type\", \"sizeInMB\" ],            \"additionalProperties\": false        }    }}", response.Content);
 				}
 					
 			}
 
-            var headers = new Models.MultipleGetByIdHeader();
-            headers.SetProperties(response.Headers, response.StatusCode);
-            return new Models.MoviesGetByIdResponse  
+            var headers = new Models.PostEntriesCreatedResponseHeader();
+            headers.SetProperties(response.Headers);
+            return new Models.EntriesPostResponse  
                                             {
                                                 RawContent = response.Content,
                                                 Headers = headers, 
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid(Models.MoviesGetByIdResponse.GetSchema(response.StatusCode), response.Content), true)
+												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid("{    \"id\": \"http://some.site.somewhere/entry-schema#\",    \"$schema\": \"http://json-schema.org/draft-04/schema#\",    \"description\": \"schema for an fstab entry\",    \"type\": \"object\",    \"required\": [ \"storage\" ],    \"properties\": {        \"storage\": {            \"type\": \"object\",            \"oneOf\": [                { \"$ref\": \"#/definitions/diskDevice\" },                { \"$ref\": \"#/definitions/diskUUID\" },                { \"$ref\": \"#/definitions/nfs\" },                { \"$ref\": \"#/definitions/tmpfs\" }            ]        },        \"fstype\": {            \"enum\": [ \"ext3\", \"ext4\", \"btrfs\" ]        },        \"options\": {            \"type\": \"array\",            \"minItems\": 1,            \"items\": { \"type\": \"string\" },            \"uniqueItems\": true        },        \"readonly\": { \"type\": \"boolean\" }    },    \"definitions\": {        \"diskDevice\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"device\": {                    \"type\": \"string\",                    \"pattern\": \"^/dev/[^/]+(/[^/]+)*$\"                }            },            \"required\": [ \"type\", \"device\" ],            \"additionalProperties\": false        },        \"diskUUID\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"label\": {                    \"type\": \"string\",                    \"pattern\": \"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$\"                }            },            \"required\": [ \"type\", \"label\" ],            \"additionalProperties\": false        },        \"nfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"nfs\" ] },                \"remotePath\": {                    \"type\": \"string\",                    \"pattern\": \"^(/[^/]+)+$\"                },                \"server\": {                    \"type\": \"string\",                    \"oneOf\": [                        { \"format\": \"host-name\" },                        { \"format\": \"ipv4\" },                        { \"format\": \"ipv6\" }                    ]                }            },            \"required\": [ \"type\", \"server\", \"remotePath\" ],            \"additionalProperties\": false        },        \"tmpfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"tmpfs\" ] },                \"sizeInMB\": {                    \"type\": \"integer\",                    \"minimum\": 16,                    \"maximum\": 512                }            },            \"required\": [ \"type\", \"sizeInMB\" ],            \"additionalProperties\": false        }    }}", response.Content), true)
                                             };
 
         }
 
         /// <summary>
-		/// get the info of a movie
+		/// Add an fstab entry - All fstab entries
 		/// </summary>
-		/// <param name="request">Models.MoviesGetByIdRequest</param>
+		/// <param name="request">Models.EntriesPostRequest</param>
 		/// <param name="responseFormatters">response formmaters</param>
-        public virtual async Task<Models.MoviesGetByIdResponse> GetById(Models.MoviesGetByIdRequest request, IEnumerable<MediaTypeFormatter> responseFormatters = null)
+        public virtual async Task<Models.EntriesPostResponse> Post(Models.EntriesPostRequest request, IEnumerable<MediaTypeFormatter> responseFormatters = null)
         {
 
-            var url = "movies/{id}";
-			if(request.UriParameters == null)
-				throw new InvalidOperationException("Uri Parameters cannot be null");               
-
-			if(request.UriParameters.Id == null)
-				throw new InvalidOperationException("Uri Parameter Id cannot be null");
-
-            url = url.Replace("{id}", request.UriParameters.Id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Get, url);
-
-            if(request.RawHeaders != null)
-            {
-                foreach(var header in request.RawHeaders)
-                {
-                    req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
-                }
-            }
-	        var response = await proxy.Client.SendAsync(req);
-			if (proxy.SchemaValidation.Enabled && proxy.SchemaValidation.RaiseExceptions)
-            {
-				if(proxy.SchemaValidation.RaiseExceptions)
-				{
-					await SchemaValidator.ValidateWithExceptionAsync(Models.MoviesGetByIdResponse.GetSchema(response.StatusCode), response.Content);
-				}
-				
-            }
-            var headers = new Models.MultipleGetByIdHeader();
-            headers.SetProperties(response.Headers, response.StatusCode);
-            return new Models.MoviesGetByIdResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                Headers = headers, 
-                                                RawHeaders = response.Headers,
-	                                            Formatters = responseFormatters,
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid(Models.MoviesGetByIdResponse.GetSchema(response.StatusCode), response.Content), true)
-                                            };
-        }
-
-        /// <summary>
-		/// update the info of a movie
-		/// </summary>
-		/// <param name="idputrequestcontent"></param>
-		/// <param name="id"></param>
-        public virtual async Task<ApiResponse> Put(Models.IdPutRequestContent idputrequestcontent, string id)
-        {
-
-            var url = "movies/{id}";
-            url = url.Replace("{id}", id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Put, url);
-            req.Content = new ObjectContent(typeof(Models.IdPutRequestContent), idputrequestcontent, new JsonMediaTypeFormatter());
-	        var response = await proxy.Client.SendAsync(req);
-
-            return new ApiResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers, 
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => true, true)
-                                            };
-
-        }
-
-        /// <summary>
-		/// update the info of a movie
-		/// </summary>
-		/// <param name="request">Models.MoviesPutRequest</param>
-        public virtual async Task<ApiResponse> Put(Models.MoviesPutRequest request)
-        {
-
-            var url = "movies/{id}";
-			if(request.UriParameters == null)
-				throw new InvalidOperationException("Uri Parameters cannot be null");               
-
-			if(request.UriParameters.Id == null)
-				throw new InvalidOperationException("Uri Parameter Id cannot be null");
-
-            url = url.Replace("{id}", request.UriParameters.Id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Put, url);
+            var url = "entries";
+            var req = new HttpRequestMessage(HttpMethod.Post, url);
 
             if(request.RawHeaders != null)
             {
@@ -836,146 +148,79 @@ namespace Movies
             if(request.Formatter == null)
                 request.Formatter = new JsonMediaTypeFormatter();
 
-            req.Content = new ObjectContent(typeof(Models.IdPutRequestContent), request.Content, request.Formatter);
+            req.Content = new ObjectContent(typeof(Models.Entry), request.Content, request.Formatter);
 	        var response = await proxy.Client.SendAsync(req);
-            return new ApiResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers,
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => true, true)
-                                            };
-        }
-
-        /// <summary>
-		/// remove a movie from the catalogue
-		/// </summary>
-		/// <param name="id"></param>
-        public virtual async Task<ApiResponse> Delete(string id)
-        {
-
-            var url = "movies/{id}";
-            url = url.Replace("{id}", id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Delete, url);
-	        var response = await proxy.Client.SendAsync(req);
-
-            return new ApiResponse  
-                                            {
-                                                RawContent = response.Content,
-                                                RawHeaders = response.Headers, 
-                                                StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => true, true)
-                                            };
-
-        }
-
-        /// <summary>
-		/// remove a movie from the catalogue
-		/// </summary>
-		/// <param name="request">Models.MoviesDeleteRequest</param>
-        public virtual async Task<ApiResponse> Delete(Models.MoviesDeleteRequest request)
-        {
-
-            var url = "movies/{id}";
-			if(request.UriParameters == null)
-				throw new InvalidOperationException("Uri Parameters cannot be null");               
-
-			if(request.UriParameters.Id == null)
-				throw new InvalidOperationException("Uri Parameter Id cannot be null");
-
-            url = url.Replace("{id}", request.UriParameters.Id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Delete, url);
-
-            if(request.RawHeaders != null)
+			if (proxy.SchemaValidation.Enabled && proxy.SchemaValidation.RaiseExceptions)
             {
-                foreach(var header in request.RawHeaders)
-                {
-                    req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
-                }
+				if(proxy.SchemaValidation.RaiseExceptions)
+				{
+					await SchemaValidator.ValidateWithExceptionAsync("{    \"id\": \"http://some.site.somewhere/entry-schema#\",    \"$schema\": \"http://json-schema.org/draft-04/schema#\",    \"description\": \"schema for an fstab entry\",    \"type\": \"object\",    \"required\": [ \"storage\" ],    \"properties\": {        \"storage\": {            \"type\": \"object\",            \"oneOf\": [                { \"$ref\": \"#/definitions/diskDevice\" },                { \"$ref\": \"#/definitions/diskUUID\" },                { \"$ref\": \"#/definitions/nfs\" },                { \"$ref\": \"#/definitions/tmpfs\" }            ]        },        \"fstype\": {            \"enum\": [ \"ext3\", \"ext4\", \"btrfs\" ]        },        \"options\": {            \"type\": \"array\",            \"minItems\": 1,            \"items\": { \"type\": \"string\" },            \"uniqueItems\": true        },        \"readonly\": { \"type\": \"boolean\" }    },    \"definitions\": {        \"diskDevice\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"device\": {                    \"type\": \"string\",                    \"pattern\": \"^/dev/[^/]+(/[^/]+)*$\"                }            },            \"required\": [ \"type\", \"device\" ],            \"additionalProperties\": false        },        \"diskUUID\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"label\": {                    \"type\": \"string\",                    \"pattern\": \"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$\"                }            },            \"required\": [ \"type\", \"label\" ],            \"additionalProperties\": false        },        \"nfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"nfs\" ] },                \"remotePath\": {                    \"type\": \"string\",                    \"pattern\": \"^(/[^/]+)+$\"                },                \"server\": {                    \"type\": \"string\",                    \"oneOf\": [                        { \"format\": \"host-name\" },                        { \"format\": \"ipv4\" },                        { \"format\": \"ipv6\" }                    ]                }            },            \"required\": [ \"type\", \"server\", \"remotePath\" ],            \"additionalProperties\": false        },        \"tmpfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"tmpfs\" ] },                \"sizeInMB\": {                    \"type\": \"integer\",                    \"minimum\": 16,                    \"maximum\": 512                }            },            \"required\": [ \"type\", \"sizeInMB\" ],            \"additionalProperties\": false        }    }}", response.Content);
+				}
+				
             }
-	        var response = await proxy.Client.SendAsync(req);
-            return new ApiResponse  
+            var headers = new Models.PostEntriesCreatedResponseHeader();
+            headers.SetProperties(response.Headers);
+            return new Models.EntriesPostResponse  
                                             {
                                                 RawContent = response.Content,
+                                                Headers = headers, 
                                                 RawHeaders = response.Headers,
+	                                            Formatters = responseFormatters,
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => true, true)
+												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid("{    \"id\": \"http://some.site.somewhere/entry-schema#\",    \"$schema\": \"http://json-schema.org/draft-04/schema#\",    \"description\": \"schema for an fstab entry\",    \"type\": \"object\",    \"required\": [ \"storage\" ],    \"properties\": {        \"storage\": {            \"type\": \"object\",            \"oneOf\": [                { \"$ref\": \"#/definitions/diskDevice\" },                { \"$ref\": \"#/definitions/diskUUID\" },                { \"$ref\": \"#/definitions/nfs\" },                { \"$ref\": \"#/definitions/tmpfs\" }            ]        },        \"fstype\": {            \"enum\": [ \"ext3\", \"ext4\", \"btrfs\" ]        },        \"options\": {            \"type\": \"array\",            \"minItems\": 1,            \"items\": { \"type\": \"string\" },            \"uniqueItems\": true        },        \"readonly\": { \"type\": \"boolean\" }    },    \"definitions\": {        \"diskDevice\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"device\": {                    \"type\": \"string\",                    \"pattern\": \"^/dev/[^/]+(/[^/]+)*$\"                }            },            \"required\": [ \"type\", \"device\" ],            \"additionalProperties\": false        },        \"diskUUID\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"label\": {                    \"type\": \"string\",                    \"pattern\": \"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$\"                }            },            \"required\": [ \"type\", \"label\" ],            \"additionalProperties\": false        },        \"nfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"nfs\" ] },                \"remotePath\": {                    \"type\": \"string\",                    \"pattern\": \"^(/[^/]+)+$\"                },                \"server\": {                    \"type\": \"string\",                    \"oneOf\": [                        { \"format\": \"host-name\" },                        { \"format\": \"ipv4\" },                        { \"format\": \"ipv6\" }                    ]                }            },            \"required\": [ \"type\", \"server\", \"remotePath\" ],            \"additionalProperties\": false        },        \"tmpfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"tmpfs\" ] },                \"sizeInMB\": {                    \"type\": \"integer\",                    \"minimum\": 16,                    \"maximum\": 512                }            },            \"required\": [ \"type\", \"sizeInMB\" ],            \"additionalProperties\": false        }    }}", response.Content), true)
                                             };
         }
 
-    }
-
-    public partial class Search
-    {
-        private readonly MoviesApi proxy;
-
-        internal Search(MoviesApi proxy)
-        {
-            this.proxy = proxy;
-        }
-
         /// <summary>
-		/// search movies by name or director
+		/// Retrieve a single fstab entry for the specfied device - A single fstab entry
 		/// </summary>
-		/// <param name="json"></param>
-		/// <param name="postsearchquery">query properties</param>
-        public virtual async Task<Models.SearchPostResponse> Post(string json, Models.PostSearchQuery postsearchquery)
+		/// <param name="device"></param>
+        public virtual async Task<Models.EntriesGetByDeviceResponse> GetByDevice(string device)
         {
 
-            var url = "search";
-            if(postsearchquery != null)
-            {
-                url += "?";
-                if(postsearchquery.Name != null)
-                    url += "&postsearchquery.Name=" + postsearchquery.Name;
-                if(postsearchquery.Director != null)
-                    url += "&postsearchquery.Director=" + postsearchquery.Director;
-            }
-            var req = new HttpRequestMessage(HttpMethod.Post, url);
-            req.Content = new StringContent(json);
+            var url = "entries/{device}";
+            url = url.Replace("{device}", device.ToString());
+            var req = new HttpRequestMessage(HttpMethod.Get, url);
 	        var response = await proxy.Client.SendAsync(req);
 			
 			if (proxy.SchemaValidation.Enabled)
 		    {
 				if(proxy.SchemaValidation.RaiseExceptions) 
 				{
-					await SchemaValidator.ValidateWithExceptionAsync("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content);
+					await SchemaValidator.ValidateWithExceptionAsync("{    \"id\": \"http://some.site.somewhere/entry-schema#\",    \"$schema\": \"http://json-schema.org/draft-04/schema#\",    \"description\": \"schema for an fstab entry\",    \"type\": \"object\",    \"required\": [ \"storage\" ],    \"properties\": {        \"storage\": {            \"type\": \"object\",            \"oneOf\": [                { \"$ref\": \"#/definitions/diskDevice\" },                { \"$ref\": \"#/definitions/diskUUID\" },                { \"$ref\": \"#/definitions/nfs\" },                { \"$ref\": \"#/definitions/tmpfs\" }            ]        },        \"fstype\": {            \"enum\": [ \"ext3\", \"ext4\", \"btrfs\" ]        },        \"options\": {            \"type\": \"array\",            \"minItems\": 1,            \"items\": { \"type\": \"string\" },            \"uniqueItems\": true        },        \"readonly\": { \"type\": \"boolean\" }    },    \"definitions\": {        \"diskDevice\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"device\": {                    \"type\": \"string\",                    \"pattern\": \"^/dev/[^/]+(/[^/]+)*$\"                }            },            \"required\": [ \"type\", \"device\" ],            \"additionalProperties\": false        },        \"diskUUID\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"label\": {                    \"type\": \"string\",                    \"pattern\": \"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$\"                }            },            \"required\": [ \"type\", \"label\" ],            \"additionalProperties\": false        },        \"nfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"nfs\" ] },                \"remotePath\": {                    \"type\": \"string\",                    \"pattern\": \"^(/[^/]+)+$\"                },                \"server\": {                    \"type\": \"string\",                    \"oneOf\": [                        { \"format\": \"host-name\" },                        { \"format\": \"ipv4\" },                        { \"format\": \"ipv6\" }                    ]                }            },            \"required\": [ \"type\", \"server\", \"remotePath\" ],            \"additionalProperties\": false        },        \"tmpfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"tmpfs\" ] },                \"sizeInMB\": {                    \"type\": \"integer\",                    \"minimum\": 16,                    \"maximum\": 512                }            },            \"required\": [ \"type\", \"sizeInMB\" ],            \"additionalProperties\": false        }    }}", response.Content);
 				}
 					
 			}
 
-            return new Models.SearchPostResponse  
+            return new Models.EntriesGetByDeviceResponse  
                                             {
                                                 RawContent = response.Content,
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content), true)
+												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid("{    \"id\": \"http://some.site.somewhere/entry-schema#\",    \"$schema\": \"http://json-schema.org/draft-04/schema#\",    \"description\": \"schema for an fstab entry\",    \"type\": \"object\",    \"required\": [ \"storage\" ],    \"properties\": {        \"storage\": {            \"type\": \"object\",            \"oneOf\": [                { \"$ref\": \"#/definitions/diskDevice\" },                { \"$ref\": \"#/definitions/diskUUID\" },                { \"$ref\": \"#/definitions/nfs\" },                { \"$ref\": \"#/definitions/tmpfs\" }            ]        },        \"fstype\": {            \"enum\": [ \"ext3\", \"ext4\", \"btrfs\" ]        },        \"options\": {            \"type\": \"array\",            \"minItems\": 1,            \"items\": { \"type\": \"string\" },            \"uniqueItems\": true        },        \"readonly\": { \"type\": \"boolean\" }    },    \"definitions\": {        \"diskDevice\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"device\": {                    \"type\": \"string\",                    \"pattern\": \"^/dev/[^/]+(/[^/]+)*$\"                }            },            \"required\": [ \"type\", \"device\" ],            \"additionalProperties\": false        },        \"diskUUID\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"label\": {                    \"type\": \"string\",                    \"pattern\": \"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$\"                }            },            \"required\": [ \"type\", \"label\" ],            \"additionalProperties\": false        },        \"nfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"nfs\" ] },                \"remotePath\": {                    \"type\": \"string\",                    \"pattern\": \"^(/[^/]+)+$\"                },                \"server\": {                    \"type\": \"string\",                    \"oneOf\": [                        { \"format\": \"host-name\" },                        { \"format\": \"ipv4\" },                        { \"format\": \"ipv6\" }                    ]                }            },            \"required\": [ \"type\", \"server\", \"remotePath\" ],            \"additionalProperties\": false        },        \"tmpfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"tmpfs\" ] },                \"sizeInMB\": {                    \"type\": \"integer\",                    \"minimum\": 16,                    \"maximum\": 512                }            },            \"required\": [ \"type\", \"sizeInMB\" ],            \"additionalProperties\": false        }    }}", response.Content), true)
                                             };
 
         }
 
         /// <summary>
-		/// search movies by name or director
+		/// Retrieve a single fstab entry for the specfied device - A single fstab entry
 		/// </summary>
-		/// <param name="request">Models.SearchPostRequest</param>
+		/// <param name="request">Models.EntriesGetByDeviceRequest</param>
 		/// <param name="responseFormatters">response formmaters</param>
-        public virtual async Task<Models.SearchPostResponse> Post(Models.SearchPostRequest request, IEnumerable<MediaTypeFormatter> responseFormatters = null)
+        public virtual async Task<Models.EntriesGetByDeviceResponse> GetByDevice(Models.EntriesGetByDeviceRequest request, IEnumerable<MediaTypeFormatter> responseFormatters = null)
         {
 
-            var url = "search";
-            if(request.Query != null)
-            {
-                url += "?";
-                if(request.Query.Name != null)
-                    url += "&Name=" + request.Query.Name;
-                if(request.Query.Director != null)
-                    url += "&Director=" + request.Query.Director;
-            }
-            var req = new HttpRequestMessage(HttpMethod.Post, url);
+            var url = "entries/{device}";
+			if(request.UriParameters == null)
+				throw new InvalidOperationException("Uri Parameters cannot be null");               
+
+			if(request.UriParameters.Device == null)
+				throw new InvalidOperationException("Uri Parameter Device cannot be null");
+
+            url = url.Replace("{device}", request.UriParameters.Device.ToString());
+            var req = new HttpRequestMessage(HttpMethod.Get, url);
 
             if(request.RawHeaders != null)
             {
@@ -984,24 +229,81 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
-            req.Content = request.Content;
 	        var response = await proxy.Client.SendAsync(req);
 			if (proxy.SchemaValidation.Enabled && proxy.SchemaValidation.RaiseExceptions)
             {
 				if(proxy.SchemaValidation.RaiseExceptions)
 				{
-					await SchemaValidator.ValidateWithExceptionAsync("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content);
+					await SchemaValidator.ValidateWithExceptionAsync("{    \"id\": \"http://some.site.somewhere/entry-schema#\",    \"$schema\": \"http://json-schema.org/draft-04/schema#\",    \"description\": \"schema for an fstab entry\",    \"type\": \"object\",    \"required\": [ \"storage\" ],    \"properties\": {        \"storage\": {            \"type\": \"object\",            \"oneOf\": [                { \"$ref\": \"#/definitions/diskDevice\" },                { \"$ref\": \"#/definitions/diskUUID\" },                { \"$ref\": \"#/definitions/nfs\" },                { \"$ref\": \"#/definitions/tmpfs\" }            ]        },        \"fstype\": {            \"enum\": [ \"ext3\", \"ext4\", \"btrfs\" ]        },        \"options\": {            \"type\": \"array\",            \"minItems\": 1,            \"items\": { \"type\": \"string\" },            \"uniqueItems\": true        },        \"readonly\": { \"type\": \"boolean\" }    },    \"definitions\": {        \"diskDevice\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"device\": {                    \"type\": \"string\",                    \"pattern\": \"^/dev/[^/]+(/[^/]+)*$\"                }            },            \"required\": [ \"type\", \"device\" ],            \"additionalProperties\": false        },        \"diskUUID\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"label\": {                    \"type\": \"string\",                    \"pattern\": \"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$\"                }            },            \"required\": [ \"type\", \"label\" ],            \"additionalProperties\": false        },        \"nfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"nfs\" ] },                \"remotePath\": {                    \"type\": \"string\",                    \"pattern\": \"^(/[^/]+)+$\"                },                \"server\": {                    \"type\": \"string\",                    \"oneOf\": [                        { \"format\": \"host-name\" },                        { \"format\": \"ipv4\" },                        { \"format\": \"ipv6\" }                    ]                }            },            \"required\": [ \"type\", \"server\", \"remotePath\" ],            \"additionalProperties\": false        },        \"tmpfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"tmpfs\" ] },                \"sizeInMB\": {                    \"type\": \"integer\",                    \"minimum\": 16,                    \"maximum\": 512                }            },            \"required\": [ \"type\", \"sizeInMB\" ],            \"additionalProperties\": false        }    }}", response.Content);
 				}
 				
             }
-            return new Models.SearchPostResponse  
+            return new Models.EntriesGetByDeviceResponse  
                                             {
                                                 RawContent = response.Content,
                                                 RawHeaders = response.Headers,
 	                                            Formatters = responseFormatters,
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase,
-												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content), true)
+												IsValid = new Lazy<bool>(() => SchemaValidator.IsValid("{    \"id\": \"http://some.site.somewhere/entry-schema#\",    \"$schema\": \"http://json-schema.org/draft-04/schema#\",    \"description\": \"schema for an fstab entry\",    \"type\": \"object\",    \"required\": [ \"storage\" ],    \"properties\": {        \"storage\": {            \"type\": \"object\",            \"oneOf\": [                { \"$ref\": \"#/definitions/diskDevice\" },                { \"$ref\": \"#/definitions/diskUUID\" },                { \"$ref\": \"#/definitions/nfs\" },                { \"$ref\": \"#/definitions/tmpfs\" }            ]        },        \"fstype\": {            \"enum\": [ \"ext3\", \"ext4\", \"btrfs\" ]        },        \"options\": {            \"type\": \"array\",            \"minItems\": 1,            \"items\": { \"type\": \"string\" },            \"uniqueItems\": true        },        \"readonly\": { \"type\": \"boolean\" }    },    \"definitions\": {        \"diskDevice\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"device\": {                    \"type\": \"string\",                    \"pattern\": \"^/dev/[^/]+(/[^/]+)*$\"                }            },            \"required\": [ \"type\", \"device\" ],            \"additionalProperties\": false        },        \"diskUUID\": {            \"properties\": {                \"type\": { \"enum\": [ \"disk\" ] },                \"label\": {                    \"type\": \"string\",                    \"pattern\": \"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$\"                }            },            \"required\": [ \"type\", \"label\" ],            \"additionalProperties\": false        },        \"nfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"nfs\" ] },                \"remotePath\": {                    \"type\": \"string\",                    \"pattern\": \"^(/[^/]+)+$\"                },                \"server\": {                    \"type\": \"string\",                    \"oneOf\": [                        { \"format\": \"host-name\" },                        { \"format\": \"ipv4\" },                        { \"format\": \"ipv6\" }                    ]                }            },            \"required\": [ \"type\", \"server\", \"remotePath\" ],            \"additionalProperties\": false        },        \"tmpfs\": {            \"properties\": {                \"type\": { \"enum\": [ \"tmpfs\" ] },                \"sizeInMB\": {                    \"type\": \"integer\",                    \"minimum\": 16,                    \"maximum\": 512                }            },            \"required\": [ \"type\", \"sizeInMB\" ],            \"additionalProperties\": false        }    }}", response.Content), true)
+                                            };
+        }
+
+        /// <summary>
+		/// Remove a single fstab entry for the specified device - A single fstab entry
+		/// </summary>
+		/// <param name="device"></param>
+        public virtual async Task<ApiResponse> Delete(string device)
+        {
+
+            var url = "entries/{device}";
+            url = url.Replace("{device}", device.ToString());
+            var req = new HttpRequestMessage(HttpMethod.Delete, url);
+	        var response = await proxy.Client.SendAsync(req);
+
+            return new ApiResponse  
+                                            {
+                                                RawContent = response.Content,
+                                                RawHeaders = response.Headers, 
+                                                StatusCode = response.StatusCode,
+                                                ReasonPhrase = response.ReasonPhrase,
+												IsValid = new Lazy<bool>(() => true, true)
+                                            };
+
+        }
+
+        /// <summary>
+		/// Remove a single fstab entry for the specified device - A single fstab entry
+		/// </summary>
+		/// <param name="request">Models.EntriesDeleteRequest</param>
+        public virtual async Task<ApiResponse> Delete(Models.EntriesDeleteRequest request)
+        {
+
+            var url = "entries/{device}";
+			if(request.UriParameters == null)
+				throw new InvalidOperationException("Uri Parameters cannot be null");               
+
+			if(request.UriParameters.Device == null)
+				throw new InvalidOperationException("Uri Parameter Device cannot be null");
+
+            url = url.Replace("{device}", request.UriParameters.Device.ToString());
+            var req = new HttpRequestMessage(HttpMethod.Delete, url);
+
+            if(request.RawHeaders != null)
+            {
+                foreach(var header in request.RawHeaders)
+                {
+                    req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
+                }
+            }
+	        var response = await proxy.Client.SendAsync(req);
+            return new ApiResponse  
+                                            {
+                                                RawContent = response.Content,
+                                                RawHeaders = response.Headers,
+                                                StatusCode = response.StatusCode,
+                                                ReasonPhrase = response.ReasonPhrase,
+												IsValid = new Lazy<bool>(() => true, true)
                                             };
         }
 
@@ -1010,25 +312,17 @@ namespace Movies
     /// <summary>
     /// Main class for grouping root resources. Nested resources are defined as properties. The constructor can optionally receive an URL and HttpClient instance to override the default ones.
     /// </summary>
-    public partial class MoviesApi
+    public partial class FstabApi
     {
 		
         protected readonly HttpClient client;
-        public const string BaseUri = "http://movies.com/api/";
+        public const string BaseUri = "http://localhost/fstab/v1/";
 
         internal HttpClient Client { get { return client; } }
 
 		public SchemaValidationSettings SchemaValidation { get; private set; }
 
-        public string OAuthAccessToken { get; set; }
-
-		private string oauthAuthorizeUrl = "https://localhost:8081/oauth/authorize";
-		public string OAuthAuthorizeUrl { get { return oauthAuthorizeUrl; } set { oauthAuthorizeUrl = value; } }
-
-   		private string oauthAccessTokenUrl = "https://localhost:8081/oauth/access_token";
-		public string OAuthAccessTokenUrl { get { return oauthAccessTokenUrl; } set { oauthAccessTokenUrl = value; } }
-
-        public MoviesApi(string endpointUrl)
+        public FstabApi(string endpointUrl)
         {
 			SchemaValidation = new SchemaValidationSettings
 			{
@@ -1055,7 +349,7 @@ namespace Movies
             client = new HttpClient {BaseAddress = new Uri(endpointUrl)};
         }
 
-        public MoviesApi(HttpClient httpClient)
+        public FstabApi(HttpClient httpClient)
         {
             if(httpClient.BaseAddress == null)
                 throw new InvalidOperationException("You must set the BaseAddress property of the HttpClient instance");
@@ -1071,24 +365,9 @@ namespace Movies
         }
 
         
-        public virtual Movies Movies
+        public virtual Entries Entries
         {
-            get { return new Movies(this); }
-        }
-                
-        public virtual Rent Rent
-        {
-            get { return new Rent(this); }
-        }
-                
-        public virtual Return Return
-        {
-            get { return new Return(this); }
-        }
-                
-        public virtual Search Search
-        {
-            get { return new Search(this); }
+            get { return new Entries(this); }
         }
                 
 
@@ -1109,439 +388,67 @@ namespace Movies
 } // end namespace
 
 
-namespace Movies.Models
+namespace Fstab.Models
 {
-    public partial class MoviesPostRequestContent 
+    public abstract class  Storage 
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Director { get; set; }
-        public string Genre { get; set; }
-        public string Cast { get; set; }
-        public decimal Duration { get; set; }
-        public string Storyline { get; set; }
-        public string Language { get; set; }
 
     } // end class
 
-    public partial class IdPutRequestContent 
+    public partial class StoragediskDevice  : Storage
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Director { get; set; }
-        public string Genre { get; set; }
-        public string Cast { get; set; }
-        public decimal Duration { get; set; }
-        public string Storyline { get; set; }
-        public string Language { get; set; }
+        public string Device { get; set; }
 
     } // end class
 
-    public partial class MoviesGetOKResponseContent 
+    public partial class StoragediskUUID  : Storage
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Director { get; set; }
-        public string Genre { get; set; }
-        public string Cast { get; set; }
-        public decimal Duration { get; set; }
-        public string Storyline { get; set; }
-        public string Language { get; set; }
-        public bool Rented { get; set; }
+        public string Label { get; set; }
 
     } // end class
 
-    public partial class MoviesGetBadRequestResponseContent 
+    public partial class Storagenfs  : Storage
     {
-        public string Error { get; set; }
-        public int Code { get; set; }
+        public string RemotePath { get; set; }
+        public string Server { get; set; }
 
     } // end class
 
-    public partial class IdGetOKResponseContent 
+    public partial class Storagetmpfs  : Storage
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Director { get; set; }
-        public string Genre { get; set; }
-        public string Cast { get; set; }
-        public decimal Duration { get; set; }
-        public string Storyline { get; set; }
-        public string Language { get; set; }
-        public bool Rented { get; set; }
+        public int SizeInMB { get; set; }
 
     } // end class
 
-    public partial class IdGetBadRequestResponseContent 
+    public partial class  Entry 
     {
-        public string Error { get; set; }
-        public int Code { get; set; }
-
-    } // end class
-
-    public partial class IdGetNotFoundResponseContent 
-    {
-        public int Id { get; set; }
-        public string Error { get; set; }
-        public int Code { get; set; }
-
-    } // end class
-
-    public partial class WishlistGetOKResponseContent 
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Director { get; set; }
-        public string Genre { get; set; }
-        public string Cast { get; set; }
-        public decimal Duration { get; set; }
-        public string Storyline { get; set; }
-        public string Language { get; set; }
-        public bool Rented { get; set; }
-
-    } // end class
-
-    public partial class RentedGetOKResponseContent 
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Director { get; set; }
-        public string Genre { get; set; }
-        public string Cast { get; set; }
-        public decimal Duration { get; set; }
-        public string Storyline { get; set; }
-        public string Language { get; set; }
-        public bool Rented { get; set; }
-
-    } // end class
-
-    public partial class AvailableGetOKResponseContent 
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Director { get; set; }
-        public string Genre { get; set; }
-        public string Cast { get; set; }
-        public decimal Duration { get; set; }
-        public string Storyline { get; set; }
-        public string Language { get; set; }
-        public bool Rented { get; set; }
-
-    } // end class
-
-    public partial class SearchPostOKResponseContent 
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Director { get; set; }
-        public string Genre { get; set; }
-        public string Cast { get; set; }
-        public decimal Duration { get; set; }
-        public string Storyline { get; set; }
-        public string Language { get; set; }
-        public bool Rented { get; set; }
+        public Storage Storage { get; set; }
+        public string[] Options { get; set; }
+        public bool Readonly { get; set; }
 
     } // end class
 
     /// <summary>
-    /// Multiple Response Types MoviesGetOKResponseContent, MoviesGetBadRequestResponseContent
+    /// Uri Parameters for resource /{device}
     /// </summary>
-    public partial class MultipleMoviesGet : ApiMultipleResponse
+    public partial class  EntriesDeviceUriParameters 
     {
-   
-        static readonly Dictionary<HttpStatusCode, string> schemas = new Dictionary<HttpStatusCode, string>
-        {
-			{ HttpStatusCode.OK, "{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}"},
-			{ HttpStatusCode.BadRequest, "{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"object\",  \"description\": \"bad request error\",  \"properties\":     {      \"error\": { \"type\": \"string\"},      \"code\": { \"type\": \"integer\" }    }  }"},
-		};
-        
-		public static string GetSchema(HttpStatusCode statusCode)
-        {
-            return schemas.ContainsKey(statusCode) ? schemas[statusCode] : string.Empty;
-        }
+        public string Device { get; set; }
 
-		public MultipleMoviesGet()
-        {
-            names.Add(HttpStatusCode.OK, "MoviesGetOKResponseContent");
-            types.Add(HttpStatusCode.OK, typeof(MoviesGetOKResponseContent[]));
-            names.Add(HttpStatusCode.BadRequest, "MoviesGetBadRequestResponseContent");
-            types.Add(HttpStatusCode.BadRequest, typeof(MoviesGetBadRequestResponseContent));
-        }
-        public MoviesGetOKResponseContent[] MoviesGetOKResponseContent { get; set; }
-        public MoviesGetBadRequestResponseContent MoviesGetBadRequestResponseContent { get; set; }
+    } // end class
+
+    public partial class PostEntriesCreatedResponseHeader : ApiResponseHeader
+    {
+        public string Location { get; set; }
 
     } // end class
 
     /// <summary>
-    /// Multiple Response Types IdGetOKResponseContent, IdGetBadRequestResponseContent, IdGetNotFoundResponseContent
+    /// Request object for method Post of class Entries
     /// </summary>
-    public partial class MultipleIdGet : ApiMultipleResponse
+    public partial class EntriesPostRequest : ApiRequest
     {
-   
-        static readonly Dictionary<HttpStatusCode, string> schemas = new Dictionary<HttpStatusCode, string>
-        {
-			{ HttpStatusCode.OK, "{   \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"object\",  \"description\": \"a movie\",  \"properties\": {    \"id\": { \"type\": \"integer\"},    \"name\": { \"type\": \"string\"},    \"director\": { \"type\": \"string\"},    \"genre\": { \"type\": \"string\" },    \"cast\":{ \"type\": \"string\" },    \"duration\":{ \"type\": \"number\" },    \"storyline\":{ \"type\": \"string\" },    \"language\":{ \"type\": \"string\" },    \"rented\":{ \"type\": \"boolean\" }  }}"},
-			{ HttpStatusCode.BadRequest, "{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"object\",  \"description\": \"bad request error\",  \"properties\":     {      \"error\": { \"type\": \"string\"},      \"code\": { \"type\": \"integer\" }    }  }"},
-			{ HttpStatusCode.NotFound, "{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"object\",  \"description\": \"not found\",  \"properties\":     {      \"id\": { \"type\": \"integer\" },      \"error\": { \"type\": \"string\"},      \"code\": { \"type\": \"integer\" }    }  }"},
-		};
-        
-		public static string GetSchema(HttpStatusCode statusCode)
-        {
-            return schemas.ContainsKey(statusCode) ? schemas[statusCode] : string.Empty;
-        }
-
-		public MultipleIdGet()
-        {
-            names.Add(HttpStatusCode.OK, "IdGetOKResponseContent");
-            types.Add(HttpStatusCode.OK, typeof(IdGetOKResponseContent));
-            names.Add(HttpStatusCode.BadRequest, "IdGetBadRequestResponseContent");
-            types.Add(HttpStatusCode.BadRequest, typeof(IdGetBadRequestResponseContent));
-            names.Add(HttpStatusCode.NotFound, "IdGetNotFoundResponseContent");
-            types.Add(HttpStatusCode.NotFound, typeof(IdGetNotFoundResponseContent));
-        }
-        public IdGetOKResponseContent IdGetOKResponseContent { get; set; }
-        public IdGetBadRequestResponseContent IdGetBadRequestResponseContent { get; set; }
-        public IdGetNotFoundResponseContent IdGetNotFoundResponseContent { get; set; }
-
-    } // end class
-
-    public partial class PostSearchQuery 
-    {
-        /// <summary>
-        /// Name of the movie
-        /// </summary>
-        public string Name { get; set; }
-        /// <summary>
-        /// Director of the movie
-        /// </summary>
-        public string Director { get; set; }
-
-    } // end class
-
-    /// <summary>
-    /// Uri Parameters for resource /{id}
-    /// </summary>
-    public partial class MoviesIdUriParameters 
-    {
-        public string Id { get; set; }
-
-    } // end class
-
-    /// <summary>
-    /// Uri Parameters for resource /rent
-    /// </summary>
-    public partial class MoviesIdRentUriParameters 
-    {
-        public string Id { get; set; }
-
-    } // end class
-
-    /// <summary>
-    /// Uri Parameters for resource /return
-    /// </summary>
-    public partial class MoviesIdReturnUriParameters 
-    {
-        public string Id { get; set; }
-
-    } // end class
-
-    /// <summary>
-    /// Uri Parameters for resource /{id}
-    /// </summary>
-    public partial class MoviesWishlistIdUriParameters 
-    {
-        public string Id { get; set; }
-
-    } // end class
-
-    public partial class GetMoviesHeader : ApiHeader
-    {
-
-        public string User { get; set; }
-        public int? Code { get; set; }
-
-    } // end class
-
-    public partial class GetByIdMoviesOKResponseHeader : ApiResponseHeader
-    {
-        public int? Code { get; set; }
-        public DateTime? Created { get; set; }
-
-    } // end class
-
-    public partial class GetByIdMoviesBadRequestResponseHeader : ApiResponseHeader
-    {
-        public int? Code { get; set; }
-
-    } // end class
-
-    /// <summary>
-    /// Multiple Header Types GetByIdMoviesOKResponseHeader, GetByIdMoviesBadRequestResponseHeader
-    /// </summary>
-    public partial class MultipleGetByIdHeader : ApiMultipleObject
-    {
-        
-        public MultipleGetByIdHeader()
-        {
-            names.Add(HttpStatusCode.OK, "GetByIdMoviesOKResponseHeader");
-            types.Add(HttpStatusCode.OK, typeof(GetByIdMoviesOKResponseHeader));
-            names.Add(HttpStatusCode.BadRequest, "GetByIdMoviesBadRequestResponseHeader");
-            types.Add(HttpStatusCode.BadRequest, typeof(GetByIdMoviesBadRequestResponseHeader));
-        }
-
-		public void SetProperties(HttpResponseHeaders headers, HttpStatusCode statusCode)
-	    {
-		    if (statusCode == HttpStatusCode.OK)
-		    {
-				var header = new GetByIdMoviesOKResponseHeader();
-			    foreach (var responseHeader in headers)
-			    {
-				    var prop = header.GetType().GetProperties().FirstOrDefault(p => p.Name == NetNamingMapper.GetPropertyName(responseHeader.Key));
-					if(prop != null)
-						prop.SetValue(header, responseHeader.Value);
-			    }
-			    this.GetByIdMoviesOKResponseHeader = header;
-				return;
-		    }
-		    if (statusCode == HttpStatusCode.BadRequest)
-		    {
-				var header = new GetByIdMoviesBadRequestResponseHeader();
-			    foreach (var responseHeader in headers)
-			    {
-				    var prop = header.GetType().GetProperties().FirstOrDefault(p => p.Name == NetNamingMapper.GetPropertyName(responseHeader.Key));
-					if(prop != null)
-						prop.SetValue(header, responseHeader.Value);
-			    }
-			    this.GetByIdMoviesBadRequestResponseHeader = header;
-				return;
-		    }
-	    }
-        public GetByIdMoviesOKResponseHeader GetByIdMoviesOKResponseHeader { get; set; }
-        public GetByIdMoviesBadRequestResponseHeader GetByIdMoviesBadRequestResponseHeader { get; set; }
-
-    } // end class
-
-    /// <summary>
-    /// Request object for method Put of class Rent
-    /// </summary>
-    public partial class RentPutRequest : ApiRequest
-    {
-        public RentPutRequest(MoviesIdRentUriParameters UriParameters, HttpContent Content = null, MediaTypeFormatter Formatter = null)
-        {
-            this.Content = Content;
-            this.Formatter = Formatter;
-            this.UriParameters = UriParameters;
-        }
-
-        /// <summary>
-        /// Request content
-        /// </summary>
-        public HttpContent Content { get; set; }
-        /// <summary>
-        /// Request formatter
-        /// </summary>
-        public MediaTypeFormatter Formatter { get; set; }
-        /// <summary>
-        /// Request Uri Parameters
-        /// </summary>
-        public MoviesIdRentUriParameters UriParameters { get; set; }
-
-    } // end class
-
-    /// <summary>
-    /// Request object for method Put of class Return
-    /// </summary>
-    public partial class ReturnPutRequest : ApiRequest
-    {
-        public ReturnPutRequest(MoviesIdReturnUriParameters UriParameters, HttpContent Content = null, MediaTypeFormatter Formatter = null)
-        {
-            this.Content = Content;
-            this.Formatter = Formatter;
-            this.UriParameters = UriParameters;
-        }
-
-        /// <summary>
-        /// Request content
-        /// </summary>
-        public HttpContent Content { get; set; }
-        /// <summary>
-        /// Request formatter
-        /// </summary>
-        public MediaTypeFormatter Formatter { get; set; }
-        /// <summary>
-        /// Request Uri Parameters
-        /// </summary>
-        public MoviesIdReturnUriParameters UriParameters { get; set; }
-
-    } // end class
-
-    /// <summary>
-    /// Request object for method Post of class Wishlist
-    /// </summary>
-    public partial class WishlistPostRequest : ApiRequest
-    {
-        public WishlistPostRequest(MoviesWishlistIdUriParameters UriParameters, HttpContent Content = null, MediaTypeFormatter Formatter = null)
-        {
-            this.Content = Content;
-            this.Formatter = Formatter;
-            this.UriParameters = UriParameters;
-        }
-
-        /// <summary>
-        /// Request content
-        /// </summary>
-        public HttpContent Content { get; set; }
-        /// <summary>
-        /// Request formatter
-        /// </summary>
-        public MediaTypeFormatter Formatter { get; set; }
-        /// <summary>
-        /// Request Uri Parameters
-        /// </summary>
-        public MoviesWishlistIdUriParameters UriParameters { get; set; }
-
-    } // end class
-
-    /// <summary>
-    /// Request object for method Delete of class Wishlist
-    /// </summary>
-    public partial class WishlistDeleteRequest : ApiRequest
-    {
-        public WishlistDeleteRequest(MoviesWishlistIdUriParameters UriParameters)
-        {
-            this.UriParameters = UriParameters;
-        }
-
-        /// <summary>
-        /// Request Uri Parameters
-        /// </summary>
-        public MoviesWishlistIdUriParameters UriParameters { get; set; }
-
-    } // end class
-
-    /// <summary>
-    /// Request object for method Get of class Movies
-    /// </summary>
-    public partial class MoviesGetRequest : ApiRequest
-    {
-        public MoviesGetRequest(GetMoviesHeader Headers = null)
-        {
-            this.Headers = Headers;
-        }
-
-        /// <summary>
-        /// Typed Request headers
-        /// </summary>
-        public GetMoviesHeader Headers { get; set; }
-
-    } // end class
-
-    /// <summary>
-    /// Request object for method Post of class Movies
-    /// </summary>
-    public partial class MoviesPostRequest : ApiRequest
-    {
-        public MoviesPostRequest(MoviesPostRequestContent Content = null, MediaTypeFormatter Formatter = null)
+        public EntriesPostRequest(Entry Content = null, MediaTypeFormatter Formatter = null)
         {
             this.Content = Content;
             this.Formatter = Formatter;
@@ -1550,7 +457,7 @@ namespace Movies.Models
         /// <summary>
         /// Request content
         /// </summary>
-        public MoviesPostRequestContent Content { get; set; }
+        public Entry Content { get; set; }
         /// <summary>
         /// Request formatter
         /// </summary>
@@ -1559,11 +466,11 @@ namespace Movies.Models
     } // end class
 
     /// <summary>
-    /// Request object for method GetById of class Movies
+    /// Request object for method GetByDevice of class Entries
     /// </summary>
-    public partial class MoviesGetByIdRequest : ApiRequest
+    public partial class EntriesGetByDeviceRequest : ApiRequest
     {
-        public MoviesGetByIdRequest(MoviesIdUriParameters UriParameters)
+        public EntriesGetByDeviceRequest(EntriesDeviceUriParameters UriParameters)
         {
             this.UriParameters = UriParameters;
         }
@@ -1571,43 +478,16 @@ namespace Movies.Models
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
-        public MoviesIdUriParameters UriParameters { get; set; }
+        public EntriesDeviceUriParameters UriParameters { get; set; }
 
     } // end class
 
     /// <summary>
-    /// Request object for method Put of class Movies
+    /// Request object for method Delete of class Entries
     /// </summary>
-    public partial class MoviesPutRequest : ApiRequest
+    public partial class EntriesDeleteRequest : ApiRequest
     {
-        public MoviesPutRequest(MoviesIdUriParameters UriParameters, IdPutRequestContent Content = null, MediaTypeFormatter Formatter = null)
-        {
-            this.Content = Content;
-            this.Formatter = Formatter;
-            this.UriParameters = UriParameters;
-        }
-
-        /// <summary>
-        /// Request content
-        /// </summary>
-        public IdPutRequestContent Content { get; set; }
-        /// <summary>
-        /// Request formatter
-        /// </summary>
-        public MediaTypeFormatter Formatter { get; set; }
-        /// <summary>
-        /// Request Uri Parameters
-        /// </summary>
-        public MoviesIdUriParameters UriParameters { get; set; }
-
-    } // end class
-
-    /// <summary>
-    /// Request object for method Delete of class Movies
-    /// </summary>
-    public partial class MoviesDeleteRequest : ApiRequest
-    {
-        public MoviesDeleteRequest(MoviesIdUriParameters UriParameters)
+        public EntriesDeleteRequest(EntriesDeviceUriParameters UriParameters)
         {
             this.UriParameters = UriParameters;
         }
@@ -1615,50 +495,23 @@ namespace Movies.Models
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
-        public MoviesIdUriParameters UriParameters { get; set; }
+        public EntriesDeviceUriParameters UriParameters { get; set; }
 
     } // end class
 
     /// <summary>
-    /// Request object for method Post of class Search
-    /// </summary>
-    public partial class SearchPostRequest : ApiRequest
-    {
-        public SearchPostRequest(HttpContent Content = null, MediaTypeFormatter Formatter = null, PostSearchQuery Query = null)
-        {
-            this.Content = Content;
-            this.Formatter = Formatter;
-            this.Query = Query;
-        }
-
-        /// <summary>
-        /// Request content
-        /// </summary>
-        public HttpContent Content { get; set; }
-        /// <summary>
-        /// Request formatter
-        /// </summary>
-        public MediaTypeFormatter Formatter { get; set; }
-        /// <summary>
-        /// Request query string properties
-        /// </summary>
-        public PostSearchQuery Query { get; set; }
-
-    } // end class
-
-    /// <summary>
-    /// Response object for method Get of class Wishlist
+    /// Response object for method Get of class Entries
     /// </summary>
 
-    public partial class WishlistGetResponse : ApiResponse
+    public partial class EntriesGetResponse : ApiResponse
     {
 
 
-	    private WishlistGetOKResponseContent[] typedContent;
+	    private Entry typedContent;
         /// <summary>
         /// Typed Response content
         /// </summary>
-        public WishlistGetOKResponseContent[] Content 
+        public Entry Content 
     	{
 	        get
 	        {
@@ -1666,8 +519,8 @@ namespace Movies.Models
 			        return typedContent;
 
 		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<WishlistGetOKResponseContent[]>(Formatters)
-                            : RawContent.ReadAsAsync<WishlistGetOKResponseContent[]>();
+                            ? RawContent.ReadAsAsync<Entry>(Formatters)
+                            : RawContent.ReadAsAsync<Entry>();
 		        task.Wait();
 		        typedContent = task.GetAwaiter().GetResult();
 		        return typedContent;
@@ -1677,156 +530,22 @@ namespace Movies.Models
     } // end class
 
     /// <summary>
-    /// Response object for method Get of class Rented
+    /// Response object for method Post of class Entries
     /// </summary>
 
-    public partial class RentedGetResponse : ApiResponse
-    {
-
-
-	    private RentedGetOKResponseContent[] typedContent;
-        /// <summary>
-        /// Typed Response content
-        /// </summary>
-        public RentedGetOKResponseContent[] Content 
-    	{
-	        get
-	        {
-		        if (typedContent != null)
-			        return typedContent;
-
-		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<RentedGetOKResponseContent[]>(Formatters)
-                            : RawContent.ReadAsAsync<RentedGetOKResponseContent[]>();
-		        task.Wait();
-		        typedContent = task.GetAwaiter().GetResult();
-		        return typedContent;
-	        }
-	    }
-
-    } // end class
-
-    /// <summary>
-    /// Response object for method Get of class Available
-    /// </summary>
-
-    public partial class AvailableGetResponse : ApiResponse
-    {
-
-
-	    private AvailableGetOKResponseContent[] typedContent;
-        /// <summary>
-        /// Typed Response content
-        /// </summary>
-        public AvailableGetOKResponseContent[] Content 
-    	{
-	        get
-	        {
-		        if (typedContent != null)
-			        return typedContent;
-
-		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<AvailableGetOKResponseContent[]>(Formatters)
-                            : RawContent.ReadAsAsync<AvailableGetOKResponseContent[]>();
-		        task.Wait();
-		        typedContent = task.GetAwaiter().GetResult();
-		        return typedContent;
-	        }
-	    }
-
-    } // end class
-
-    /// <summary>
-    /// Response object for method Get of class Movies
-    /// </summary>
-
-    public partial class MoviesGetResponse : ApiResponse
-    {
-
-	    private MultipleMoviesGet typedContent;
-        /// <summary>
-        /// Typed response content
-        /// </summary>
-        public MultipleMoviesGet Content 
-	    {
-	        get
-	        {
-		        if (typedContent != null) 
-					return typedContent;
-
-		        typedContent = new MultipleMoviesGet();
-		        var task = Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode), Formatters)
-                            : RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode));
-		        task.Wait();
-		        var content = task.GetAwaiter().GetResult();
-		        typedContent.SetPropertyByStatusCode(StatusCode, content);
-		        return typedContent;
-	        }
-    	}      
-		
-		public static string GetSchema(HttpStatusCode statusCode)
-        {
-            return MultipleMoviesGet.GetSchema(statusCode);
-        }
-  
-
-    } // end class
-
-    /// <summary>
-    /// Response object for method GetById of class Movies
-    /// </summary>
-
-    public partial class MoviesGetByIdResponse : ApiResponse
+    public partial class EntriesPostResponse : ApiResponse
     {
 
         /// <summary>
         /// Typed Response headers (defined in RAML)
         /// </summary>
-        public Models.MultipleGetByIdHeader Headers { get; set; }
-	    private MultipleIdGet typedContent;
-        /// <summary>
-        /// Typed response content
-        /// </summary>
-        public MultipleIdGet Content 
-	    {
-	        get
-	        {
-		        if (typedContent != null) 
-					return typedContent;
+        public Models.PostEntriesCreatedResponseHeader Headers { get; set; }
 
-		        typedContent = new MultipleIdGet();
-		        var task = Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode), Formatters)
-                            : RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode));
-		        task.Wait();
-		        var content = task.GetAwaiter().GetResult();
-		        typedContent.SetPropertyByStatusCode(StatusCode, content);
-		        return typedContent;
-	        }
-    	}      
-		
-		public static string GetSchema(HttpStatusCode statusCode)
-        {
-            return MultipleIdGet.GetSchema(statusCode);
-        }
-  
-
-    } // end class
-
-    /// <summary>
-    /// Response object for method Post of class Search
-    /// </summary>
-
-    public partial class SearchPostResponse : ApiResponse
-    {
-
-
-	    private SearchPostOKResponseContent[] typedContent;
+	    private Entry typedContent;
         /// <summary>
         /// Typed Response content
         /// </summary>
-        public SearchPostOKResponseContent[] Content 
+        public Entry Content 
     	{
 	        get
 	        {
@@ -1834,8 +553,38 @@ namespace Movies.Models
 			        return typedContent;
 
 		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<SearchPostOKResponseContent[]>(Formatters)
-                            : RawContent.ReadAsAsync<SearchPostOKResponseContent[]>();
+                            ? RawContent.ReadAsAsync<Entry>(Formatters)
+                            : RawContent.ReadAsAsync<Entry>();
+		        task.Wait();
+		        typedContent = task.GetAwaiter().GetResult();
+		        return typedContent;
+	        }
+	    }
+
+    } // end class
+
+    /// <summary>
+    /// Response object for method GetByDevice of class Entries
+    /// </summary>
+
+    public partial class EntriesGetByDeviceResponse : ApiResponse
+    {
+
+
+	    private Entry typedContent;
+        /// <summary>
+        /// Typed Response content
+        /// </summary>
+        public Entry Content 
+    	{
+	        get
+	        {
+		        if (typedContent != null)
+			        return typedContent;
+
+		        var task =  Formatters != null && Formatters.Any() 
+                            ? RawContent.ReadAsAsync<Entry>(Formatters)
+                            : RawContent.ReadAsAsync<Entry>();
 		        task.Wait();
 		        typedContent = task.GetAwaiter().GetResult();
 		        return typedContent;

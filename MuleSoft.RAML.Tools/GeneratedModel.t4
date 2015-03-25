@@ -476,7 +476,7 @@ namespace $(namespace)
 namespace $(namespace).Models
 {
 <#
-foreach (var apiObject in model.Objects.Values.Where(o => o.Properties.Any()))
+foreach (var apiObject in model.Objects.Values)
 {
 	if (!string.IsNullOrWhiteSpace(apiObject.Description))
 	{
@@ -485,11 +485,23 @@ foreach (var apiObject in model.Objects.Values.Where(o => o.Properties.Any()))
     /// <#= apiObject.Description #>
     /// </summary>
 <#
-	}
+	}	
+	
+	if(!apiObject.IsMultiple && apiObject.BaseClass != null) 
+	{
 #>
-    public partial class <#= apiObject.Name #> <#= apiObject.IsMultiple ? ": ApiMultipleResponse" : string.Empty #>
+    public partial class <#= apiObject.Name #> <#= " : " +  apiObject.BaseClass #>
     {
 <#
+	} 
+	else 
+	{
+#>
+    public <#= (apiObject.Properties.Any()) ? "partial class " : "abstract class " #> <#= apiObject.Name #> <#= apiObject.IsMultiple ? ": ApiMultipleResponse" : string.Empty #>
+    {
+<#
+	} 
+
 	if (apiObject.IsMultiple)
 	{
 #>
