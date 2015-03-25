@@ -519,9 +519,9 @@ namespace Fstab.Models
 			        return typedContent;
 
 		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<Entry>(Formatters)
-                            : RawContent.ReadAsAsync<Entry>();
-		        task.Wait();
+                            ? RawContent.ReadAsAsync<Entry>(Formatters).ConfigureAwait(false)
+                            : RawContent.ReadAsAsync<Entry>().ConfigureAwait(false);
+		        
 		        typedContent = task.GetAwaiter().GetResult();
 		        return typedContent;
 	        }
@@ -553,9 +553,9 @@ namespace Fstab.Models
 			        return typedContent;
 
 		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<Entry>(Formatters)
-                            : RawContent.ReadAsAsync<Entry>();
-		        task.Wait();
+                            ? RawContent.ReadAsAsync<Entry>(Formatters).ConfigureAwait(false)
+                            : RawContent.ReadAsAsync<Entry>().ConfigureAwait(false);
+		        
 		        typedContent = task.GetAwaiter().GetResult();
 		        return typedContent;
 	        }
@@ -583,9 +583,9 @@ namespace Fstab.Models
 			        return typedContent;
 
 		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<Entry>(Formatters)
-                            : RawContent.ReadAsAsync<Entry>();
-		        task.Wait();
+                            ? RawContent.ReadAsAsync<Entry>(Formatters).ConfigureAwait(false)
+                            : RawContent.ReadAsAsync<Entry>().ConfigureAwait(false);
+		        
 		        typedContent = task.GetAwaiter().GetResult();
 		        return typedContent;
 	        }
