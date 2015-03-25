@@ -8,10 +8,21 @@ namespace RAML.Api.Core
 {
     public class SchemaValidationException : Exception
     {
-        public SchemaValidationException() { }
+        public IList<string> Errors { get; private set; }
 
-        public SchemaValidationException(string message) : base(message) { }
+        public SchemaValidationException(IList<string> errors) 
+        {
+            this.Errors = errors;
+        }
 
-        public SchemaValidationException(string message, Exception innerException) : base(message, innerException) { }
+        public SchemaValidationException(string message, IList<string> errors) : base(message) 
+        {
+            this.Errors = errors;
+        }
+
+        public SchemaValidationException(string message, Exception innerException, IList<string> errors) : base(message, innerException) 
+        {
+            this.Errors = errors;
+        }
     }
 }

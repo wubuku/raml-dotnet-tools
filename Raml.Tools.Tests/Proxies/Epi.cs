@@ -54,7 +54,7 @@ namespace EPiServerServiceAPI
                 RawHeaders = response.Headers,
                 StatusCode = response.StatusCode,
                 ReasonPhrase = response.ReasonPhrase,
-                IsValid = new Lazy<bool>(() => SchemaValidator.IsValid(Models.TokenPostResponse.GetSchema(response.StatusCode), response.Content), true)
+                SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid(Models.TokenPostResponse.GetSchema(response.StatusCode), response.Content), true)
             };
 
         }
@@ -94,7 +94,7 @@ namespace EPiServerServiceAPI
                 Formatters = responseFormatters,
                 StatusCode = response.StatusCode,
                 ReasonPhrase = response.ReasonPhrase,
-                IsValid = new Lazy<bool>(() => SchemaValidator.IsValid(Models.TokenPostResponse.GetSchema(response.StatusCode), response.Content), true)
+                SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid(Models.TokenPostResponse.GetSchema(response.StatusCode), response.Content), true)
             };
         }
 
@@ -140,7 +140,7 @@ namespace EPiServerServiceAPI
                 RawHeaders = response.Headers,
                 StatusCode = response.StatusCode,
                 ReasonPhrase = response.ReasonPhrase,
-                IsValid = new Lazy<bool>(() => SchemaValidator.IsValid("{  \"$schema\": \"http://json-schema.org/draft-04/schema#\",  \"title\": \"API Version\",  \"description\": \"A Version description for the EPiServer ServiceAPI\",  \"type\": \"object\",  \"properties\": {    \"Component\": {      \"type\": \"string\"    },    \"Version\": {      \"type\": \"string\"    }  },  \"required\": [\"Component\", \"Version\"]}", response.Content), true)
+                SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid("{  \"$schema\": \"http://json-schema.org/draft-04/schema#\",  \"title\": \"API Version\",  \"description\": \"A Version description for the EPiServer ServiceAPI\",  \"type\": \"object\",  \"properties\": {    \"Component\": {      \"type\": \"string\"    },    \"Version\": {      \"type\": \"string\"    }  },  \"required\": [\"Component\", \"Version\"]}", response.Content), true)
             };
 
         }
@@ -182,7 +182,7 @@ namespace EPiServerServiceAPI
                 Formatters = responseFormatters,
                 StatusCode = response.StatusCode,
                 ReasonPhrase = response.ReasonPhrase,
-                IsValid = new Lazy<bool>(() => SchemaValidator.IsValid("{  \"$schema\": \"http://json-schema.org/draft-04/schema#\",  \"title\": \"API Version\",  \"description\": \"A Version description for the EPiServer ServiceAPI\",  \"type\": \"object\",  \"properties\": {    \"Component\": {      \"type\": \"string\"    },    \"Version\": {      \"type\": \"string\"    }  },  \"required\": [\"Component\", \"Version\"]}", response.Content), true)
+                SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid("{  \"$schema\": \"http://json-schema.org/draft-04/schema#\",  \"title\": \"API Version\",  \"description\": \"A Version description for the EPiServer ServiceAPI\",  \"type\": \"object\",  \"properties\": {    \"Component\": {      \"type\": \"string\"    },    \"Version\": {      \"type\": \"string\"    }  },  \"required\": [\"Component\", \"Version\"]}", response.Content), true)
             };
         }
 

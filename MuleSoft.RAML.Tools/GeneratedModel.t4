@@ -135,7 +135,7 @@ namespace $(namespace)
 #>
 	        var response = await proxy.Client.SendAsync(req);
 <#
-            string validationCall = "new Lazy<bool>(() => true, true)";
+            string validationCall = "new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)";
             string validationWithException = "";
 
             if (method.ResponseType != "ApiResponse")
@@ -145,7 +145,7 @@ namespace $(namespace)
 					method.ResponseType + ".GetSchema(response.StatusCode)";
                 
 				validationWithException = String.Format("await SchemaValidator.ValidateWithExceptionAsync({0}, response.Content)", jsonSchema);
-                validationCall = String.Format("new Lazy<bool>(() => SchemaValidator.IsValid({0}, response.Content), true)", jsonSchema);
+                validationCall = String.Format("new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid({0}, response.Content), true)", jsonSchema);
 #>
 			
 			if (proxy.SchemaValidation.Enabled)
@@ -187,7 +187,7 @@ namespace $(namespace)
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase,
-												IsValid = <#= validationCall #>
+												SchemaValidation = <#= validationCall #>
                                             };
 
         }
@@ -352,7 +352,7 @@ namespace $(namespace)
 <#                  }  #>
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase,
-												IsValid = <#= validationCall #>
+												SchemaValidation = <#= validationCall #>
                                             };
 <#
                 

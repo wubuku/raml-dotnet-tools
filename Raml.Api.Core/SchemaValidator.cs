@@ -16,31 +16,31 @@ namespace RAML.Api.Core
     {
         public static async Task ValidateWithExceptionAsync(string rawSchema, HttpContent content)
         {
-            var isValid = await IsValidAsync(rawSchema, content);
-            if (!isValid)
+            var results = await IsValidAsync(rawSchema, content);
+            if (!results.IsValid)
             {
-                throw new SchemaValidationException("The response is not valid according to the associated schema");
+                throw new SchemaValidationException("The response is not valid according to the associated schema", results.Errors);
             }
         }
 
-        public static async Task<bool> IsValidAsync(string rawSchema, HttpContent content)
+        public static async Task<SchemaValidationResults> IsValidAsync(string rawSchema, HttpContent content)
         {
             if (!content.Headers.ContentType.MediaType.Equals("application/json",
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                return true;
+                return new SchemaValidationResults(true, new List<string>());
             }
 
             var rawContent = await content.ReadAsStringAsync();
             return IsValidJSON(rawSchema, rawContent);
         }
 
-        public static bool IsValid(string rawSchema, HttpContent content)
+        public static SchemaValidationResults IsValid(string rawSchema, HttpContent content)
         {
             if (!content.Headers.ContentType.MediaType.Equals("application/json",
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                return true;
+                return new SchemaValidationResults(true, new List<string>());
             }
 
             var readTask = content.ReadAsStringAsync().ConfigureAwait(false);
@@ -50,7 +50,7 @@ namespace RAML.Api.Core
 
         }
 
-        private static bool IsValidJSON(string rawSchema, string responseString)
+        private static SchemaValidationResults IsValidJSON(string rawSchema, string responseString)
         {
             JsonSchema schema;
             v4SchemaNS.JsonSchema v4Schema;
@@ -61,39 +61,35 @@ namespace RAML.Api.Core
             else
                 data = JObject.Parse(responseString);
 
+            IList<string> errors;
+
             try
             {
                 schema = JsonSchema.Parse(rawSchema);
 
-                if (!data.IsValid(schema))
+                if (!data.IsValid(schema, out errors))
                 {
-                    return false;
+                    return new SchemaValidationResults (false, errors);
                 }
             }
             catch (Exception)
             {
-                try
-                {
-                    v4Schema = v4SchemaNS.JsonSchema.Parse(rawSchema);
+                v4Schema = v4SchemaNS.JsonSchema.Parse(rawSchema);
                     
-                    v4LinqNS.JToken datav4 = null;
-                    if (responseString.StartsWith("["))
-                        datav4 = v4LinqNS.JArray.Parse(responseString);
-                    else
-                        datav4 = v4LinqNS.JObject.Parse(responseString);
+                v4LinqNS.JToken datav4 = null;
+                if (responseString.StartsWith("["))
+                    datav4 = v4LinqNS.JArray.Parse(responseString);
+                else
+                    datav4 = v4LinqNS.JObject.Parse(responseString);
                                         
-                    if (!v4SchemaNS.Extensions.IsValid(datav4, v4Schema))
-                    {
-                        return false;
-                    }
-                }
-                catch (Exception)
+                if (!v4SchemaNS.Extensions.IsValid(datav4, v4Schema, out errors))
                 {
-                    return false;
+                    return new SchemaValidationResults(false, errors);
                 }
+                
             }
 
-            return true;
+            return new SchemaValidationResults(true, new List<string>());
         }
     }
 }

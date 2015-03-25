@@ -11,7 +11,7 @@ namespace RAML.Api.Core
 	{
 		public HttpStatusCode StatusCode { get; set; }
 		public string ReasonPhrase { get; set; }
-        public Lazy<bool> IsValid { get; set; }
+        public Lazy<SchemaValidationResults> SchemaValidation { get; set; }
 
 
 

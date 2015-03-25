@@ -29,7 +29,7 @@ namespace Raml.Tools.Tests
 
             var movies = await proxy.Movies.Get();
 
-            Assert.IsFalse(movies.IsValid.Value);
+            Assert.IsFalse(movies.SchemaValidation.Value.IsValid);
                         
         }
 
@@ -52,7 +52,7 @@ namespace Raml.Tools.Tests
 
             var movies = await proxy.Movies.Get();
 
-            Assert.IsTrue(movies.IsValid.Value);
+            Assert.IsTrue(movies.SchemaValidation.Value.IsValid);
 
         }
 
@@ -75,7 +75,7 @@ namespace Raml.Tools.Tests
 
             var movies = await proxy.Movies.Get();
 
-            Assert.IsTrue(movies.IsValid.Value);
+            Assert.IsTrue(movies.SchemaValidation.Value.IsValid);
 
         }
 
@@ -121,7 +121,7 @@ namespace Raml.Tools.Tests
 
             var movies = await proxy.Movies.Get();
 
-
+            Assert.IsNotNull(movies);
         }
 
         [TestMethod]
@@ -143,7 +143,7 @@ namespace Raml.Tools.Tests
 
             var movies = await proxy.Movies.Get();
 
-
+            Assert.IsNotNull(movies);
         }
 
         [TestMethod]
@@ -166,7 +166,7 @@ namespace Raml.Tools.Tests
 
             var version = await proxy.Version.Get();
 
-            Assert.IsTrue(version.IsValid.Value);
+            Assert.IsTrue(version.SchemaValidation.Value.IsValid);
 
         }
 
