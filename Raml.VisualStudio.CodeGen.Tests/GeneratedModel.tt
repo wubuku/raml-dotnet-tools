@@ -95,7 +95,7 @@ namespace <#= model.Namespace #>
 		            {
 #>
                 if(<#= method.Query.Name.ToLower() #>.<#= property.Name #> != null)
-                    url += "&<#= method.Query.Name.ToLower() #>.<#= property.Name #>=" + <#= method.Query.Name.ToLower() #>.<#= property.Name #>;
+					url += "&<#= property.Name #>=" + <#= method.Query.Name.ToLower() #>.<#= property.Name #>;
 <#
         		    }
 #>

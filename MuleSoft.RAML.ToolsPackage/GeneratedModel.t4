@@ -84,7 +84,7 @@ namespace $(namespace)
 		            {
 #>
                 if(<#= method.Query.Name.ToLower() #>.<#= property.Name #> != null)
-                    url += "&<#= method.Query.Name.ToLower() #>.<#= property.Name #>=" + <#= method.Query.Name.ToLower() #>.<#= property.Name #>;
+					url += "&<#= property.Name #>=" + <#= method.Query.Name.ToLower() #>.<#= property.Name #>;
 <#
         		    }
 #>
@@ -205,7 +205,7 @@ namespace $(namespace)
 		            {
 #>
                 if(request.Query.<#= property.Name #> != null)
-                    url += "&<#= property.Name #>=" + request.Query.<#= property.Name #>;
+                    url += "&<#= property.OriginalName #>=" + request.Query.<#= property.Name #>;
 <#
 		            }
 #>
