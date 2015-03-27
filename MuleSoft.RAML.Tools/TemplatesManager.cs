@@ -18,7 +18,7 @@ namespace MuleSoft.RAML.Tools
         private const string TitlePrefix = "// title:";
 		private const string VersionPrefix = "// version:";
 		private readonly string ServerTemplatesVersion = Settings.Default.ServerTemplatesVersion;
-		private readonly string ClientTemplatesVersion = Settings.Default.ServerTemplatesVersion;
+		private readonly string ClientTemplatesVersion = Settings.Default.ClientTemplatesVersion;
 
 		public void CopyServerTemplateToProjectFolder(string generatedFolderPath, string templateName, string title)
 		{
@@ -111,22 +111,27 @@ namespace MuleSoft.RAML.Tools
 		}
 
 	    private void ManageTemplateThatWasCustomized(string templateName, string destTemplateFilePath,
-			string sourceTemplateFilePath, string version, string title)
-		{
-			if (IsTheSameVersion(destTemplateFilePath, version))
-				return;
+	        string sourceTemplateFilePath, string version, string title)
+	    {
+	        if (IsTheSameVersion(destTemplateFilePath, version))
+	            return;
 
-				var dialogResult =
-					MessageBox.Show(
-						string.Format("Template {0} has changed. Do you want to override it and loose your changes?", templateName),
-						"Confirmation",
-						MessageBoxButton.YesNo, MessageBoxImage.Question);
+	        if (IsVersionCompatible(destTemplateFilePath, version))
+	        {
+	            var text = string.Format("Template {0} has changed. Do you want to override it and loose your changes?",
+	                templateName);
+	            var dialogResult = MessageBox.Show(text, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-				if (dialogResult == MessageBoxResult.Yes)
-					CopyTemplateAndAddMetadata(sourceTemplateFilePath, destTemplateFilePath, version, title);
-		}
+	            if (dialogResult == MessageBoxResult.Yes)
+	                CopyTemplateAndAddMetadata(sourceTemplateFilePath, destTemplateFilePath, version, title);
+	        }
+	        else
+	        {
+	            CopyTemplateAndAddMetadata(sourceTemplateFilePath, destTemplateFilePath, version, title);
+	        }
+	    }
 
-		private bool IsVersionCompatible(string templateFilePath, string newTemplatesVersion)
+	    private bool IsVersionCompatible(string templateFilePath, string newTemplatesVersion)
 		{
 			var installedVersion = GetVersion(templateFilePath);
 			var numbers = installedVersion.Split('.');
