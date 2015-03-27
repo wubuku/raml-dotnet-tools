@@ -25,7 +25,7 @@ namespace Raml.Common
 			private set;
 		}
 
-		public Result TransformText(string templatePath, ClientGeneratorModel model, string path, string ramlFile, string targetNamespace)
+		public Result TransformText(string templatePath, ClientGeneratorModel model, string binPath, string ramlFile, string targetNamespace)
 		{
 			// Get the T4 engine from VS
 			var textTemplating = ServiceProvider.GetService(typeof (STextTemplating)) as ITextTemplating;
@@ -35,7 +35,7 @@ namespace Raml.Common
 
 			// Read the T4 from disk into memory
 			var templateFileContent = File.ReadAllText(templatePath);
-			templateFileContent = templateFileContent.Replace("$(binDir)", path);
+			templateFileContent = templateFileContent.Replace("$(binDir)", binPath);
 			templateFileContent = templateFileContent.Replace("$(ramlFile)", ramlFile.Replace("\\", "\\\\"));
 			templateFileContent = templateFileContent.Replace("$(namespace)", targetNamespace);
 
@@ -51,7 +51,7 @@ namespace Raml.Common
 			return new Result { Content = content, HasErrors = content.StartsWith("ErrorGeneratingOutput"), Errors = errors, Messages = messages };
 		}
 
-		public Result TransformText<T>(string templatePath, string paramName, T param)
+		public Result TransformText<T>(string templatePath, string paramName, T param, string binPath, string targetNamespace)
 		{
 			// Get the T4 engine from VS
 			var textTemplating = ServiceProvider.GetService(typeof(STextTemplating)) as ITextTemplating;
@@ -61,6 +61,8 @@ namespace Raml.Common
 
 			// Read the T4 from disk into memory
 			var templateFileContent = File.ReadAllText(templatePath);
+			templateFileContent = templateFileContent.Replace("$(binDir)", binPath);
+			templateFileContent = templateFileContent.Replace("$(namespace)", targetNamespace);
 
 			// Initialize the T4 host so we can transfer the Dictionary contents
 			// into the new app domain in which the host runs
