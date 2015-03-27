@@ -1,7 +1,7 @@
 ﻿<#@ template debug="true" hostspecific="true" language="C#" #>
-<#@ assembly name="$(SolutionDir)RAML.Parser\bin\Debug\RAML.Parser.dll" #>
-<#@ assembly name="$(SolutionDir)Raml.VisualStudio.Tools\bin\Debug\Raml.Tools.dll" #>
-<#@ assembly name="$(SolutionDir)RAML.Parser\bin\Debug\EdgeJs.dll" #>
+<#@ assembly name="$(SolutionDir)RAML.CodeGen.Tests\bin\Debug\RAML.Parser.dll" #>
+<#@ assembly name="$(SolutionDir)RAML.CodeGen.Tests\bin\Debug\EdgeJs.dll" #>
+<#@ assembly name="$(SolutionDir)Raml.Tools\bin\Debug\Raml.Tools.dll" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="Raml.Parser" #>
 <#@ import namespace="Raml.Tools" #>
@@ -15,7 +15,7 @@
 	var raml = parser.Load(ramlFile);
 	var service = new WebApiGeneratorService(raml);
 	var model = service.BuildModel();
-	var classObject = model.Controllers.First();
+	var controllerObject = model.Controllers.First();
 #>
 
 using System;
@@ -25,20 +25,17 @@ using System.Web.Http;
 
 namespace <#= model.Namespace #>
 {
-    [RoutePrefix("<#= classObject.PrefixUri #>")]
-    public partial class <#= classObject.Name #>Controller : ApiController
+	public partial class <#= controllerObject.Name #>Controller : I<#= controllerObject.Name #>Controller
     {
 
 <#
-		foreach (var method in classObject.Methods)
+		foreach (var method in controllerObject.Methods)
 		{
 #>
 
-        /// <#= method.Comment ?? string.Empty #>
-        [Http<#= method.Verb #>]
-        [Route("<#= method.Url #>")]
-        public virtual async Task<IHttpActionResult> <#= method.Name #>(<#= method.ParametersString #>)
+        public IHttpActionResult <#= method.Name #>(<#= method.ParametersString #>)
         {
+            // put your code here
             return Ok();
         }
 

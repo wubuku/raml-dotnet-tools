@@ -100,6 +100,7 @@ namespace Raml.Tools
 				var prop = new Property
 				           {
 					           Name = NetNamingMapper.GetPropertyName(kv.Key),
+                               OriginalName = kv.Key,
 					           Type = NetTypeMapper.Map(kv.Value.Type),
 					           Description = kv.Value.Description
 				           };
@@ -121,6 +122,7 @@ namespace Raml.Tools
 				var prop = new Property
 				           {
 					           Name = NetNamingMapper.GetPropertyName(property.Key),
+                               OriginalName = property.Key,
 					           Type = NetTypeMapper.Map(property.Value.Type),
 					           Description = property.Value.Description
 				           };
@@ -165,6 +167,7 @@ namespace Raml.Tools
 				var prop = new Property
 				           {
 					           Name = NetNamingMapper.GetPropertyName(kv.Key),
+                               OriginalName = kv.Key,
 					           Type = NetTypeMapper.Map(kv.Value.Type),
 					           Description = kv.Value.Description
 				           };
@@ -210,6 +213,7 @@ namespace Raml.Tools
 				var prop = new Property
 				           {
 					           Name = NetNamingMapper.GetPropertyName(key),
+                               OriginalName = key,
 					           Type = NetTypeMapper.Map(property.Value.Type),
 					           Description = property.Value.Description
 				           };

@@ -205,7 +205,7 @@ namespace $(namespace)
 		            {
 #>
                 if(request.Query.<#= property.Name #> != null)
-                    url += "&<#= property.OriginalName #>=" + request.Query.<#= property.Name #>;
+                    url += "&<#= property.OriginalName ?? property.Name #>=" + request.Query.<#= property.Name #>;
 <#
 		            }
 #>
@@ -461,7 +461,11 @@ foreach (var apiObject in model.Objects.Values.Where(o => o.Properties.Any()))
         /// </summary>
 <#
     	}
+		if(!string.IsNullOrWhiteSpace(property.OriginalName) && property.OriginalName != property.Name)
+		{
 #>
+		[JsonProperty("<#= property.OriginalName #>")]
+<#		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
 <#
 	}
@@ -497,8 +501,13 @@ foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any())
         /// <#= property.Description #>
         /// </summary>
 <#
-	}
+		}
+
+		if(!string.IsNullOrWhiteSpace(property.OriginalName) && property.OriginalName != property.Name)
+		{
 #>
+		[JsonProperty("<#= property.OriginalName #>")]
+<#		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
 <#
 	}
@@ -574,7 +583,12 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
         /// </summary>
 <#
 	    }
+
+		if(!string.IsNullOrWhiteSpace(property.OriginalName) && property.OriginalName != property.Name)
+		{
 #>
+		[JsonProperty("<#= property.OriginalName #>")]
+<#		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
 <#
 	}
