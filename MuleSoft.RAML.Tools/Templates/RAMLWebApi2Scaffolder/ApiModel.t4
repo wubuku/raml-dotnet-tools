@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace $(namespace).Models
 {
@@ -38,7 +39,12 @@ namespace $(namespace).Models
         /// </summary>
 <#
 	    }
+		
+		if(!string.IsNullOrWhiteSpace(property.OriginalName) && property.OriginalName != property.Name)
+		{
 #>
+		[JsonProperty("<#= property.OriginalName #>")]
+<#		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
 <#
 	}

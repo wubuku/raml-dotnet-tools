@@ -53,6 +53,7 @@ namespace Raml.Tools
                                {
                                    Type = type + typeSuffix,
                                    Name = NetNamingMapper.GetPropertyName(header.DisplayName),
+                                   OriginalName = header.DisplayName,
                                    Description = description,
                                    Example = header.Example,
                                    Required = header.Required

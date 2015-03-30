@@ -1,7 +1,7 @@
 ﻿<#@ template debug="true" hostspecific="true" language="C#" #>
-<#@ assembly name="$(SolutionDir)RAML.Parser\bin\Debug\RAML.Parser.dll" #>
-<#@ assembly name="$(SolutionDir)Raml.VisualStudio.Tools\bin\Debug\Raml.Tools.dll" #>
-<#@ assembly name="$(SolutionDir)RAML.Parser\bin\Debug\EdgeJs.dll" #>
+<#@ assembly name="$(SolutionDir)RAML.CodeGen.Tests\bin\Debug\RAML.Parser.dll" #>
+<#@ assembly name="$(SolutionDir)RAML.CodeGen.Tests\bin\Debug\EdgeJs.dll" #>
+<#@ assembly name="$(SolutionDir)Raml.Tools\bin\Debug\Raml.Tools.dll" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="Raml.Parser" #>
 <#@ import namespace="Raml.Tools" #>
@@ -20,12 +20,14 @@
 
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
-namespace <#= model.Namespace #>.Objects
+namespace <#= model.Namespace #>.Models
 {
 <#
 foreach (var apiObject in model.Objects.Values.Where(o => o.Properties.Any()))
 {
+
 	if (!string.IsNullOrWhiteSpace(apiObject.Description))
 	{
 #>
@@ -48,8 +50,12 @@ foreach (var apiObject in model.Objects.Values.Where(o => o.Properties.Any()))
         /// <#= property.Description #>
         /// </summary>
 <#
-	}
+	    }
+		
+		if(!string.IsNullOrWhiteSpace(property.OriginalName) && property.OriginalName != property.Name)
+		{
 #>
+		[JsonProperty("<#= property.OriginalName #>")]<# } #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
 <#
 	}

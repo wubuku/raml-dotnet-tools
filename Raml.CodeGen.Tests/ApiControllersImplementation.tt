@@ -1,7 +1,7 @@
 ﻿<#@ template debug="true" hostspecific="true" language="C#" #>
-<#@ assembly name="$(SolutionDir)RAML.Parser\bin\Debug\RAML.Parser.dll" #>
-<#@ assembly name="$(SolutionDir)Raml.VisualStudio.Tools\bin\Debug\Raml.Tools.dll" #>
-<#@ assembly name="$(SolutionDir)RAML.Parser\bin\Debug\EdgeJs.dll" #>
+<#@ assembly name="$(SolutionDir)RAML.CodeGen.Tests\bin\Debug\RAML.Parser.dll" #>
+<#@ assembly name="$(SolutionDir)RAML.CodeGen.Tests\bin\Debug\EdgeJs.dll" #>
+<#@ assembly name="$(SolutionDir)Raml.Tools\bin\Debug\Raml.Tools.dll" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="Raml.Parser" #>
 <#@ import namespace="Raml.Tools" #>
@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using <#= model.Namespace #>.Objects;
+using <#= model.Namespace #>.Models;
 
 namespace <#= model.Namespace #>
 {
@@ -30,7 +30,7 @@ namespace <#= model.Namespace #>
 	foreach (var controllerObject in model.Controllers)
 	{
 #>
-    public partial class <#= controllerObject.Name #>Controller : ApiController
+	public partial class <#= controllerObject.Name #>Controller : I<#= controllerObject.Name #>Controller
     {
 
 <#
@@ -38,23 +38,14 @@ namespace <#= model.Namespace #>
 		{
 #>
 
-        <#= method.XmlComment ?? string.Empty #>
-<#
-    if (method.ReturnType != null && method.ReturnType != "string")
-    {
-#>
-        [ResponseType(typeof(<#= method.ReturnType #>))]
-<#
-    }
-#>
-        [Http<#= method.Verb #>]
-        [Route("<#= method.Url #>")]
-        public virtual IHttpActionResult <#= method.Name #>Base(<#= method.ParametersString #>)
+        public IHttpActionResult <#= method.Name #>(<#= method.ParametersString #>)
         {
-            return <#= method.Name #>(<#= method.ParametersCallString #>);
+            // put your code here
+            return Ok();
         }
 
 <#
+
 		}
 #>
     }

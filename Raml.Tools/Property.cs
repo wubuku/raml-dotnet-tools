@@ -25,11 +25,11 @@ namespace Raml.Tools
 			set { name = value; }
 		}
 
+        public string OriginalName { get; set; }
 		public string Description { get; set; }
 		public string Type { get; set; }
 		public string Example { get; set; }
 		public bool Required { get; set; }
-
 		public HttpStatusCode StatusCode { get; set; }
 	}
 }
