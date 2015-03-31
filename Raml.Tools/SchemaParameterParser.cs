@@ -15,58 +15,106 @@ namespace Raml.Tools
 
 		public string Parse(string schema, Resource resource, Method method, string fullUrl)
 		{
-			var url = resource.RelativeUri;
-			url = ReplaceUriParameters(url);
+			var url = GetResourcePath(resource, fullUrl);
 
-			if (string.IsNullOrWhiteSpace(url) || url.Trim() == "/")
-			{
-				fullUrl = ReplaceUriParameters(fullUrl);
-				url = fullUrl;
-			}
-
-			url = url.TrimEnd('/');
-			if (!url.StartsWith("/"))
-				url = "/" + url;
-
-			var res = schema.Replace("<<resourcePathName>>", url.Substring(1));
-			res = res.Replace("<<resourcePath>>", url);
-			if(method != null && method.Verb != null)
-				res = res.Replace("<<methodName>>", method.Verb.ToLower());
-
-			var regex = new Regex(@"\<\<(resourcePathName|resourcePath|methodName)\s?\|\s?\!(pluralize|singularize)\>\>", RegexOptions.IgnoreCase);
-			var matchCollection = regex.Matches(res);
-			foreach (Match match in matchCollection)
-			{
-				string replacementWord;
-				switch (match.Groups[1].Value)
-				{
-					case "resourcePathName":
-						replacementWord = url.Substring(1);
-						break;
-					case "resourcePath":
-						replacementWord = url.Substring(1);
-						break;
-					case "methodName":
-						replacementWord = url.Substring(1);
-						break;
-					default:
-						continue;
-				}
-
-				if (match.Groups[2].Value == "singularize")
-				{
-					res = res.Replace(match.Groups[0].Value, Singularize(replacementWord));
-				}
-				else if (match.Groups[2].Value == "pluralize")
-				{
-					res = res.Replace(match.Groups[0].Value, Pluralize(replacementWord));
-				}
-			}
+		    var res = ReplaceReservedParameters(schema, method, url);
+            res = ReplaceCustomParameters(resource, res);
+		    res = ReplaceParametersWithFunctions(resource, res, url);
 
 			return res;
 		}
 
-		private static string ReplaceUriParameters(string fullUrl)
+	    private static string GetResourcePath(Resource resource, string fullUrl)
+	    {
+	        var url = resource.RelativeUri;
+	        url = ReplaceUriParameters(url);
+
+	        if (string.IsNullOrWhiteSpace(url) || url.Trim() == "/")
+	        {
+	            fullUrl = ReplaceUriParameters(fullUrl);
+	            url = fullUrl;
+	        }
+
+	        url = url.TrimEnd('/');
+	        if (!url.StartsWith("/"))
+	            url = "/" + url;
+	        return url;
+	    }
+
+	    private static string ReplaceReservedParameters(string schema, Method method, string url)
+	    {
+	        var res = schema.Replace("<<resourcePathName>>", url.Substring(1));
+	        res = res.Replace("<<resourcePath>>", url);
+	        if (method != null && method.Verb != null)
+	            res = res.Replace("<<methodName>>", method.Verb.ToLower());
+	        return res;
+	    }
+
+	    private static string ReplaceCustomParameters(Resource resource, string res)
+	    {
+	        var regex = new Regex(@"\<\<([^>]+)\>\>", RegexOptions.IgnoreCase);
+	        var matchCollection = regex.Matches(res);
+	        foreach (Match match in matchCollection)
+	        {
+                if(resource.Type == null)
+                    continue;
+
+	            var paramFound = match.Groups[1].Value;
+	            var type = resource.GetResourceType();
+	            if (string.IsNullOrWhiteSpace(type) || !resource.Type.ContainsKey(type) || resource.Type[type] == null || !resource.Type[type].ContainsKey(paramFound))
+	                continue;
+
+	            var value = resource.Type[type][paramFound];
+	            res = res.Replace("<<" + paramFound + ">>", value);
+	        }
+
+	        return res;
+	    }
+
+	    private string ReplaceParametersWithFunctions(Resource resource, string res, string url)
+	    {
+	        var regex = new Regex(@"\<\<([a-z_-]+)\s?\|\s?\!(pluralize|singularize)\>\>", RegexOptions.IgnoreCase);
+	        var matchCollection = regex.Matches(res);
+	        foreach (Match match in matchCollection)
+	        {
+	            string replacementWord;
+	            switch (match.Groups[1].Value)
+	            {
+	                case "resourcePathName":
+	                    replacementWord = url.Substring(1);
+	                    break;
+	                case "resourcePath":
+	                    replacementWord = url.Substring(1);
+	                    break;
+	                case "methodName":
+	                    replacementWord = url.Substring(1);
+	                    break;
+	                default:
+	                    var paramFound = match.Groups[1].Value;
+	                    var type = resource.GetResourceType();
+	                    if (string.IsNullOrWhiteSpace(type))
+	                        continue;
+
+	                    if (!resource.Type[type].ContainsKey(paramFound))
+	                        continue;
+
+	                    replacementWord = resource.Type[type][paramFound];
+	                    break;
+	            }
+
+	            if (match.Groups[2].Value == "singularize")
+	            {
+	                res = res.Replace(match.Groups[0].Value, Singularize(replacementWord));
+	            }
+	            else if (match.Groups[2].Value == "pluralize")
+	            {
+	                res = res.Replace(match.Groups[0].Value, Pluralize(replacementWord));
+	            }
+	        }
+	        return res;
+	    }
+
+	    private static string ReplaceUriParameters(string fullUrl)
 		{
 			var regexParams = new Regex(@"\{[^\}]+\}");
 			fullUrl = regexParams.Replace(fullUrl, string.Empty);

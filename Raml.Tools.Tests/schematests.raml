@@ -45,7 +45,12 @@ resourceTypes:
             body:
               schema: <<schema-type>>
               example: <<example-member>>
-
+  - sender:
+      post:
+        description: Create/add a new <<schema-type>>
+        body:
+          schema: <<schema-type>>
+          example: <<example-member>>
 schemas:
   - things: |
       {
@@ -104,7 +109,27 @@ schemas:
           }
         }
       }
-
+  - thingRequest: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema",
+        "type": "object",
+        "properties": 
+        {
+          "name": { "type": "string", "required": true },
+          "count": { "type": "integer", "required": true },
+          "children": { 
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties":
+              {
+                "name": { "type": "string", "required": true },
+                "size": { "type": "number", "required": true }
+              }
+            }
+          }
+        }
+      }
 /things:
   displayName: things
   type:
@@ -152,3 +177,12 @@ schemas:
         responses:
          200:
            body:
+    /send:
+      type:
+        sender:
+          schema-type: thingRequest
+          example-member: |
+            { 
+            }
+      post:
+        description: sends the result of processing a thing
