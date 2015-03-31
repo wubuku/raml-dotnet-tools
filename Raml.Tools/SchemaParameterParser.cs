@@ -56,16 +56,15 @@ namespace Raml.Tools
 	        var matchCollection = regex.Matches(res);
 	        foreach (Match match in matchCollection)
 	        {
+                if(resource.Type == null)
+                    continue;
+
 	            var paramFound = match.Groups[1].Value;
 	            var type = resource.GetResourceType();
-	            if (string.IsNullOrWhiteSpace(type))
-	                continue;
-
-	            if (!resource.Type[type].ContainsKey(paramFound))
+	            if (string.IsNullOrWhiteSpace(type) || !resource.Type.ContainsKey(type) || resource.Type[type] == null || !resource.Type[type].ContainsKey(paramFound))
 	                continue;
 
 	            var value = resource.Type[type][paramFound];
-
 	            res = res.Replace("<<" + paramFound + ">>", value);
 	        }
 
