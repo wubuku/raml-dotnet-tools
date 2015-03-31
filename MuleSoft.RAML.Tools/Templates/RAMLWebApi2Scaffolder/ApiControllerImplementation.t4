@@ -21,11 +21,20 @@ namespace $(namespace)
 		foreach (var method in controllerObject.Methods)
 		{
 #>
-
+		<#= method.XmlComment ?? string.Empty #>
         public IHttpActionResult <#= method.Name #>(<#= method.ParametersString #>)
         {
-            // put your code here
-            return Ok();
+            // TODO: implement <#= method.Name #>
+<#
+    if (method.ReturnType != null && method.ReturnType != "string")
+    {
+#>
+			// var result = new <#= method.ReturnType #>();
+			// return Ok(result);
+<#
+	}
+#>
+			return Ok();
         }
 
 <#
