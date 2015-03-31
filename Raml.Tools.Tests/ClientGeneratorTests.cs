@@ -330,6 +330,16 @@ namespace Raml.Tools.Tests
 			Assert.AreEqual(2, model.Classes.Count());
 		}
 
+        [Test]
+        public async void Should_Name_Schemas_Using_Keys()
+        {
+            var model = await GetSchemaTestsGeneratedModel();
+            Assert.IsTrue(model.Objects.Any(o => o.Value.Name == "Thing"));
+            Assert.IsTrue(model.Objects.Any(o => o.Value.Name == "Things"));
+            Assert.IsTrue(model.Objects.Any(o => o.Value.Name == "ThingResult"));
+            Assert.IsTrue(model.Objects.Any(o => o.Value.Name == "ThingRequest"));
+        }
+
 		private static async Task<ClientGeneratorModel> GetTestGeneratedModel()
 		{
             var raml = await new RamlParser().LoadAsync("test.raml");
@@ -437,6 +447,14 @@ namespace Raml.Tools.Tests
 
 			return model;
 		}
+
+        private static async Task<ClientGeneratorModel> GetSchemaTestsGeneratedModel()
+        {
+            var raml = await new RamlParser().LoadAsync("schematests.raml");
+            var model = new ClientGeneratorService(raml, "SchemaTest").BuildModel();
+
+            return model;
+        }
 
 	}
 }

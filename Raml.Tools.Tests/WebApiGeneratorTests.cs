@@ -100,7 +100,9 @@ namespace Raml.Tools.Tests
 			var model = await GetSchemaTestsGeneratedModel();
 			Assert.IsTrue(model.Objects.Any(o => o.Value.Name == "Thing"));
 			Assert.IsTrue(model.Objects.Any(o => o.Value.Name == "Things"));
-			Assert.AreEqual(4, model.Objects.Count());
+            Assert.IsTrue(model.Objects.Any(o => o.Value.Name == "ThingResult"));
+            Assert.IsTrue(model.Objects.Any(o => o.Value.Name == "ThingRequest"));
+			Assert.AreEqual(5, model.Objects.Count());
 		}
 
 
