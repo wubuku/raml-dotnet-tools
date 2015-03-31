@@ -5,9 +5,29 @@ using Newtonsoft.Json.Schema;
 
 namespace Raml.Tools
 {
+    public class CollectionTypeHelper
+    {
+        public const string CollectionType = "ICollection";
+
+        public static string GetCollectionType(string netType)
+        {
+            return CollectionType + "<" + netType + ">";
+        }
+
+        public static string GetBaseReturnType(string type)
+        {
+            if (!type.StartsWith(CollectionTypeHelper.CollectionType)) return type;
+
+            type = type.Replace(CollectionTypeHelper.CollectionType, string.Empty);
+            type = type.Substring(1, type.Length - 2);
+            return type;
+        }
+    }
+
 	public class JsonSchemaParser
 	{
-		private readonly string[] suffixes = { "A", "B", "C", "D", "E", "F", "G" };
+	    
+	    private readonly string[] suffixes = { "A", "B", "C", "D", "E", "F", "G" };
 
 		public ApiObject Parse(string key, string jsonSchema, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings)
 		{
@@ -182,11 +202,11 @@ namespace Raml.Tools
 			var netType = NetTypeMapper.Map(schema.Items.First().Type);
 			if (netType != null)
 			{
-				prop.Type = netType + "[]";
+				prop.Type = CollectionTypeHelper.GetCollectionType(netType);
 			}
 			else
 			{
-				prop.Type = NetNamingMapper.GetObjectName(property.Key) + "[]";
+                prop.Type = CollectionTypeHelper.GetCollectionType(NetNamingMapper.GetObjectName(property.Key));
 				foreach (var item in schema.Items)
 				{
 					ParseObject(property.Key, item.Properties, objects);
@@ -194,8 +214,7 @@ namespace Raml.Tools
 			}
 		}
 
-
-		private void ParseProperties(IDictionary<string, ApiObject> objects, ICollection<Property> props, IDictionary<string, JsonSchema> properties)
+	    private void ParseProperties(IDictionary<string, ApiObject> objects, ICollection<Property> props, IDictionary<string, JsonSchema> properties)
 		{
 			if (properties == null)
 				return;
@@ -260,11 +279,11 @@ namespace Raml.Tools
 			var netType = NetTypeMapper.Map(schema.Items.First().Type);
 			if (netType != null)
 			{
-				prop.Type = netType + "[]";
+                prop.Type = CollectionTypeHelper.GetCollectionType(netType);
 			}
 			else
 			{
-				prop.Type = NetNamingMapper.GetObjectName(property.Key) + "[]";
+                prop.Type = CollectionTypeHelper.GetCollectionType(NetNamingMapper.GetObjectName(property.Key));
 				foreach (var item in schema.Items)
 				{
 					ParseObject(property.Key, item.Properties, objects);

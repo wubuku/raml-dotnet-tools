@@ -251,7 +251,7 @@ namespace Raml.Tools
 				{
 					var prop = apiObject.Properties[index];
 					var type = prop.Type;
-					if (!string.IsNullOrWhiteSpace(type) && type.EndsWith("[]"))
+					if (!string.IsNullOrWhiteSpace(type) && IsCollectionType(type))
 						type = type.Substring(0, type.Length - 2);
 
 					if (!NetTypeMapper.IsPrimitiveType(type) && schemaResponseObjects.All(o => o.Value.Name != type) && schemaRequestObjects.All(o => o.Value.Name != type))
@@ -262,7 +262,12 @@ namespace Raml.Tools
 			}
 		}
 
-		private void ParseSchemas(IDictionary<string, ApiObject> objects)
+	    private bool IsCollectionType(string type)
+	    {
+	        return type.EndsWith(">") && type.StartsWith(CollectionTypeHelper.CollectionType);
+	    }
+
+	    private void ParseSchemas(IDictionary<string, ApiObject> objects)
 		{
 			foreach (var schema in raml.Schemas)
 			{
