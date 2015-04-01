@@ -105,6 +105,76 @@ namespace Raml.Tools.Tests
 			Assert.AreEqual(5, model.Objects.Count());
 		}
 
+        [Test]
+        public async void Should_Generate_Properties_When_Movies()
+        {
+            var model = await GetMoviesGeneratedModel();
+            Assert.AreEqual(82, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_Box()
+        {
+            var model = await GetBoxGeneratedModel();
+            Assert.AreEqual(17, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_Congo()
+        {
+            var model = await GetCongoGeneratedModel();
+            Assert.AreEqual(26, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_Contacts()
+        {
+            var model = await GetContactsGeneratedModel();
+            Assert.AreEqual(3, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_GitHub()
+        {
+            var model = await GetGitHubGeneratedModel();
+            Assert.AreEqual(345, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_Instagram()
+        {
+            var model = await GetInstagramGeneratedModel();
+            Assert.AreEqual(21, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_Large()
+        {
+            var model = await GetLargeGeneratedModel();
+            Assert.AreEqual(17, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_Regression()
+        {
+            var model = await GetRegressionGeneratedModel();
+            Assert.AreEqual(60, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_Test()
+        {
+            var model = await GetTestGeneratedModel();
+            Assert.AreEqual(20, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_Twitter()
+        {
+            var model = await GetTwitterGeneratedModel();
+            Assert.AreEqual(302, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
 
 		private static async Task<WebApiGeneratorModel> GetTestGeneratedModel()
 		{

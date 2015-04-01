@@ -83,7 +83,7 @@ namespace Raml.Tools
 
 			var property = new Property
 			               {
-				               Name = type.Replace("[]", string.Empty),
+                               Name = CollectionTypeHelper.GetBaseType(type),
 				               Description = response.Description + " " + mimeType.Description,
 				               Example = mimeType.Example,
 				               Type = type,
@@ -120,12 +120,16 @@ namespace Raml.Tools
 			if (!string.IsNullOrWhiteSpace(returnType))
 				return returnType;
 
-			if (schemaResponseObjects.ContainsKey(key) && schemaResponseObjects[key].Properties.Any())
-				return schemaResponseObjects[key].IsArray ? schemaResponseObjects[key].Name + "[]" : schemaResponseObjects[key].Name;
+		    if (schemaResponseObjects.ContainsKey(key) && schemaResponseObjects[key].Properties.Any())
+		        return schemaResponseObjects[key].IsArray
+		            ? CollectionTypeHelper.GetCollectionType(schemaResponseObjects[key].Name)
+		            : schemaResponseObjects[key].Name;
 
 			var responseKey = key + ParserHelpers.GetStatusCode(responseCode) + GeneratorServiceBase.ResponseContentSuffix;
-			if (schemaResponseObjects.ContainsKey(responseKey) && schemaResponseObjects[responseKey].Properties.Any())
-				return schemaResponseObjects[responseKey].IsArray ? schemaResponseObjects[responseKey].Name + "[]" : schemaResponseObjects[responseKey].Name;
+		    if (schemaResponseObjects.ContainsKey(responseKey) && schemaResponseObjects[responseKey].Properties.Any())
+		        return schemaResponseObjects[responseKey].IsArray
+		            ? CollectionTypeHelper.GetCollectionType(schemaResponseObjects[responseKey].Name)
+		            : schemaResponseObjects[responseKey].Name;
 
 			return returnType;
 		}
@@ -194,12 +198,16 @@ namespace Raml.Tools
 			if (!string.IsNullOrWhiteSpace(returnType))
 				return returnType;
 
-			if (schemaResponseObjects.ContainsKey(key) && schemaResponseObjects[key].Properties.Any())
-				return schemaResponseObjects[key].IsArray ? schemaResponseObjects[key].Name + "[]" : schemaResponseObjects[key].Name;
+		    if (schemaResponseObjects.ContainsKey(key) && schemaResponseObjects[key].Properties.Any())
+		        return schemaResponseObjects[key].IsArray
+		            ? CollectionTypeHelper.GetCollectionType(schemaResponseObjects[key].Name)
+		            : schemaResponseObjects[key].Name;
 
 			var responseKey = key + ParserHelpers.GetStatusCode(responseCode) + GeneratorServiceBase.ResponseContentSuffix;
-			if (schemaResponseObjects.ContainsKey(responseKey) && schemaResponseObjects[responseKey].Properties.Any())
-				return schemaResponseObjects[responseKey].IsArray ? schemaResponseObjects[responseKey].Name + "[]" : schemaResponseObjects[responseKey].Name;
+		    if (schemaResponseObjects.ContainsKey(responseKey) && schemaResponseObjects[responseKey].Properties.Any())
+		        return schemaResponseObjects[responseKey].IsArray
+		            ? CollectionTypeHelper.GetCollectionType(schemaResponseObjects[responseKey].Name)
+		            : schemaResponseObjects[responseKey].Name;
 
 			return returnType;
 		}
@@ -225,7 +233,7 @@ namespace Raml.Tools
 	        if (schemaResponseObjects.Values.Any(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type.ToLowerInvariant()))
 	        {
 	            var apiObject = schemaResponseObjects.Values.First(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type.ToLowerInvariant());
-	            returnType = apiObject.IsArray ? apiObject.Name + "[]" : apiObject.Name;
+                returnType = apiObject.IsArray ? CollectionTypeHelper.GetCollectionType(apiObject.Name) : apiObject.Name;
 	        }
 	        return returnType;
 	    }
@@ -239,7 +247,7 @@ namespace Raml.Tools
 	            var apiObject =
 	                schemaResponseObjects.Values.First(
 	                    o => o.Properties.Any() && o.Name.ToLowerInvariant() == type.ToLowerInvariant());
-	            returnType = apiObject.IsArray ? apiObject.Name + "[]" : apiObject.Name;
+                returnType = apiObject.IsArray ? CollectionTypeHelper.GetCollectionType(apiObject.Name) : apiObject.Name;
 	        }
 	        return returnType;
 	    }
@@ -315,7 +323,7 @@ namespace Raml.Tools
 				generatorParameter = new GeneratorParameter
 				                     {
 					                     Name = apiObject.Name.ToLower(),
-					                     Type = apiObject.IsArray ? apiObject.Name + "[]" : apiObject.Name,
+                                         Type = apiObject.IsArray ? CollectionTypeHelper.GetCollectionType(apiObject.Name) : apiObject.Name,
 					                     Description = apiObject.Description
 				                     };
 			}
@@ -333,7 +341,7 @@ namespace Raml.Tools
 				generatorParameter = new GeneratorParameter
 				                     {
 					                     Name = apiObject.Name.ToLower(),
-					                     Type = apiObject.IsArray ? apiObject.Name + "[]" : apiObject.Name,
+                                         Type = apiObject.IsArray ? CollectionTypeHelper.GetCollectionType(apiObject.Name) : apiObject.Name,
 					                     Description = apiObject.Description
 				                     };
 			}

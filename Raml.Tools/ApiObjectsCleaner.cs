@@ -51,33 +51,32 @@ namespace Raml.Tools
 
 		public bool IsUsedAsResponseInAnyMethod(IEnumerable<ControllerObject> controllers, ApiObject requestObj)
 		{
-			return controllers.Any(c => c.Methods.Any(m => m.ReturnType == requestObj.Name || m.ReturnType == requestObj.Name + "[]"));
+			return controllers.Any(c => c.Methods.Any(m => m.ReturnType == requestObj.Name ||   m.ReturnType == CollectionTypeHelper.GetCollectionType(requestObj.Name)));
 		}
 
 		public bool IsUsedAsParameterInAnyMethod(IEnumerable<ControllerObject> controllers, ApiObject requestObj)
 		{
 			return controllers.Any(c => c.Methods
 				.Any(m => m.Parameter != null
-				          && (m.Parameter.Type == requestObj.Name || m.Parameter.Type == requestObj.Name + "[]")));
+                          && (m.Parameter.Type == requestObj.Name || m.Parameter.Type == CollectionTypeHelper.GetCollectionType(requestObj.Name))));
 		}
 
-		public bool IsUsedAsResponseInAnyMethod(IEnumerable<ClassObject> controllers, ApiObject requestObj)
+		public bool IsUsedAsResponseInAnyMethod(IEnumerable<ClassObject> classes, ApiObject requestObj)
 		{
-			return controllers.Any(c => c.Methods.Any(m => m.ReturnType == requestObj.Name || m.ReturnType == requestObj.Name + "[]"));
+            return classes.Any(c => c.Methods.Any(m => m.ReturnType == requestObj.Name || m.ReturnType == CollectionTypeHelper.GetCollectionType(requestObj.Name)));
 		}
 
-		public bool IsUsedAsParameterInAnyMethod(IEnumerable<ClassObject> controllers, ApiObject requestObj)
+		public bool IsUsedAsParameterInAnyMethod(IEnumerable<ClassObject> classes, ApiObject requestObj)
 		{
-			return controllers.Any(c => c.Methods
+			return classes.Any(c => c.Methods
 				.Any(m => m.Parameter != null
-						  && (m.Parameter.Type == requestObj.Name || m.Parameter.Type == requestObj.Name + "[]")));
+                          && (m.Parameter.Type == requestObj.Name || m.Parameter.Type == CollectionTypeHelper.GetCollectionType(requestObj.Name))));
 		}
-
-
+        
 		private bool IsUsedAsReferenceInAnyObject(ApiObject requestObj)
 		{
-			return schemaRequestObjects.SelectMany(o => o.Value.Properties).Any(x => x.Type == requestObj.Name || x.Type == requestObj.Name + "[]")
-				   || schemaResponseObjects.SelectMany(o => o.Value.Properties).Any(x => x.Type == requestObj.Name || x.Type == requestObj.Name + "[]");
+            return schemaRequestObjects.SelectMany(o => o.Value.Properties).Any(x => x.Type == requestObj.Name || x.Type == CollectionTypeHelper.GetCollectionType(requestObj.Name))
+                   || schemaResponseObjects.SelectMany(o => o.Value.Properties).Any(x => x.Type == requestObj.Name || x.Type == CollectionTypeHelper.GetCollectionType(requestObj.Name));
 		}
 
 	}

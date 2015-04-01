@@ -41,8 +41,10 @@ namespace Raml.Tools.ClientGenerator
 			var generatedMethod = BuildClassMethod(url, method, resource, schemaRequestObjects, schemaResponseObjects);
 			if (generatedMethod.ReturnType != "string")
 			{
-				generatedMethod.ReturnTypeObject = schemaResponseObjects.Values
-					.First(o => o.Name == generatedMethod.ReturnType.Replace("[]", ""));
+                var returnType = CollectionTypeHelper.GetBaseType(generatedMethod.ReturnType);
+
+			    generatedMethod.ReturnTypeObject = schemaResponseObjects.Values
+			        .First(o => o.Name == returnType );
 
 				generatedMethod.OkReturnType = GetOkReturnType(generatedMethod);
 			}
@@ -63,7 +65,7 @@ namespace Raml.Tools.ClientGenerator
 			methodsNames.Add(generatedMethod.Name);
 		}
 
-		private ClientGeneratorMethod BuildClassMethod(string url, Method method, Resource resource, IDictionary<string, ApiObject> schemaRequestObjects, IDictionary<string, ApiObject> schemaResponseObjects)
+	    private ClientGeneratorMethod BuildClassMethod(string url, Method method, Resource resource, IDictionary<string, ApiObject> schemaRequestObjects, IDictionary<string, ApiObject> schemaResponseObjects)
 		{
 			var generatedMethod = new ClientGeneratorMethod
 			{
