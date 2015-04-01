@@ -8,6 +8,7 @@
 <#@ output extension=".cs" #>
 
 using System;
+using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Description;
 using $(namespace).Models;
@@ -24,7 +25,7 @@ namespace $(namespace)
 		<#= method.XmlComment ?? string.Empty #>
         public IHttpActionResult <#= method.Name #>(<#= method.ParametersString #>)
         {
-            // TODO: implement <#= method.Name #>
+            // TODO: implement <#= method.Name #> - route: <#= controllerObject.PrefixUri + "/" + method.Url #>
 <#
     if (method.ReturnType != null && method.ReturnType != "string")
     {
