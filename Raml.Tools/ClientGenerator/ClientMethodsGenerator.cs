@@ -41,7 +41,7 @@ namespace Raml.Tools.ClientGenerator
 			var generatedMethod = BuildClassMethod(url, method, resource, schemaRequestObjects, schemaResponseObjects);
 			if (generatedMethod.ReturnType != "string")
 			{
-                var returnType = CollectionTypeHelper.GetBaseReturnType(generatedMethod.ReturnType);
+                var returnType = CollectionTypeHelper.GetBaseType(generatedMethod.ReturnType);
 
 			    generatedMethod.ReturnTypeObject = schemaResponseObjects.Values
 			        .First(o => o.Name == returnType );

@@ -5,26 +5,7 @@ using Newtonsoft.Json.Schema;
 
 namespace Raml.Tools
 {
-    public class CollectionTypeHelper
-    {
-        public const string CollectionType = "ICollection";
-
-        public static string GetCollectionType(string netType)
-        {
-            return CollectionType + "<" + netType + ">";
-        }
-
-        public static string GetBaseReturnType(string type)
-        {
-            if (!type.StartsWith(CollectionTypeHelper.CollectionType)) return type;
-
-            type = type.Replace(CollectionTypeHelper.CollectionType, string.Empty);
-            type = type.Substring(1, type.Length - 2);
-            return type;
-        }
-    }
-
-	public class JsonSchemaParser
+    public class JsonSchemaParser
 	{
 	    
 	    private readonly string[] suffixes = { "A", "B", "C", "D", "E", "F", "G" };

@@ -76,6 +76,7 @@
     <Compile Include="ClientGenerator\FluentProperty.cs" />
     <Compile Include="ClientGenerator\ClientGeneratorMethod.cs" />
     <Compile Include="ClientGenerator\ClientGeneratorModel.cs" />
+    <Compile Include="CollectionTypeHelper.cs" />
     <Compile Include="GeneratorParameter.cs" />
     <Compile Include="ClientGenerator\ClientGeneratorService.cs" />
     <Compile Include="GeneratorServiceBase.cs" />

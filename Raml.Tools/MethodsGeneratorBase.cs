@@ -83,7 +83,7 @@ namespace Raml.Tools
 
 			var property = new Property
 			               {
-                               Name = CollectionTypeHelper.GetBaseReturnType(type),
+                               Name = CollectionTypeHelper.GetBaseType(type),
 				               Description = response.Description + " " + mimeType.Description,
 				               Example = mimeType.Example,
 				               Type = type,

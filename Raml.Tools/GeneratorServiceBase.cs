@@ -252,7 +252,7 @@ namespace Raml.Tools
 					var prop = apiObject.Properties[index];
 					var type = prop.Type;
 					if (!string.IsNullOrWhiteSpace(type) && IsCollectionType(type))
-						type = type.Substring(0, type.Length - 2);
+						type = CollectionTypeHelper.GetBaseType(type);
 
 					if (!NetTypeMapper.IsPrimitiveType(type) && schemaResponseObjects.All(o => o.Value.Name != type) && schemaRequestObjects.All(o => o.Value.Name != type))
 						apiObject.Properties.Remove(prop);
