@@ -69,7 +69,7 @@ namespace Raml.Tools.Tests
             var dynamicRaml = new Dictionary<string, object> { { "method", "get" }, { "queryParameters", parameters } };
 
             var parsedParameters = QueryParametersParser.ParseParameters(new MethodBuilder().Build(dynamicRaml));
-            Assert.AreEqual("keep-orig-name", parsedParameters.First(p => p.Name == "Keeporigname").OriginalName);
+            Assert.AreEqual("keep-orig-name", parsedParameters.First(p => p.Name == "KeepOrigName").OriginalName);
         }
 	}
 }

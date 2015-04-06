@@ -120,8 +120,8 @@ namespace Raml.Tools.Tests
             var service = new ClientGeneratorService(doc, "test");
             var model = service.BuildModel();
 
-            Assert.AreEqual("code-oneOne", model.UriParameterObjects.First().Value.Properties.First(p => p.Name == "CodeoneOne").OriginalName);
-            Assert.AreEqual("token_Two", model.UriParameterObjects.First().Value.Properties.First(p => p.Name == "Token_Two").OriginalName);
+            Assert.AreEqual("code-oneOne", model.UriParameterObjects.First().Value.Properties.First(p => p.Name == "CodeOneOne").OriginalName);
+            Assert.AreEqual("token_Two", model.UriParameterObjects.First().Value.Properties.First(p => p.Name == "TokenTwo").OriginalName);
         }
 	}
 }

@@ -89,8 +89,8 @@ namespace Raml.Tools.Tests
             var warnings = new Dictionary<string, string>();
             var objects = new Dictionary<string, ApiObject>();
             var obj = parser.Parse("name", schema, objects, warnings);
-            Assert.AreEqual("to-address-id", obj.Properties.First(p => p.Name == "Toaddressid").OriginalName);
-            Assert.AreEqual("order_item_id", obj.Properties.First(p => p.Name == "Order_item_id").OriginalName);
+            Assert.AreEqual("to-address-id", obj.Properties.First(p => p.Name == "ToAddressId").OriginalName);
+            Assert.AreEqual("order_item_id", obj.Properties.First(p => p.Name == "OrderItemId").OriginalName);
         }
 	}
 }
