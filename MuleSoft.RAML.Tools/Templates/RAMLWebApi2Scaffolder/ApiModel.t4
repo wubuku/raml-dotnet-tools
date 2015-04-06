@@ -20,7 +20,7 @@ namespace $(namespace).Models
 	{
 #>
     /// <summary>
-    /// <#= apiObject.Description #>
+    /// <#= XmlCommentHelper.Escape(apiObject.Description) #>
     /// </summary>
 <#
 	}
@@ -35,7 +35,7 @@ namespace $(namespace).Models
 	    {
 #>
         /// <summary>
-        /// <#= property.Description #>
+        /// <#= XmlCommentHelper.Escape(property.Description) #>
         /// </summary>
 <#
 	    }

@@ -1576,14 +1576,14 @@ namespace Movies.Models
         {
 
             names.Add(HttpStatusCode.OK, "MoviesGetOKResponseContent");
-            types.Add(HttpStatusCode.OK, typeof(MoviesGetOKResponseContent[]));
+            types.Add(HttpStatusCode.OK, typeof(ICollection<MoviesGetOKResponseContent>));
 
             names.Add(HttpStatusCode.BadRequest, "MoviesGetBadRequestResponseContent");
             types.Add(HttpStatusCode.BadRequest, typeof(MoviesGetBadRequestResponseContent));
 
         }
 
-        public MoviesGetOKResponseContent[] MoviesGetOKResponseContent { get; set; }
+        public ICollection<MoviesGetOKResponseContent> MoviesGetOKResponseContent { get; set; }
 
         public MoviesGetBadRequestResponseContent MoviesGetBadRequestResponseContent { get; set; }
 
@@ -2115,11 +2115,11 @@ namespace Movies.Models
 
 
 
-	    private WishlistGetOKResponseContent[] typedContent;
+	    private ICollection<WishlistGetOKResponseContent> typedContent;
         /// <summary>
         /// Typed Response content
         /// </summary>
-        public WishlistGetOKResponseContent[] Content 
+        public ICollection<WishlistGetOKResponseContent> Content 
     	{
 	        get
 	        {
@@ -2127,8 +2127,8 @@ namespace Movies.Models
 			        return typedContent;
 
 		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<WishlistGetOKResponseContent[]>(Formatters)
-                            : RawContent.ReadAsAsync<WishlistGetOKResponseContent[]>();
+                            ? RawContent.ReadAsAsync<ICollection<WishlistGetOKResponseContent>>(Formatters)
+                            : RawContent.ReadAsAsync<ICollection<WishlistGetOKResponseContent>>();
 		        task.Wait();
 		        typedContent = task.GetAwaiter().GetResult();
 		        return typedContent;
@@ -2149,11 +2149,11 @@ namespace Movies.Models
 
 
 
-	    private RentedGetOKResponseContent[] typedContent;
+	    private ICollection<RentedGetOKResponseContent> typedContent;
         /// <summary>
         /// Typed Response content
         /// </summary>
-        public RentedGetOKResponseContent[] Content 
+        public ICollection<RentedGetOKResponseContent> Content 
     	{
 	        get
 	        {
@@ -2161,8 +2161,8 @@ namespace Movies.Models
 			        return typedContent;
 
 		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<RentedGetOKResponseContent[]>(Formatters)
-                            : RawContent.ReadAsAsync<RentedGetOKResponseContent[]>();
+                            ? RawContent.ReadAsAsync<ICollection<RentedGetOKResponseContent>>(Formatters)
+                            : RawContent.ReadAsAsync<ICollection<RentedGetOKResponseContent>>();
 		        task.Wait();
 		        typedContent = task.GetAwaiter().GetResult();
 		        return typedContent;
@@ -2183,11 +2183,11 @@ namespace Movies.Models
 
 
 
-	    private AvailableGetOKResponseContent[] typedContent;
+	    private ICollection<AvailableGetOKResponseContent> typedContent;
         /// <summary>
         /// Typed Response content
         /// </summary>
-        public AvailableGetOKResponseContent[] Content 
+        public ICollection<AvailableGetOKResponseContent> Content 
     	{
 	        get
 	        {
@@ -2195,8 +2195,8 @@ namespace Movies.Models
 			        return typedContent;
 
 		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<AvailableGetOKResponseContent[]>(Formatters)
-                            : RawContent.ReadAsAsync<AvailableGetOKResponseContent[]>();
+                            ? RawContent.ReadAsAsync<ICollection<AvailableGetOKResponseContent>>(Formatters)
+                            : RawContent.ReadAsAsync<ICollection<AvailableGetOKResponseContent>>();
 		        task.Wait();
 		        typedContent = task.GetAwaiter().GetResult();
 		        return typedContent;
@@ -2293,11 +2293,11 @@ namespace Movies.Models
 
 
 
-	    private SearchGetOKResponseContent[] typedContent;
+	    private ICollection<SearchGetOKResponseContent> typedContent;
         /// <summary>
         /// Typed Response content
         /// </summary>
-        public SearchGetOKResponseContent[] Content 
+        public ICollection<SearchGetOKResponseContent> Content 
     	{
 	        get
 	        {
@@ -2305,8 +2305,8 @@ namespace Movies.Models
 			        return typedContent;
 
 		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<SearchGetOKResponseContent[]>(Formatters)
-                            : RawContent.ReadAsAsync<SearchGetOKResponseContent[]>();
+                            ? RawContent.ReadAsAsync<ICollection<SearchGetOKResponseContent>>(Formatters)
+                            : RawContent.ReadAsAsync<ICollection<SearchGetOKResponseContent>>();
 		        task.Wait();
 		        typedContent = task.GetAwaiter().GetResult();
 		        return typedContent;

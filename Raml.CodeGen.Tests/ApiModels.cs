@@ -22,16 +22,16 @@ namespace TwitterAPI.Models
         
 
 		[JsonProperty("id_str")]
-        public string Id_str { get; set; }
+        public string IdStr { get; set; }
 
 		[JsonProperty("id")]
         public int Id { get; set; }
 
 		[JsonProperty("followed_by")]
-        public bool Followed_by { get; set; }
+        public bool FollowedBy { get; set; }
 
 		[JsonProperty("screen_name")]
-        public string Screen_name { get; set; }
+        public string ScreenName { get; set; }
 
 		[JsonProperty("following")]
         public bool Following { get; set; }
@@ -44,34 +44,34 @@ namespace TwitterAPI.Models
         
 
 		[JsonProperty("can_dm")]
-        public bool Can_dm { get; set; }
+        public bool CanDm { get; set; }
 
 		[JsonProperty("blocking")]
         public bool Blocking { get; set; }
 
 		[JsonProperty("id_str")]
-        public string Id_str { get; set; }
+        public string IdStr { get; set; }
 
 		[JsonProperty("all_replies")]
-        public bool All_replies { get; set; }
+        public bool AllReplies { get; set; }
 
 		[JsonProperty("want_retweets")]
-        public bool Want_retweets { get; set; }
+        public bool WantRetweets { get; set; }
 
 		[JsonProperty("id")]
         public int Id { get; set; }
 
 		[JsonProperty("marked_spam")]
-        public bool Marked_spam { get; set; }
+        public bool MarkedSpam { get; set; }
 
 		[JsonProperty("followed_by")]
-        public bool Followed_by { get; set; }
+        public bool FollowedBy { get; set; }
 
 		[JsonProperty("notifications_enabled")]
-        public bool Notifications_enabled { get; set; }
+        public bool NotificationsEnabled { get; set; }
 
 		[JsonProperty("screen_name")]
-        public string Screen_name { get; set; }
+        public string ScreenName { get; set; }
 
 		[JsonProperty("following")]
         public bool Following { get; set; }
@@ -117,52 +117,52 @@ namespace TwitterAPI.Models
         
 
 		[JsonProperty("contributors_enabled")]
-        public bool Contributors_enabled { get; set; }
+        public bool ContributorsEnabled { get; set; }
 
 		[JsonProperty("created_at")]
-        public string Created_at { get; set; }
+        public string CreatedAt { get; set; }
 
 		[JsonProperty("default_profile")]
-        public bool Default_profile { get; set; }
+        public bool DefaultProfile { get; set; }
 
 		[JsonProperty("default_profile_image")]
-        public bool Default_profile_image { get; set; }
+        public bool DefaultProfileImage { get; set; }
 
 		[JsonProperty("description")]
         public string Description { get; set; }
 
 		[JsonProperty("favourites_count")]
-        public int Favourites_count { get; set; }
+        public int FavouritesCount { get; set; }
 
 		[JsonProperty("follow_request_sent")]
-        public bool Follow_request_sent { get; set; }
+        public bool FollowRequestSent { get; set; }
 
 		[JsonProperty("followers_count")]
-        public int Followers_count { get; set; }
+        public int FollowersCount { get; set; }
 
 		[JsonProperty("following")]
         public bool Following { get; set; }
 
 		[JsonProperty("friends_count")]
-        public int Friends_count { get; set; }
+        public int FriendsCount { get; set; }
 
 		[JsonProperty("geo_enabled")]
-        public bool Geo_enabled { get; set; }
+        public bool GeoEnabled { get; set; }
 
 		[JsonProperty("id")]
         public int Id { get; set; }
 
 		[JsonProperty("id_str")]
-        public string Id_str { get; set; }
+        public string IdStr { get; set; }
 
 		[JsonProperty("is_translator")]
-        public bool Is_translator { get; set; }
+        public bool IsTranslator { get; set; }
 
 		[JsonProperty("lang")]
         public string Lang { get; set; }
 
 		[JsonProperty("listed_count")]
-        public int Listed_count { get; set; }
+        public int ListedCount { get; set; }
 
 		[JsonProperty("location")]
         public string Location { get; set; }
@@ -174,58 +174,58 @@ namespace TwitterAPI.Models
         public bool Notifications { get; set; }
 
 		[JsonProperty("profile_background_color")]
-        public string Profile_background_color { get; set; }
+        public string ProfileBackgroundColor { get; set; }
 
 		[JsonProperty("profile_background_image_url")]
-        public string Profile_background_image_url { get; set; }
+        public string ProfileBackgroundImageUrl { get; set; }
 
 		[JsonProperty("profile_background_image_url_https")]
-        public string Profile_background_image_url_https { get; set; }
+        public string ProfileBackgroundImageUrlHttps { get; set; }
 
 		[JsonProperty("profile_background_tile")]
-        public bool Profile_background_tile { get; set; }
+        public bool ProfileBackgroundTile { get; set; }
 
 		[JsonProperty("profile_image_url")]
-        public string Profile_image_url { get; set; }
+        public string ProfileImageUrl { get; set; }
 
 		[JsonProperty("profile_image_url_https")]
-        public string Profile_image_url_https { get; set; }
+        public string ProfileImageUrlHttps { get; set; }
 
 		[JsonProperty("profile_link_color")]
-        public string Profile_link_color { get; set; }
+        public string ProfileLinkColor { get; set; }
 
 		[JsonProperty("profile_sidebar_border_color")]
-        public string Profile_sidebar_border_color { get; set; }
+        public string ProfileSidebarBorderColor { get; set; }
 
 		[JsonProperty("profile_sidebar_fill_color")]
-        public string Profile_sidebar_fill_color { get; set; }
+        public string ProfileSidebarFillColor { get; set; }
 
 		[JsonProperty("profile_text_color")]
-        public string Profile_text_color { get; set; }
+        public string ProfileTextColor { get; set; }
 
 		[JsonProperty("profile_use_background_image")]
-        public bool Profile_use_background_image { get; set; }
+        public bool ProfileUseBackgroundImage { get; set; }
 
 		[JsonProperty("protected")]
         public bool Protected { get; set; }
 
 		[JsonProperty("screen_name")]
-        public string Screen_name { get; set; }
+        public string ScreenName { get; set; }
 
 		[JsonProperty("show_all_inline_media")]
-        public bool Show_all_inline_media { get; set; }
+        public bool ShowAllInlineMedia { get; set; }
 
 		[JsonProperty("statuses_count")]
-        public int Statuses_count { get; set; }
+        public int StatusesCount { get; set; }
 
 		[JsonProperty("time_zone")]
-        public string Time_zone { get; set; }
+        public string TimeZone { get; set; }
 
 		[JsonProperty("url")]
         public string Url { get; set; }
 
 		[JsonProperty("utc_offset")]
-        public int Utc_offset { get; set; }
+        public int UtcOffset { get; set; }
 
 		[JsonProperty("verified")]
         public bool Verified { get; set; }
@@ -238,52 +238,52 @@ namespace TwitterAPI.Models
         
 
 		[JsonProperty("geo_enabled")]
-        public bool Geo_enabled { get; set; }
+        public bool GeoEnabled { get; set; }
 
 		[JsonProperty("profile_background_image_url_https")]
-        public string Profile_background_image_url_https { get; set; }
+        public string ProfileBackgroundImageUrlHttps { get; set; }
 
 		[JsonProperty("profile_background_color")]
-        public string Profile_background_color { get; set; }
+        public string ProfileBackgroundColor { get; set; }
 
 		[JsonProperty("protected")]
         public bool Protected { get; set; }
 
 		[JsonProperty("default_profile")]
-        public bool Default_profile { get; set; }
+        public bool DefaultProfile { get; set; }
 
 		[JsonProperty("listed_count")]
-        public int Listed_count { get; set; }
+        public int ListedCount { get; set; }
 
 		[JsonProperty("profile_background_tile")]
-        public bool Profile_background_tile { get; set; }
+        public bool ProfileBackgroundTile { get; set; }
 
 		[JsonProperty("created_at")]
-        public string Created_at { get; set; }
+        public string CreatedAt { get; set; }
 
 		[JsonProperty("friends_count")]
-        public int Friends_count { get; set; }
+        public int FriendsCount { get; set; }
 
 		[JsonProperty("name")]
         public string Name { get; set; }
 
 		[JsonProperty("profile_sidebar_fill_color")]
-        public string Profile_sidebar_fill_color { get; set; }
+        public string ProfileSidebarFillColor { get; set; }
 
 		[JsonProperty("notifications")]
         public bool Notifications { get; set; }
 
 		[JsonProperty("utc_offset")]
-        public int Utc_offset { get; set; }
+        public int UtcOffset { get; set; }
 
 		[JsonProperty("profile_image_url_https")]
-        public string Profile_image_url_https { get; set; }
+        public string ProfileImageUrlHttps { get; set; }
 
 		[JsonProperty("description")]
         public string Description { get; set; }
 
 		[JsonProperty("display_url")]
-        public string Display_url { get; set; }
+        public string DisplayUrl { get; set; }
 
 		[JsonProperty("following")]
         public bool Following { get; set; }
@@ -292,67 +292,67 @@ namespace TwitterAPI.Models
         public bool Verified { get; set; }
 
 		[JsonProperty("favourites_count")]
-        public int Favourites_count { get; set; }
+        public int FavouritesCount { get; set; }
 
 		[JsonProperty("profile_sidebar_border_color")]
-        public string Profile_sidebar_border_color { get; set; }
+        public string ProfileSidebarBorderColor { get; set; }
 
 		[JsonProperty("followers_count")]
-        public int Followers_count { get; set; }
+        public int FollowersCount { get; set; }
 
 		[JsonProperty("profile_image_url")]
-        public string Profile_image_url { get; set; }
+        public string ProfileImageUrl { get; set; }
 
 		[JsonProperty("default_profile_image")]
-        public bool Default_profile_image { get; set; }
+        public bool DefaultProfileImage { get; set; }
 
 		[JsonProperty("contributors_enabled")]
-        public bool Contributors_enabled { get; set; }
+        public bool ContributorsEnabled { get; set; }
 
 		[JsonProperty("deactivated_bit")]
-        public bool Deactivated_bit { get; set; }
+        public bool DeactivatedBit { get; set; }
 
 		[JsonProperty("statuses_count")]
-        public int Statuses_count { get; set; }
+        public int StatusesCount { get; set; }
 
 		[JsonProperty("profile_use_background_image")]
-        public bool Profile_use_background_image { get; set; }
+        public bool ProfileUseBackgroundImage { get; set; }
 
 		[JsonProperty("location")]
         public string Location { get; set; }
 
 		[JsonProperty("id_str")]
-        public string Id_str { get; set; }
+        public string IdStr { get; set; }
 
 		[JsonProperty("show_all_inline_media")]
-        public bool Show_all_inline_media { get; set; }
+        public bool ShowAllInlineMedia { get; set; }
 
 		[JsonProperty("profile_text_color")]
-        public string Profile_text_color { get; set; }
+        public string ProfileTextColor { get; set; }
 
 		[JsonProperty("screen_name")]
-        public string Screen_name { get; set; }
+        public string ScreenName { get; set; }
 
 		[JsonProperty("follow_request_sent")]
-        public bool Follow_request_sent { get; set; }
+        public bool FollowRequestSent { get; set; }
 
 		[JsonProperty("profile_background_image_url")]
-        public string Profile_background_image_url { get; set; }
+        public string ProfileBackgroundImageUrl { get; set; }
 
 		[JsonProperty("url")]
         public string Url { get; set; }
 
 		[JsonProperty("expanded_url")]
-        public string Expanded_url { get; set; }
+        public string ExpandedUrl { get; set; }
 
 		[JsonProperty("is_translator")]
-        public bool Is_translator { get; set; }
+        public bool IsTranslator { get; set; }
 
 		[JsonProperty("time_zone")]
-        public string Time_zone { get; set; }
+        public string TimeZone { get; set; }
 
 		[JsonProperty("profile_link_color")]
-        public string Profile_link_color { get; set; }
+        public string ProfileLinkColor { get; set; }
 
 		[JsonProperty("id")]
         public int Id { get; set; }
@@ -365,7 +365,7 @@ namespace TwitterAPI.Models
         
 
 		[JsonProperty("created_at")]
-        public string Created_at { get; set; }
+        public string CreatedAt { get; set; }
 
 		[JsonProperty("slug")]
         public string Slug { get; set; }
@@ -374,7 +374,7 @@ namespace TwitterAPI.Models
         public string Name { get; set; }
 
 		[JsonProperty("full_name")]
-        public string Full_name { get; set; }
+        public string FullName { get; set; }
 
 		[JsonProperty("description")]
         public string Description { get; set; }
@@ -389,13 +389,13 @@ namespace TwitterAPI.Models
         public User User { get; set; }
 
 		[JsonProperty("member_count")]
-        public int Member_count { get; set; }
+        public int MemberCount { get; set; }
 
 		[JsonProperty("id_str")]
-        public string Id_str { get; set; }
+        public string IdStr { get; set; }
 
 		[JsonProperty("subscriber_count")]
-        public int Subscriber_count { get; set; }
+        public int SubscriberCount { get; set; }
 
 		[JsonProperty("id")]
         public int Id { get; set; }
@@ -411,7 +411,7 @@ namespace TwitterAPI.Models
         
 
 		[JsonProperty("created_at")]
-        public string Created_at { get; set; }
+        public string CreatedAt { get; set; }
 
 		[JsonProperty("slug")]
         public string Slug { get; set; }
@@ -420,7 +420,7 @@ namespace TwitterAPI.Models
         public string Name { get; set; }
 
 		[JsonProperty("full_name")]
-        public string Full_name { get; set; }
+        public string FullName { get; set; }
 
 		[JsonProperty("description")]
         public string Description { get; set; }
@@ -435,13 +435,13 @@ namespace TwitterAPI.Models
         public User User { get; set; }
 
 		[JsonProperty("member_count")]
-        public int Member_count { get; set; }
+        public int MemberCount { get; set; }
 
 		[JsonProperty("id_str")]
-        public string Id_str { get; set; }
+        public string IdStr { get; set; }
 
 		[JsonProperty("subscriber_count")]
-        public int Subscriber_count { get; set; }
+        public int SubscriberCount { get; set; }
 
 		[JsonProperty("id")]
         public int Id { get; set; }
@@ -457,13 +457,13 @@ namespace TwitterAPI.Models
         
 
 		[JsonProperty("created_at")]
-        public string Created_at { get; set; }
+        public string CreatedAt { get; set; }
 
 		[JsonProperty("id")]
         public int Id { get; set; }
 
 		[JsonProperty("id_str")]
-        public string Id_str { get; set; }
+        public string IdStr { get; set; }
 
 		[JsonProperty("name")]
         public string Name { get; set; }
@@ -491,13 +491,13 @@ namespace TwitterAPI.Models
         
 
 		[JsonProperty("created_at")]
-        public string Created_at { get; set; }
+        public string CreatedAt { get; set; }
 
 		[JsonProperty("id")]
         public int Id { get; set; }
 
 		[JsonProperty("id_str")]
-        public string Id_str { get; set; }
+        public string IdStr { get; set; }
 
 		[JsonProperty("name")]
         public string Name { get; set; }
@@ -516,13 +516,13 @@ namespace TwitterAPI.Models
         
 
 		[JsonProperty("created_at")]
-        public string Created_at { get; set; }
+        public string CreatedAt { get; set; }
 
 		[JsonProperty("id")]
         public int Id { get; set; }
 
 		[JsonProperty("id_str")]
-        public string Id_str { get; set; }
+        public string IdStr { get; set; }
 
 		[JsonProperty("name")]
         public string Name { get; set; }
@@ -541,7 +541,7 @@ namespace TwitterAPI.Models
         
 
 		[JsonProperty("162834:id")]
-        public string P162834id { get; set; }
+        public string P162834Id { get; set; }
 
     } // end class
 
@@ -561,16 +561,16 @@ namespace TwitterAPI.Models
         
 
 		[JsonProperty("bounding_box")]
-        public BoundingBox Bounding_box { get; set; }
+        public BoundingBox BoundingBox { get; set; }
 
 		[JsonProperty("country_code")]
-        public string Country_code { get; set; }
+        public string CountryCode { get; set; }
 
 		[JsonProperty("country")]
         public string Country { get; set; }
 
 		[JsonProperty("full_name")]
-        public string Full_name { get; set; }
+        public string FullName { get; set; }
 
 		[JsonProperty("id")]
         public string Id { get; set; }
@@ -579,7 +579,7 @@ namespace TwitterAPI.Models
         public string Name { get; set; }
 
 		[JsonProperty("place_type")]
-        public string Place_type { get; set; }
+        public string PlaceType { get; set; }
 
 		[JsonProperty("url")]
         public string Url { get; set; }
@@ -605,19 +605,19 @@ namespace TwitterAPI.Models
         public Attributes Attributes { get; set; }
 
 		[JsonProperty("bounding_box")]
-        public BoundingBox Bounding_box { get; set; }
+        public BoundingBox BoundingBox { get; set; }
 
 		[JsonProperty("contained_within")]
-        public ContainedWithin[] Contained_within { get; set; }
+        public ICollection<ContainedWithin> ContainedWithin { get; set; }
 
 		[JsonProperty("country_code")]
-        public string Country_code { get; set; }
+        public string CountryCode { get; set; }
 
 		[JsonProperty("country")]
         public string Country { get; set; }
 
 		[JsonProperty("full_name")]
-        public string Full_name { get; set; }
+        public string FullName { get; set; }
 
 		[JsonProperty("geometry")]
         public Geometry Geometry { get; set; }
@@ -629,10 +629,10 @@ namespace TwitterAPI.Models
         public string Name { get; set; }
 
 		[JsonProperty("place_type")]
-        public string Place_type { get; set; }
+        public string PlaceType { get; set; }
 
 		[JsonProperty("polylines")]
-        public string[] Polylines { get; set; }
+        public ICollection<string> Polylines { get; set; }
 
 		[JsonProperty("url")]
         public string Url { get; set; }
@@ -648,19 +648,19 @@ namespace TwitterAPI.Models
         public Attributes Attributes { get; set; }
 
 		[JsonProperty("bounding_box")]
-        public BoundingBox Bounding_box { get; set; }
+        public BoundingBox BoundingBox { get; set; }
 
 		[JsonProperty("contained_within")]
-        public ContainedWithin[] Contained_within { get; set; }
+        public ICollection<ContainedWithin> ContainedWithin { get; set; }
 
 		[JsonProperty("country_code")]
-        public string Country_code { get; set; }
+        public string CountryCode { get; set; }
 
 		[JsonProperty("country")]
         public string Country { get; set; }
 
 		[JsonProperty("full_name")]
-        public string Full_name { get; set; }
+        public string FullName { get; set; }
 
 		[JsonProperty("geometry")]
         public Geometry Geometry { get; set; }
@@ -672,10 +672,10 @@ namespace TwitterAPI.Models
         public string Name { get; set; }
 
 		[JsonProperty("place_type")]
-        public string Place_type { get; set; }
+        public string PlaceType { get; set; }
 
 		[JsonProperty("polylines")]
-        public string[] Polylines { get; set; }
+        public ICollection<string> Polylines { get; set; }
 
 		[JsonProperty("url")]
         public string Url { get; set; }
@@ -691,19 +691,19 @@ namespace TwitterAPI.Models
         public Attributes Attributes { get; set; }
 
 		[JsonProperty("bounding_box")]
-        public BoundingBox Bounding_box { get; set; }
+        public BoundingBox BoundingBox { get; set; }
 
 		[JsonProperty("contained_within")]
-        public ContainedWithin[] Contained_within { get; set; }
+        public ICollection<ContainedWithin> ContainedWithin { get; set; }
 
 		[JsonProperty("country_code")]
-        public string Country_code { get; set; }
+        public string CountryCode { get; set; }
 
 		[JsonProperty("country")]
         public string Country { get; set; }
 
 		[JsonProperty("full_name")]
-        public string Full_name { get; set; }
+        public string FullName { get; set; }
 
 		[JsonProperty("geometry")]
         public Geometry Geometry { get; set; }
@@ -715,10 +715,10 @@ namespace TwitterAPI.Models
         public string Name { get; set; }
 
 		[JsonProperty("place_type")]
-        public string Place_type { get; set; }
+        public string PlaceType { get; set; }
 
 		[JsonProperty("polylines")]
-        public string[] Polylines { get; set; }
+        public ICollection<string> Polylines { get; set; }
 
 		[JsonProperty("url")]
         public string Url { get; set; }
@@ -734,19 +734,19 @@ namespace TwitterAPI.Models
         public Attributes Attributes { get; set; }
 
 		[JsonProperty("bounding_box")]
-        public BoundingBox Bounding_box { get; set; }
+        public BoundingBox BoundingBox { get; set; }
 
 		[JsonProperty("contained_within")]
-        public ContainedWithin[] Contained_within { get; set; }
+        public ICollection<ContainedWithin> ContainedWithin { get; set; }
 
 		[JsonProperty("country_code")]
-        public string Country_code { get; set; }
+        public string CountryCode { get; set; }
 
 		[JsonProperty("country")]
         public string Country { get; set; }
 
 		[JsonProperty("full_name")]
-        public string Full_name { get; set; }
+        public string FullName { get; set; }
 
 		[JsonProperty("geometry")]
         public Geometry Geometry { get; set; }
@@ -758,10 +758,10 @@ namespace TwitterAPI.Models
         public string Name { get; set; }
 
 		[JsonProperty("place_type")]
-        public string Place_type { get; set; }
+        public string PlaceType { get; set; }
 
 		[JsonProperty("polylines")]
-        public string[] Polylines { get; set; }
+        public ICollection<string> Polylines { get; set; }
 
 		[JsonProperty("url")]
         public string Url { get; set; }
@@ -777,19 +777,19 @@ namespace TwitterAPI.Models
         public Attributes Attributes { get; set; }
 
 		[JsonProperty("bounding_box")]
-        public BoundingBox Bounding_box { get; set; }
+        public BoundingBox BoundingBox { get; set; }
 
 		[JsonProperty("contained_within")]
-        public ContainedWithin[] Contained_within { get; set; }
+        public ICollection<ContainedWithin> ContainedWithin { get; set; }
 
 		[JsonProperty("country_code")]
-        public string Country_code { get; set; }
+        public string CountryCode { get; set; }
 
 		[JsonProperty("country")]
         public string Country { get; set; }
 
 		[JsonProperty("full_name")]
-        public string Full_name { get; set; }
+        public string FullName { get; set; }
 
 		[JsonProperty("geometry")]
         public Geometry Geometry { get; set; }
@@ -801,10 +801,10 @@ namespace TwitterAPI.Models
         public string Name { get; set; }
 
 		[JsonProperty("place_type")]
-        public string Place_type { get; set; }
+        public string PlaceType { get; set; }
 
 		[JsonProperty("polylines")]
-        public string[] Polylines { get; set; }
+        public ICollection<string> Polylines { get; set; }
 
 		[JsonProperty("url")]
         public string Url { get; set; }
@@ -864,7 +864,7 @@ namespace TwitterAPI.Models
         
 
 		[JsonProperty("access_token")]
-        public string Access_token { get; set; }
+        public string AccessToken { get; set; }
 
     } // end class
 
@@ -938,16 +938,16 @@ namespace TwitterAPI.Models
         
 
 		[JsonProperty("/help/configuration")]
-        public HelpConfiguration Helpconfiguration { get; set; }
+        public HelpConfiguration HelpConfiguration { get; set; }
 
 		[JsonProperty("/help/languages")]
-        public HelpLanguages Helplanguages { get; set; }
+        public HelpLanguages HelpLanguages { get; set; }
 
 		[JsonProperty("/help/privacy")]
-        public HelpPrivacy Helpprivacy { get; set; }
+        public HelpPrivacy HelpPrivacy { get; set; }
 
 		[JsonProperty("/help/tos")]
-        public HelpTos Helptos { get; set; }
+        public HelpTos HelpTos { get; set; }
 
     } // end class
 
@@ -973,7 +973,7 @@ namespace TwitterAPI.Models
         
 
 		[JsonProperty("/search/tweets")]
-        public SearchTweets Searchtweets { get; set; }
+        public SearchTweets SearchTweets { get; set; }
 
     } // end class
 
@@ -1079,22 +1079,22 @@ namespace TwitterAPI.Models
         
 
 		[JsonProperty("/statuses/home_timeline")]
-        public StatusesHomeTimeline Statuseshome_timeline { get; set; }
+        public StatusesHomeTimeline StatusesHomeTimeline { get; set; }
 
 		[JsonProperty("/statuses/mentions_timeline")]
-        public StatusesMentionsTimeline Statusesmentions_timeline { get; set; }
+        public StatusesMentionsTimeline StatusesMentionsTimeline { get; set; }
 
 		[JsonProperty("/statuses/oembed")]
-        public StatusesOembed Statusesoembed { get; set; }
+        public StatusesOembed StatusesOembed { get; set; }
 
 		[JsonProperty("/statuses/retweets/:id")]
-        public StatusesRetweetsId Statusesretweetsid { get; set; }
+        public StatusesRetweetsId StatusesRetweetsId { get; set; }
 
 		[JsonProperty("/statuses/show/:id")]
-        public StatusesShowId Statusesshowid { get; set; }
+        public StatusesShowId StatusesShowId { get; set; }
 
 		[JsonProperty("/statuses/user_timeline")]
-        public StatusesUserTimeline Statusesuser_timeline { get; set; }
+        public StatusesUserTimeline StatusesUserTimeline { get; set; }
 
     } // end class
 
@@ -1232,28 +1232,28 @@ namespace TwitterAPI.Models
         
 
 		[JsonProperty("/users/contributees")]
-        public UsersContributees Userscontributees { get; set; }
+        public UsersContributees UsersContributees { get; set; }
 
 		[JsonProperty("/users/contributors")]
-        public UsersContributors Userscontributors { get; set; }
+        public UsersContributors UsersContributors { get; set; }
 
 		[JsonProperty("/users/lookup")]
-        public UsersLookup Userslookup { get; set; }
+        public UsersLookup UsersLookup { get; set; }
 
 		[JsonProperty("/users/search")]
-        public UsersSearch Userssearch { get; set; }
+        public UsersSearch UsersSearch { get; set; }
 
 		[JsonProperty("/users/show")]
-        public UsersShow Usersshow { get; set; }
+        public UsersShow UsersShow { get; set; }
 
 		[JsonProperty("/users/suggestions/:slug/members")]
-        public UsersSuggestionsSlugMembers Userssuggestionsslugmembers { get; set; }
+        public UsersSuggestionsSlugMembers UsersSuggestionsSlugMembers { get; set; }
 
 		[JsonProperty("/users/suggestions/:slug")]
-        public UsersSuggestionsSlug Userssuggestionsslug { get; set; }
+        public UsersSuggestionsSlug UsersSuggestionsSlug { get; set; }
 
 		[JsonProperty("/users/suggestions")]
-        public UsersSuggestions Userssuggestions { get; set; }
+        public UsersSuggestions UsersSuggestions { get; set; }
 
     } // end class
 
@@ -1282,7 +1282,7 @@ namespace TwitterAPI.Models
         
 
 		[JsonProperty("rate_limit_context")]
-        public RateLimitContext Rate_limit_context { get; set; }
+        public RateLimitContext RateLimitContext { get; set; }
 
 		[JsonProperty("resources")]
         public Resources Resources { get; set; }

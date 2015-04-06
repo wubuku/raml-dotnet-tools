@@ -20,14 +20,14 @@ namespace Raml.Tools
 			if (string.IsNullOrWhiteSpace(input))
 				return "NullInput";
 
-			var name = ReplaceSpecialChars(input, "-");
-			name = ReplaceSpecialChars(name, "\\");
-			name = ReplaceSpecialChars(name, "/");
-			name = ReplaceSpecialChars(name, "_");
-			name = ReplaceSpecialChars(name, ":");
+			var name = ReplaceSplittingChars(input, "-");
+			name = ReplaceSplittingChars(name, "\\");
+			name = ReplaceSplittingChars(name, "/");
+			name = ReplaceSplittingChars(name, "_");
+			name = ReplaceSplittingChars(name, ":");
 
-			name = ReplaceSpecialChars(name, "{");
-			name = ReplaceSpecialChars(name, "}");
+			name = ReplaceSplittingChars(name, "{");
+			name = ReplaceSplittingChars(name, "}");
 
 			name = RemoveIndalidChars(name);
 
@@ -40,12 +40,12 @@ namespace Raml.Tools
 			return name;
 		}
 
-		private static string ReplaceSpecialChars(string key, string separator)
+		private static string ReplaceSplittingChars(string key, string separator)
 		{
-			return ReplaceSpecialChars(key, new[] {separator});
+			return ReplaceSplittingChars(key, new[] {separator});
 		}
 
-		private static string ReplaceSpecialChars(string key, string[] separator)
+		private static string ReplaceSplittingChars(string key, string[] separator)
 		{
 			var name = String.Empty;
 			var words = key.Split(separator, StringSplitOptions.RemoveEmptyEntries);
@@ -74,10 +74,11 @@ namespace Raml.Tools
 
 		public static string GetMethodName(string input)
 		{
-			var name = ReplaceSpecialChars(input, "-");
-			name = ReplaceSpecialChars(name, "\\");
-			name = ReplaceSpecialChars(name, "/");
-			name = ReplaceSpecialChars(name, "_");
+			var name = ReplaceSplittingChars(input, "-");
+			name = ReplaceSplittingChars(name, "\\");
+			name = ReplaceSplittingChars(name, "/");
+			name = ReplaceSplittingChars(name, "_");
+            name = ReplaceSplittingChars(name, ".");
 			name = ReplaceUriParameters(name);
 			name = name.Replace(":", string.Empty);
 			name = RemoveIndalidChars(name);
@@ -110,9 +111,11 @@ namespace Raml.Tools
 
 		public static string GetPropertyName(string name)
 		{
-			var propName = name.Replace(":", string.Empty);
-			propName = propName.Replace("/", string.Empty);
-			propName = propName.Replace("-", string.Empty);
+			var propName = ReplaceSplittingChars(name, ":");
+            propName = ReplaceSplittingChars(propName, "/");
+            propName = ReplaceSplittingChars(propName, "-");
+            propName = ReplaceSplittingChars(propName, ".");
+            propName = ReplaceSplittingChars(propName, "_");
 			propName = NetNamingMapper.Capitalize(propName);
 
 			if (StartsWithNumber(propName))
