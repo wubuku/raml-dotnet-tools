@@ -6,7 +6,7 @@
 				 mc:Ignorable="d"
 				 x:Class="Raml.Common.RamlChooser"
 				 x:Name="RamlChooserWindow"
-				 Width="505"
+				 Width="540"
 				 ResizeMode="CanMinimize">
 	<Window.Resources>
 		<Style x:Key="TextBlockStyle"
@@ -165,6 +165,7 @@
 							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
 
 						<Label Content="Address:"
@@ -181,8 +182,14 @@
 								HorizontalAlignment="Left"
 								Click="GoButton_Click" />
 
-						<Button Content="Browse..."
+                        <Button Content="Library..."
 								Grid.Column="3"
+								Style="{StaticResource DefaultButton}"
+								x:Name="LibraryButton"
+                                Click="LibraryButton_OnClick"/>
+
+                        <Button Content="Browse..."
+								Grid.Column="4"
 								Style="{StaticResource DefaultButton}"
 								x:Name="BrowseButton"
 								Click="btnChooseFile_Click" />

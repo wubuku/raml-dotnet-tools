@@ -16,6 +16,7 @@ using Raml.Common.Annotations;
 using Raml.Parser;
 using Raml.Parser.Expressions;
 using Raml.Tools;
+using Task = System.Threading.Tasks.Task;
 
 namespace Raml.Common
 {
@@ -103,6 +104,21 @@ namespace Raml.Common
 				ActivityLog.LogError(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, VisualStudioAutomationHelper.GetExceptionInfo(ex));
 			}
 		}
+
+        private async void LibraryButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var rmlLibrary = new RAMLLibraryBrowser();
+            var selectedRAMLFile = rmlLibrary.ShowDialog();
+
+            if (selectedRAMLFile.HasValue && selectedRAMLFile.Value)
+            {
+                var url = rmlLibrary.RAMLFileUrl;
+
+                addressText.Text = url;
+
+                await GetRamlFromURL();
+            }
+        }
 
 		private void SetPreview(RamlDocument document)
 		{
@@ -224,56 +240,64 @@ namespace Raml.Common
 
 		private async void GoButton_Click(object sender, RoutedEventArgs e)
 		{
-			StartProgress();
-			DoEvents();
-
-			try
-			{
-				var url = addressText.Text;
-				var result = includesManager.Manage(url, Path.GetTempPath());
-
-				var raml = result.ModifiedContents;
-				var parser = new RamlParser();
-
-				var ramlDocument = await parser.LoadRamlAsync(raml);
-
-				var filename = Path.GetFileName(url);
-
-				if (string.IsNullOrEmpty(filename))
-					filename = "reference.raml";
-
-				if (!filename.ToLowerInvariant().EndsWith(RamlFileExtension))
-					filename += RamlFileExtension;
-
-				txtFileName.Text = NetNamingMapper.RemoveIndalidChars(Path.GetFileNameWithoutExtension(filename)) + RamlFileExtension;
-
-				var path = Path.Combine(Path.GetTempPath(), filename);
-				File.WriteAllText(path, raml);
-				RamlTempFilePath = path;
-				RamlOriginalSource = url;
-
-				SetPreview(ramlDocument);
-
-				btnOk.IsEnabled = true;
-				StopProgress();
-			}
-			catch (UriFormatException uex)
-			{
-				ShowErrorAndStopProgress(uex.Message);
-			}
-			catch (HttpRequestException rex)
-			{
-				ShowErrorAndStopProgress(GetFriendlyMessage(rex));
-				ActivityLog.LogError(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, VisualStudioAutomationHelper.GetExceptionInfo(rex));
-			}
-			catch (Exception ex)
-			{
-				ShowErrorAndStopProgress(ex.Message);
-				ActivityLog.LogError(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, VisualStudioAutomationHelper.GetExceptionInfo(ex));
-			}
+		    await GetRamlFromURL();
 		}
 
-		private void StartProgress()
+	    private async Task GetRamlFromURL()
+	    {
+	        StartProgress();
+	        DoEvents();
+
+	        try
+	        {
+	            var url = addressText.Text;
+	            var result = includesManager.Manage(url, Path.GetTempPath());
+
+	            var raml = result.ModifiedContents;
+	            var parser = new RamlParser();
+
+	            var ramlDocument = await parser.LoadRamlAsync(raml);
+
+	            var filename = Path.GetFileName(url);
+
+	            if (string.IsNullOrEmpty(filename))
+	                filename = "reference.raml";
+
+	            if (!filename.ToLowerInvariant().EndsWith(RamlFileExtension))
+	                filename += RamlFileExtension;
+
+	            txtFileName.Text = NetNamingMapper.RemoveIndalidChars(Path.GetFileNameWithoutExtension(filename)) +
+	                               RamlFileExtension;
+
+	            var path = Path.Combine(Path.GetTempPath(), filename);
+	            File.WriteAllText(path, raml);
+	            RamlTempFilePath = path;
+	            RamlOriginalSource = url;
+
+	            SetPreview(ramlDocument);
+
+	            btnOk.IsEnabled = true;
+	            StopProgress();
+	        }
+	        catch (UriFormatException uex)
+	        {
+	            ShowErrorAndStopProgress(uex.Message);
+	        }
+	        catch (HttpRequestException rex)
+	        {
+	            ShowErrorAndStopProgress(GetFriendlyMessage(rex));
+	            ActivityLog.LogError(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource,
+	                VisualStudioAutomationHelper.GetExceptionInfo(rex));
+	        }
+	        catch (Exception ex)
+	        {
+	            ShowErrorAndStopProgress(ex.Message);
+	            ActivityLog.LogError(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource,
+	                VisualStudioAutomationHelper.GetExceptionInfo(ex));
+	        }
+	    }
+
+	    private void StartProgress()
 		{
 			progressBar.Visibility = Visibility.Visible;
 			btnOk.IsEnabled = false;
