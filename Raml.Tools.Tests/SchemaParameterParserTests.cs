@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 using Raml.Parser;
@@ -110,5 +111,22 @@ namespace Raml.Tools.Tests
 			var actual = schemaParameterParser.Parse("<<resourcePathName | !singularize>>", resource, new Method(), "songs");
 			Assert.AreEqual("song", actual);
 		}
+
+	    [Test]
+	    public void ShoudParseCustomParameters()
+	    {
+	        var type = new Dictionary<string, IDictionary<string, string>>();
+	        var typeParams = new Dictionary<string, string>();
+            typeParams.Add("customParam","valueOfParam");
+	        type.Add("type", typeParams);
+	        var resource = new Resource
+	        {
+	            RelativeUri = "/test",
+	            Type = type
+	        };
+
+	        var actual = schemaParameterParser.Parse("<<customParam>>", resource, new Method(), "/test");
+            Assert.AreEqual("valueOfParam", actual);
+	    }
 	}
 }

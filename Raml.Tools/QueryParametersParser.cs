@@ -33,6 +33,7 @@ namespace Raml.Tools
 						               NetTypeMapper.Map(parameter.Value.Type) +
 						               (NetTypeMapper.Map(parameter.Value.Type) == "string" || parameter.Value.Required ? "" : "?"),
 					               Name = NetNamingMapper.GetPropertyName(parameter.Key),
+                                   OriginalName = parameter.Key,
 					               Description = description,
 					               Example = parameter.Value.Example,
 					               Required = parameter.Value.Required

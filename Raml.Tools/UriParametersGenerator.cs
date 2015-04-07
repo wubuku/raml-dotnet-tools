@@ -80,6 +80,7 @@ namespace Raml.Tools
 			return new Property
 			       {
 				       Name = NetNamingMapper.Capitalize(p.Name),
+                       OriginalName = p.Name,
 				       Description = p.Description,
 				       Type = p.Type,
 				       Required = true

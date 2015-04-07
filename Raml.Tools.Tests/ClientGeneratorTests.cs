@@ -56,9 +56,6 @@ namespace Raml.Tools.Tests
 		public async Task ShouldHaveNoWarnings_WhenMovies()
 		{
 			var model = await GetMoviesGeneratedModel();
-
-            var o = model.Objects.Where(p => p.Value.Properties.Any());
-
 			Assert.AreEqual(0, model.Warnings.Count());
 		}
 
@@ -300,7 +297,7 @@ namespace Raml.Tools.Tests
 		public async Task ShouldParseArrays()
 		{
 			var model = await GetTestGeneratedModel();
-			Assert.AreEqual("Sales[]", model.Objects["/sales-getOKResponseContent"].Properties[1].Type);
+            Assert.AreEqual(CollectionTypeHelper.GetCollectionType("Sales"), model.Objects["/sales-getOKResponseContent"].Properties[1].Type);
 		}
 
 		[Test]
@@ -354,6 +351,86 @@ namespace Raml.Tools.Tests
 			var model = await GetFooGeneratedModel();
 			Assert.AreEqual(2, model.Classes.Count());
 		}
+
+        [Test]
+        public async void Should_Name_Schemas_Using_Keys()
+        {
+            var model = await GetSchemaTestsGeneratedModel();
+            Assert.IsTrue(model.Objects.Any(o => o.Value.Name == "Thing"));
+            Assert.IsTrue(model.Objects.Any(o => o.Value.Name == "Things"));
+            Assert.IsTrue(model.Objects.Any(o => o.Value.Name == "ThingResult"));
+            Assert.IsTrue(model.Objects.Any(o => o.Value.Name == "ThingRequest"));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_Movies()
+        {
+            var model = await GetMoviesGeneratedModel();
+            Assert.AreEqual(88, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_Box()
+        {
+            var model = await GetBoxGeneratedModel();
+            Assert.AreEqual(70, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_Congo()
+        {
+            var model = await GetCongoGeneratedModel();
+            Assert.AreEqual(39, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_Contacts()
+        {
+            var model = await GetContactsGeneratedModel();
+            Assert.AreEqual(5, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_GitHub()
+        {
+            var model = await GetGitHubGeneratedModel();
+            Assert.AreEqual(659, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_Instagram()
+        {
+            var model = await GetInstagramGeneratedModel();
+            Assert.AreEqual(114, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_Large()
+        {
+            var model = await GetLargeGeneratedModel();
+            Assert.AreEqual(70, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_Regression()
+        {
+            var model = await GetRegressionGeneratedModel();
+            Assert.AreEqual(74, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_Test()
+        {
+            var model = await GetTestGeneratedModel();
+            Assert.AreEqual(23, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async void Should_Generate_Properties_When_Twitter()
+        {
+            var model = await GetTwitterGeneratedModel();
+            Assert.AreEqual(627, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
 
 		private static async Task<ClientGeneratorModel> GetTestGeneratedModel()
 		{
@@ -470,6 +547,14 @@ namespace Raml.Tools.Tests
 
 			return model;
 		}
+
+        private static async Task<ClientGeneratorModel> GetSchemaTestsGeneratedModel()
+        {
+            var raml = await new RamlParser().LoadAsync("schematests.raml");
+            var model = new ClientGeneratorService(raml, "SchemaTest").BuildModel();
+
+            return model;
+        }
 
 	}
 }

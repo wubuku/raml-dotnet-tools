@@ -1,7 +1,7 @@
 ﻿<#@ template debug="true" hostspecific="true" language="C#" #>
-<#@ assembly name="$(SolutionDir)MuleSoft.RAML.Tools\bin\Debug\RAML.Parser.dll" #>
-<#@ assembly name="$(SolutionDir)MuleSoft.RAML.Tools\bin\Debug\RAML.Tools.dll" #>
-<#@ assembly name="$(SolutionDir)MuleSoft.RAML.Tools\bin\Debug\EdgeJs.dll" #>
+<#@ assembly name="$(SolutionDir)RAML.CodeGen.Tests\bin\Debug\RAML.Parser.dll" #>
+<#@ assembly name="$(SolutionDir)RAML.CodeGen.Tests\bin\Debug\EdgeJs.dll" #>
+<#@ assembly name="$(SolutionDir)Raml.Tools\bin\Debug\Raml.Tools.dll" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="Raml.Parser" #>
 <#@ import namespace="Raml.Tools" #>
@@ -95,7 +95,7 @@ namespace <#= model.Namespace #>
 		            {
 #>
                 if(<#= method.Query.Name.ToLower() #>.<#= property.Name #> != null)
-                    url += "&<#= method.Query.Name.ToLower() #>.<#= property.Name #>=" + <#= method.Query.Name.ToLower() #>.<#= property.Name #>;
+					url += "&<#= property.OriginalName #>=" + <#= method.Query.Name.ToLower() #>.<#= property.Name #>;
 <#
         		    }
 #>
@@ -242,7 +242,7 @@ namespace <#= model.Namespace #>
 		            {
 #>
                 if(request.Query.<#= property.Name #> != null)
-                    url += "&<#= property.Name #>=" + request.Query.<#= property.Name #>;
+                    url += "&<#= property.OriginalName ?? property.Name #>=" + request.Query.<#= property.Name #>;
 <#
 		            }
 #>
@@ -481,6 +481,11 @@ namespace <#= model.Namespace #>
 } // end namespace
 
 
+
+
+
+
+
 namespace <#= model.Namespace #>.Models
 {
 <#
@@ -553,7 +558,9 @@ foreach (var apiObject in model.Objects.Values)
         /// </summary>
 <#
     	}
+		if(!string.IsNullOrWhiteSpace(property.OriginalName) && property.OriginalName != property.Name) {
 #>
+		[JsonProperty("<#= property.OriginalName #>")]<# 		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
 <#
 	}
@@ -589,8 +596,12 @@ foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any())
         /// <#= property.Description #>
         /// </summary>
 <#
-	}
+		}
+
+		if(!string.IsNullOrWhiteSpace(property.OriginalName) && property.OriginalName != property.Name)
+		{
 #>
+		[JsonProperty("<#= property.OriginalName #>")]<#		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
 <#
 	}
@@ -666,7 +677,11 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
         /// </summary>
 <#
 	    }
+
+		if(!string.IsNullOrWhiteSpace(property.OriginalName) && property.OriginalName != property.Name)
+		{ 
 #>
+		[JsonProperty("<#= property.OriginalName #>")]<#		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
 <#
 	}

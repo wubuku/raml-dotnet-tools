@@ -11,7 +11,7 @@ namespace Raml.Tools.Tests
 	public class UriParametersTests
 	{
 		[Test]
-		public void Should_Build_Uri_Parameter_Objects()
+		public void should_build_uri_parameter_objects()
 		{
 			var doc = new RamlDocument { Title = "test" };
 
@@ -67,5 +67,61 @@ namespace Raml.Tools.Tests
 			Assert.IsTrue(model.Classes.First().Methods.All(m => m.UriParametersType == "MoviesUriParameters"));
 			Assert.AreEqual(1, model.Objects.Count);
 		}
+
+        [Test]
+        public void should_keep_original_names()
+        {
+            var doc = new RamlDocument { Title = "test" };
+
+            var uriParams = new Dictionary<string, Parameter>()
+			                {
+				                {
+					                "code-oneOne", new Parameter
+					                        {
+						                        DisplayName = "code",
+						                        Type = "integer"
+					                        }
+				                },
+				                {
+					                "token_Two", new Parameter
+					                         {
+						                         DisplayName = "token",
+						                         Type = "string"
+					                         }
+				                }
+			                };
+
+
+
+            var methods = new List<Method>
+			              {
+				              new Method
+				              {
+					              Verb = "get",
+				              },
+							  new Method
+							  {
+								  Verb = "post"
+							  }
+			              };
+
+            var resources = new Collection<Resource>
+			                {
+				                new Resource
+				                {
+					                RelativeUri = "/movies",
+									UriParameters = uriParams,
+					                Methods = methods
+				                }
+			                };
+
+            doc.Resources = resources;
+
+            var service = new ClientGeneratorService(doc, "test");
+            var model = service.BuildModel();
+
+            Assert.AreEqual("code-oneOne", model.UriParameterObjects.First().Value.Properties.First(p => p.Name == "CodeoneOne").OriginalName);
+            Assert.AreEqual("token_Two", model.UriParameterObjects.First().Value.Properties.First(p => p.Name == "Token_Two").OriginalName);
+        }
 	}
 }

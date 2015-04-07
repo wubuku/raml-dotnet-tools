@@ -61,25 +61,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GeneratedModel1.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>GeneratedModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Objects.cs">
-      <DependentUpon>Objects.tt</DependentUpon>
+    <Compile Include="ApiModels.cs">
+      <DependentUpon>ApiModels.tt</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="WebApiBaseControllers.cs">
-      <DependentUpon>WebApiBaseControllers.tt</DependentUpon>
+    <Compile Include="ApiControllersBase.cs">
+      <DependentUpon>ApiControllersBase.tt</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="WebApiControllers.cs">
-      <DependentUpon>WebApiControllers.tt</DependentUpon>
+    <Compile Include="ApiControllersImplementation.cs">
+      <DependentUpon>ApiControllersImplementation.tt</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
+    </Compile>
+
+    <Compile Include="ApiControllerImplementation.cs">
+      <DependentUpon>ApiControllerImplementation.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="RAMLClient.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RAMLClient.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -299,25 +305,25 @@
     <None Include="node_modules\raml-parser\test\raml-files\traitsAtResourceLevel.yml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Objects.tt">
+    <None Include="ApiModels.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Objects.cs</LastGenOutput>
+      <LastGenOutput>ApiModels.cs</LastGenOutput>
     </None>
-    <None Include="WebApiBaseControllers.tt">
+    <None Include="ApiControllersBase.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>WebApiBaseControllers.cs</LastGenOutput>
+      <LastGenOutput>ApiControllersBase.cs</LastGenOutput>
     </None>
-    <None Include="WebApiControllers.tt">
+    <None Include="ApiControllersImplementation.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>WebApiControllers.cs</LastGenOutput>
+      <LastGenOutput>ApiControllersImplementation.cs</LastGenOutput>
     </None>
-    <None Include="WebApiController.tt">
+    <None Include="ApiControllerImplementation.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>WebApiController.cs</LastGenOutput>
+      <LastGenOutput>ApiControllerImplementation.cs</LastGenOutput>
     </None>
-    <None Include="GeneratedModel.tt">
+    <None Include="RAMLClient.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>GeneratedModel1.cs</LastGenOutput>
+      <LastGenOutput>RAMLClient.cs</LastGenOutput>
     </None>
     <None Include="github.raml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

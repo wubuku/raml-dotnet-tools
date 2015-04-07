@@ -5,9 +5,10 @@ using Newtonsoft.Json.Schema;
 
 namespace Raml.Tools
 {
-	public class JsonSchemaParser
+    public class JsonSchemaParser
 	{
-		private readonly string[] suffixes = { "A", "B", "C", "D", "E", "F", "G" };
+	    
+	    private readonly string[] suffixes = { "A", "B", "C", "D", "E", "F", "G" };
 
 		public ApiObject Parse(string key, string jsonSchema, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings)
 		{
@@ -101,6 +102,7 @@ namespace Raml.Tools
 				var prop = new Property
 				           {
 					           Name = NetNamingMapper.GetPropertyName(kv.Key),
+                               OriginalName = kv.Key,
 					           Type = NetTypeMapper.Map(kv.Value.Type),
 					           Description = kv.Value.Description
 				           };
@@ -126,6 +128,8 @@ namespace Raml.Tools
 					           Name = NetNamingMapper.GetPropertyName(property.Key),
 					           Type = (property.Value.OneOf != null && property.Value.OneOf.Count > 0) ? NetNamingMapper.GetObjectName(property.Key) : 
                                     NetTypeMapper.Map(property.Value.Type),
+                               OriginalName = property.Key,
+					           Type = NetTypeMapper.Map(property.Value.Type),
 					           Description = property.Value.Description
 				           };
 
@@ -195,6 +199,7 @@ namespace Raml.Tools
 				var prop = new Property
 				           {
 					           Name = NetNamingMapper.GetPropertyName(kv.Key),
+                               OriginalName = kv.Key,
 					           Type = NetTypeMapper.Map(kv.Value.Type),
 					           Description = kv.Value.Description
 				           };
@@ -209,11 +214,11 @@ namespace Raml.Tools
 			var netType = NetTypeMapper.Map(schema.Items.First().Type);
 			if (netType != null)
 			{
-				prop.Type = netType + "[]";
+				prop.Type = CollectionTypeHelper.GetCollectionType(netType);
 			}
 			else
 			{
-				prop.Type = NetNamingMapper.GetObjectName(property.Key) + "[]";
+                prop.Type = CollectionTypeHelper.GetCollectionType(NetNamingMapper.GetObjectName(property.Key));
 				foreach (var item in schema.Items)
 				{
 					ParseObject(property.Key, item.Properties, objects);
@@ -221,8 +226,7 @@ namespace Raml.Tools
 			}
 		}
 
-
-		private void ParseProperties(IDictionary<string, ApiObject> objects, ICollection<Property> props, IDictionary<string, JsonSchema> properties)
+	    private void ParseProperties(IDictionary<string, ApiObject> objects, ICollection<Property> props, IDictionary<string, JsonSchema> properties)
 		{
 			if (properties == null)
 				return;
@@ -240,6 +244,7 @@ namespace Raml.Tools
 				var prop = new Property
 				           {
 					           Name = NetNamingMapper.GetPropertyName(key),
+                               OriginalName = key,
 					           Type = NetTypeMapper.Map(property.Value.Type),
 					           Description = property.Value.Description
 				           };
@@ -286,11 +291,11 @@ namespace Raml.Tools
 			var netType = NetTypeMapper.Map(schema.Items.First().Type);
 			if (netType != null)
 			{
-				prop.Type = netType + "[]";
+                prop.Type = CollectionTypeHelper.GetCollectionType(netType);
 			}
 			else
 			{
-				prop.Type = NetNamingMapper.GetObjectName(property.Key) + "[]";
+                prop.Type = CollectionTypeHelper.GetCollectionType(NetNamingMapper.GetObjectName(property.Key));
 				foreach (var item in schema.Items)
 				{
 					ParseObject(property.Key, item.Properties, objects);

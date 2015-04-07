@@ -29,5 +29,29 @@
     <Setting Name="ApiReferencesFolderName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">API References</Value>
     </Setting>
+    <Setting Name="ClientT4TemplateName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">RAMLClient.t4</Value>
+    </Setting>
+    <Setting Name="ServerTemplatesVersion" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">0.1</Value>
+    </Setting>
+    <Setting Name="ClientTemplatesVersion" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">0.1</Value>
+    </Setting>
+    <Setting Name="ClientTemplateTitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Client Proxy T4 Template</Value>
+    </Setting>
+    <Setting Name="ModelsTemplateTitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Models</Value>
+    </Setting>
+    <Setting Name="BaseControllerTemplateTitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Base Controller</Value>
+    </Setting>
+    <Setting Name="ControllerInterfaceTemplateTitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Controller Interface</Value>
+    </Setting>
+    <Setting Name="ControllerImplementationTemplateTitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Controller Implementation</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
