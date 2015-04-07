@@ -141,7 +141,7 @@ namespace Raml.Tools
 				ParseObject(property.Key, propertySchema.Properties, objects);
 				prop.Type = NetNamingMapper.GetObjectName(property.Key);
 			}
-            else if (propertySchema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Object && propertySchema.OneOf.Count > 0 && schema.Definitions.Count > 0)
+            else if (propertySchema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Object && propertySchema.OneOf != null && propertySchema.OneOf.Count > 0 && schema.Definitions != null && schema.Definitions.Count > 0)
             {
                 string baseTypeName = NetNamingMapper.GetObjectName(property.Key);
 

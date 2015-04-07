@@ -47,8 +47,7 @@ namespace Raml.Tools.Tests
         }
 
         [Test]
-        [Ignore]
-        public async Task ShouldValidateSchema()
+        public async Task ShouldNotValidateSchema_WhenItHasDefinitions()
         {
             var content = new StringContent("{ storage: { remotePath : 'path', server : 'server' } }",
                 Encoding.UTF8,
@@ -66,7 +65,10 @@ namespace Raml.Tools.Tests
 
             var entries = await proxy.Entries.Get();
 
-            Assert.IsTrue(entries.SchemaValidation.Value.IsValid);
+            Assert.IsFalse(entries.SchemaValidation.Value.IsValid);
+            Assert.AreEqual(
+                "Definitions are not supported. Don not use Schema Validation with schemas that contain definitions.",
+                entries.SchemaValidation.Value.Errors.First());
         }
 
         class FakeHttpMessageHandler : HttpMessageHandler

@@ -75,7 +75,11 @@ namespace RAML.Api.Core
             catch (Exception)
             {
                 v4Schema = v4SchemaNS.JsonSchema.Parse(rawSchema);
-                    
+                
+                // Definitions are not supported
+                if(v4Schema.Definitions != null && v4Schema.Definitions.Any())
+                    return new SchemaValidationResults(false, new[] { "Definitions are not supported. Don not use Schema Validation with schemas that contain definitions." });
+
                 v4LinqNS.JToken datav4 = null;
                 if (responseString.StartsWith("["))
                     datav4 = v4LinqNS.JArray.Parse(responseString);
