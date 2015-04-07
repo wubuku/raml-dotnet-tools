@@ -65,8 +65,8 @@ namespace Raml.Tools.Tests
             proxy.SchemaValidation.RaiseExceptions = false;
 
             var entries = await proxy.Entries.Get();
-            
-            Assert.IsTrue(entries.IsValid.Value);
+
+            Assert.IsTrue(entries.SchemaValidation.Value.IsValid);
         }
 
         class FakeHttpMessageHandler : HttpMessageHandler

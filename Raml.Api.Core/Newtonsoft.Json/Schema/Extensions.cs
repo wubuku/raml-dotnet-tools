@@ -92,6 +92,7 @@ namespace Newtonsoft.JsonV4.Schema
             using (JsonValidatingReader reader = new JsonValidatingReader(source.CreateReader()))
             {
                 reader.Schema = schema;
+               
                 if (validationEventHandler != null)
                     reader.ValidationEventHandler += validationEventHandler;
 
