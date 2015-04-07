@@ -18,7 +18,7 @@ namespace RAML.Api.Core
 
         public SchemaValidationResults(bool isValid, IList<string> errors)
         {
-            this.IsValid = IsValid;
+            this.IsValid = isValid;
             this.Errors = errors;
         }
     }

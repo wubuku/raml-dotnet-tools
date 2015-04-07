@@ -129,7 +129,6 @@ namespace Raml.Tools
 					           Type = (property.Value.OneOf != null && property.Value.OneOf.Count > 0) ? NetNamingMapper.GetObjectName(property.Key) : 
                                     NetTypeMapper.Map(property.Value.Type),
                                OriginalName = property.Key,
-					           Type = NetTypeMapper.Map(property.Value.Type),
 					           Description = property.Value.Description
 				           };
 
