@@ -40,8 +40,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Raml.Parser">
-      <HintPath>..\packages\Raml.Parser.0.8.1\lib\net45\Raml.Parser.dll</HintPath>
+    <Reference Include="Raml.Parser, Version=0.8.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Raml.Parser.0.8.10\lib\net45\Raml.Parser.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -76,7 +77,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-
     <Compile Include="ApiControllerImplementation.cs">
       <DependentUpon>ApiControllerImplementation.tt</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -116,6 +116,22 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="fstab.raml" />
+    <None Include="ApiModels.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ApiModels.cs</LastGenOutput>
+    </None>
+    <None Include="ApiControllersBase.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ApiControllersBase.cs</LastGenOutput>
+    </None>
+    <None Include="ApiControllersImplementation.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ApiControllersImplementation.cs</LastGenOutput>
+    </None>
+    <None Include="ApiControllerImplementation.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ApiControllerImplementation.cs</LastGenOutput>
+    </None>
     <None Include="node_modules\raml-parser\bower.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -304,22 +320,6 @@
     </None>
     <None Include="node_modules\raml-parser\test\raml-files\traitsAtResourceLevel.yml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="ApiModels.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ApiModels.cs</LastGenOutput>
-    </None>
-    <None Include="ApiControllersBase.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ApiControllersBase.cs</LastGenOutput>
-    </None>
-    <None Include="ApiControllersImplementation.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ApiControllersImplementation.cs</LastGenOutput>
-    </None>
-    <None Include="ApiControllerImplementation.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ApiControllerImplementation.cs</LastGenOutput>
     </None>
     <None Include="RAMLClient.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
