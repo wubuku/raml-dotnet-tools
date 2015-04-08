@@ -80,18 +80,18 @@ namespace MuleSoft.RAML.Tools.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("RAML.Api.Core")]
-        public string RAMLClientCommonPackageId {
+        public string RAMLApiCorePackageId {
             get {
-                return ((string)(this["RAMLClientCommonPackageId"]));
+                return ((string)(this["RAMLApiCorePackageId"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0.9.1")]
-        public string RAMLClientCommonPackageVersion {
+        public string RAMLApiCorePackageVersion {
             get {
-                return ((string)(this["RAMLClientCommonPackageVersion"]));
+                return ((string)(this["RAMLApiCorePackageVersion"]));
             }
         }
         
