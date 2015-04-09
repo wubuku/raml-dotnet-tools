@@ -20,13 +20,11 @@ namespace MuleSoft.RAML.Tools
 		private readonly string newtonsoftJsonPackageVersion = Settings.Default.NewtonsoftJsonPackageVersion;
 		private readonly string webApiClientPackageId = Settings.Default.WebApiClientPackageId;
 		private readonly string webApiClientPackageVersion = Settings.Default.WebApiClientPackageVersion;
-		private readonly string ramlClientCommonPackageId = Settings.Default.RAMLClientCommonPackageId;
-		private readonly string ramlClientCommonPackageVersion = Settings.Default.RAMLClientCommonPackageVersion;
+		private readonly string ramlApiCorePackageId = Settings.Default.RAMLApiCorePackageId;
+		private readonly string ramlApiCorePackageVersion = Settings.Default.RAMLApiCorePackageVersion;
 		public readonly static string ApiReferencesFolderName = Settings.Default.ApiReferencesFolderName;
 
-		private readonly TemplatesManager templatesManager = new TemplatesManager();
-
-		public RamlReferenceService(IServiceProvider serviceProvider)
+	    public RamlReferenceService(IServiceProvider serviceProvider)
 		{
 			this.serviceProvider = serviceProvider;
 		}
@@ -71,10 +69,10 @@ namespace MuleSoft.RAML.Tools
 				installer.InstallPackage(nugetPackagesSource, proj, webApiClientPackageId, webApiClientPackageVersion, false);
 			}
 
-			// RAML.Tools.Core
-			if (!installerServices.IsPackageInstalled(proj, ramlClientCommonPackageId))
+			// RAML.Api.Core
+			if (!installerServices.IsPackageInstalled(proj, ramlApiCorePackageId))
 			{
-				installer.InstallPackage(nugetPackagesSource, proj, ramlClientCommonPackageId, ramlClientCommonPackageVersion, false);
+                installer.InstallPackage(nugetPackagesSource, proj, ramlApiCorePackageId, ramlApiCorePackageVersion, false);
 			}
 		}
 

@@ -42,7 +42,7 @@ namespace Raml.Tools
 				if (checkAction(classes, apiObject))
 					continue;
 
-				if (IsUsedAsReferenceInAnyObject(apiObject))
+                if (IsUsedAsReferenceInAnyObject(apiObject))
 					continue;
 
 				objects.Remove(key);
@@ -75,8 +75,14 @@ namespace Raml.Tools
         
 		private bool IsUsedAsReferenceInAnyObject(ApiObject requestObj)
 		{
-            return schemaRequestObjects.SelectMany(o => o.Value.Properties).Any(x => x.Type == requestObj.Name || x.Type == CollectionTypeHelper.GetCollectionType(requestObj.Name))
-                   || schemaResponseObjects.SelectMany(o => o.Value.Properties).Any(x => x.Type == requestObj.Name || x.Type == CollectionTypeHelper.GetCollectionType(requestObj.Name));
+           	return schemaRequestObjects.SelectMany(o => o.Value.Properties).Any(x => x.Type == requestObj.Name || 
+                        x.Type == CollectionTypeHelper.GetCollectionType(requestObj.Name) || 
+                        x.Type == requestObj.BaseClass || 
+                        x.Type == CollectionTypeHelper.GetCollectionType(requestObj.BaseClass))
+				   || schemaResponseObjects.SelectMany(o => o.Value.Properties).Any(x => x.Type == requestObj.Name || 
+                        x.Type == CollectionTypeHelper.GetCollectionType(requestObj.Name) ||
+                        x.Type == requestObj.BaseClass ||
+                        x.Type == CollectionTypeHelper.GetCollectionType(requestObj.BaseClass));
 		}
 
 	}

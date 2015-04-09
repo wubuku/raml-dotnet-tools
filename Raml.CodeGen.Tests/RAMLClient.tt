@@ -11,9 +11,9 @@
 <#
 
 	var parser = new RamlParser();
-	var ramlFile = Host.ResolvePath("movies.raml");
+	var ramlFile = Host.ResolvePath("fstab.raml");
 	var raml = parser.Load(ramlFile);
-	var service = new ClientGeneratorService(raml, "MoviesApi");
+	var service = new ClientGeneratorService(raml, "FstabApi");
 	var model = service.BuildModel();
 
 #>
@@ -41,7 +41,7 @@ namespace <#= model.Namespace #>
 		{
 #>
     /// <summary>
-    /// <#= XmlCommentHelper.Escape(classObject.Description) #>
+    /// <#= classObject.Description #>
     /// </summary>
 <#
 		}
@@ -95,7 +95,7 @@ namespace <#= model.Namespace #>
 		            {
 #>
                 if(<#= method.Query.Name.ToLower() #>.<#= property.Name #> != null)
-					url += "&<#= property.Name #>=" + <#= method.Query.Name.ToLower() #>.<#= property.Name #>;
+					url += "&<#= property.OriginalName #>=" + <#= method.Query.Name.ToLower() #>.<#= property.Name #>;
 <#
         		    }
 #>
@@ -145,6 +145,31 @@ namespace <#= model.Namespace #>
                 }
 #>
 	        var response = await proxy.Client.SendAsync(req);
+<#
+            string validationCall = "new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)";
+            string validationWithException = "";
+
+            if (method.ResponseType != "ApiResponse")
+			{
+                var jsonSchema = !method.ReturnTypeObject.IsMultiple ? 
+					String.Format("\"{0}\"", method.ReturnTypeObject.JSONSchema) : 
+					method.ResponseType + ".GetSchema(response.StatusCode)";
+                
+				validationWithException = String.Format("await SchemaValidator.ValidateWithExceptionAsync({0}, response.Content)", jsonSchema);
+                validationCall = String.Format("new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid({0}, response.Content), true)", jsonSchema);
+#>
+			
+			if (proxy.SchemaValidation.Enabled)
+		    {
+				if(proxy.SchemaValidation.RaiseExceptions) 
+				{
+					<#= validationWithException #>;
+				}
+					
+			}
+<#
+			}
+#>
 
 <#
 
@@ -172,7 +197,8 @@ namespace <#= model.Namespace #>
 <#                  } #>
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = <#= validationCall #>
                                             };
 
         }
@@ -295,6 +321,19 @@ namespace <#= model.Namespace #>
 #>
 	        var response = await proxy.Client.SendAsync(req);
 <#
+            if (method.ResponseType != "ApiResponse")
+			{
+#>
+			if (proxy.SchemaValidation.Enabled && proxy.SchemaValidation.RaiseExceptions)
+            {
+				if(proxy.SchemaValidation.RaiseExceptions)
+				{
+					<#= validationWithException #>;
+				}
+				
+            }
+<#
+			}
 
 	            if (method.ResponseHeaders.Count == 1)
 	            {
@@ -323,7 +362,8 @@ namespace <#= model.Namespace #>
 	                                            Formatters = responseFormatters,
 <#                  }  #>
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = <#= validationCall #>
                                             };
 <#
                 
@@ -340,15 +380,17 @@ namespace <#= model.Namespace #>
 	}
 #>
     /// <summary>
-    /// <#= XmlCommentHelper.Escape(model.Root.Description) ?? string.Empty #>
+    /// <#= model.Root.Description ?? string.Empty #>
     /// </summary>
     public partial class <#= model.Root.Name #>
     {
+		
         protected readonly HttpClient client;
         public const string BaseUri = "<#= model.BaseUri #>";
 
         internal HttpClient Client { get { return client; } }
 
+		public SchemaValidationSettings SchemaValidation { get; private set; }
 <#
     if (model.Security != null && !string.IsNullOrWhiteSpace(model.Security.AccessTokenUri))
     {
@@ -368,6 +410,13 @@ namespace <#= model.Namespace #>
 
         public <#= model.Root.Name #>(string endpointUrl)
         {
+			SchemaValidation = new SchemaValidationSettings
+			{
+				Enabled = true,
+				RaiseExceptions = true
+			};
+			
+
             if(string.IsNullOrWhiteSpace(endpointUrl))
                 throw new ArgumentException("You must specify the endpoint URL", "endpointUrl");
 
@@ -391,7 +440,14 @@ namespace <#= model.Namespace #>
             if(httpClient.BaseAddress == null)
                 throw new InvalidOperationException("You must set the BaseAddress property of the HttpClient instance");
 
+
             client = httpClient;
+
+			SchemaValidation = new SchemaValidationSettings
+			{
+				Enabled = true,
+				RaiseExceptions = true
+			};
         }
 
         
@@ -433,24 +489,51 @@ namespace <#= model.Namespace #>
 namespace <#= model.Namespace #>.Models
 {
 <#
-foreach (var apiObject in model.Objects.Values.Where(o => o.Properties.Any()))
+foreach (var apiObject in model.Objects.Values)
 {
 	if (!string.IsNullOrWhiteSpace(apiObject.Description))
 	{
 #>
     /// <summary>
-    /// <#= XmlCommentHelper.Escape(apiObject.Description) #>
+    /// <#= apiObject.Description #>
     /// </summary>
 <#
 	}
+
+	if(!apiObject.IsMultiple && apiObject.BaseClass != null) 
+	{
 #>
-    public partial class <#= apiObject.Name #> <#= apiObject.IsMultiple ? ": ApiMultipleResponse" : string.Empty #>
+    public partial class <#= apiObject.Name #> <#= " : " +  apiObject.BaseClass #>
     {
 <#
+	} else {
+#>
+    public <#= (apiObject.Properties.Any()) ? "partial class " : "abstract class " #> <#= apiObject.Name #> <#= apiObject.IsMultiple ? ": ApiMultipleResponse" : string.Empty #>
+    {
+<#
+	} 
+
 	if (apiObject.IsMultiple)
 	{
-#>        
-        public <#= apiObject.Name #>()
+#>   
+        static readonly Dictionary<HttpStatusCode, string> schemas = new Dictionary<HttpStatusCode, string>
+        {
+<#
+		foreach (var property in apiObject.Properties.Where(p => p.Type != null && p.Name != null && p.JSONSchema != null).ToArray())
+		{
+#>
+			{ HttpStatusCode.<#= property.StatusCode #>, "<#= property.JSONSchema #>"},
+<#
+        }
+#>
+		};
+        
+		public static string GetSchema(HttpStatusCode statusCode)
+        {
+            return schemas.ContainsKey(statusCode) ? schemas[statusCode] : string.Empty;
+        }
+
+		public <#= apiObject.Name #>()
         {
 <#
 		foreach (var property in apiObject.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
@@ -471,7 +554,7 @@ foreach (var apiObject in model.Objects.Values.Where(o => o.Properties.Any()))
 	    {
 #>
         /// <summary>
-        /// <#= XmlCommentHelper.Escape(property.Description) #>
+        /// <#= property.Description #>
         /// </summary>
 <#
     	}
@@ -495,7 +578,7 @@ foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any())
 	{
 #>
     /// <summary>
-    /// <#= XmlCommentHelper.Escape(header.Description) #>
+    /// <#= header.Description #>
     /// </summary>
 <#
 	}
@@ -510,7 +593,7 @@ foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any())
 	    {
 #>
         /// <summary>
-        /// <#= XmlCommentHelper.Escape(property.Description) #>
+        /// <#= property.Description #>
         /// </summary>
 <#
 		}
@@ -535,7 +618,7 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
 	{
 #>
     /// <summary>
-    /// <#= XmlCommentHelper.Escape(respHeader.Description) #>
+    /// <#= respHeader.Description #>
     /// </summary>
 <#
 	}
@@ -590,7 +673,7 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
 	    {
 #>
         /// <summary>
-        /// <#= XmlCommentHelper.Escape(property.Description) #>
+        /// <#= property.Description #>
         /// </summary>
 <#
 	    }
@@ -616,7 +699,7 @@ foreach (var apiObject in model.ApiRequestObjects)
 	{
 #>
     /// <summary>
-    /// <#= XmlCommentHelper.Escape(apiObject.Description) #>
+    /// <#= apiObject.Description #>
     /// </summary>
 <#
 	}
@@ -642,7 +725,7 @@ foreach (var apiObject in model.ApiRequestObjects)
 	    {
 #>
         /// <summary>
-        /// <#= XmlCommentHelper.Escape(property.Description) #>
+        /// <#= property.Description #>
         /// </summary>
 <#
     	}
@@ -665,7 +748,7 @@ foreach (var apiObject in model.ApiResponseObjects)
 	{
 #>
     /// <summary>
-    /// <#= XmlCommentHelper.Escape(apiObject.Description) #>
+    /// <#= apiObject.Description #>
     /// </summary>
 <#
 	}
@@ -682,7 +765,7 @@ foreach (var apiObject in model.ApiResponseObjects)
 	    {
 #>
         /// <summary>
-        /// <#= XmlCommentHelper.Escape(property.Description) #>
+        /// <#= property.Description #>
         /// </summary>
 <#
     	}
@@ -710,14 +793,20 @@ foreach (var apiObject in model.ApiResponseObjects)
 
 		        typedContent = new <#= body.Type #>();
 		        var task = Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode), Formatters)
-                            : RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode));
-		        task.Wait();
+                            ? RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode), Formatters).ConfigureAwait(false)
+                            : RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode)).ConfigureAwait(false);
+		        
 		        var content = task.GetAwaiter().GetResult();
 		        typedContent.SetPropertyByStatusCode(StatusCode, content);
 		        return typedContent;
 	        }
-    	}        
+    	}      
+		
+		public static string GetSchema(HttpStatusCode statusCode)
+        {
+            return <#= body.Type #>.GetSchema(statusCode);
+        }
+  
 <#		
 		}
 		else
@@ -736,9 +825,9 @@ foreach (var apiObject in model.ApiResponseObjects)
 			        return typedContent;
 
 		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<<#= body.Type #>>(Formatters)
-                            : RawContent.ReadAsAsync<<#= body.Type #>>();
-		        task.Wait();
+                            ? RawContent.ReadAsAsync<<#= body.Type #>>(Formatters).ConfigureAwait(false)
+                            : RawContent.ReadAsAsync<<#= body.Type #>>().ConfigureAwait(false);
+		        
 		        typedContent = task.GetAwaiter().GetResult();
 		        return typedContent;
 	        }

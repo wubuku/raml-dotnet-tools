@@ -87,7 +87,8 @@ namespace Raml.Tools
 				               Description = response.Description + " " + mimeType.Description,
 				               Example = mimeType.Example,
 				               Type = type,
-				               StatusCode = (HttpStatusCode) Enum.Parse(typeof (HttpStatusCode), response.Code)
+				               StatusCode = (HttpStatusCode) Enum.Parse(typeof (HttpStatusCode), response.Code),
+                               JSONSchema = mimeType.Schema == null ? null : mimeType.Schema.Replace("\"", "\\\"").Replace("\n", "")
 			               };
 
 			properties.Add(property);
