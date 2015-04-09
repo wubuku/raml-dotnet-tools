@@ -11,7 +11,7 @@ namespace Raml.Common
 {
 	public class RamlIncludesManager
 	{
-		private readonly char[] IncludeDirectiveTrimChars = { ' ', '"', '}' };
+		private readonly char[] IncludeDirectiveTrimChars = { ' ', '"', '}', ']', ',' };
 		private const string IncludeDirective = "!include";
 
 		public RamlIncludesManagerResult Manage(string ramlSource, string destinationFolder, bool confirmOverrite = false)
