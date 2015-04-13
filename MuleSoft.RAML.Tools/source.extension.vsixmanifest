@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="49d3aa6e-2e80-4568-92e9-4bcb3eb2b40d" Version="0.9.20150406" Language="en-US" Publisher="MuleSoft Inc" />
+    <Identity Id="49d3aa6e-2e80-4568-92e9-4bcb3eb2b40d" Version="0.9.20150413" Language="en-US" Publisher="MuleSoft Inc" />
     <DisplayName>RAML Tools for .NET</DisplayName>
     <Description xml:space="preserve">Allows developers to easily integrate and consume APIs that expose a RAML definition, or use a contract-first approach to generate a new ASP.NET Web API implementation from a previously created RAML definition. See http://raml.org for information on RAML (RESTful API Markup Language).</Description>
     <MoreInfo>https://github.com/mulesoft-labs/raml-dotnet-tools</MoreInfo>
