@@ -88,6 +88,9 @@
     <Compile Include="RAMLLibraryBrowser.xaml.cs">
       <DependentUpon>RAMLLibraryBrowser.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RamlPreview.xaml.cs">
+      <DependentUpon>RamlPreview.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RamlScaffolderHelper.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="T4Service.cs" />
@@ -131,12 +134,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="RamlPreview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Raml.Tools\Raml.Tools.csproj">
       <Project>{851d7eab-c9fb-4a3f-9537-bb8f36710395}</Project>
       <Name>Raml.Tools</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="RamlLogo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

@@ -28,13 +28,14 @@ namespace Raml.Common
 		private const string RamlFileExtension = ".raml";
 		// action to execute when clicking Ok button (add RAML Reference, Scaffold Web Api, etc.)
 		private readonly Action<RamlChooserActionParams> action;
-		private bool isContractUseCase;
 		private readonly RamlIncludesManager includesManager = new RamlIncludesManager();
 		public string RamlTempFilePath { get; private set; }
 		public string RamlOriginalSource { get; set; }
 
 		public string TargetNamespace { get { return txtNamespace.Text; } }
 		public IServiceProvider ServiceProvider { get; set; }
+
+        private bool isContractUseCase;
 
 		private bool IsContractUseCase
 		{
@@ -146,49 +147,6 @@ namespace Raml.Common
 			});
 		}
 
-		private void btnOk_Click(object sender, RoutedEventArgs e)
-		{
-			StartProgress();
-			DoEvents();
-
-			if (!txtFileName.Text.ToLowerInvariant().EndsWith(RamlFileExtension))
-			{
-				ShowErrorStopProgressAndDisableOk("Error: the file must have the .raml extension.");
-				DialogResult = false;
-				return;				
-			}
-
-			if (!IsContractUseCase && !File.Exists(RamlTempFilePath))
-			{
-				ShowErrorStopProgressAndDisableOk("Error: the specified file does not exist.");
-				DialogResult = false;
-				return;
-			}
-
-			var path = Path.GetDirectoryName(GetType().Assembly.Location) + Path.DirectorySeparatorChar;
-
-			try
-			{
-				ResourcesLabel.Text = "Processing. Please wait..." + Environment.NewLine + Environment.NewLine;
-				
-				// Execute action (add RAML Reference, Scaffold Web Api, etc)
-				var parameters = new RamlChooserActionParams(RamlOriginalSource, RamlTempFilePath, txtTitle.Text, path,
-					txtFileName.Text, txtNamespace.Text, chkDoNotScaffold.IsChecked);
-				action(parameters);
-
-				ResourcesLabel.Text += "Succeeded";
-				StopProgress();
-				btnOk.IsEnabled = true;
-				DialogResult = true;
-				Close();
-			}
-			catch (Exception ex)
-			{
-				ShowErrorStopProgressAndDisableOk("Error: " + ex.Message);
-
-				ActivityLog.LogError(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, VisualStudioAutomationHelper.GetExceptionInfo(ex));
-			}
-		}
 
 		private void ShowErrorStopProgressAndDisableOk(string errorMessage)
 		{
@@ -232,11 +190,6 @@ namespace Raml.Common
 			return output;
 		}
 
-		private void btnCancel_Click(object sender, RoutedEventArgs e)
-		{
-			DialogResult = false;
-			Close();
-		}
 
 		private async void GoButton_Click(object sender, RoutedEventArgs e)
 		{
@@ -396,5 +349,10 @@ namespace Raml.Common
 			existingRamlRadioButton.IsChecked = false;
 		}
 
+	    private void btnCancel_Click(object sender, RoutedEventArgs e)
+	    {
+            //TODO
+	        throw new NotImplementedException();
+	    }
 	}
 }
