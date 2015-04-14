@@ -168,8 +168,8 @@ namespace MuleSoft.RAML.Tools
 		private static ClientGeneratorModel GetGeneratorModel(string wszInputFilePath, RamlInfo ramlInfo)
 		{
 			var rootName = Raml.Tools.NetNamingMapper.GetObjectName(Path.GetFileNameWithoutExtension(wszInputFilePath));
-			if (!rootName.ToLower().Contains("api"))
-				rootName += "Api";
+			if (!rootName.ToLower().Contains("client"))
+				rootName += "Client";
 			var model = new ClientGeneratorService(ramlInfo.RamlDocument, rootName).BuildModel();
 			return model;
 		}
