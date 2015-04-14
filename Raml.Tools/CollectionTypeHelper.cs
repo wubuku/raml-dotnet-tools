@@ -2,7 +2,7 @@ namespace Raml.Tools
 {
     public class CollectionTypeHelper
     {
-        public const string CollectionType = "ICollection";
+        public const string CollectionType = "IList";
 
         public static string GetCollectionType(string netType)
         {
