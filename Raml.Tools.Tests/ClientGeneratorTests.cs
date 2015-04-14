@@ -188,28 +188,28 @@ namespace Raml.Tools.Tests
 		public async Task ShouldBuildPropertiosOnClasses_FromBox()
 		{
 			var model = await GetBoxGeneratedModel();
-			Assert.AreEqual(9, model.Classes.SelectMany(c => c.Properties).Count());
+			Assert.AreEqual(16, model.Classes.SelectMany(c => c.Properties).Count());
 		}
 
 		[Test]
 		public async Task ShouldBuildPropertiosOnrOOTClass_FromCongo()
 		{
 			var model = await GetCongoGeneratedModel();
-			Assert.AreEqual(3, model.Root.Properties.Count());
+			Assert.AreEqual(2, model.Root.Properties.Count());
 		}
 
 		[Test]
 		public async Task ShouldBuildPropertiosOnClasses_FromGitHub()
 		{
 			var model = await GetGitHubGeneratedModel();
-			Assert.AreEqual(68, model.Classes.SelectMany(c => c.Properties).Count());
+			Assert.AreEqual(91, model.Classes.SelectMany(c => c.Properties).Count());
 		}
 
 		[Test]
 		public async Task ShouldBuildPropertiosOnClasses_FromTwitter()
 		{
 			var model = await GetTwitterGeneratedModel();
-			Assert.AreEqual(90, model.Classes.SelectMany(c => c.Properties).Count());
+			Assert.AreEqual(91, model.Classes.SelectMany(c => c.Properties).Count());
 		}
 
 		[Test]
