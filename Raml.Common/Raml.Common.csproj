@@ -148,6 +148,11 @@
   <ItemGroup>
     <Resource Include="RamlLogo.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\exchange.png" />
+    <Resource Include="images\RAML.png" />
+    <Resource Include="images\upload.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -354,5 +354,11 @@ namespace Raml.Common
             //TODO
 	        throw new NotImplementedException();
 	    }
+
+        private void btnOk_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
 	}
 }
