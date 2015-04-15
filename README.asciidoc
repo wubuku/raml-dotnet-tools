@@ -369,20 +369,20 @@ In the case your customized template is no longer compatible then you will be gi
 
 === Customizing the generated code for the client
 
-For the client there is a single template containing all the generated code, the RAMLClient.t4 file is placed under "API References/Templates".
+For the client there is a single template containing all the generated code, the *RAMLClient.t4* file is placed under "API References/Templates".
 
 
 === Customizing the generated code for the Asp.Net Web API
 
 For the Web API there are a several templates under "Contracts/Templates":
 
-- ApiControllerImplementation.t4: this generates the skeleton of the controller, this is the place where you implement your code.
+- *ApiControllerImplementation.t4*: this generates the skeleton of the controller, this is the place where you implement your code.
 
-- ApiControllerBase.t4: this class delegates the to the methods on the controller implementation class (ApiControllerImplementation).
+- *ApiControllerBase.t4*: this class delegates the to the methods on the controller implementation class (ApiControllerImplementation).
 
-- ApiControllerInterface.t4: the interface that the controller implements.
+- *ApiControllerInterface.t4*: the interface that the controller implements.
 
-- ApiModel.t4: template for the request and response content models.
+- *ApiModel.t4*: template for the request and response content models.
 
 
 
