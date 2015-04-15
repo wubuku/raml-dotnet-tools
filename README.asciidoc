@@ -64,7 +64,7 @@ A folder called API References containing the generated assets is added to the p
 +
 image::./docimages/RAML_NET_APIRef.png[align="center"]
 +
-The Newtonsoft.Json and Microsoft.AspNet.WebApi.Client NuGet packages are installed and referenced by the project.
+The RAML.Api.Core, Newtonsoft.Json and Microsoft.AspNet.WebApi.Client NuGet packages are installed and referenced by the project.
 +
 . The C# classes nested beneath the parent RAML file contain the generated code to consume the Web API. At this point, the generated code is ready to be used.
 
@@ -80,16 +80,16 @@ image::./docimages/RAML_NET_RunTests.png[align="center"]
 The RAML .NET installation package includes a sample project for a Movies API,
 which is a fictitious video library service where users browse a movie catalog,  rent or return movies, and add movies to a wishlist for future watching.
 
-The main constructor of the project's MoviesAPI client uses an endpoint URI. The overload for the constructor allows a custom HttpClient implementation to be injected, such as an HttpClient instance configured with a MessageHandler. You can use this instance for unit testing.
+The main constructor of the project's MoviesClient client uses an endpoint URI. The overload for the constructor allows a custom HttpClient implementation to be injected, such as an HttpClient instance configured with a MessageHandler. You can use this instance for unit testing.
 
 === C#: Consuming an API
 
-The MoviesApi model object replicates the same structure as the RAML definition through available resources and actions. The methods in this object model are asynchronous and based on the Task Parallel Library (TPL), so they can executed with the new async  and await syntax in C# version 5.
+The MoviesClient model object replicates the same structure as the RAML definition through available resources and actions. The methods in this object model are asynchronous and based on the Task Parallel Library (TPL), so they can executed with the new async  and await syntax in C# version 5.
 
 
 [source, c#]
 ----
-var api = new MoviesApi("http://movies.com/api/");
+var api = new MoviesClient("http://movies.com/api/");
 
 // GET /movies
 var moviesResponse = await api.Movies.Get();
@@ -128,7 +128,7 @@ Replace the <OAuth_Token> with your  OAuth token received from your OAuth author
 
 === C#: Consuming the HTTP Response
 
-All methods in the generated class return a concrete implementation of ApiResponse base class. This class provides access to the HTTP status codes, raw headers, and content. The following code fragment illustrates how to use those:
+All methods in the generated class return an instance of ApiResponse or of a subclass of it. This class provides access to the HTTP status codes, raw headers, and content. The following code fragment illustrates how to use those:
 
 [source, c#]
 ----
@@ -201,96 +201,189 @@ The generated controllers provide the starting point for the implementation. The
 [source, c#]
 ----
 public partial class MoviesController : IMoviesController
+{
+
+    /// <summary>
+    /// gets all movies in the catalogue
+    /// </summary>
+    /// <returns>IList<MoviesGetOKResponseContent></returns>
+    public IHttpActionResult Get()
     {
-
-
-        public IHttpActionResult Get()
-        {
-            // Put your code here
-            return Ok();
-        }
-
-
-        public IHttpActionResult Post(Models.MoviesPostRequestContent moviespostrequestcontent,[FromUri] string access_token = null)
-        {
-            // Put your code here
-            return Ok();
-        }
-
-
-        public IHttpActionResult GetById([FromUri] string id)
-        {
-            // Put your code here
-            return Ok();
-        }
-
-
-        public IHttpActionResult Put(Models.IdPutRequestContent idputrequestcontent,[FromUri] string id)
-        {
-            // Put your code here
-            return Ok();
-        }
-
-
-        public IHttpActionResult Delete([FromUri] string id)
-        {
-            // Put your code here
-            return Ok();
-        }
-
-
-        public IHttpActionResult PutRent(string json,[FromUri] string id,[FromUri] string access_token = null)
-        {
-            // Put your code here
-            return Ok();
-        }
-
-
-        public IHttpActionResult PutReturn(string json,[FromUri] string id,[FromUri] string access_token = null)
-        {
-            // Put your code here
-            return Ok();
-        }
-
-
-        public IHttpActionResult GetWishlist([FromUri] string access_token = null)
-        {
-            // Put your code here
-            return Ok();
-        }
-
-
-        public IHttpActionResult PostById(string json,[FromUri] string id,[FromUri] string access_token = null)
-        {
-            // Put your code here
-            return Ok();
-        }
-
-
-        public IHttpActionResult DeleteById([FromUri] string id,[FromUri] string access_token = null)
-        {
-            // Put your code here
-            return Ok();
-        }
-
-
-        public IHttpActionResult GetRented()
-        {
-            // Put your code here
-            return Ok();
-        }
-
-
-        public IHttpActionResult GetAvailable()
-        {
-            // Put your code here
-            return Ok();
-        }
-
+        // TODO: implement Get - route: movies/
+        // var result = new IList<MoviesGetOKResponseContent>();
+        // return Ok(result);
+        return Ok();
     }
+
+    /// <summary>
+    /// adds a movie to the catalogue
+    /// </summary>
+    /// <param name="moviespostrequestcontent"></param>
+    /// <param name="access_token">Used to send a valid OAuth 2 access token. Do not use together with the &quot;Authorization&quot; header </param>
+    public IHttpActionResult Post(Models.MoviesPostRequestContent moviespostrequestcontent,[FromUri] string access_token = null)
+    {
+        // TODO: implement Post - route: movies/
+        return Ok();
+    }
+
+    /// <summary>
+    /// get the info of a movie
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>IdGetOKResponseContent</returns>
+    public IHttpActionResult GetById([FromUri] string id)
+    {
+        // TODO: implement GetById - route: movies/{id}
+        // var result = new IdGetOKResponseContent();
+        // return Ok(result);
+        return Ok();
+    }
+
+    /// <summary>
+    /// update the info of a movie
+    /// </summary>
+    /// <param name="idputrequestcontent"></param>
+    /// <param name="id"></param>
+    public IHttpActionResult Put(Models.IdPutRequestContent idputrequestcontent,[FromUri] string id)
+    {
+        // TODO: implement Put - route: movies/{id}
+        return Ok();
+    }
+
+    /// <summary>
+    /// remove a movie from the catalogue
+    /// </summary>
+    /// <param name="id"></param>
+    public IHttpActionResult Delete([FromUri] string id)
+    {
+        // TODO: implement Delete - route: movies/{id}
+        return Ok();
+    }
+
+    /// <summary>
+    /// rent a movie
+    /// </summary>
+    /// <param name="json"></param>
+    /// <param name="id"></param>
+    /// <param name="access_token">Used to send a valid OAuth 2 access token. Do not use together with the &quot;Authorization&quot; header </param>
+    public IHttpActionResult PutRent(string json,[FromUri] string id,[FromUri] string access_token = null)
+    {
+        // TODO: implement PutRent - route: movies/{id}/rent
+        return Ok();
+    }
+
+    /// <summary>
+    /// return a movie
+    /// </summary>
+    /// <param name="json"></param>
+    /// <param name="id"></param>
+    /// <param name="access_token">Used to send a valid OAuth 2 access token. Do not use together with the &quot;Authorization&quot; header </param>
+    public IHttpActionResult PutReturn(string json,[FromUri] string id,[FromUri] string access_token = null)
+    {
+        // TODO: implement PutReturn - route: movies/{id}/return
+        return Ok();
+    }
+
+    /// <summary>
+    /// gets the current user movies wishlist
+    /// </summary>
+    /// <param name="access_token">Used to send a valid OAuth 2 access token. Do not use together with the &quot;Authorization&quot; header </param>
+    /// <returns>IList<WishlistGetOKResponseContent></returns>
+    public IHttpActionResult GetWishlist([FromUri] string access_token = null)
+    {
+        // TODO: implement GetWishlist - route: movies/wishlist
+        // var result = new IList<WishlistGetOKResponseContent>();
+        // return Ok(result);
+        return Ok();
+    }
+
+    /// <summary>
+    /// add a movie to the current user movies wishlist
+    /// </summary>
+    /// <param name="json"></param>
+    /// <param name="id"></param>
+    /// <param name="access_token">Used to send a valid OAuth 2 access token. Do not use together with the &quot;Authorization&quot; header </param>
+    public IHttpActionResult PostById(string json,[FromUri] string id,[FromUri] string access_token = null)
+    {
+        // TODO: implement PostById - route: movies/wishlist/{id}
+        return Ok();
+    }
+
+    /// <summary>
+    /// removes a movie from the current user movies wishlist
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="access_token">Used to send a valid OAuth 2 access token. Do not use together with the &quot;Authorization&quot; header </param>
+    public IHttpActionResult DeleteById([FromUri] string id,[FromUri] string access_token = null)
+    {
+        // TODO: implement DeleteById - route: movies/wishlist/{id}
+        return Ok();
+    }
+
+    /// <summary>
+    /// gets the user rented movies
+    /// </summary>
+    /// <returns>IList<RentedGetOKResponseContent></returns>
+    public IHttpActionResult GetRented()
+    {
+        // TODO: implement GetRented - route: movies/rented
+        // var result = new IList<RentedGetOKResponseContent>();
+        // return Ok(result);
+        return Ok();
+    }
+
+    /// <summary>
+    /// get all movies that are not currently rented
+    /// </summary>
+    /// <returns>IList<AvailableGetOKResponseContent></returns>
+    public IHttpActionResult GetAvailable()
+    {
+        // TODO: implement GetAvailable - route: movies/available
+        // var result = new IList<AvailableGetOKResponseContent>();
+        // return Ok(result);
+        return Ok();
+    }
+
+}
 ----
 
-The IMovies interface implemented by the controller represents the contract. You can provide, for example, the implementation code for the Get method and return a list of available movies in the catalog.
+The IMoviesController interface implemented by the controller represents the contract. You can provide, for example, the implementation code for the Get method and return a list of available movies in the catalog.
+
+
+
+== Customizing the generated code
+
+RAML Tools for .NET uses T4 templates for code generation of client and service implementation.
+The T4 templates are now placed in your project folder to be able to easily customize them.
+
+If you customize a template be sure to add this file to your VCS repository.
+
+Each template has a header with the tile, version and hash, please do not modify this information as is used to check for customization and compatibility with new versions.
+
+=== Compatibility with new versions of the templates
+
+When upgrading the tool if the template has changed a compatibility check will be performed. If you have customized the template and the new version of the template is compatible with your current one, then you will be given with the option to override or continue using your customized template.
+
+In the case your customized template is no longer compatible then you will be given the choice to override the template or stop the process. In the latter you must uninstall the new version of the tool and reinstall the previous one.
+
+
+=== Customizing the generated code for the client
+
+For the client there is a single template containing all the generated code, the RAMLClient.t4 file is placed under "API References/Templates".
+
+
+=== Customizing the generated code for the Asp.Net Web API
+
+For the Web API there are a several templates under "Contracts/Templates":
+
+- ApiControllerImplementation.t4: this generates the skeleton of the controller, this is the place where you implement your code.
+
+- ApiControllerBase.t4: this class delegates the to the methods on the controller implementation class (ApiControllerImplementation).
+
+- ApiControllerInterface.t4: the interface that the controller implements.
+
+- ApiModel.t4: template for the request and response content models.
+
 
 
 == FAQ
@@ -305,12 +398,7 @@ A: Currently, C# is the only output language supported. This generated code can 
 
 Q: Can I customize the code-generation templates?
 
-A: RAML Tools for .NET uses T4 templates for code generation of client and service implementation. These templates are currently global for all projects, and are stored in a randomly named directory under the directory:
-
-[source,xml]
-----
-%UserProfile%\AppData\Local\Microsoft\VisualStudio\12.0\Extensions
-----
+A: Yes, RAML Tools for .NET uses T4 templates for code generation of client and service implementation. See the appropriate sections.
 
 While it is possible to customize the T4 templates found beneath this directory, it is not explicitly supported by the tooling yet and as such the naming and use of these templates is subject to change in future revisions. It is intended that explicit overriding on a per-project basis is supported in the near term.
 
