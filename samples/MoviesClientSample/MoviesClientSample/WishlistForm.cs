@@ -7,7 +7,7 @@ namespace MoviesClientSample
 {
 	public partial class WishlistForm : Form
 	{
-		private MoviesApi client;
+		private MoviesClient client;
 
 		public WishlistForm()
 		{
@@ -16,7 +16,7 @@ namespace MoviesClientSample
 
 		private async void WishlistForm_Load(object sender, EventArgs e)
 		{
-			client = new MoviesApi(new HttpClient(new FakeResponseHandler()) {BaseAddress = new Uri("http://test.com/api/")});
+			client = new MoviesClient(new HttpClient(new FakeResponseHandler()) {BaseAddress = new Uri("http://test.com/api/")});
 			client.OAuthAccessToken = "sadasdasdasdasdasdasd4545345345343asd";
 			var wishlist = await client.Movies.Wishlist.Get();
 			dataGridView1.DataSource = wishlist.Content;
