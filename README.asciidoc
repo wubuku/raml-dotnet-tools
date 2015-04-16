@@ -398,9 +398,7 @@ A: Currently, C# is the only output language supported. This generated code can 
 
 Q: Can I customize the code-generation templates?
 
-A: Yes, RAML Tools for .NET uses T4 templates for code generation of client and service implementation. See the appropriate sections.
-
-While it is possible to customize the T4 templates found beneath this directory, it is not explicitly supported by the tooling yet and as such the naming and use of these templates is subject to change in future revisions. It is intended that explicit overriding on a per-project basis is supported in the near term.
+A: Yes, RAML Tools for .NET uses T4 templates for code generation of client and service implementation. See the appropriate sections for guidance on where and how to customize templates.
 
 Q: I already have an API built using ASP.NET WebApi - how do I adopt RAML for my project?
 
