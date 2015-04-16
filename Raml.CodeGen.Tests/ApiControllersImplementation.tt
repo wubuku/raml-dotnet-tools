@@ -1,0 +1,56 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ assembly name="$(SolutionDir)RAML.CodeGen.Tests\bin\Debug\RAML.Parser.dll" #>
+<#@ assembly name="$(SolutionDir)RAML.CodeGen.Tests\bin\Debug\EdgeJs.dll" #>
+<#@ assembly name="$(SolutionDir)Raml.Tools\bin\Debug\Raml.Tools.dll" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="Raml.Parser" #>
+<#@ import namespace="Raml.Tools" #>
+<#@ import namespace="Raml.Tools.WebApiGenerator" #>
+<#@ import namespace="System.Linq" #>
+<#@ output extension=".cs" #>
+<#
+
+	var parser = new RamlParser();
+	var ramlFile = Host.ResolvePath("twitter.raml");
+	var raml = parser.Load(ramlFile);
+	var service = new WebApiGeneratorService(raml);
+	var model = service.BuildModel();
+#>
+
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Web.Http;
+using System.Web.Http.Description;
+using <#= model.Namespace #>.Models;
+
+namespace <#= model.Namespace #>
+{
+<#
+	foreach (var controllerObject in model.Controllers)
+	{
+#>
+	public partial class <#= controllerObject.Name #>Controller : I<#= controllerObject.Name #>Controller
+    {
+
+<#
+		foreach (var method in controllerObject.Methods)
+		{
+#>
+
+        public IHttpActionResult <#= method.Name #>(<#= method.ParametersString #>)
+        {
+            // put your code here
+            return Ok();
+        }
+
+<#
+
+		}
+#>
+    }
+
+<#
+	}
+#>
+}

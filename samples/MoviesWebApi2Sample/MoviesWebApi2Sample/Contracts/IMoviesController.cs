@@ -1,5 +1,7 @@
+// Template: Controller Interface (ApiControllerInterface.t4) version 0.1
 
 using System;
+using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Description;
 using MoviesWebApi2Sample.Movies.Models;

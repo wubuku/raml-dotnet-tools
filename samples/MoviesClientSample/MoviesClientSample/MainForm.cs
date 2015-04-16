@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -9,7 +10,7 @@ namespace MoviesClientSample
 {
     public partial class MainForm : Form
     {
-        private MoviesApi client;
+        private MoviesClient client;
 	    private readonly string oAuthAccessToken = "asdasdewr34r4wef34r34";
 
 	    public MainForm()
@@ -25,12 +26,12 @@ namespace MoviesClientSample
 			this.FormBorderStyle = FormBorderStyle.FixedDialog;
 		}
 
-		public async Task<MoviesGetOKResponseContent[]> GetMovies()
+		public async Task<IList<MoviesGetOKResponseContent>> GetMovies()
 	    {
 			var fakeResponseHandler = new FakeResponseHandler();
 			var httpClient = new HttpClient(fakeResponseHandler) {BaseAddress = new Uri("http://test.com/api/")};
 
-		    client = new MoviesApi(httpClient);
+		    client = new MoviesClient(httpClient);
 		    var movies = await client.Movies.Get();
 		    return movies.Content;
 	    }
@@ -50,7 +51,7 @@ namespace MoviesClientSample
             var item = (MoviesGetOKResponseContent)dataGridView1.CurrentRow.DataBoundItem;
 			item.Rented = true;
 			client.OAuthAccessToken = oAuthAccessToken;
-			await client.Rent.Put("", item.Id.ToString());
+			await client.Movies.Rent.Put("", item.Id.ToString());
 			dataGridView1.CurrentRow.Cells[8].Value = true;
 			dataGridView1.Refresh();
 			cmdRent.Enabled = false;
@@ -62,7 +63,7 @@ namespace MoviesClientSample
             var item = (MoviesGetOKResponseContent)dataGridView1.CurrentRow.DataBoundItem;
 			item.Rented = false;
 			client.OAuthAccessToken = oAuthAccessToken;
-			await client.Return.Put("", item.Id.ToString());
+			await client.Movies.Return.Put("", item.Id.ToString());
 
 			dataGridView1.CurrentRow.Cells[8].Value = false;
 			dataGridView1.Refresh();

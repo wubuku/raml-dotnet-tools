@@ -1,0 +1,57 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="MuleSoft.RAML.Tools.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="NugetPackagesSource" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://www.nuget.org/api/v2/</Value>
+    </Setting>
+    <Setting Name="NewtonsoftJsonPackageId" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Newtonsoft.Json</Value>
+    </Setting>
+    <Setting Name="NewtonsoftJsonPackageVersion" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">6.0.4</Value>
+    </Setting>
+    <Setting Name="WebApiClientPackageId" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Microsoft.AspNet.WebApi.Client</Value>
+    </Setting>
+    <Setting Name="WebApiClientPackageVersion" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">5.2.0</Value>
+    </Setting>
+    <Setting Name="ContractsFolderName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Contracts</Value>
+    </Setting>
+    <Setting Name="RAMLApiCorePackageId" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">RAML.Api.Core</Value>
+    </Setting>
+    <Setting Name="RAMLApiCorePackageVersion" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">0.9.2</Value>
+    </Setting>
+    <Setting Name="ApiReferencesFolderName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">API References</Value>
+    </Setting>
+    <Setting Name="ClientT4TemplateName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">RAMLClient.t4</Value>
+    </Setting>
+    <Setting Name="ServerTemplatesVersion" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">0.1</Value>
+    </Setting>
+    <Setting Name="ClientTemplatesVersion" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">0.1</Value>
+    </Setting>
+    <Setting Name="ClientTemplateTitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Client Proxy T4 Template</Value>
+    </Setting>
+    <Setting Name="ModelsTemplateTitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Models</Value>
+    </Setting>
+    <Setting Name="BaseControllerTemplateTitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Base Controller</Value>
+    </Setting>
+    <Setting Name="ControllerInterfaceTemplateTitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Controller Interface</Value>
+    </Setting>
+    <Setting Name="ControllerImplementationTemplateTitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Controller Implementation</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

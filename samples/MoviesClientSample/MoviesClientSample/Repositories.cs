@@ -5,7 +5,7 @@ namespace MoviesClientSample
 {
 	public static class Repositories
 	{
-        public static ICollection<MoviesGetOKResponseContent> Movies { get; set; }
-        public static ICollection<MoviesGetOKResponseContent> Wishlist { get; set; }
+        public static IList<MoviesGetOKResponseContent> Movies { get; set; }
+        public static IList<MoviesGetOKResponseContent> Wishlist { get; set; }
 	}
 }

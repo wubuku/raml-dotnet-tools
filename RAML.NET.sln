@@ -1,24 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raml.Tools", "Raml.VisualStudio.Tools\Raml.Tools.csproj", "{851D7EAB-C9FB-4A3F-9537-BB8F36710395}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raml.Tools", "Raml.Tools\Raml.Tools.csproj", "{851D7EAB-C9FB-4A3F-9537-BB8F36710395}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raml.Tools.Tests", "Raml.VisualStudio.Tools.Tests\Raml.Tools.Tests.csproj", "{506E0987-5F2D-409B-80DE-0B0D3EDE275B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raml.Tools.Tests", "Raml.Tools.Tests\Raml.Tools.Tests.csproj", "{506E0987-5F2D-409B-80DE-0B0D3EDE275B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raml.CodeGen.Tests", "Raml.VisualStudio.CodeGen.Tests\Raml.CodeGen.Tests.csproj", "{AB9722BA-FDC7-44B4-BFAC-9D6FF9227D4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raml.CodeGen.Tests", "Raml.CodeGen.Tests\Raml.CodeGen.Tests.csproj", "{AB9722BA-FDC7-44B4-BFAC-9D6FF9227D4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MuleSoft.RAML.Tools", "MuleSoft.RAML.ToolsPackage\MuleSoft.RAML.Tools.csproj", "{7E570882-1D40-487C-977B-69DEDA80BD63}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MuleSoft.RAML.Tools", "MuleSoft.RAML.Tools\MuleSoft.RAML.Tools.csproj", "{7E570882-1D40-487C-977B-69DEDA80BD63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raml.Common", "Raml.SelectorUI\Raml.SelectorUI\Raml.Common.csproj", "{05A60B40-E199-435D-99A4-0DD7637F5690}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raml.Common", "Raml.Common\Raml.Common.csproj", "{05A60B40-E199-435D-99A4-0DD7637F5690}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DD39147D-2814-4B26-81D7-76A354193023}"
-	ProjectSection(SolutionItems) = preProject
-		README.ad = README.ad
-	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAML.Api.Core", "Raml.Client.Common\RAML.Api.Core.csproj", "{38B9703D-6167-4AAE-BAED-0C896C24A762}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAML.Api.Core", "RAML.Api.Core\RAML.Api.Core.csproj", "{38B9703D-6167-4AAE-BAED-0C896C24A762}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C5478D09-843C-40EA-9DF5-06D5CAD36B01}"
 	ProjectSection(SolutionItems) = preProject
