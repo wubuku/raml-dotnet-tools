@@ -146,9 +146,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="RamlLogo.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="images\exchange.png" />
     <Resource Include="images\RAML.png" />
     <Resource Include="images\upload.png" />
