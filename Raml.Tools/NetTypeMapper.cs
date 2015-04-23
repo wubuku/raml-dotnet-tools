@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using Newtonsoft.Json.Schema;
 
 namespace Raml.Tools
@@ -108,5 +109,10 @@ namespace Raml.Tools
 		{
 			return typeStringConversion.Any(t => t.Value == type);
 		}
+
+	    public static string Map(XmlQualifiedName schemaTypeName)
+	    {
+	        return schemaTypeName.Name;
+	    }
 	}
 }

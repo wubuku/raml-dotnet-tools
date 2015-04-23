@@ -103,6 +103,7 @@
     <Compile Include="UriParametersTests.cs" />
     <Compile Include="UrlGeneratorHelperTests.cs" />
     <Compile Include="WebApiGeneratorTests.cs" />
+    <Compile Include="XmlSchemaParserTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RAML.Api.Core\RAML.Api.Core.csproj">
