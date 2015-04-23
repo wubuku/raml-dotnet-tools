@@ -362,9 +362,9 @@ Each template has a header with the tile, version and hash, please do not modify
 
 === Compatibility with new versions of the templates
 
-When upgrading the tool if the template has changed a compatibility check will be performed. If you have customized the template and the new version of the template is compatible with your current one, then you will be given with the option to override or continue using your customized template.
+When upgrading the tool if the template has changed a compatibility check is performed. If you have customized the template and the new version of the template is compatible with your current one, then you are given the option to override or continue using your customized template.
 
-In the case your customized template is no longer compatible then you will be given the choice to override the template or stop the process. In the latter you must uninstall the new version of the tool and reinstall the previous one.
+In case your customized template is no longer compatible, then you are given the choice to override the template or stop the process. In the latter, you must uninstall the new version of the tool and reinstall the previous one.
 
 
 === Customizing the generated code for the client
