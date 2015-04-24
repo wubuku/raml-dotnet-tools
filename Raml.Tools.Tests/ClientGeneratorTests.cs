@@ -1,8 +1,9 @@
-﻿using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Raml.Parser;
-using System.Threading.Tasks;
 using Raml.Tools.ClientGenerator;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Xml;
 
 namespace Raml.Tools.Tests
 {
@@ -63,8 +64,6 @@ namespace Raml.Tools.Tests
         public async Task ShouldHaveNoWarnings_WhenFstab()
         {
             var model = await GetFstabGeneratedModel();
-
-            var o = model.Objects.Where(p => p.Value.Properties.Any());
 
             Assert.AreEqual(0, model.Warnings.Count());
         }
@@ -430,6 +429,56 @@ namespace Raml.Tools.Tests
         {
             var model = await GetTwitterGeneratedModel();
             Assert.AreEqual(627, model.Objects.Sum(c => c.Value.Properties.Count));
+        }
+
+        [Test]
+        public async Task Should_Generate_Valid_XML_Comments_WhenGithub()
+        {
+            var model = await GetGitHubGeneratedModel();
+            var xmlDoc = new XmlDocument();
+            foreach (var method in model.Classes.SelectMany(c => c.Methods))
+            {
+                var xmlComment = GetXml(method.XmlComment);
+                var xmlSimpleComment = GetXml(method.XmlSimpleComment);
+                Assert.DoesNotThrow(() => xmlDoc.LoadXml(xmlComment));
+                Assert.DoesNotThrow(() => xmlDoc.LoadXml(xmlSimpleComment));
+            }
+        }
+
+	    [Test]
+        public async Task Should_Generate_Valid_XML_Comments_WhenTwitter()
+        {
+            var model = await GetTwitterGeneratedModel();
+            var xmlDoc = new XmlDocument();
+            foreach (var method in model.Classes.SelectMany(c => c.Methods))
+            {
+                var xmlComment = GetXml(method.XmlComment);
+                var xmlSimpleComment = GetXml(method.XmlSimpleComment);
+                Assert.DoesNotThrow(() => xmlDoc.LoadXml(xmlComment));
+                Assert.DoesNotThrow(() => xmlDoc.LoadXml(xmlSimpleComment));
+            }
+        }
+
+        [Test]
+        public async Task Should_Generate_Valid_XML_Comments_WhenMovies()
+        {
+            var model = await GetMoviesGeneratedModel();
+            var xmlDoc = new XmlDocument();
+            foreach (var method in model.Classes.SelectMany(c => c.Methods))
+            {
+                var xmlComment = GetXml(method.XmlComment);
+                var xmlSimpleComment = GetXml(method.XmlSimpleComment);
+                Assert.DoesNotThrow(() => xmlDoc.LoadXml(xmlComment));
+                Assert.DoesNotThrow(() => xmlDoc.LoadXml(xmlSimpleComment));
+            }
+        }
+
+        private static string GetXml(string comment)
+        {
+            if (string.IsNullOrWhiteSpace(comment))
+                return comment;
+
+            return "<root>" + comment.Replace("///", string.Empty).Replace("\\\"", "\"") + "</root>";
         }
 
 		private static async Task<ClientGeneratorModel> GetTestGeneratedModel()

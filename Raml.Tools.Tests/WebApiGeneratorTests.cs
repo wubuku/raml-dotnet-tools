@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using NUnit.Framework;
 using Raml.Parser;
 using Raml.Tools.WebApiGenerator;
@@ -175,6 +177,49 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(302, model.Objects.Sum(c => c.Value.Properties.Count));
         }
 
+        [Test]
+        public async Task Should_Generate_Valid_XML_Comments_WhenGithub()
+        {
+            var model = await GetGitHubGeneratedModel();
+            var xmlDoc = new XmlDocument();
+            foreach (var method in model.Controllers.SelectMany(c => c.Methods))
+            {
+                var xmlComment = GetXml(method.XmlComment);
+                Assert.DoesNotThrow(() => xmlDoc.LoadXml(xmlComment));
+            }
+        }
+
+        [Test]
+        public async Task Should_Generate_Valid_XML_Comments_WhenTwitter()
+        {
+            var model = await GetTwitterGeneratedModel();
+            var xmlDoc = new XmlDocument();
+            foreach (var method in model.Controllers.SelectMany(c => c.Methods))
+            {
+                var xmlComment = GetXml(method.XmlComment);
+                Assert.DoesNotThrow(() => xmlDoc.LoadXml(xmlComment));
+            }
+        }
+
+        [Test]
+        public async Task Should_Generate_Valid_XML_Comments_WhenMovies()
+        {
+            var model = await GetMoviesGeneratedModel();
+            var xmlDoc = new XmlDocument();
+            foreach (var method in model.Controllers.SelectMany(c => c.Methods))
+            {
+                var xmlComment = GetXml(method.XmlComment);
+                Assert.DoesNotThrow(() => xmlDoc.LoadXml(xmlComment));
+            }
+        }
+
+        private static string GetXml(string comment)
+        {
+            if (string.IsNullOrWhiteSpace(comment))
+                return comment;
+
+            return "<root>" + comment.Replace("///", string.Empty).Replace("\\\"", "\"") + "</root>";
+        }
 
 		private static async Task<WebApiGeneratorModel> GetTestGeneratedModel()
 		{
