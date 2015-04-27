@@ -24,8 +24,18 @@ namespace $(namespace).Models
     /// </summary>
 <#
 	}
+
+	if(!apiObject.IsMultiple && apiObject.BaseClass != null) 
+	{
+#>
+    public partial class <#= apiObject.Name #> <#= " : " +  apiObject.BaseClass #>
+<#
+	} else {
 #>
     public partial class <#= apiObject.Name #>
+<#
+	}
+#>
     {
         
 <#
