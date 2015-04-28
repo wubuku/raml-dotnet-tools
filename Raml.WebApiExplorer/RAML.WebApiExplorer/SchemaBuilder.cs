@@ -51,7 +51,7 @@ namespace RAML.WebApiExplorer
 	        foreach (var definition in definitions)
 	        {
 
-	            schema += "\"  " + definition.Key + "\": {" + Environment.NewLine;
+	            schema += "  \"" + definition.Key + "\": {" + Environment.NewLine;
 	            schema += GetProperties(definition.Value, 4);
                 schema += "  }," + Environment.NewLine;
 	        }
