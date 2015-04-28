@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 namespace FstabExplorerTest.Fstab.Models
 {
+    [JsonObject("tmpfs")]
     public partial class Storagetmpfs  : Storage
     {
         

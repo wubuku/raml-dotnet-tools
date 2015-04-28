@@ -1,4 +1,6 @@
-﻿using FstabExplorerTest.Fstab.Models;
+﻿using System.IO;
+using FstabExplorerTest.Fstab.Models;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Schema;
 using NUnit.Framework;
 using RAML.WebApiExplorer.Tests.Types;

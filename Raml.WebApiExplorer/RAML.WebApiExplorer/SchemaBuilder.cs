@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
 
 namespace RAML.WebApiExplorer
 {
@@ -37,26 +38,31 @@ namespace RAML.WebApiExplorer
 		        schema += GetDefinitions();
 		    }
 
+            schema += "}" + Environment.NewLine;
+
 		    return schema;
 		}
 
 	    private static string AddTrailingComma(string schema)
 	    {
-            return schema.Substring(0, schema.Length) + "," + Environment.NewLine;
+            return schema.Substring(0, schema.Length - "\r\n".Length) + "," + Environment.NewLine;
 	    }
 
 	    private string GetDefinitions()
 	    {
-	        var schema = "\"definitions\": {" + Environment.NewLine;
+	        var schema = "  \"definitions\": {" + Environment.NewLine;
 	        foreach (var definition in definitions)
 	        {
-
-	            schema += "  \"" + definition.Key + "\": {" + Environment.NewLine;
-	            schema += GetProperties(definition.Value, 4);
-                schema += "  }," + Environment.NewLine;
+	            schema += "    \"" + definition.Key + "\": {" + Environment.NewLine;
+	            schema += GetProperties(definition.Value, 6);
+                
+                if(definition.Key == definitions.Last().Key)
+                    schema += "    }" + Environment.NewLine;
+                else
+                    schema += "    }," + Environment.NewLine;
 	        }
 	        schema = RemoveTrailingComma(schema);
-            schema += "}" + Environment.NewLine;
+            schema += "  }" + Environment.NewLine;
 	        return schema;
 	    }
 
@@ -76,7 +82,7 @@ namespace RAML.WebApiExplorer
 	        objectSchema += GetProperties(type, 4);
 
 	        objectSchema += "  }\r\n";
-	        objectSchema += "}\r\n";
+
 	        return objectSchema;
 	    }
 
@@ -95,7 +101,6 @@ namespace RAML.WebApiExplorer
 
 	        arraySchema += "    }\r\n";
 	        arraySchema += "  }\r\n";
-	        arraySchema += "}\r\n";
 	        return arraySchema;
 	    }
 
@@ -171,7 +176,7 @@ namespace RAML.WebApiExplorer
                               "  \"type\": \"array\",\r\n".Indent(pad) +
                               "  \"items\": \r\n".Indent(pad) +
                               "  {\r\n".Indent(pad) +
-                              ("    \"type\": \"" + SchemaTypeMapper.Map(elementType) + "\",\r\n").Indent(pad) +
+                              ("    \"type\": \"" + SchemaTypeMapper.Map(elementType) + "\"\r\n").Indent(pad) +
                               "  }\r\n".Indent(pad) +
                               "}\r\n".Indent(pad);
             return arraySchema;
@@ -190,10 +195,12 @@ namespace RAML.WebApiExplorer
 
 	    private string GetProperty(int pad, PropertyInfo prop, string schema, PropertyInfo[] props)
 	    {
-	        schema = SchemaTypeMapper.Map(prop.PropertyType) != null ? 
-                HandlePrimitiveTypeProperty(pad, prop, props, schema) : 
-                HandleNestedTypeProperty(pad, prop, schema, props);
-	        return schema;
+	        if (SchemaTypeMapper.Map(prop.PropertyType) != null)
+	            schema = HandlePrimitiveTypeProperty(pad, prop, props, schema);
+	        else 
+                schema = HandleNestedTypeProperty(pad, prop, schema, props);
+	        
+            return schema;
 	    }
 
 	    private static string HandlePrimitiveTypeProperty(int pad, PropertyInfo prop, PropertyInfo[] props, string schema)
@@ -210,7 +217,8 @@ namespace RAML.WebApiExplorer
 	        var nestedType = GetRecursively(prop.PropertyType, pad + 2);
 	        if (!string.IsNullOrWhiteSpace(nestedType))
 	        {
-	            schema += ("\"" + prop.Name + "\":").Indent(pad) + Environment.NewLine;
+                var name = GetPropertyName(prop);
+	            schema += ("\"" + name + "\":").Indent(pad) + Environment.NewLine;
 	            schema += nestedType;
 	        }
 	        else
@@ -231,13 +239,16 @@ namespace RAML.WebApiExplorer
 
 	    private string GetOneOfProperty(PropertyInfo prop, IEnumerable<Type> subclasses, int pad)
 	    {
-	        var oneOf = ("\"" + prop.Name + "\": {").Indent(pad) + Environment.NewLine;
+            var name = GetPropertyName(prop);
+	        var oneOf = ("\"" + name + "\": {").Indent(pad) + Environment.NewLine;
 	        oneOf += "\"type\": \"object\",".Indent(pad + 2) + Environment.NewLine;
 	        oneOf += "\"oneOf\": [".Indent(pad + 2) + Environment.NewLine;
-	        foreach (var subclass in subclasses)
+	        foreach (var subclass in subclasses.Distinct())
 	        {
-                oneOf += ("{ \"$ref\": \"#/definitions/" + subclass.Name + "\" },").Indent(pad + 4) + Environment.NewLine;
-                definitions.Add(subclass.Name, subclass);
+	            var className = GetClassName(subclass);
+	            oneOf += ("{ \"$ref\": \"#/definitions/" + className + "\" },").Indent(pad + 4) + Environment.NewLine;
+                if(!definitions.ContainsKey(className))
+                    definitions.Add(className, subclass);
 	        }
 	        oneOf = oneOf.Substring(0, oneOf.Length - Environment.NewLine.Length - 1) + Environment.NewLine;
 	        oneOf += "]".Indent(pad + 2) + Environment.NewLine;
@@ -247,7 +258,9 @@ namespace RAML.WebApiExplorer
 
 	    private static string BuildProperty(PropertyInfo prop, int pad)
 		{
-			var res = "\"" + prop.Name.ToLowerInvariant() + "\": { \"type\": \"" + SchemaTypeMapper.Map(prop.PropertyType) + "\"";
+	        var name = GetPropertyName(prop);
+
+	        var res = "\"" + name + "\": { \"type\": \"" + SchemaTypeMapper.Map(prop.PropertyType) + "\"";
 			
 			if (IsNullable(prop.PropertyType))
 				res += ", \"required\": \"false\"";
@@ -258,9 +271,34 @@ namespace RAML.WebApiExplorer
 			return res;
 		}
 
-		private static string BuildLastProperty(PropertyInfo prop, int pad)
+	    private static string GetPropertyName(MemberInfo property)
+	    {
+            return GetMemberNameByType(property, typeof(JsonPropertyAttribute));
+	    }
+
+        private static string GetClassName(MemberInfo @class)
+        {
+            return GetMemberNameByType(@class, typeof(JsonObjectAttribute));
+        }
+
+        private static string GetMemberNameByType(MemberInfo @class, Type attributeType)
+        {
+            var className = @class.Name;
+            if (@class.CustomAttributes.All(a => a.AttributeType != attributeType))
+                return className;
+
+            var attr = @class.CustomAttributes.First(a => a.AttributeType == attributeType);
+            if (attr.ConstructorArguments.Any())
+                className = attr.ConstructorArguments.First().Value.ToString();
+
+            return className;
+        }
+
+
+	    private static string BuildLastProperty(PropertyInfo prop, int pad)
 		{
-			var res = "\"" + prop.Name.ToLowerInvariant() + "\": { \"type\": \"" + SchemaTypeMapper.Map(prop.PropertyType) + "\"";
+            var name = GetPropertyName(prop);
+			var res = "\"" + name + "\": { \"type\": \"" + SchemaTypeMapper.Map(prop.PropertyType) + "\"";
 
 			if (IsNullable(prop.PropertyType))
 				res += ", \"required\": \"false\"";

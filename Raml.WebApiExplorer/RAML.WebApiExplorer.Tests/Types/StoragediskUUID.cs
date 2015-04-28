@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 namespace FstabExplorerTest.Fstab.Models
 {
+    [JsonObject("diskUUID")]
     public partial class StoragediskUUID  : Storage
     {
         
