@@ -42,11 +42,6 @@ namespace RAML.WebApiExplorer
 			var parameterDescriptionsDic = new Dictionary<string, Collection<ApiParameterDescription>>();
 			foreach (var api in apiExplorer.ApiDescriptions)
 			{
-				//var filters = api.ActionDescriptor.ControllerDescriptor.GetFilters();
-				//var filterPipeline = api.ActionDescriptor.GetFilterPipeline();
-				//var handlers = api.ActionDescriptor.ControllerDescriptor.Configuration.MessageHandlers;
-				//var props = api.ActionDescriptor.ControllerDescriptor.Properties;
-
 				var relativeUri = !api.Route.RouteTemplate.StartsWith("/") ? "/" + api.Route.RouteTemplate : api.Route.RouteTemplate;
 				if (relativeUri.Contains("{controller}"))
 				{
@@ -163,6 +158,7 @@ namespace RAML.WebApiExplorer
 
 		public Action<Resource, HttpActionDescriptor> SetResourcePropertiesByAction { get; set; }
 
+        public Action<ApiDescription, Method> SetMethodProperties { get; set; }
 
 		private void SetSecurityScheme(RamlDocument raml)
 		{
@@ -259,7 +255,11 @@ namespace RAML.WebApiExplorer
 					             Responses = GetResponses(api.ResponseDescription),
 				             };
 				methods.Add(method);
-				verbs.Add(verb);
+                verbs.Add(verb);
+
+                if (SetMethodProperties != null)
+                    SetMethodProperties(api, method);
+
 			}
 			return methods;
 		}
