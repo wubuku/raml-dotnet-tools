@@ -120,5 +120,14 @@ namespace Raml.Tools
 
 			return propName;
 		}
+
+	    public static string GetEnumValueName(string enumValue)
+	    {
+	        return enumValue
+                .Replace(":", string.Empty)
+                .Replace("/", string.Empty)
+	            .Replace(" ", "_")
+	            .Replace("-", "_");
+	    }
 	}
 }

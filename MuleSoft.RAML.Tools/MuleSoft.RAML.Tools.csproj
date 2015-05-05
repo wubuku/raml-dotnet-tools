@@ -688,6 +688,10 @@
     <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\test-request-protocols.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Templates\RAMLWebApi2Scaffolder\ApiEnum.t4">
+      <LastGenOutput>Objects.cs.cs</LastGenOutput>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Resource Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\testdata.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

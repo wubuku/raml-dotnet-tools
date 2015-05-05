@@ -18,6 +18,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using RAML.Api.Core;
 using Raml.Common;
 
@@ -473,6 +474,7 @@ namespace $(namespace)
 
 
 
+
 namespace $(namespace).Models
 {
 <#
@@ -551,8 +553,15 @@ foreach (var apiObject in model.Objects.Values)
 		{
 #>
 		[JsonProperty("<#= property.OriginalName #>")]
+<#		} 
+
+		if(property.IsEnum)
+		{
+#>
+		[JsonConverter(typeof(StringEnumConverter))]
 <#		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
+
 <#
 	}
 
@@ -593,6 +602,12 @@ foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any())
 		{
 #>
 		[JsonProperty("<#= property.OriginalName #>")]
+<#		}
+
+		if(property.IsEnum)
+		{
+#>
+		[JsonConverter(typeof(StringEnumConverter))]
 <#		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
 <#
@@ -674,6 +689,12 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
 		{
 #>
 		[JsonProperty("<#= property.OriginalName #>")]
+<#		}
+
+		if(property.IsEnum)
+		{
+#>
+		[JsonConverter(typeof(StringEnumConverter))]
 <#		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
 <#
@@ -833,6 +854,26 @@ foreach (var apiObject in model.ApiResponseObjects)
 #>
 
     } // end class
+
+<#
+}
+
+foreach (var apiEnum in model.Enums)
+{
+	if (!string.IsNullOrWhiteSpace(apiEnum.Description))
+	{
+#>
+    /// <summary>
+    /// <#= apiEnum.Description #>
+    /// </summary>
+<#
+	}	
+#>
+	
+	public enum <#= apiEnum.Name #>
+	{
+		<#= string.Join(", ", apiEnum.Values) #>
+    }
 
 <#
 }

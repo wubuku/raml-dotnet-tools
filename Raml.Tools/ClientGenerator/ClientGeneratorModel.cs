@@ -97,5 +97,6 @@ namespace Raml.Tools.ClientGenerator
 			}
 		}
 
+	    public IEnumerable<ApiEnum> Enums { get; set; }
 	}
 }

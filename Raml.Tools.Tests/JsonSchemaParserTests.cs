@@ -99,12 +99,39 @@ namespace Raml.Tools.Tests
             var parser = new JsonSchemaParser();
             var warnings = new Dictionary<string, string>();
             var objects = new Dictionary<string, ApiObject>();
-            var obj = parser.Parse("name", schema, objects, warnings);
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
 
             Assert.AreEqual(0, warnings.Count);
             Assert.AreEqual("Name", obj.Name);
-
         }
+
+	    [Test]
+	    public void should_parse_enums()
+	    {
+	        const string schema = @"{
+          'id': 'http://some.site.somewhere/entry-schema#',
+          '$schema': 'http://json-schema.org/draft-03/schema#',
+          'description': 'schema for an fstab entry',
+          'type': 'object',
+          'properties': {
+              'fstype': {
+                  'enum': [ 'ext3', 'ext4', 'btrfs' ]
+              },
+              'readonly': { 'type': 'boolean' }
+          },
+      }";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
+
+            Assert.AreEqual(0, warnings.Count);
+            Assert.AreEqual(2, obj.Properties.Count);
+            Assert.AreEqual(1, enums.Count);
+	    }
 
 		[Test]
 		public void should_parse_schema_when_object()
@@ -125,7 +152,8 @@ namespace Raml.Tools.Tests
 			 var parser = new JsonSchemaParser();
 			 var warnings = new Dictionary<string, string>();
 			 var objects = new Dictionary<string, ApiObject>();
-			 var obj = parser.Parse("name", schema, objects, warnings);
+             var enums = new Dictionary<string, ApiEnum>();
+			 var obj = parser.Parse("name", schema, objects, warnings, enums);
 			 Assert.AreEqual(0, warnings.Count);
 			 Assert.AreEqual("Name", obj.Name);
 			 Assert.IsFalse(obj.IsArray);
@@ -156,7 +184,8 @@ namespace Raml.Tools.Tests
 			var parser = new JsonSchemaParser();
 			var warnings = new Dictionary<string, string>();
 			var objects = new Dictionary<string, ApiObject>();
-			var obj = parser.Parse("name", schema, objects, warnings);
+            var enums = new Dictionary<string, ApiEnum>();
+			var obj = parser.Parse("name", schema, objects, warnings, enums);
 			Assert.AreEqual(0, warnings.Count);
 			Assert.AreEqual("Name", obj.Name);
 			Assert.IsTrue(obj.IsArray);
@@ -187,7 +216,8 @@ namespace Raml.Tools.Tests
             var parser = new JsonSchemaParser();
             var warnings = new Dictionary<string, string>();
             var objects = new Dictionary<string, ApiObject>();
-            var obj = parser.Parse("name", schema, objects, warnings);
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
             Assert.AreEqual("to-address-id", obj.Properties.First(p => p.Name == "Toaddressid").OriginalName);
             Assert.AreEqual("order_item_id", obj.Properties.First(p => p.Name == "Order_item_id").OriginalName);
         }

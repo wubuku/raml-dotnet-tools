@@ -8,9 +8,11 @@ namespace RAML.WebApiExplorer
 {
 	public class SchemaBuilder
 	{
-        private IDictionary<string, Type> definitions = new Dictionary<string, Type>();
+        private readonly IDictionary<string, Type> definitions = new Dictionary<string, Type>();
 		public string Get(Type type)
 		{
+            definitions.Clear();
+
 		    string schema;
 
 			if (type.IsGenericType && IsGenericWebResult(type))
@@ -32,16 +34,22 @@ namespace RAML.WebApiExplorer
 		        schema = GetMainObjectSchema(type);
 		    }
 
-		    if (definitions.Any())
-		    {
-		        schema = AddTrailingComma(schema);
-		        schema += GetDefinitions();
-		    }
+		    schema = AddDefinitionsIfAny(schema);
 
             schema += "}" + Environment.NewLine;
 
 		    return schema;
 		}
+
+	    private string AddDefinitionsIfAny(string schema)
+	    {
+	        if (definitions.Any())
+	        {
+	            schema = AddTrailingComma(schema);
+	            schema += GetDefinitions();
+	        }
+	        return schema;
+	    }
 
 	    private static string AddTrailingComma(string schema)
 	    {
@@ -193,9 +201,11 @@ namespace RAML.WebApiExplorer
 			return schema;
 		}
 
-	    private string GetProperty(int pad, PropertyInfo prop, string schema, PropertyInfo[] props)
+	    private string GetProperty(int pad, PropertyInfo prop, string schema, IEnumerable<PropertyInfo> props)
 	    {
-	        if (SchemaTypeMapper.Map(prop.PropertyType) != null)
+	        if (prop.PropertyType.IsEnum)
+	            schema = HandleEnumProperty(pad, prop, props, schema);
+	        else if (SchemaTypeMapper.Map(prop.PropertyType) != null)
 	            schema = HandlePrimitiveTypeProperty(pad, prop, props, schema);
 	        else 
                 schema = HandleNestedTypeProperty(pad, prop, schema, props);
@@ -203,7 +213,23 @@ namespace RAML.WebApiExplorer
             return schema;
 	    }
 
-	    private static string HandlePrimitiveTypeProperty(int pad, PropertyInfo prop, PropertyInfo[] props, string schema)
+	    private string HandleEnumProperty(int pad, PropertyInfo prop, IEnumerable<PropertyInfo> props, string schema)
+	    {
+            if (prop == props.Last())
+                schema += GetEnumProperty(prop, pad) + Environment.NewLine;
+            else
+                schema += GetEnumProperty(prop, pad) + "," + Environment.NewLine;
+            return schema;
+	    }
+
+	    private static string GetEnumProperty(PropertyInfo prop, int pad)
+	    {
+            return ("\"" + GetPropertyName(prop) + "\": { ").Indent(pad) + Environment.NewLine
+                + ("  \"enum\": [" + string.Join(", ", Enum.GetNames(prop.PropertyType).Select(v => "\"" + v + "\"")) + "]").Indent(pad) + Environment.NewLine
+                + "}".Indent(pad);
+	    }
+
+	    private static string HandlePrimitiveTypeProperty(int pad, PropertyInfo prop, IEnumerable<PropertyInfo> props, string schema)
 	    {
 	        if (prop == props.Last())
 	            schema += BuildLastProperty(prop, pad);

@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace $(namespace).Models
 {
@@ -54,6 +55,11 @@ namespace $(namespace).Models
 		{
 #>
 		[JsonProperty("<#= property.OriginalName #>")]
+<#		}
+		if(property.IsEnum)
+		{
+#>
+		[JsonConverter(typeof(StringEnumConverter))]
 <#		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
 <#
