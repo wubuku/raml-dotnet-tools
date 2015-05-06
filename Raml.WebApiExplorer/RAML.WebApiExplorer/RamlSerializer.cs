@@ -42,12 +42,26 @@ namespace RAML.WebApiExplorer
 
 			SerializeSecuritySchemes(sb, ramlDocument.SecuritySchemes);
 
+		    SerializeSchemas(sb, ramlDocument.Schemas);
+
 			SerializeResources(sb, ramlDocument.Resources);
 
 			return sb.ToString();
 		}
 
-		private void SerializeSecuritySchemes(StringBuilder sb, IEnumerable<IDictionary<string, SecurityScheme>> securitySchemes)
+	    private void SerializeSchemas(StringBuilder sb, IEnumerable<IDictionary<string, string>> schemas)
+	    {
+            if(schemas == null || !schemas.Any())
+                return;
+
+	        sb.AppendLine("schemas:");
+	        foreach (var kv in schemas.SelectMany(schemaDic => schemaDic))
+	        {
+	           SerializeSchema(sb, kv.Key, kv.Value, 2);
+	        }
+	    }
+
+	    private void SerializeSecuritySchemes(StringBuilder sb, IEnumerable<IDictionary<string, SecurityScheme>> securitySchemes)
 		{
 			if (securitySchemes == null || !securitySchemes.Any()) return;
 
@@ -240,6 +254,18 @@ namespace RAML.WebApiExplorer
 				sb.AppendLine(line.Indent(indentation + 2));
 			}
 		}
+
+        private static void SerializeSchema(StringBuilder sb, string propertyTitle, string propertyValue, int indentation)
+        {
+            sb.AppendFormat("- {0}: |".Indent(indentation), propertyTitle);
+            sb.AppendLine();
+            var lines = propertyValue.Split(new[] { Environment.NewLine, "\r\n", "\n", "\r" }, StringSplitOptions.None);
+            foreach (var line in lines)
+            {
+                sb.AppendLine(line.Indent(indentation + 4));
+            }
+        }
+
 
 		private static void SerializeProperty(StringBuilder sb, string propertyTitle, string propertyValue, int indentation = 0)
 		{

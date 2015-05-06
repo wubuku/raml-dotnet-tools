@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
 using Raml.Parser.Expressions;
@@ -25,8 +27,10 @@ namespace RAML.WebApiExplorer
         public string DefaultMediaType { get; set; }
 
         private readonly SchemaBuilder schemaBuilder = new SchemaBuilder();
+	    private readonly IDictionary<string, string> schemas = new Dictionary<string, string>();
+        private readonly ICollection<Type> schemaTypes = new Collection<Type>();
 
-		public ApiExplorerService(IApiExplorer apiExplorer, string baseUri)
+	    public ApiExplorerService(IApiExplorer apiExplorer, string baseUri)
 		{
 			this.apiExplorer = apiExplorer;
 			this.baseUri = baseUri;
@@ -86,6 +90,8 @@ namespace RAML.WebApiExplorer
 				if(SetResourcePropertiesByController != null)
 					SetResourcePropertiesByController(resource, api.ActionDescriptor.ControllerDescriptor);
 			}
+
+		    raml.Schemas = new List<IDictionary<string, string>> { schemas };
 
 			OrganizeResourcesHierarchically(raml, resourcesDic);
 
@@ -270,13 +276,19 @@ namespace RAML.WebApiExplorer
 				return new Collection<Response>();
 
 			var responseType = responseDescription.ResponseType ?? responseDescription.DeclaredType;
-			var mimeTypes = new Dictionary<string, MimeType>
+
+            if(responseType == typeof(IHttpActionResult))
+                return new Collection<Response>();
+
+		    var schemaName = AddSchema(responseType);
+
+		    var mimeTypes = new Dictionary<string, MimeType>
 			                {
 				                {
 					                "application/json",
 					                new MimeType
 					                {
-						                Schema = schemaBuilder.Get(responseType)
+						                Schema = schemaName
 					                }
 				                }
 			                };
@@ -289,7 +301,39 @@ namespace RAML.WebApiExplorer
 			return new[] {response};
 		}
 
-		private Dictionary<string, MimeType> GetRequestMimeTypes(ApiDescription api)
+	    private string AddSchema(Type type)
+	    {
+	        var schemaName = type.Name;
+	        if (schemaTypes.Contains(type)) 
+                return schemaName;
+
+	        var schema = schemaBuilder.Get(type);
+
+	        if (string.IsNullOrWhiteSpace(schema))
+	            return string.Empty;
+	        
+            // handle case of different types with same class name
+	        if (schemas.ContainsKey(schemaName))
+	            schemaName = GetUniqueSchemaName(schemaName);
+
+	        schemas.Add(schemaName, schema);
+            schemaTypes.Add(type);
+
+	        return schemaName;
+	    }
+
+	    private string GetUniqueSchemaName(string schemaName)
+	    {
+	        for (var i = 0; i < 1000; i++)
+	        {
+	            schemaName += i;
+	            if (!schemas.ContainsKey(schemaName))
+	                return schemaName;
+	        }
+            throw new InvalidOperationException("Could not find a unique name. You have more than 1000 types with the same class name");
+	    }
+
+	    private Dictionary<string, MimeType> GetRequestMimeTypes(ApiDescription api)
 		{
 			var mediaTypes = api.SupportedRequestBodyFormatters.SelectMany(f => f.SupportedMediaTypes).ToArray();
 			var mimeTypes = new Dictionary<string, MimeType>();
@@ -300,9 +344,12 @@ namespace RAML.WebApiExplorer
 			if (apiParam != null)
 			{
 				var type = apiParam.ParameterDescriptor.ParameterType;
+
+                var schemaName = AddSchema(type);
+
 				mimeType = new MimeType
 				           {
-					           Schema = schemaBuilder.Get(type)
+					           Schema = schemaName
 				           };
 			}
 
