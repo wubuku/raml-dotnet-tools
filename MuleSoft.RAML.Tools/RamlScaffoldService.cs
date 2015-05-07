@@ -95,6 +95,8 @@ namespace MuleSoft.RAML.Tools
 	                controllersFolderItem, "controllerObject", model.Controllers, controllersFolderPath, folderItem,
 	                extensionPath, targetNamespace, "Controller", false);
 	        controllerImplementationTemplateParams.Title = Settings.Default.ControllerImplementationTemplateTitle;
+	        controllerImplementationTemplateParams.IncludeHasModels = true;
+	        controllerImplementationTemplateParams.HasModels = model.Objects.Any();
 	        GenerateCodeFromTemplate(controllerImplementationTemplateParams);
 	    }
 
@@ -109,6 +111,8 @@ namespace MuleSoft.RAML.Tools
 	                ramlItem, "controllerObject", model.Controllers, generatedFolderPath, folderItem, extensionPath,
 	                targetNamespace, "Controller", true, "I");
 	        controllerInterfaceParams.Title = Settings.Default.ControllerInterfaceTemplateTitle;
+            controllerInterfaceParams.IncludeHasModels = true;
+            controllerInterfaceParams.HasModels = model.Objects.Any();
 	        GenerateCodeFromTemplate(controllerInterfaceParams);
 	    }
 
@@ -123,6 +127,8 @@ namespace MuleSoft.RAML.Tools
 	                ramlItem, "controllerObject", model.Controllers, generatedFolderPath, folderItem, extensionPath,
 	                targetNamespace, "Controller");
 	        controllerBaseTemplateParams.Title = Settings.Default.BaseControllerTemplateTitle;
+            controllerBaseTemplateParams.IncludeHasModels = true;
+            controllerBaseTemplateParams.HasModels = model.Objects.Any();
 	        GenerateCodeFromTemplate(controllerBaseTemplateParams);
 	    }
 
@@ -361,6 +367,10 @@ namespace MuleSoft.RAML.Tools
 	        }
 
 	        public string Title { get; set; }
+
+	        public bool IncludeHasModels { get; set; }
+
+	        public bool HasModels { get; set; }
 	    }
 
 	    private void GenerateCodeFromTemplate<T>(TemplateParams<T> templateParams) where T : IHasName
@@ -370,7 +380,7 @@ namespace MuleSoft.RAML.Tools
 			{
 				var generatedFileName = GetGeneratedFileName(templateParams.Suffix, templateParams.Prefix, parameter);
 
-				var result = t4Service.TransformText(templateParams.TemplatePath, templateParams.ParameterName, parameter, templateParams.BinPath, templateParams.TargetNamespace);
+                var result = t4Service.TransformText(templateParams.TemplatePath, templateParams.ParameterName, parameter, templateParams.BinPath, templateParams.TargetNamespace, templateParams.IncludeHasModels, templateParams.HasModels);
 				var destinationFile = Path.Combine(templateParams.FolderPath, generatedFileName);
 				var contents = templatesManager.AddServerMetadataHeader(result.Content, Path.GetFileNameWithoutExtension(templateParams.TemplatePath), templateParams.Title);
 				
