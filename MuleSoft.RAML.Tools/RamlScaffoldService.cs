@@ -96,7 +96,7 @@ namespace MuleSoft.RAML.Tools
 	                extensionPath, targetNamespace, "Controller", false);
 	        controllerImplementationTemplateParams.Title = Settings.Default.ControllerImplementationTemplateTitle;
 	        controllerImplementationTemplateParams.IncludeHasModels = true;
-	        controllerImplementationTemplateParams.HasModels = model.Objects.Any();
+	        controllerImplementationTemplateParams.HasModels = model.Objects.Any() || model.Enums.Any();
 	        GenerateCodeFromTemplate(controllerImplementationTemplateParams);
 	    }
 
@@ -112,7 +112,7 @@ namespace MuleSoft.RAML.Tools
 	                targetNamespace, "Controller", true, "I");
 	        controllerInterfaceParams.Title = Settings.Default.ControllerInterfaceTemplateTitle;
             controllerInterfaceParams.IncludeHasModels = true;
-            controllerInterfaceParams.HasModels = model.Objects.Any();
+            controllerInterfaceParams.HasModels = model.Objects.Any() || model.Enums.Any();
 	        GenerateCodeFromTemplate(controllerInterfaceParams);
 	    }
 
@@ -128,7 +128,7 @@ namespace MuleSoft.RAML.Tools
 	                targetNamespace, "Controller");
 	        controllerBaseTemplateParams.Title = Settings.Default.BaseControllerTemplateTitle;
             controllerBaseTemplateParams.IncludeHasModels = true;
-            controllerBaseTemplateParams.HasModels = model.Objects.Any();
+            controllerBaseTemplateParams.HasModels = model.Objects.Any() || model.Enums.Any();
 	        GenerateCodeFromTemplate(controllerBaseTemplateParams);
 	    }
 
