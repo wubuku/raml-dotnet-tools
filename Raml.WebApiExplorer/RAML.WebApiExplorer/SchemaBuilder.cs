@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
@@ -9,9 +10,13 @@ namespace RAML.WebApiExplorer
 	public class SchemaBuilder
 	{
         private readonly IDictionary<string, Type> definitions = new Dictionary<string, Type>();
+        private readonly ICollection<Type> types = new Collection<Type>();
+
+
 		public string Get(Type type)
 		{
             definitions.Clear();
+            types.Clear();
 
 		    string schema;
 
@@ -85,7 +90,10 @@ namespace RAML.WebApiExplorer
 	        var objectSchema = "{ \r\n" +
 	                           "  \"$schema\": \"http://json-schema.org/draft-03/schema\",\r\n" +
 	                           "  \"type\": \"object\",\r\n" +
+                               "  \"id\": \"" + type.Name + "\",\r\n" +
 	                           "  \"properties\": {\r\n";
+
+            types.Add(type);
 
 	        objectSchema += GetProperties(type, 4);
 
@@ -102,8 +110,10 @@ namespace RAML.WebApiExplorer
 	                          "  \"items\": \r\n" +
 	                          "  {\r\n" +
 	                          "    \"type\": \"object\",\r\n" +
+                              "    \"id\": \"" + elementType.Name + "\",\r\n" +
 	                          "    \"properties\": \r\n" +
 	                          "    {\r\n";
+            types.Add(elementType);
 
 	        arraySchema += GetProperties(elementType, 6);
 
@@ -148,11 +158,18 @@ namespace RAML.WebApiExplorer
 
 	    private string GetNestedObjectSchema(Type type, int pad)
 	    {
+	        if (types.Contains(type))
+	        {
+                return ("{ \"$ref\": \"" + type.Name + "\" }").Indent(pad) + Environment.NewLine;
+	        }
+
+            types.Add(type);
 	        var objectSchema = "{ \r\n".Indent(pad) +
 	                           "  \"type\": \"object\",\r\n".Indent(pad) +
-	                           "  \"properties\": {\r\n".Indent(pad);
+                               ("  \"id\": \"" + type.Name + "\",\r\n").Indent(pad) + 
+                               "  \"properties\": {\r\n".Indent(pad);
 
-	        objectSchema += GetProperties(type, pad + 2);
+	        objectSchema += GetProperties(type, pad + 4);
 
 	        objectSchema += "  }\r\n".Indent(pad);
 	        objectSchema += "}\r\n".Indent(pad);
@@ -163,17 +180,26 @@ namespace RAML.WebApiExplorer
 	    {
 	        var arraySchema = "{\r\n".Indent(pad) +
 	                          "  \"type\": \"array\",\r\n".Indent(pad) +
-	                          "  \"items\": \r\n".Indent(pad) +
-	                          "  {\r\n".Indent(pad) +
-	                          "    \"type\": \"object\",\r\n".Indent(pad) +
-	                          "    \"properties\": \r\n".Indent(pad) +
-	                          "    {\r\n".Indent(pad);
+	                          "  \"items\": \r\n".Indent(pad);
 
+	        if (types.Contains(elementType))
+	        {
+                arraySchema += ("{ \"$ref\": \"" + elementType.Name + "\" }").Indent(pad + 4) + Environment.NewLine;
+	        }
+	        else
+	        {
+                types.Add(elementType);
+                arraySchema += "  {\r\n".Indent(pad) +
+                               "    \"type\": \"object\",\r\n".Indent(pad) +
+                               "    \"properties\": \r\n".Indent(pad) +
+                               "    {\r\n".Indent(pad);
 
-	        arraySchema += GetProperties(elementType, pad + 4);
+                arraySchema += GetProperties(elementType, pad + 4);
 
-	        arraySchema += "    }\r\n".Indent(pad);
-	        arraySchema += "  }\r\n".Indent(pad);
+                arraySchema += "    }\r\n".Indent(pad);
+                arraySchema += "  }\r\n".Indent(pad);            
+	        }
+
 	        arraySchema += "}\r\n".Indent(pad);
 	        return arraySchema;
 	    }
@@ -241,6 +267,9 @@ namespace RAML.WebApiExplorer
 	    private string HandleNestedTypeProperty(int pad, PropertyInfo prop, string schema, IEnumerable<PropertyInfo> props)
 	    {
 	        var nestedType = GetRecursively(prop.PropertyType, pad + 2);
+            if(nestedType == null)
+                return string.Empty;
+
 	        if (!string.IsNullOrWhiteSpace(nestedType))
 	        {
                 var name = GetPropertyName(prop);
@@ -273,8 +302,9 @@ namespace RAML.WebApiExplorer
 	        {
 	            var className = GetClassName(subclass);
 	            oneOf += ("{ \"$ref\": \"#/definitions/" + className + "\" },").Indent(pad + 4) + Environment.NewLine;
-                if(!definitions.ContainsKey(className))
+                if (!definitions.ContainsKey(className)) { 
                     definitions.Add(className, subclass);
+}
 	        }
 	        oneOf = oneOf.Substring(0, oneOf.Length - Environment.NewLine.Length - 1) + Environment.NewLine;
 	        oneOf += "]".Indent(pad + 2) + Environment.NewLine;

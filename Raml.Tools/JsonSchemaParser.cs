@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Newtonsoft.Json.Schema;
 
@@ -9,6 +10,7 @@ namespace Raml.Tools
 	{
 	    
 	    private readonly string[] suffixes = { "A", "B", "C", "D", "E", "F", "G" };
+        private readonly ICollection<string> ids  = new Collection<string>();
 
 		public ApiObject Parse(string key, string jsonSchema, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings, IDictionary<string, ApiEnum> enums)
 		{
@@ -168,6 +170,12 @@ namespace Raml.Tools
 		{
 			if (propertySchema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Object && propertySchema.Properties != null)
 			{
+                if (!string.IsNullOrWhiteSpace(schema.Id) && ids.Contains(schema.Id))
+                    return;
+
+                if (!string.IsNullOrWhiteSpace(schema.Id))
+                    ids.Add(schema.Id);
+
 				ParseObject(property.Key, propertySchema.Properties, objects, enums);
 				prop.Type = NetNamingMapper.GetObjectName(property.Key);
 			}
@@ -402,6 +410,12 @@ namespace Raml.Tools
 		{
 			if (schema.Type == JsonSchemaType.Object && schema.Properties != null)
 			{
+			    if (!string.IsNullOrWhiteSpace(schema.Id) && ids.Contains(schema.Id))
+                        return;
+			    
+                if (!string.IsNullOrWhiteSpace(schema.Id))
+                    ids.Add(schema.Id);
+
 				ParseObject(key, schema.Properties, objects, enums);
 				prop.Type = NetNamingMapper.GetObjectName(key);
 			}

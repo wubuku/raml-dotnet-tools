@@ -13,7 +13,7 @@ namespace RAML.WebApiExplorer.Tests
 	    private readonly SchemaBuilder schemaBuilder = new SchemaBuilder();
 
 		[Test]
-		public void ShouldParseTypeWithNextedTypes()
+		public void ShouldParseTypeWithNestedTypes()
 		{
 			var schema = schemaBuilder.Get(typeof (ForksPostResponse));
 			Assert.IsTrue(schema.Contains("\"Owner\":"));
@@ -47,5 +47,15 @@ namespace RAML.WebApiExplorer.Tests
             var obj = JsonSchema.Parse(schema);
             Assert.IsNotNull(obj);
         }
+
+        [Test]
+        public void ShouldParseTypeWithRecursiveTypes()
+        {
+            var schema = schemaBuilder.Get(typeof(Employee));
+            Assert.IsTrue(schema.Contains("\"$ref\": \"Employee\""));
+            var obj = JsonSchema.Parse(schema);
+            Assert.IsNotNull(obj);
+        }
+
     }
 }

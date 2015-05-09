@@ -26,7 +26,7 @@ namespace RAML.WebApiExplorer
 				},
 				{
 					typeof (DateTime),
-					"date"
+					"string"
 				},
 				{
 					typeof (object),

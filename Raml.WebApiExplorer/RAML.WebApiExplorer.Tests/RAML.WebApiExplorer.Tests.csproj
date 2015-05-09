@@ -65,12 +65,14 @@
     <Compile Include="Types\Attributes.cs" />
     <Compile Include="Types\BoundingBox.cs" />
     <Compile Include="Types\ContainedWithin.cs" />
+    <Compile Include="Types\Employee.cs" />
     <Compile Include="Types\Entry.cs" />
     <Compile Include="Types\ForksPostResponse.cs" />
     <Compile Include="Types\Geometry.cs" />
     <Compile Include="Types\Owner.cs" />
     <Compile Include="SchemaBuilderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Types\Person.cs" />
     <Compile Include="Types\SearchGetResponse.cs" />
     <Compile Include="Types\Storage.cs" />
     <Compile Include="Types\StoragediskDevice.cs" />
