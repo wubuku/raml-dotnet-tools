@@ -221,5 +221,65 @@ namespace Raml.Tools.Tests
             Assert.AreEqual("to-address-id", obj.Properties.First(p => p.Name == "Toaddressid").OriginalName);
             Assert.AreEqual("order_item_id", obj.Properties.First(p => p.Name == "Order_item_id").OriginalName);
         }
+
+	    [Test]
+	    public void should_parse_recursive_schemas()
+	    {
+	        var schema = "      { \r\n" +
+	                     "        \"$schema\": \"http://json-schema.org/draft-03/schema\",\r\n" +
+	                     "        \"type\": \"object\",\r\n" +
+	                     "        \"id\": \"Customer\",\r\n" +
+	                     "        \"properties\": {\r\n" +
+	                     "          \"Id\": { \"type\": \"integer\"},\r\n" +
+	                     "          \"Company\": { \"type\": \"string\"},\r\n" +
+	                     "          \"SupportRepresentant\":\r\n" +
+	                     "            { \r\n" +
+	                     "              \"type\": \"object\",\r\n" +
+	                     "              \"id\": \"Employee\",\r\n" +
+	                     "              \"properties\": {\r\n" +
+	                     "                \"Id\": { \"type\": \"integer\"},\r\n" +
+	                     "                \"Title\": { \"type\": \"string\"},\r\n" +
+	                     "                \"BirthDate\": { \"type\": \"string\"},\r\n" +
+	                     "                \"HireDate\": { \"type\": \"string\"},\r\n" +
+	                     "                \"ReportsTo\":\r\n" +
+	                     "                  { \"$ref\": \"Employee\" },\r\n" +
+	                     "                \"FirstName\": { \"type\": \"string\"},\r\n" +
+	                     "                \"LastName\": { \"type\": \"string\"},\r\n" +
+	                     "                \"Address\": { \"type\": \"string\"},\r\n" +
+	                     "                \"City\": { \"type\": \"string\"},\r\n" +
+	                     "                \"State\": { \"type\": \"string\"},\r\n" +
+	                     "                \"Country\": { \"type\": \"string\"},\r\n" +
+	                     "                \"PostalCode\": { \"type\": \"string\"},\r\n" +
+	                     "                \"Phone\": { \"type\": \"string\"},\r\n" +
+	                     "                \"Fax\": { \"type\": \"string\"},\r\n" +
+	                     "                \"Email\": { \"type\": \"string\"}\r\n" +
+	                     "              }\r\n" +
+	                     "            },\r\n" +
+	                     "          \"FirstName\": { \"type\": \"string\"},\r\n" +
+	                     "          \"LastName\": { \"type\": \"string\"},\r\n" +
+	                     "          \"Address\": { \"type\": \"string\"},\r\n" +
+	                     "          \"City\": { \"type\": \"string\"},\r\n" +
+	                     "          \"State\": { \"type\": \"string\"},\r\n" +
+	                     "          \"Country\": { \"type\": \"string\"},\r\n" +
+	                     "          \"PostalCode\": { \"type\": \"string\"},\r\n" +
+	                     "          \"Phone\": { \"type\": \"string\"},\r\n" +
+	                     "          \"Fax\": { \"type\": \"string\"},\r\n" +
+	                     "          \"Email\": { \"type\": \"string\"}\r\n" +
+	                     "        }\r\n" +
+	                     "      }";
+            
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
+            Assert.AreEqual(1, objects.Count);
+            Assert.AreEqual("Employee", objects.First().Value.Name);
+            Assert.AreEqual("Employee", objects.First().Value.Properties[4].Type);
+            Assert.AreEqual("SupportRepresentant", obj.Properties[2].Name);
+            Assert.AreEqual("Employee", obj.Properties[2].Type);
+	    }
+
 	}
 }
