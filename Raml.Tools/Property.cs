@@ -33,5 +33,6 @@ namespace Raml.Tools
 		public HttpStatusCode StatusCode { get; set; }
 
         public string JSONSchema { get; set; }
+	    public bool IsEnum { get; set; }
 	}
 }

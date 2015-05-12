@@ -18,6 +18,7 @@ namespace Raml.Tools.WebApiGenerator
 		{
 			classesNames = new Collection<string>();
 			warnings = new Dictionary<string, string>();
+            enums = new Dictionary<string, ApiEnum>();
 
 			schemaRequestObjects = GetRequestObjects();
 			schemaResponseObjects = GetResponseObjects();
@@ -35,7 +36,8 @@ namespace Raml.Tools.WebApiGenerator
 				       Controllers = controllers,
 					   RequestObjects = schemaRequestObjects,
 					   ResponseObjects = schemaResponseObjects,
-					   Warnings = warnings
+                       Warnings = warnings,
+                       Enums = Enums
 			       };
 		}
 

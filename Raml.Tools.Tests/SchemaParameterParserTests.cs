@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Raml.Parser;
 using Raml.Parser.Expressions;
 using Raml.Tools.Pluralization;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Raml.Tools.Tests
 {
@@ -19,8 +18,8 @@ namespace Raml.Tools.Tests
 		[SetUp]
 		public void Setup()
 		{
-			var raml = new RamlParser().Load("box.raml");
-			var raml2 = new RamlParser().Load("congo-drones-5-f.raml");
+			var raml = new RamlParser().Load("files/box.raml");
+            var raml2 = new RamlParser().Load("files/congo-drones-5-f.raml");
 			deliveriesResource = raml2.Resources.First(r => r.RelativeUri == "/deliveries");
 			searchResource = raml.Resources.First(r => r.RelativeUri == "/search");
 			foldersResource = raml.Resources.First(r => r.RelativeUri == "/folders");
@@ -116,8 +115,7 @@ namespace Raml.Tools.Tests
 	    public void ShoudParseCustomParameters()
 	    {
 	        var type = new Dictionary<string, IDictionary<string, string>>();
-	        var typeParams = new Dictionary<string, string>();
-            typeParams.Add("customParam","valueOfParam");
+	        var typeParams = new Dictionary<string, string> {{"customParam", "valueOfParam"}};
 	        type.Add("type", typeParams);
 	        var resource = new Resource
 	        {

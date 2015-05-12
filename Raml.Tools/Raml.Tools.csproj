@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiEnum.cs" />
     <Compile Include="ApiObject.cs" />
     <Compile Include="ApiObjectsCleaner.cs" />
     <Compile Include="ClientGenerator\ApiRequestObjectsGenerator.cs" />
