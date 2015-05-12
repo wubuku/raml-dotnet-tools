@@ -393,7 +393,7 @@ namespace Raml.Tools.Tests
         public async void Should_Generate_Properties_When_GitHub()
         {
             var model = await GetGitHubGeneratedModel();
-            Assert.AreEqual(667, model.Objects.Sum(c => c.Value.Properties.Count));
+            Assert.AreEqual(668, model.Objects.Sum(c => c.Value.Properties.Count));
         }
 
         [Test]
@@ -428,7 +428,7 @@ namespace Raml.Tools.Tests
         public async void Should_Generate_Properties_When_Twitter()
         {
             var model = await GetTwitterGeneratedModel();
-            Assert.AreEqual(627, model.Objects.Sum(c => c.Value.Properties.Count));
+            Assert.AreEqual(628, model.Objects.Sum(c => c.Value.Properties.Count));
         }
 
         [Test]
