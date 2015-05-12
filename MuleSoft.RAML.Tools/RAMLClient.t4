@@ -18,6 +18,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using RAML.Api.Core;
 using Raml.Common;
 
@@ -30,7 +31,7 @@ namespace $(namespace)
 		{
 #>
     /// <summary>
-    /// <#= XmlCommentHelper.Escape(classObject.Description) #>
+    /// <#= classObject.Description #>
     /// </summary>
 <#
 		}
@@ -369,7 +370,7 @@ namespace $(namespace)
 	}
 #>
     /// <summary>
-    /// <#= XmlCommentHelper.Escape(model.Root.Description) ?? string.Empty #>
+    /// <#= model.Root.Description ?? string.Empty #>
     /// </summary>
     public partial class <#= model.Root.Name #>
     {
@@ -473,6 +474,7 @@ namespace $(namespace)
 
 
 
+
 namespace $(namespace).Models
 {
 <#
@@ -482,7 +484,7 @@ foreach (var apiObject in model.Objects.Values)
 	{
 #>
     /// <summary>
-    /// <#= XmlCommentHelper.Escape(apiObject.Description) #>
+    /// <#= apiObject.Description #>
     /// </summary>
 <#
 	}	
@@ -543,7 +545,7 @@ foreach (var apiObject in model.Objects.Values)
 	    {
 #>
         /// <summary>
-        /// <#= XmlCommentHelper.Escape(property.Description) #>
+        /// <#= property.Description #>
         /// </summary>
 <#
     	}
@@ -551,8 +553,15 @@ foreach (var apiObject in model.Objects.Values)
 		{
 #>
 		[JsonProperty("<#= property.OriginalName #>")]
+<#		} 
+
+		if(property.IsEnum)
+		{
+#>
+		[JsonConverter(typeof(StringEnumConverter))]
 <#		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
+
 <#
 	}
 
@@ -569,7 +578,7 @@ foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any())
 	{
 #>
     /// <summary>
-    /// <#= XmlCommentHelper.Escape(header.Description) #>
+    /// <#= header.Description #>
     /// </summary>
 <#
 	}
@@ -584,7 +593,7 @@ foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any())
 	    {
 #>
         /// <summary>
-        /// <#= XmlCommentHelper.Escape(property.Description) #>
+        /// <#= property.Description #>
         /// </summary>
 <#
 		}
@@ -593,6 +602,12 @@ foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any())
 		{
 #>
 		[JsonProperty("<#= property.OriginalName #>")]
+<#		}
+
+		if(property.IsEnum)
+		{
+#>
+		[JsonConverter(typeof(StringEnumConverter))]
 <#		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
 <#
@@ -610,7 +625,7 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
 	{
 #>
     /// <summary>
-    /// <#= XmlCommentHelper.Escape(respHeader.Description) #>
+    /// <#= respHeader.Description #>
     /// </summary>
 <#
 	}
@@ -665,7 +680,7 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
 	    {
 #>
         /// <summary>
-        /// <#= XmlCommentHelper.Escape(property.Description) #>
+        /// <#= property.Description #>
         /// </summary>
 <#
 	    }
@@ -674,6 +689,12 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
 		{
 #>
 		[JsonProperty("<#= property.OriginalName #>")]
+<#		}
+
+		if(property.IsEnum)
+		{
+#>
+		[JsonConverter(typeof(StringEnumConverter))]
 <#		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
 <#
@@ -692,7 +713,7 @@ foreach (var apiObject in model.ApiRequestObjects)
 	{
 #>
     /// <summary>
-    /// <#= XmlCommentHelper.Escape(apiObject.Description) #>
+    /// <#= apiObject.Description #>
     /// </summary>
 <#
 	}
@@ -718,7 +739,7 @@ foreach (var apiObject in model.ApiRequestObjects)
 	    {
 #>
         /// <summary>
-        /// <#= XmlCommentHelper.Escape(property.Description) #>
+        /// <#= property.Description #>
         /// </summary>
 <#
     	}
@@ -741,7 +762,7 @@ foreach (var apiObject in model.ApiResponseObjects)
 	{
 #>
     /// <summary>
-    /// <#= XmlCommentHelper.Escape(apiObject.Description) #>
+    /// <#= apiObject.Description #>
     /// </summary>
 <#
 	}
@@ -758,7 +779,7 @@ foreach (var apiObject in model.ApiResponseObjects)
 	    {
 #>
         /// <summary>
-        /// <#= XmlCommentHelper.Escape(property.Description) #>
+        /// <#= property.Description #>
         /// </summary>
 <#
     	}
@@ -833,6 +854,26 @@ foreach (var apiObject in model.ApiResponseObjects)
 #>
 
     } // end class
+
+<#
+}
+
+foreach (var apiEnum in model.Enums)
+{
+	if (!string.IsNullOrWhiteSpace(apiEnum.Description))
+	{
+#>
+    /// <summary>
+    /// <#= apiEnum.Description #>
+    /// </summary>
+<#
+	}	
+#>
+	
+	public enum <#= apiEnum.Name #>
+	{
+		<#= string.Join(", ", apiEnum.Values) #>
+    }
 
 <#
 }

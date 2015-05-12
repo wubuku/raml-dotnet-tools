@@ -38,6 +38,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="RAML.Api.Core">
+      <HintPath>..\packages\RAML.Api.Core.0.9.2.0\lib\net45\RAML.Api.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
@@ -45,6 +48,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.0\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -55,18 +59,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="API References\ApiHeader.cs" />
-    <Compile Include="API References\ApiMultipleObject.cs" />
-    <Compile Include="API References\ApiMultipleResponse.cs" />
-    <Compile Include="API References\ApiRequest.cs" />
-    <Compile Include="API References\ApiResponse.cs" />
-    <Compile Include="API References\ApiResponseHeader.cs" />
     <Compile Include="API References\movies\movies.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>movies.raml</DependentUpon>
     </Compile>
-    <Compile Include="API References\NetNamingMapper.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

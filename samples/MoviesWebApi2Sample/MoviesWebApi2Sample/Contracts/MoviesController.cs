@@ -1,5 +1,7 @@
+// Template: Base Controller (ApiControllerBase.t4) version 0.1
 
 using System;
+using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Description;
 using MoviesWebApi2Sample.Movies.Models;
@@ -16,8 +18,8 @@ namespace MoviesWebApi2Sample.Movies
         /// <summary>
 		/// gets all movies in the catalogue
 		/// </summary>
-		/// <returns>MoviesGetOKResponseContent[]</returns>
-        [ResponseType(typeof(MoviesGetOKResponseContent[]))]
+		/// <returns>IList<MoviesGetOKResponseContent></returns>
+        [ResponseType(typeof(IList<MoviesGetOKResponseContent>))]
         [HttpGet]
         [Route("")]
         public virtual IHttpActionResult GetBase()
@@ -110,8 +112,8 @@ namespace MoviesWebApi2Sample.Movies
 		/// gets the current user movies wishlist
 		/// </summary>
 		/// <param name="access_token">Used to send a valid OAuth 2 access token. Do not use together with the &quot;Authorization&quot; header </param>
-		/// <returns>WishlistGetOKResponseContent[]</returns>
-        [ResponseType(typeof(WishlistGetOKResponseContent[]))]
+		/// <returns>IList<WishlistGetOKResponseContent></returns>
+        [ResponseType(typeof(IList<WishlistGetOKResponseContent>))]
         [HttpGet]
         [Route("wishlist")]
         public virtual IHttpActionResult GetWishlistBase([FromUri] string access_token = null)
@@ -150,8 +152,8 @@ namespace MoviesWebApi2Sample.Movies
         /// <summary>
 		/// gets the user rented movies
 		/// </summary>
-		/// <returns>RentedGetOKResponseContent[]</returns>
-        [ResponseType(typeof(RentedGetOKResponseContent[]))]
+		/// <returns>IList<RentedGetOKResponseContent></returns>
+        [ResponseType(typeof(IList<RentedGetOKResponseContent>))]
         [HttpGet]
         [Route("rented")]
         public virtual IHttpActionResult GetRentedBase()
@@ -163,8 +165,8 @@ namespace MoviesWebApi2Sample.Movies
         /// <summary>
 		/// get all movies that are not currently rented
 		/// </summary>
-		/// <returns>AvailableGetOKResponseContent[]</returns>
-        [ResponseType(typeof(AvailableGetOKResponseContent[]))]
+		/// <returns>IList<AvailableGetOKResponseContent></returns>
+        [ResponseType(typeof(IList<AvailableGetOKResponseContent>))]
         [HttpGet]
         [Route("available")]
         public virtual IHttpActionResult GetAvailableBase()

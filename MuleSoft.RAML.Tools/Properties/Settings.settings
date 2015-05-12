@@ -33,10 +33,10 @@
       <Value Profile="(Default)">RAMLClient.t4</Value>
     </Setting>
     <Setting Name="ServerTemplatesVersion" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">0.1</Value>
+      <Value Profile="(Default)">1.0</Value>
     </Setting>
     <Setting Name="ClientTemplatesVersion" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">0.1</Value>
+      <Value Profile="(Default)">1.0</Value>
     </Setting>
     <Setting Name="ClientTemplateTitle" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Client Proxy T4 Template</Value>
@@ -52,6 +52,9 @@
     </Setting>
     <Setting Name="ControllerImplementationTemplateTitle" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Controller Implementation</Value>
+    </Setting>
+    <Setting Name="EnumsTemplateTitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Enums</Value>
     </Setting>
   </Settings>
 </SettingsFile>

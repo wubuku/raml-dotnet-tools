@@ -1,5 +1,7 @@
+// Template: Base Controller (ApiControllerBase.t4) version 0.1
 
 using System;
+using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Description;
 using MoviesWebApi2Sample.Movies.Models;
@@ -18,8 +20,8 @@ namespace MoviesWebApi2Sample.Movies
 		/// </summary>
 		/// <param name="name">Name of the movie</param>
 		/// <param name="director">Director of the movie</param>
-		/// <returns>SearchGetOKResponseContent[]</returns>
-        [ResponseType(typeof(SearchGetOKResponseContent[]))]
+		/// <returns>IList<SearchGetOKResponseContent></returns>
+        [ResponseType(typeof(IList<SearchGetOKResponseContent>))]
         [HttpGet]
         [Route("")]
         public virtual IHttpActionResult GetBase([FromUri] string name = null,[FromUri] string director = null)

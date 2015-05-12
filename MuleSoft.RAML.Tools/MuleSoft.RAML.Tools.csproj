@@ -90,9 +90,9 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Raml.Parser, Version=0.8.10.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Raml.Parser, Version=0.8.101.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Raml.Parser.0.8.10\lib\net45\Raml.Parser.dll</HintPath>
+      <HintPath>..\packages\Raml.Parser.0.8.101\lib\net45\Raml.Parser.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -305,9 +305,9 @@
     <Content Include="node_modules\raml-parser\package.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <None Include="node_modules\raml-parser\README.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Content Include="node_modules\raml-parser\README.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="node_modules\raml-parser\src\composer.coffee">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -687,6 +687,10 @@
     </Content>
     <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\test-request-protocols.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\RAMLWebApi2Scaffolder\ApiEnum.t4">
+      <LastGenOutput>Objects.cs.cs</LastGenOutput>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Resource Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\testdata.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

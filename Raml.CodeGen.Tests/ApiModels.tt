@@ -11,7 +11,7 @@
 <#
 
 	var parser = new RamlParser();
-	var ramlFile = Host.ResolvePath("twitter.raml");
+	var ramlFile = Host.ResolvePath("fstab.raml");
 	var raml = parser.Load(ramlFile);
 	var service = new WebApiGeneratorService(raml);
 	var model = service.BuildModel();
@@ -21,11 +21,12 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace <#= model.Namespace #>.Models
 {
 <#
-foreach (var apiObject in model.Objects.Values.Where(o => o.Properties.Any()))
+foreach (var apiObject in model.Objects.Values)
 {
 
 	if (!string.IsNullOrWhiteSpace(apiObject.Description))
@@ -36,8 +37,18 @@ foreach (var apiObject in model.Objects.Values.Where(o => o.Properties.Any()))
     /// </summary>
 <#
 	}
+
+	if(!apiObject.IsMultiple && apiObject.BaseClass != null) 
+	{
+#>
+    public partial class <#= apiObject.Name #> <#= " : " +  apiObject.BaseClass #>
+<#
+	} else {
 #>
     public partial class <#= apiObject.Name #>
+<#
+	}
+#>
     {
         
 <#
@@ -55,7 +66,14 @@ foreach (var apiObject in model.Objects.Values.Where(o => o.Properties.Any()))
 		if(!string.IsNullOrWhiteSpace(property.OriginalName) && property.OriginalName != property.Name)
 		{
 #>
-		[JsonProperty("<#= property.OriginalName #>")]<# } #>
+		[JsonProperty("<#= property.OriginalName #>")]
+<#		} 
+
+		if(property.IsEnum)
+		{
+#>
+		[JsonConverter(typeof(StringEnumConverter))]
+<#		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
 <#
 	}
@@ -75,5 +93,25 @@ foreach (var apiObject in model.Objects.Values.Where(o => o.Properties.Any()))
 <#
 		}
     }
+
+foreach (var apiEnum in model.Enums)
+{
+	if (!string.IsNullOrWhiteSpace(apiEnum.Description))
+	{
+#>
+    /// <summary>
+    /// <#= apiEnum.Description #>
+    /// </summary>
+<#
+	}	
+#>
+	
+	public enum <#= apiEnum.Name #>
+	{
+		<#= string.Join(", ", apiEnum.Values) #>
+    }
+
+<#
+}
 #>
 } // end Objects namespace

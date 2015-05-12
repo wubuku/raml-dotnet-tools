@@ -39,6 +39,7 @@ namespace Raml.Tools.ClientGenerator
             classes = new Collection<ClassObject>();
             classesObjectsRegistry = new Dictionary<string, ClassObject>();
 			uriParameterObjects = new Dictionary<string, ApiObject>();
+            enums = new Dictionary<string, ApiEnum>();
 
             schemaRequestObjects = GetRequestObjects();
             schemaResponseObjects = GetResponseObjects();
@@ -76,7 +77,8 @@ namespace Raml.Tools.ClientGenerator
                        Warnings = warnings,
                        Classes = classObjects.Where(c => c.Name != rootClassName).ToArray(),
                        Root = classObjects.First(c => c.Name == rootClassName),
-					   UriParameterObjects = uriParameterObjects
+					   UriParameterObjects = uriParameterObjects,
+                       Enums = Enums
                    };
         }
 
@@ -129,6 +131,10 @@ namespace Raml.Tools.ClientGenerator
 		            schemaResponseObjects, uriParameterObjects, queryObjects, headerObjects, responseHeadersObjects, schemaRequestObjects);
 
                 classObj.Children = GetClasses(resource.Resources, resource, classObj, fullUrl);
+                
+                //TODO: check
+                parentClass.Children.Add(classObj);
+
                 classesNames.Add(classObj.Name);
                 classes.Add(classObj);
                 classesObjectsRegistry.Add(CalculateClassKey(fullUrl), classObj);
@@ -165,12 +171,13 @@ namespace Raml.Tools.ClientGenerator
                         throw new InvalidOperationException("Null class object for resource " + fullUrl);
 
                     SetFluentApiProperties(parentResource, classObj, fullUrl);
+                    SetClassesProperties(parentResource.Resources, classObj, fullUrl);
                 }
                 else
                 {
                     SetFluentApiProperties(parentResource, rootClassObject, fullUrl);
+                    SetClassesProperties(parentResource.Resources, rootClassObject, fullUrl);
                 }
-                SetClassesProperties(parentResource.Resources, rootClassObject, fullUrl);
             }
         }
 
@@ -192,12 +199,13 @@ namespace Raml.Tools.ClientGenerator
                         throw new InvalidOperationException("Null class object for resource " + fullUrl);
 
                     SetFluentApiProperties(resource, classObj, fullUrl);
+                    SetClassesProperties(resource.Resources, classObj, fullUrl);
                 }
                 else
                 {
                     SetFluentApiProperties(resource, parentClass, fullUrl);
+                    SetClassesProperties(resource.Resources, parentClass, fullUrl);
                 }
-                SetClassesProperties(resource.Resources, parentClass, fullUrl);
             }
         }
 

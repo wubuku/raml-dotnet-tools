@@ -20,6 +20,7 @@ namespace MuleSoft.RAML.Tools
 		private const string ControllerInterfaceTemplateName = "ApiControllerInterface.t4";
 		private const string ControllerImplementationTemplateName = "ApiControllerImplementation.t4";
 		private const string ModelTemplateName = "ApiModel.t4";
+        private const string EnumTemplateName = "ApiEnum.t4";
 
 		private readonly string ContractsFolderName = Settings.Default.ContractsFolderName;
 		private readonly IT4Service t4Service;
@@ -62,14 +63,16 @@ namespace MuleSoft.RAML.Tools
 			var ramlItem = folderItem.ProjectItems.Cast<ProjectItem>().First(i => i.Name == ramlFileName);
 			var generatedFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + ContractsFolderName + Path.DirectorySeparatorChar;
 
-            if (!templatesManager.ConfirmWhenIncompatibleServerTemplate(generatedFolderPath, 
-                new[] { ControllerBaseTemplateName, ControllerInterfaceTemplateName, ControllerImplementationTemplateName, ModelTemplateName }))
+            if (!templatesManager.ConfirmWhenIncompatibleServerTemplate(generatedFolderPath,
+                new[] { ControllerBaseTemplateName, ControllerInterfaceTemplateName, ControllerImplementationTemplateName, ModelTemplateName, EnumTemplateName }))
                 return;
 
 			var extensionPath = Path.GetDirectoryName(GetType().Assembly.Location) + Path.DirectorySeparatorChar;
 
 			
 			AddOrUpdateModels(targetNamespace, generatedFolderPath, ramlItem, model, folderItem, extensionPath);
+
+            AddOrUpdateEnums(targetNamespace, generatedFolderPath, ramlItem, model, folderItem, extensionPath);
 
 		    AddOrUpdateControllerBase(targetNamespace, generatedFolderPath, ramlItem, model, folderItem, extensionPath);
 
@@ -92,6 +95,8 @@ namespace MuleSoft.RAML.Tools
 	                controllersFolderItem, "controllerObject", model.Controllers, controllersFolderPath, folderItem,
 	                extensionPath, targetNamespace, "Controller", false);
 	        controllerImplementationTemplateParams.Title = Settings.Default.ControllerImplementationTemplateTitle;
+	        controllerImplementationTemplateParams.IncludeHasModels = true;
+	        controllerImplementationTemplateParams.HasModels = model.Objects.Any() || model.Enums.Any();
 	        GenerateCodeFromTemplate(controllerImplementationTemplateParams);
 	    }
 
@@ -106,6 +111,8 @@ namespace MuleSoft.RAML.Tools
 	                ramlItem, "controllerObject", model.Controllers, generatedFolderPath, folderItem, extensionPath,
 	                targetNamespace, "Controller", true, "I");
 	        controllerInterfaceParams.Title = Settings.Default.ControllerInterfaceTemplateTitle;
+            controllerInterfaceParams.IncludeHasModels = true;
+            controllerInterfaceParams.HasModels = model.Objects.Any() || model.Enums.Any();
 	        GenerateCodeFromTemplate(controllerInterfaceParams);
 	    }
 
@@ -120,6 +127,8 @@ namespace MuleSoft.RAML.Tools
 	                ramlItem, "controllerObject", model.Controllers, generatedFolderPath, folderItem, extensionPath,
 	                targetNamespace, "Controller");
 	        controllerBaseTemplateParams.Title = Settings.Default.BaseControllerTemplateTitle;
+            controllerBaseTemplateParams.IncludeHasModels = true;
+            controllerBaseTemplateParams.HasModels = model.Objects.Any() || model.Enums.Any();
 	        GenerateCodeFromTemplate(controllerBaseTemplateParams);
 	    }
 
@@ -127,7 +136,7 @@ namespace MuleSoft.RAML.Tools
 	        WebApiGeneratorModel model, ProjectItem folderItem, string extensionPath)
 	    {
 	        templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ModelTemplateName,
-	            Settings.Default.ClientTemplateTitle);
+	            Settings.Default.ModelsTemplateTitle);
             var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
 	        var apiObjectTemplateParams = new TemplateParams<ApiObject>(
 	            Path.Combine(templatesFolder, ModelTemplateName), ramlItem, "apiObject", model.Objects.Values,
@@ -135,6 +144,20 @@ namespace MuleSoft.RAML.Tools
 	        apiObjectTemplateParams.Title = Settings.Default.ModelsTemplateTitle;
 	        GenerateCodeFromTemplate(apiObjectTemplateParams);
 	    }
+
+        private void AddOrUpdateEnums(string targetNamespace, string generatedFolderPath, ProjectItem ramlItem,
+            WebApiGeneratorModel model, ProjectItem folderItem, string extensionPath)
+        {
+            templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, EnumTemplateName,
+                Settings.Default.EnumsTemplateTitle);
+            var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
+            var apiEnumTemplateParams = new TemplateParams<ApiEnum>(
+                Path.Combine(templatesFolder, EnumTemplateName), ramlItem, "apiEnum", model.Enums,
+                generatedFolderPath, folderItem, extensionPath, targetNamespace);
+            apiEnumTemplateParams.Title = Settings.Default.ModelsTemplateTitle;
+            GenerateCodeFromTemplate(apiEnumTemplateParams);
+        }
+
 
 	    public void UpdateRaml(string ramlFilePath)
 		{
@@ -344,6 +367,10 @@ namespace MuleSoft.RAML.Tools
 	        }
 
 	        public string Title { get; set; }
+
+	        public bool IncludeHasModels { get; set; }
+
+	        public bool HasModels { get; set; }
 	    }
 
 	    private void GenerateCodeFromTemplate<T>(TemplateParams<T> templateParams) where T : IHasName
@@ -353,7 +380,7 @@ namespace MuleSoft.RAML.Tools
 			{
 				var generatedFileName = GetGeneratedFileName(templateParams.Suffix, templateParams.Prefix, parameter);
 
-				var result = t4Service.TransformText(templateParams.TemplatePath, templateParams.ParameterName, parameter, templateParams.BinPath, templateParams.TargetNamespace);
+                var result = t4Service.TransformText(templateParams.TemplatePath, templateParams.ParameterName, parameter, templateParams.BinPath, templateParams.TargetNamespace, templateParams.IncludeHasModels, templateParams.HasModels);
 				var destinationFile = Path.Combine(templateParams.FolderPath, generatedFileName);
 				var contents = templatesManager.AddServerMetadataHeader(result.Content, Path.GetFileNameWithoutExtension(templateParams.TemplatePath), templateParams.Title);
 				
