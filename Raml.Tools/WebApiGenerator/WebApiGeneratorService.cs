@@ -20,9 +20,11 @@ namespace Raml.Tools.WebApiGenerator
 			warnings = new Dictionary<string, string>();
             enums = new Dictionary<string, ApiEnum>();
 
+		    schemaObjects = GetSchemaObjects();
 			schemaRequestObjects = GetRequestObjects();
-			schemaResponseObjects = GetResponseObjects();
+            schemaResponseObjects = GetResponseObjects();
 
+            CleanProperties(schemaObjects);
 			CleanProperties(schemaRequestObjects);
 			CleanProperties(schemaResponseObjects);
 
@@ -34,6 +36,7 @@ namespace Raml.Tools.WebApiGenerator
 			       {
 					   Namespace = NetNamingMapper.GetNamespace(raml.Title),
 				       Controllers = controllers,
+                       SchemaObjects = schemaObjects,
 					   RequestObjects = schemaRequestObjects,
 					   ResponseObjects = schemaResponseObjects,
                        Warnings = warnings,
@@ -41,10 +44,10 @@ namespace Raml.Tools.WebApiGenerator
 			       };
 		}
 
-		private void CleanNotUsedObjects(IEnumerable<ControllerObject> controllers)
+        private void CleanNotUsedObjects(IEnumerable<ControllerObject> controllers)
 		{
+            apiObjectsCleaner.CleanObjects(controllers, schemaObjects, apiObjectsCleaner.IsUsedAsParameterOrResponseInAnyMethod);
 			apiObjectsCleaner.CleanObjects(controllers, schemaRequestObjects, apiObjectsCleaner.IsUsedAsParameterInAnyMethod);
-
 			apiObjectsCleaner.CleanObjects(controllers, schemaResponseObjects, apiObjectsCleaner.IsUsedAsResponseInAnyMethod);
 		}
 

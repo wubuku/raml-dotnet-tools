@@ -41,9 +41,11 @@ namespace Raml.Tools.ClientGenerator
 			uriParameterObjects = new Dictionary<string, ApiObject>();
             enums = new Dictionary<string, ApiEnum>();
 
+            schemaObjects = GetSchemaObjects();
             schemaRequestObjects = GetRequestObjects();
             schemaResponseObjects = GetResponseObjects();
 
+            CleanProperties(schemaObjects);
             CleanProperties(schemaRequestObjects);
             CleanProperties(schemaResponseObjects);
 
@@ -63,6 +65,7 @@ namespace Raml.Tools.ClientGenerator
             return new ClientGeneratorModel
                    {
                        Namespace = NetNamingMapper.GetNamespace(raml.Title),
+                       SchemaObjects = schemaObjects,
                        RequestObjects = schemaRequestObjects,
                        ResponseObjects = schemaResponseObjects,
                        QueryObjects = queryObjects,
@@ -83,10 +86,10 @@ namespace Raml.Tools.ClientGenerator
         }
 
 
-		private void CleanNotUsedObjects(IEnumerable<ClassObject> classes)
+        private void CleanNotUsedObjects(IEnumerable<ClassObject> classes)
 		{
+            apiObjectsCleaner.CleanObjects(classes, schemaObjects, apiObjectsCleaner.IsUsedAsParameterOrResponseInAnyMethod);
 			apiObjectsCleaner.CleanObjects(classes, schemaRequestObjects, apiObjectsCleaner.IsUsedAsParameterInAnyMethod);
-
 			apiObjectsCleaner.CleanObjects(classes, schemaResponseObjects, apiObjectsCleaner.IsUsedAsResponseInAnyMethod);
 		}
 

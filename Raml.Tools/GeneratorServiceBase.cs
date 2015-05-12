@@ -16,8 +16,10 @@ namespace Raml.Tools
 
 		protected readonly UriParametersGenerator uriParametersGenerator = new UriParametersGenerator();
 		protected readonly SchemaParameterParser schemaParameterParser = new SchemaParameterParser(new EnglishPluralizationService());
-		protected IDictionary<string, ApiObject> schemaRequestObjects = new Dictionary<string, ApiObject>();
-		protected IDictionary<string, ApiObject> schemaResponseObjects = new Dictionary<string, ApiObject>();
+
+	    protected IDictionary<string, ApiObject> schemaObjects = new Dictionary<string, ApiObject>();
+	    protected IDictionary<string, ApiObject> schemaRequestObjects = new Dictionary<string, ApiObject>();
+	    protected IDictionary<string, ApiObject> schemaResponseObjects = new Dictionary<string, ApiObject>();
 
 		protected readonly ApiObjectsCleaner apiObjectsCleaner;		
 
@@ -80,12 +82,49 @@ namespace Raml.Tools
 			var key = type.Key + "-" + name.ToLower() + RequestContentSuffix;
             var obj = objectParser.ParseObject(key, verb.Body.Schema, schemaRequestObjects, warnings, enums);
 
+            var alreadyIncluded = GetAlreadyIncluded(obj);
+            if (alreadyIncluded != null)
+            {
+                schemaRequestObjects.Add(key, alreadyIncluded);
+                return;
+            }
+
 			// Avoid duplicated keys and names
             if (obj != null && !schemaRequestObjects.ContainsKey(key) && schemaRequestObjects.All(o => o.Value.Name != obj.Name) && obj.Properties.Any())
                 schemaRequestObjects.Add(key, obj);
 		}
 
-        private void ParseTraitsResponses()
+        private ApiObject GetAlreadyIncluded(ApiObject apiObject)
+	    {
+            foreach (var schemaObject in schemaObjects)
+            {
+                if (HasSameProperties(schemaObject.Value, apiObject))
+                    return schemaObject.Value;
+            }
+
+            foreach (var schemaObject in schemaObjects)
+            {
+                if (HasSameProperties(schemaObject.Value, apiObject))
+                    return schemaObject.Value;
+            }
+
+            foreach (var schemaObject in schemaObjects)
+            {
+                if (HasSameProperties(schemaObject.Value, apiObject))
+                    return schemaObject.Value;
+            }
+            return null;
+	    }
+
+	    private bool HasSameProperties(ApiObject schemaObject, ApiObject apiObject)
+	    {
+	        if(schemaObject.Properties.Count != apiObject.Properties.Count)
+                return false;
+
+	        return schemaObject.Properties.All(p => apiObject.Properties.Any(x => x.Name == p.Name && x.Type == p.Type));
+	    }
+
+	    private void ParseTraitsResponses()
 		{
 			foreach (var trait in raml.Traits)
 			{
@@ -97,6 +136,13 @@ namespace Raml.Tools
 						{
 							var key = mimeType.Key + " " + mimeType.Value.Type + ResponseContentSuffix;
                             var obj = objectParser.ParseObject(key, mimeType.Value.Schema, schemaResponseObjects, warnings, enums);
+
+                            var alreadyIncluded = GetAlreadyIncluded(obj);
+                            if (alreadyIncluded != null)
+                            {
+                                schemaResponseObjects.Add(key, alreadyIncluded);
+                                continue;
+                            }
 
 							// Avoid duplicated keys and names
                             if (obj != null && !schemaResponseObjects.ContainsKey(key) && schemaResponseObjects.All(o => o.Value.Name != obj.Name) && obj.Properties.Any())
@@ -143,6 +189,14 @@ namespace Raml.Tools
 				var mimeType = GeneratorServiceHelper.GetMimeType(response);
 
                 var obj = objectParser.ParseObject(key, mimeType.Schema, schemaResponseObjects, warnings, enums);
+
+                var alreadyIncluded = GetAlreadyIncluded(obj);
+                if (alreadyIncluded != null)
+                {
+                    schemaResponseObjects.Add(key, alreadyIncluded);
+                    continue;
+                }
+
 				// Avoid duplicated keys and names
                 if (obj != null && !schemaResponseObjects.ContainsKey(key) && schemaResponseObjects.All(o => o.Value.Name != obj.Name) && obj.Properties.Any())
                     schemaResponseObjects.Add(key, obj);
@@ -167,6 +221,13 @@ namespace Raml.Tools
 
                             var obj = objectParser.ParseObject(key, kv.Value.Schema, schemaRequestObjects, warnings, enums);
 
+                            var alreadyIncluded = GetAlreadyIncluded(obj);
+                            if (alreadyIncluded != null)
+                            {
+                                schemaRequestObjects.Add(key, alreadyIncluded);
+                                continue;
+                            }
+
 							// Avoid duplicated names and objects without properties
                             if (obj != null && schemaRequestObjects.All(o => o.Value.Name != obj.Name) && obj.Properties.Any())
                                 schemaRequestObjects.Add(key, obj);
@@ -182,12 +243,17 @@ namespace Raml.Tools
 
 		protected IDictionary<string, ApiObject> GetRequestObjects()
 		{
-			ParseSchemas(schemaRequestObjects);
 			ParseResourcesRequests();
 			ParseResourceTypesRequests();
 
 			return schemaRequestObjects;
 		}
+
+	    protected IDictionary<string, ApiObject> GetSchemaObjects()
+	    {
+	        ParseSchemas();
+	        return schemaObjects;
+	    }
 
 		private void ParseResourcesRequests()
 		{
@@ -198,7 +264,6 @@ namespace Raml.Tools
 
 		protected IDictionary<string, ApiObject> GetResponseObjects()
 		{
-			ParseSchemas(schemaResponseObjects);
 			ParseResourceTypesResponses();
 			ParseTraitsResponses();
 			ParseResourcesResponses();
@@ -228,6 +293,13 @@ namespace Raml.Tools
                                 if (schemaResponseObjects.ContainsKey(key)) continue;
 
                                 var obj = objectParser.ParseObject(key, kv.Value.Schema, schemaResponseObjects, warnings, enums);
+
+                                var alreadyIncluded = GetAlreadyIncluded(obj);
+                                if (alreadyIncluded != null)
+                                {
+                                    schemaResponseObjects.Add(key, alreadyIncluded);
+                                    continue;
+                                }
 
 								// Avoid duplicated names and objects without properties
                                 if (obj != null && schemaResponseObjects.All(o => o.Value.Name != obj.Name) && obj.Properties.Any())
@@ -272,20 +344,27 @@ namespace Raml.Tools
 	        return type.EndsWith(">") && type.StartsWith(CollectionTypeHelper.CollectionType);
 	    }
 
-	    private void ParseSchemas(IDictionary<string, ApiObject> objects)
+	    private void ParseSchemas()
 		{
 			foreach (var schema in raml.Schemas)
 			{
 				foreach (var kv in schema)
 				{
-					if (objects.ContainsKey(kv.Key)) 
+					if (schemaObjects.ContainsKey(kv.Key)) 
 						continue;
 
-					var obj = objectParser.ParseObject(kv.Key, kv.Value, objects, warnings, enums);
-						
+                    var obj = objectParser.ParseObject(kv.Key, kv.Value, schemaObjects, warnings, enums);
+
+                    var alreadyIncluded = GetAlreadyIncluded(obj);
+                    if (alreadyIncluded != null)
+                    {
+                        schemaObjects.Add(kv.Key, alreadyIncluded);
+                        continue;
+                    }
+
 					// Avoid duplicated names and objects without properties
-					if (obj != null && objects.All(o => o.Value.Name != obj.Name) && obj.Properties.Any())
-						objects.Add(kv.Key, obj);
+                    if (obj != null && schemaObjects.All(o => o.Value.Name != obj.Name) && obj.Properties.Any())
+                        schemaObjects.Add(kv.Key, obj);
 				}
 			}
 		}

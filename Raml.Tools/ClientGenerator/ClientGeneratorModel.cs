@@ -14,6 +14,8 @@ namespace Raml.Tools.ClientGenerator
 
 		private string baseUri;
 		public string Namespace { get; set; }
+        public IEnumerable<ApiEnum> Enums { get; set; }
+        public IDictionary<string, ApiObject> SchemaObjects { get; set; }
 		public IDictionary<string, ApiObject> ResponseObjects { get; set; }
 		public IDictionary<string, ApiObject> RequestObjects { get; set; }
 		public IDictionary<string, ApiObject> QueryObjects { get; set; }
@@ -31,7 +33,11 @@ namespace Raml.Tools.ClientGenerator
 		{
 			get
 			{
-				var objects = RequestObjects.ToDictionary(requestObject => requestObject.Key, requestObject => requestObject.Value);
+				var objects = SchemaObjects.ToDictionary(requestObject => requestObject.Key, requestObject => requestObject.Value);
+                foreach (var responseObject in RequestObjects.Where(requestObject => !objects.ContainsKey(requestObject.Key)))
+				{
+					objects.Add(responseObject.Key, responseObject.Value);
+				}
 				foreach (var responseObject in ResponseObjects.Where(responseObject => !objects.ContainsKey(responseObject.Key)))
 				{
 					objects.Add(responseObject.Key, responseObject.Value);
@@ -97,6 +103,5 @@ namespace Raml.Tools.ClientGenerator
 			}
 		}
 
-	    public IEnumerable<ApiEnum> Enums { get; set; }
 	}
 }

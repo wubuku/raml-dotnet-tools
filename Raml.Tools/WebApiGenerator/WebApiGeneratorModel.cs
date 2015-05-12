@@ -14,6 +14,8 @@ namespace Raml.Tools.WebApiGenerator
 
 		private string baseUri;
 		public string Namespace { get; set; }
+        public IEnumerable<ApiEnum> Enums { get; set; }
+        public IDictionary<string, ApiObject> SchemaObjects { get; set; }
 		public IDictionary<string, ApiObject> ResponseObjects { get; set; }
 		public IDictionary<string, ApiObject> RequestObjects { get; set; }
 
@@ -56,6 +58,5 @@ namespace Raml.Tools.WebApiGenerator
 			}
 		}
 
-	    public IEnumerable<ApiEnum> Enums { get; set; }
 	}
 }
