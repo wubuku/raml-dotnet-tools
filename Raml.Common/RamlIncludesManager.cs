@@ -127,9 +127,18 @@ namespace Raml.Common
 			if (!Uri.TryCreate(ramlSource, UriKind.Absolute, out uri))
 				throw new UriFormatException("Invalid URL: " + ramlSource);
 
-			var contents = Downloader.GetContents(uri);
+		    string contents;
+		    try
+		    {
+		        contents = Downloader.GetContents(uri);
+		    }
+		    catch (Exception webex)
+		    {
+                // try again, avoid temp conection error
+                contents = Downloader.GetContents(uri);
+		    }
 
-			if (File.Exists(destinationFilePath) && confirmOvewrite)
+		    if (File.Exists(destinationFilePath) && confirmOvewrite)
 			{
 				var dialogResult = InstallerServices.ShowConfirmationDialog(Path.GetFileName(destinationFilePath));
 				if (dialogResult == MessageBoxResult.Yes)

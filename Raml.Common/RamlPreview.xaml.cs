@@ -131,8 +131,8 @@ namespace Raml.Common
 
         private async Task GetRamlFromURL()
         {
-            StartProgress();
-            DoEvents();
+            //StartProgress();
+            //DoEvents();
 
             try
             {
@@ -165,21 +165,21 @@ namespace Raml.Common
                 SetPreview(ramlDocument);
 
                 btnOk.IsEnabled = true;
-                StopProgress();
+                //StopProgress();
             }
             catch (UriFormatException uex)
             {
-                ShowErrorAndStopProgress(uex.Message);
+                ShowErrorAndDisableOk(uex.Message);
             }
             catch (HttpRequestException rex)
             {
-                ShowErrorAndStopProgress(GetFriendlyMessage(rex));
+                ShowErrorAndDisableOk(GetFriendlyMessage(rex));
                 ActivityLog.LogError(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource,
                     VisualStudioAutomationHelper.GetExceptionInfo(rex));
             }
             catch (Exception ex)
             {
-                ShowErrorAndStopProgress(ex.Message);
+                ShowErrorAndDisableOk(ex.Message);
                 ActivityLog.LogError(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource,
                     VisualStudioAutomationHelper.GetExceptionInfo(ex));
             }
@@ -195,19 +195,19 @@ namespace Raml.Common
 
         private void btnOk_Click(object sender, RoutedEventArgs e)
         {
-            //StartProgress();
+            StartProgress();
             DoEvents();
 
             if (!txtFileName.Text.ToLowerInvariant().EndsWith(RamlFileExtension))
             {
-                ShowErrorAndDisableOk("Error: the file must have the .raml extension.");
+                ShowErrorStopProgressAndDisableOk("Error: the file must have the .raml extension.");
                 DialogResult = false;
                 return;
             }
 
             if (!IsContractUseCase && !File.Exists(RamlTempFilePath))
             {
-                ShowErrorAndDisableOk("Error: the specified file does not exist.");
+                ShowErrorStopProgressAndDisableOk("Error: the specified file does not exist.");
                 DialogResult = false;
                 return;
             }
@@ -224,14 +224,14 @@ namespace Raml.Common
                 action(parameters);
 
                 ResourcesLabel.Text += "Succeeded";
-                //StopProgress();
+                StopProgress();
                 btnOk.IsEnabled = true;
                 DialogResult = true;
                 Close();
             }
             catch (Exception ex)
             {
-                ShowErrorAndDisableOk("Error: " + ex.Message);
+                ShowErrorStopProgressAndDisableOk("Error: " + ex.Message);
 
                 ActivityLog.LogError(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, VisualStudioAutomationHelper.GetExceptionInfo(ex));
             }

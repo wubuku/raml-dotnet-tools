@@ -153,6 +153,7 @@
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
@@ -318,12 +319,19 @@
 
             </Grid>
 
+            <ProgressBar Grid.Row="3"
+                         Grid.ColumnSpan="3"
+								 Visibility="Hidden"
+								 Height="15"
+								 Margin="5,0"
+								 IsIndeterminate="True"
+								 Name="progressBar"></ProgressBar>
 
             <Button Content="Cancel"
 									x:Name="btnCancel"
 									Style="{StaticResource Button}"
 									Grid.Column="0"
-                                    Grid.Row="3"
+                                    Grid.Row="4"
 									Click="btnCancel_Click" />
 
         </Grid>

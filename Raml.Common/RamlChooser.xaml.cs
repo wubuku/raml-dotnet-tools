@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using System.Windows.Input;
+using Microsoft.Win32;
 using Raml.Common.Annotations;
 using Raml.Tools;
 using System;
@@ -76,13 +77,35 @@ namespace Raml.Common
 			var title = Path.GetFileName(fd.FileName);
 
             var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, RamlOriginalSource, title, isContractUseCase);
-            preview.FromFile();
+            
+            StartProgress();
+		    preview.FromFile();
+		    StopProgress();
+
             var dialogResult = preview.ShowDialog();
             if(dialogResult == true)
                 Close();
 		}
 
-        private async void LibraryButton_OnClick(object sender, RoutedEventArgs e)
+        private void StartProgress()
+        {
+            progressBar.Visibility = Visibility.Visible;
+            btnOk.IsEnabled = false;
+            BrowseButton.IsEnabled = false;
+            LibraryButton.IsEnabled = false;
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+        }
+
+	    private void StopProgress()
+	    {
+            progressBar.Visibility = Visibility.Hidden;
+            btnOk.IsEnabled = true;
+            BrowseButton.IsEnabled = true;
+            LibraryButton.IsEnabled = true;
+            Mouse.OverrideCursor = null;
+	    }
+
+	    private async void LibraryButton_OnClick(object sender, RoutedEventArgs e)
         {
             SelectExistingRamlOption();
             var rmlLibrary = new RAMLLibraryBrowser();
@@ -95,8 +118,12 @@ namespace Raml.Common
                 txtURL.Text = url;
 
                 //TODO: check title !
-                var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, RamlOriginalSource, "title", isContractUseCase);
+                var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, txtURL.Text, "title", isContractUseCase);
+                
+                StartProgress();
                 preview.FromURL();
+                StopProgress();
+
                 var dialogResult = preview.ShowDialog();
                 if (dialogResult == true)
                     Close();
@@ -113,7 +140,11 @@ namespace Raml.Common
             //TODO: check title !
             SelectExistingRamlOption();
             var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, txtURL.Text, "title", isContractUseCase);
+            
+            StartProgress();
             preview.FromURL();
+            StopProgress();
+
             var dialogResult = preview.ShowDialog();
             if(dialogResult == true)
                 Close();
