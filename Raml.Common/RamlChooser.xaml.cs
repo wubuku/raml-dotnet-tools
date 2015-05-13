@@ -19,7 +19,8 @@ namespace Raml.Common
 		private const string RamlFileExtension = ".raml";
 		// action to execute when clicking Ok button (add RAML Reference, Scaffold Web Api, etc.)
 		private readonly Action<RamlChooserActionParams> action;
-		public string RamlTempFilePath { get; private set; }
+	    private readonly string exchangeUrl;
+	    public string RamlTempFilePath { get; private set; }
 		public string RamlOriginalSource { get; set; }
 
 	    public IServiceProvider ServiceProvider { get; set; }
@@ -45,10 +46,11 @@ namespace Raml.Common
 			}
 		}
 
-		public RamlChooser(IServiceProvider serviceProvider, Action<RamlChooserActionParams> action, string title, bool isContractUseCase)
+		public RamlChooser(IServiceProvider serviceProvider, Action<RamlChooserActionParams> action, string title, bool isContractUseCase, string exchangeUrl)
 		{
 			this.action = action;
-			ServiceProvider = serviceProvider;
+            this.exchangeUrl = exchangeUrl; // "https://qa.anypoint.mulesoft.com/exchange/#!/?types=api"; // testing URL
+		    ServiceProvider = serviceProvider;
 			InitializeComponent();
 			Title = title;
 			IsContractUseCase = isContractUseCase;
@@ -108,7 +110,7 @@ namespace Raml.Common
 	    private async void LibraryButton_OnClick(object sender, RoutedEventArgs e)
         {
             SelectExistingRamlOption();
-            var rmlLibrary = new RAMLLibraryBrowser();
+            var rmlLibrary = new RAMLLibraryBrowser(exchangeUrl);
             var selectedRAMLFile = rmlLibrary.ShowDialog();
 
             if (selectedRAMLFile.HasValue && selectedRAMLFile.Value)
