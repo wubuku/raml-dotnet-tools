@@ -167,6 +167,8 @@
             <Button Content="Cancel"
                     Grid.Row="5"
                     Grid.Column="0"
+                    Width="68"
+                                    Height="35"
 									x:Name="btnCancel"
 									Style="{StaticResource Button}"
 									Click="btnCancel_Click" />
@@ -174,6 +176,8 @@
             <Button Content="Import"
                     Grid.Row="5"
                     Grid.Column="3"
+                    Width="68"
+                                    Height="35"
 									Style="{StaticResource DefaultButton}"
 									x:Name="btnOk"
 									Click="btnOk_Click" />
