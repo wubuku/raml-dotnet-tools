@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows;
 using Raml.Tools;
 
@@ -13,8 +15,21 @@ namespace Raml.Common
 	{
 		private readonly char[] IncludeDirectiveTrimChars = { ' ', '"', '}', ']', ',' };
 		private const string IncludeDirective = "!include";
+        private IDictionary<string, Task> downloadFileTasks = new Dictionary<string, Task>();
 
-		public RamlIncludesManagerResult Manage(string ramlSource, string destinationFolder, bool confirmOverrite = false)
+	    private HttpClient client;
+	    private HttpClient Client
+	    {
+	        get
+	        {
+                if(client == null)
+                    client = new HttpClient();
+	            return client;
+	        }
+	    }
+
+
+	    public RamlIncludesManagerResult Manage(string ramlSource, string destinationFolder, bool confirmOverrite = false)
 		{
 			string path;
 
@@ -23,7 +38,9 @@ namespace Raml.Common
 			{
 				var destinationFilePath = GetDestinationFilePath(Path.GetTempPath(), ramlSource);
 
-				var uri = DownloadFile(ramlSource, destinationFilePath);
+			    var task = DownloadFileAsync(ramlSource, destinationFilePath);
+                task.WaitWithPumping();
+			    var uri = task.ConfigureAwait(false).GetAwaiter().GetResult();
 
 				path = uri.AbsolutePath;
 				if (ramlSource.Contains("/"))
@@ -45,11 +62,14 @@ namespace Raml.Common
 
 			Manage(lines, destinationFolder, includedFiles, path, confirmOverrite);
 
+		    //Task.WaitAll(downloadFileTasks.ToArray());
+
 			return new RamlIncludesManagerResult(string.Join(Environment.NewLine, lines), includedFiles);
 		}
 
 		private void Manage(IList<string> lines, string destinationFolder, ICollection<string> includedFiles, string path, bool confirmOvewrite)
 		{
+		    var scopeIncludedFiles = new Collection<string>();
 			for (var i = 0; i < lines.Count; i++)
 			{
 				var line = lines[i];
@@ -61,49 +81,58 @@ namespace Raml.Common
 
 				var destinationFilePath = GetDestinationFilePath(destinationFolder, includeSource);
 
-				if (IsWebSource(path, includeSource))
-				{
-					var fullPathIncludeSource = GetFullWebSource(path, includeSource);
-					DownloadFile(fullPathIncludeSource, destinationFilePath);
-				}
-				else
-				{
-					var fullPathIncludeSource = includeSource;
-					// if relative does not exist, try with full path
-					if (!File.Exists(includeSource))
-						fullPathIncludeSource = Path.Combine(path, includeSource);
+			    if (!includedFiles.Contains(destinationFilePath))
+			    {
+
+			        if (IsWebSource(path, includeSource))
+			        {
+			            var fullPathIncludeSource = GetFullWebSource(path, includeSource);
+			            DownloadFile(fullPathIncludeSource, destinationFilePath);
+			        }
+			        else
+			        {
+			            var fullPathIncludeSource = includeSource;
+			            // if relative does not exist, try with full path
+			            if (!File.Exists(includeSource))
+			                fullPathIncludeSource = Path.Combine(path, includeSource);
 
 
-					// copy file to dest folder
-					if (File.Exists(destinationFilePath) && confirmOvewrite)
-					{
-						var dialogResult = InstallerServices.ShowConfirmationDialog(Path.GetFileName(destinationFilePath));
-						if (dialogResult == MessageBoxResult.Yes)
-						{
-							if (File.Exists(destinationFilePath))
-								new FileInfo(destinationFilePath).IsReadOnly = false;
+			            // copy file to dest folder
+			            if (File.Exists(destinationFilePath) && confirmOvewrite)
+			            {
+			                var dialogResult = InstallerServices.ShowConfirmationDialog(Path.GetFileName(destinationFilePath));
+			                if (dialogResult == MessageBoxResult.Yes)
+			                {
+			                    if (File.Exists(destinationFilePath))
+			                        new FileInfo(destinationFilePath).IsReadOnly = false;
 
-							File.Copy(fullPathIncludeSource, destinationFilePath, true);
-						}
-					}
-					else
-					{
-						if (File.Exists(destinationFilePath))
-							new FileInfo(destinationFilePath).IsReadOnly = false;
+			                    File.Copy(fullPathIncludeSource, destinationFilePath, true);
+			                }
+			            }
+			            else
+			            {
+			                if (File.Exists(destinationFilePath))
+			                    new FileInfo(destinationFilePath).IsReadOnly = false;
 
-						File.Copy(fullPathIncludeSource, destinationFilePath, true);
-					}
-				}
+			                File.Copy(fullPathIncludeSource, destinationFilePath, true);
+			            }
+			        }
 
-				// replace old include for new include
+                    includedFiles.Add(destinationFilePath);
+                    scopeIncludedFiles.Add(destinationFilePath);
+			    }
+
+			    // replace old include for new include
 				lines[i] = lines[i].Replace(includeSource, GetPathWithoutDriveLetter(destinationFilePath));
-
-				includedFiles.Add(destinationFilePath);
-
-				// parse include for other includes
-				var nestedFileLines = File.ReadAllLines(destinationFilePath);
-				Manage(nestedFileLines, destinationFolder, includedFiles, path, confirmOvewrite);
 			}
+
+		    foreach (var includedFile in scopeIncludedFiles)
+		    {
+                // parse include for other includes
+		        Task.WaitAll(downloadFileTasks[includedFile]);
+                var nestedFileLines = File.ReadAllLines(includedFile);
+                Manage(nestedFileLines, destinationFolder, includedFiles, path, confirmOvewrite);
+		    }
 		}
 
 		private static string GetPathWithoutDriveLetter(string destinationFilePath)
@@ -111,7 +140,7 @@ namespace Raml.Common
 			return destinationFilePath.Substring(1,1) == ":" ? destinationFilePath.Substring(2) : destinationFilePath;
 		}
 
-		private static string GetDestinationFilePath(string destinationFolder, string includeSource)
+		private string GetDestinationFilePath(string destinationFolder, string includeSource)
 		{
 			var filename = GetFileName(includeSource);
 			var destinationFilePath = Path.Combine(destinationFolder, filename);
@@ -121,44 +150,54 @@ namespace Raml.Common
 			return destinationFilePath;
 		}
 
-		private static Uri DownloadFile(string ramlSource, string destinationFilePath, bool confirmOvewrite = false)
+		private Uri DownloadFile(string ramlSourceUrl, string destinationFilePath, bool confirmOvewrite = false)
 		{
 			Uri uri;
-			if (!Uri.TryCreate(ramlSource, UriKind.Absolute, out uri))
-				throw new UriFormatException("Invalid URL: " + ramlSource);
+			if (!Uri.TryCreate(ramlSourceUrl, UriKind.Absolute, out uri))
+				throw new UriFormatException("Invalid URL: " + ramlSourceUrl);
 
-		    string contents;
-		    try
-		    {
-		        contents = Downloader.GetContents(uri);
-		    }
-		    catch (Exception webex)
-		    {
-                // try again, avoid temp conection error
-                contents = Downloader.GetContents(uri);
-		    }
+            downloadFileTasks.Add(destinationFilePath, GetContentsAsync(uri).ContinueWith(task => WriteFile(destinationFilePath, confirmOvewrite, task.Result)));
 
-		    if (File.Exists(destinationFilePath) && confirmOvewrite)
-			{
-				var dialogResult = InstallerServices.ShowConfirmationDialog(Path.GetFileName(destinationFilePath));
-				if (dialogResult == MessageBoxResult.Yes)
-				{
-					if (File.Exists(destinationFilePath))
-						new FileInfo(destinationFilePath).IsReadOnly = false;
-					File.WriteAllText(destinationFilePath, contents);
-				}
-			}
-			else
-			{
-				if (File.Exists(destinationFilePath))
-					new FileInfo(destinationFilePath).IsReadOnly = false;
-				File.WriteAllText(destinationFilePath, contents);
-			}
+		    //WriteFile(destinationFilePath, confirmOvewrite, contents);
 
 			return uri;
 		}
 
-		private static string GetFileName(string ramlSource)
+        private async Task<Uri> DownloadFileAsync(string ramlSourceUrl, string destinationFilePath, bool confirmOvewrite = false)
+        {
+            Uri uri;
+            if (!Uri.TryCreate(ramlSourceUrl, UriKind.Absolute, out uri))
+                throw new UriFormatException("Invalid URL: " + ramlSourceUrl);
+
+            await GetContentsAsync(uri).ContinueWith(task => WriteFile(destinationFilePath, confirmOvewrite, task.Result));
+
+            //WriteFile(destinationFilePath, confirmOvewrite, contents);
+
+            return uri;
+        }
+
+
+	    private static void WriteFile(string destinationFilePath, bool confirmOvewrite, string contents)
+	    {
+	        if (File.Exists(destinationFilePath) && confirmOvewrite)
+	        {
+	            var dialogResult = InstallerServices.ShowConfirmationDialog(Path.GetFileName(destinationFilePath));
+	            if (dialogResult == MessageBoxResult.Yes)
+	            {
+	                if (File.Exists(destinationFilePath))
+	                    new FileInfo(destinationFilePath).IsReadOnly = false;
+	                File.WriteAllText(destinationFilePath, contents);
+	            }
+	        }
+	        else
+	        {
+	            if (File.Exists(destinationFilePath))
+	                new FileInfo(destinationFilePath).IsReadOnly = false;
+	            File.WriteAllText(destinationFilePath, contents);
+	        }
+	    }
+
+	    private static string GetFileName(string ramlSource)
 		{
 			var filename = Path.GetFileName(ramlSource);
 			if (string.IsNullOrWhiteSpace(filename))
@@ -178,5 +217,11 @@ namespace Raml.Common
 		{
 			return includeSource.StartsWith("http") || (!string.IsNullOrWhiteSpace(path) && path.StartsWith("http"));
 		}
+
+        public async Task<string> GetContentsAsync(Uri uri)
+        {
+            var downloadTask = await Client.GetStringAsync(uri).ConfigureAwait(false);
+            return downloadTask;
+        }
 	}
 }
