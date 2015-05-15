@@ -129,7 +129,7 @@ namespace Raml.Common
 		    foreach (var includedFile in scopeIncludedFiles)
 		    {
                 // parse include for other includes
-		        Task.WaitAll(downloadFileTasks[includedFile]);
+		        downloadFileTasks[includedFile].WaitWithPumping();
                 var nestedFileLines = File.ReadAllLines(includedFile);
                 Manage(nestedFileLines, destinationFolder, includedFiles, path, confirmOvewrite);
 		    }
