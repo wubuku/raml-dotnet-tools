@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using Raml.Common;
 using Raml.Parser.Expressions;
 using Raml.Tools.Pluralization;
 

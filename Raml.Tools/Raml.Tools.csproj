@@ -82,7 +82,6 @@
     <Compile Include="HeadersParser.cs" />
     <Compile Include="ClientGenerator\ClientMethodsGenerator.cs" />
     <Compile Include="MethodsGeneratorBase.cs" />
-    <Compile Include="NetNamingMapper.cs" />
     <Compile Include="NetTypeMapper.cs" />
     <Compile Include="ObjectParser.cs" />
     <Compile Include="ParametersMapper.cs" />

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Raml.Common;
 
 namespace Raml.Tools
 {
