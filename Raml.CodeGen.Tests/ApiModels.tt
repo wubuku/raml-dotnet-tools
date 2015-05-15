@@ -33,7 +33,7 @@ foreach (var apiObject in model.Objects.Values)
 	{
 #>
     /// <summary>
-    /// <#= apiObject.Description #>
+    /// <#= XmlCommentHelper.Escape(apiObject.Description) #>
     /// </summary>
 <#
 	}

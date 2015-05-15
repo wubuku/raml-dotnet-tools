@@ -11,6 +11,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using MuleSoft.RAML.Tools.Properties;
 using NuGet.VisualStudio;
 using Raml.Common;
 
@@ -95,7 +96,7 @@ namespace MuleSoft.RAML.Tools
 	    private void AddRamlContractCallback(object sender, EventArgs e)
 	    {
 		    var ramlScaffoldUpdater = new RamlScaffoldService(new T4Service(ServiceProvider.GlobalProvider), ServiceProvider.GlobalProvider);
-		    var frm = new RamlChooser(ServiceProvider.GlobalProvider, ramlScaffoldUpdater.AddContract, "Add RAML Contract", true);
+		    var frm = new RamlChooser(ServiceProvider.GlobalProvider, ramlScaffoldUpdater.AddContract, "Add RAML Contract", true, Settings.Default.RAMLExchangeUrl);
 		    frm.ShowDialog();
 	    }
 
@@ -132,7 +133,7 @@ namespace MuleSoft.RAML.Tools
 		private void AddRamlReferenceCallback(object sender, EventArgs e)
 		{
 			var generationServices = new RamlReferenceService(ServiceProvider.GlobalProvider);
-			var ramlChooser = new RamlChooser(this, generationServices.AddRamlReference, "Add RAML Reference", false);
+			var ramlChooser = new RamlChooser(this, generationServices.AddRamlReference, "Add RAML Reference", false, Settings.Default.RAMLExchangeUrl);
 			ramlChooser.ShowDialog();
 		}
 
