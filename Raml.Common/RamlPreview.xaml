@@ -9,7 +9,7 @@
                  Background="Gainsboro"
                  Title="Import RAML"
 				 Width="540"
-				 ResizeMode="CanMinimize">
+				 ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style x:Key="TextBlockStyle"
 			   TargetType="{x:Type TextBox}">
