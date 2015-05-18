@@ -1,3 +1,5 @@
+using System;
+
 namespace Raml.Tools
 {
 	public static class XmlCommentHelper
@@ -7,6 +9,7 @@ namespace Raml.Tools
 			return text.Replace("\r\n", string.Empty)
 				.Replace("\n", string.Empty)
 				.Replace("\r", string.Empty)
+                .Replace(Environment.NewLine, string.Empty)
 				.Replace("&", "&amp;")
 				.Replace("<", "&lt;")
 				.Replace(">", "&gt;")

@@ -11,8 +11,12 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using MuleSoft.RAML.Tools.Properties;
 using NuGet.VisualStudio;
 using Raml.Common;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 namespace MuleSoft.RAML.Tools
 {
@@ -31,7 +35,14 @@ namespace MuleSoft.RAML.Tools
 	    {
 		    var message = string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this);
 		    Debug.WriteLine(message);
-	    }
+
+#if DEBUG
+        ServicePointManager.ServerCertificateValidationCallback = delegate(Object obj, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+        {
+          return (true);
+        };
+#endif
+      }
 
         protected override void Initialize()
         {
@@ -95,7 +106,7 @@ namespace MuleSoft.RAML.Tools
 	    private void AddRamlContractCallback(object sender, EventArgs e)
 	    {
 		    var ramlScaffoldUpdater = new RamlScaffoldService(new T4Service(ServiceProvider.GlobalProvider), ServiceProvider.GlobalProvider);
-		    var frm = new RamlChooser(ServiceProvider.GlobalProvider, ramlScaffoldUpdater.AddContract, "Add RAML Contract", true);
+		    var frm = new RamlChooser(ServiceProvider.GlobalProvider, ramlScaffoldUpdater.AddContract, "Add RAML Contract", true, Settings.Default.RAMLExchangeUrl);
 		    frm.ShowDialog();
 	    }
 
@@ -132,7 +143,7 @@ namespace MuleSoft.RAML.Tools
 		private void AddRamlReferenceCallback(object sender, EventArgs e)
 		{
 			var generationServices = new RamlReferenceService(ServiceProvider.GlobalProvider);
-			var ramlChooser = new RamlChooser(this, generationServices.AddRamlReference, "Add RAML Reference", false);
+			var ramlChooser = new RamlChooser(this, generationServices.AddRamlReference, "Add RAML Reference", false, Settings.Default.RAMLExchangeUrl);
 			ramlChooser.ShowDialog();
 		}
 
