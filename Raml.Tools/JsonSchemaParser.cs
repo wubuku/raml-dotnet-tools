@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Newtonsoft.Json.Schema;
+using Raml.Common;
 
 namespace Raml.Tools
 {

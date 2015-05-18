@@ -12,7 +12,7 @@ namespace Raml.Common
 
 		public static string GetNamespace(string title)
 		{
-			return NetNamingMapper.Capitalize(NetNamingMapper.RemoveIndalidChars(title));
+			return Capitalize(RemoveIndalidChars(title));
 		}
 
 		public static string GetObjectName(string input)
@@ -20,7 +20,8 @@ namespace Raml.Common
 			if (string.IsNullOrWhiteSpace(input))
 				return "NullInput";
 
-			var name = ReplaceSpecialChars(input, "-");
+            var name = ReplaceSpecialChars(input, "{mediaTypeExtension}");
+            name = ReplaceSpecialChars(name, "-");
 			name = ReplaceSpecialChars(name, "\\");
 			name = ReplaceSpecialChars(name, "/");
 			name = ReplaceSpecialChars(name, "_");
@@ -67,9 +68,14 @@ namespace Raml.Common
 			return validnamespace;
 		}
 
+		public static bool HasIndalidChars(string input)
+		{
+			return Path.GetInvalidPathChars().Any(input.Contains);
+		}
 		public static string GetMethodName(string input)
 		{
-			var name = ReplaceSpecialChars(input, "-");
+            var name = ReplaceSpecialChars(input, "{mediaTypeExtension}");
+            name = ReplaceSpecialChars(name, "-");
 			name = ReplaceSpecialChars(name, "\\");
 			name = ReplaceSpecialChars(name, "/");
 			name = ReplaceSpecialChars(name, "_");
@@ -108,12 +114,21 @@ namespace Raml.Common
 			var propName = name.Replace(":", string.Empty);
 			propName = propName.Replace("/", string.Empty);
 			propName = propName.Replace("-", string.Empty);
-			propName = NetNamingMapper.Capitalize(propName);
+			propName = Capitalize(propName);
 
 			if (StartsWithNumber(propName))
 				propName = "P" + propName;
 
 			return propName;
 		}
+
+	    public static string GetEnumValueName(string enumValue)
+	    {
+	        return enumValue
+                .Replace(":", string.Empty)
+                .Replace("/", string.Empty)
+	            .Replace(" ", "_")
+	            .Replace("-", "_");
+	    }
 	}
 }

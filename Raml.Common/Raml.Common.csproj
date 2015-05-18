@@ -140,6 +140,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RAML.Api.Core\RAML.Api.Core.csproj">
+      <Project>{38b9703d-6167-4aae-baed-0c896c24a762}</Project>
+      <Name>RAML.Api.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Raml.Tools\Raml.Tools.csproj">
       <Project>{851d7eab-c9fb-4a3f-9537-bb8f36710395}</Project>
       <Name>Raml.Tools</Name>
