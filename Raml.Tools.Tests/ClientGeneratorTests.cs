@@ -481,6 +481,19 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(5, model.Objects.Sum(o => o.Value.Properties.Count(p => p.IsEnum)));
         }
 
+	    [Test]
+	    public async Task Should_work()
+	    {
+            var raml = await new RamlParser().LoadAsync(@"C:\desarrollo\mulesoft\raml-tests\ConsoleApplication2\ConsoleApplication2\API References\root\root.raml");
+			var model = new ClientGeneratorService(raml, "test").BuildModel();
+	        var nullMethods = model.Classes.SelectMany(m => m.Methods).Where(m => m.ResponseType == null);
+            var null2 = model.Classes.SelectMany(m => m.Methods).Where(m => m.ResponseType != "ApiResponse" && m.ReturnTypeObject == null);
+            var null3 = model.Classes.SelectMany(m => m.Methods).Where(m => m.ResponseType != "ApiResponse" && m.ReturnTypeObject.JSONSchema == null);
+            
+            Assert.IsNotNull(model);
+	    }
+        
+
         private static string GetXml(string comment)
         {
             if (string.IsNullOrWhiteSpace(comment))

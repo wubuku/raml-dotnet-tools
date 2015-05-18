@@ -13,7 +13,7 @@
 <#
 
 	var parser = new RamlParser();
-	var ramlFile = Host.ResolvePath("movies.raml");
+	var ramlFile = Host.ResolvePath(@"C:\desarrollo\mulesoft\raml-tests\ConsoleApplication2\ConsoleApplication2\API References\root\root.raml");
 	var raml = parser.Load(ramlFile);
 	var service = new ClientGeneratorService(raml, "MoviesApi");
 	var model = service.BuildModel();
@@ -44,7 +44,7 @@ namespace <#= model.Namespace #>
 		{
 #>
     /// <summary>
-    /// <#= classObject.Description #>
+    /// <#= XmlCommentHelper.Escape(classObject.Description) #>
     /// </summary>
 <#
 		}
@@ -152,7 +152,7 @@ namespace <#= model.Namespace #>
             string validationCall = "new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)";
             string validationWithException = "";
 
-            if (method.ResponseType != "ApiResponse")
+            if (method.ResponseType != "ApiResponse" && method.ReturnTypeObject != null)
 			{
                 var jsonSchema = !method.ReturnTypeObject.IsMultiple ? 
 					String.Format("\"{0}\"", method.ReturnTypeObject.JSONSchema) : 
@@ -383,7 +383,7 @@ namespace <#= model.Namespace #>
 	}
 #>
     /// <summary>
-    /// <#= model.Root.Description ?? string.Empty #>
+    /// <#= model.Root.Description == null ? string.Empty : XmlCommentHelper.Escape(model.Root.Description) #>
     /// </summary>
     public partial class <#= model.Root.Name #>
     {
@@ -499,7 +499,7 @@ foreach (var apiObject in model.Objects.Values)
 	{
 #>
     /// <summary>
-    /// <#= apiObject.Description #>
+    /// <#= XmlCommentHelper.Escape(apiObject.Description) #>
     /// </summary>
 <#
 	}	
@@ -560,7 +560,7 @@ foreach (var apiObject in model.Objects.Values)
 	    {
 #>
         /// <summary>
-        /// <#= property.Description #>
+        /// <#= XmlCommentHelper.Escape(property.Description) #>
         /// </summary>
 <#
     	}
@@ -593,7 +593,7 @@ foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any())
 	{
 #>
     /// <summary>
-    /// <#= header.Description #>
+    /// <#= XmlCommentHelper.Escape(header.Description) #>
     /// </summary>
 <#
 	}
@@ -608,7 +608,7 @@ foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any())
 	    {
 #>
         /// <summary>
-        /// <#= property.Description #>
+        /// <#= XmlCommentHelper.Escape(property.Description) #>
         /// </summary>
 <#
 		}
@@ -640,7 +640,7 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
 	{
 #>
     /// <summary>
-    /// <#= respHeader.Description #>
+    /// <#= XmlCommentHelper.Escape(respHeader.Description) #>
     /// </summary>
 <#
 	}
@@ -670,7 +670,7 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
 		foreach (var property in respHeader.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 		{
 #>
-		    if (statusCode == HttpStatusCode.<#= property.StatusCode #>)
+		    if (statusCode == (HttpStatusCode)<#= (int)property.StatusCode #>)
 		    {
 				var header = new <#= property.Type #>();
 			    foreach (var responseHeader in headers)
@@ -695,7 +695,7 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
 	    {
 #>
         /// <summary>
-        /// <#= property.Description #>
+        /// <#= XmlCommentHelper.Escape(property.Description) #>
         /// </summary>
 <#
 	    }
@@ -728,7 +728,7 @@ foreach (var apiObject in model.ApiRequestObjects)
 	{
 #>
     /// <summary>
-    /// <#= apiObject.Description #>
+    /// <#= XmlCommentHelper.Escape(apiObject.Description) #>
     /// </summary>
 <#
 	}
@@ -754,7 +754,7 @@ foreach (var apiObject in model.ApiRequestObjects)
 	    {
 #>
         /// <summary>
-        /// <#= property.Description #>
+        /// <#= XmlCommentHelper.Escape(property.Description) #>
         /// </summary>
 <#
     	}
@@ -777,7 +777,7 @@ foreach (var apiObject in model.ApiResponseObjects)
 	{
 #>
     /// <summary>
-    /// <#= apiObject.Description #>
+    /// <#= XmlCommentHelper.Escape(apiObject.Description) #>
     /// </summary>
 <#
 	}
@@ -794,7 +794,7 @@ foreach (var apiObject in model.ApiResponseObjects)
 	    {
 #>
         /// <summary>
-        /// <#= property.Description #>
+        /// <#= XmlCommentHelper.Escape(property.Description) #>
         /// </summary>
 <#
     	}
@@ -879,7 +879,7 @@ foreach (var apiEnum in model.Enums)
 	{
 #>
     /// <summary>
-    /// <#= apiEnum.Description #>
+    /// <#= XmlCommentHelper.Escape(apiEnum.Description) #>
     /// </summary>
 <#
 	}	
