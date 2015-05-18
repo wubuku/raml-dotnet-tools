@@ -97,19 +97,22 @@ namespace Raml.Tools
 
         private ApiObject GetAlreadyIncluded(ApiObject apiObject)
 	    {
-            foreach (var schemaObject in schemaObjects)
+            if(apiObject == null || apiObject.Properties == null)
+                return null;
+
+            foreach (var schemaObject in schemaObjects.Where(o => o.Value != null && o.Value.Properties != null))
             {
                 if (HasSameProperties(schemaObject.Value, apiObject))
                     return schemaObject.Value;
             }
 
-            foreach (var schemaObject in schemaObjects)
+            foreach (var schemaObject in schemaObjects.Where(o => o.Value != null && o.Value.Properties != null))
             {
                 if (HasSameProperties(schemaObject.Value, apiObject))
                     return schemaObject.Value;
             }
 
-            foreach (var schemaObject in schemaObjects)
+            foreach (var schemaObject in schemaObjects.Where(o => o.Value != null && o.Value.Properties != null))
             {
                 if (HasSameProperties(schemaObject.Value, apiObject))
                     return schemaObject.Value;
