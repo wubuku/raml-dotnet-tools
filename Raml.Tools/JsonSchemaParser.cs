@@ -19,7 +19,7 @@ namespace Raml.Tools
 			          {
 				          Name = NetNamingMapper.GetObjectName(key),
 				          Properties = new List<Property>(),
-                          JSONSchema = jsonSchema.Replace("\"", "\\\"").Replace("\n", "")
+                          JSONSchema = jsonSchema.Replace(Environment.NewLine, "").Replace("\r\n", "").Replace("\n", "").Replace("\"", "\\\"")
 			          };
 			JsonSchema schema = null;
 			Newtonsoft.JsonV4.Schema.JsonSchema v4Schema = null;

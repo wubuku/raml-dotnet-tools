@@ -114,6 +114,8 @@ namespace Raml.Common
 			var propName = name.Replace(":", string.Empty);
 			propName = propName.Replace("/", string.Empty);
 			propName = propName.Replace("-", string.Empty);
+            propName = propName.Replace("+", "Plus");
+            propName = propName.Replace(".", "Dot");
 			propName = Capitalize(propName);
 
 			if (StartsWithNumber(propName))
@@ -124,11 +126,22 @@ namespace Raml.Common
 
 	    public static string GetEnumValueName(string enumValue)
 	    {
-	        return enumValue
-                .Replace(":", string.Empty)
-                .Replace("/", string.Empty)
+	        var value = enumValue
+	            .Replace(":", string.Empty)
+	            .Replace("/", string.Empty)
 	            .Replace(" ", "_")
-	            .Replace("-", "_");
+	            .Replace("-", "_")
+                .Replace("+", string.Empty)
+                .Replace(".", string.Empty);
+
+            if (StartsWithNumber(value))
+                value = "E" + value;
+
+	        int number;
+	        if (int.TryParse(enumValue, out number))
+	            value = value + " = " + number;
+
+            return value;
 	    }
 	}
 }
