@@ -6,7 +6,7 @@
         mc:Ignorable="d" 
         WindowState="Normal"
         d:DesignHeight="700" d:DesignWidth="1010"
-        Title="RAML Library Browser" Height="700" Width="1010" Loaded="RAMLLibraryBrowser_OnLoaded">
+        Title="RAML Library Browser" Height="700" Width="1010" Loaded="RAMLLibraryBrowser_OnLoaded" WindowStartupLocation="CenterScreen">
     <Grid Margin="0, 5, 0, 5">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
