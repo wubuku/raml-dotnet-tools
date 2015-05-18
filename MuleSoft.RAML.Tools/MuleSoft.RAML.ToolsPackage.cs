@@ -14,6 +14,9 @@ using Microsoft.VisualStudio.Shell.Interop;
 using MuleSoft.RAML.Tools.Properties;
 using NuGet.VisualStudio;
 using Raml.Common;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 namespace MuleSoft.RAML.Tools
 {
@@ -32,7 +35,14 @@ namespace MuleSoft.RAML.Tools
 	    {
 		    var message = string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this);
 		    Debug.WriteLine(message);
-	    }
+
+#if DEBUG
+        ServicePointManager.ServerCertificateValidationCallback = delegate(Object obj, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+        {
+          return (true);
+        };
+#endif
+      }
 
         protected override void Initialize()
         {
