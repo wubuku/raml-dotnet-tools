@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using Raml.Common;
 using Raml.Parser.Expressions;
 using Raml.Tools.Pluralization;
 
@@ -432,7 +433,8 @@ namespace Raml.Tools
 
 		private static string GetObjectNameForParameter(Resource resource)
 		{
-			var objectNameForParameter = resource.RelativeUri.Substring(1).Replace("{", string.Empty).Replace("}", string.Empty);
+		    var relativeUri = resource.RelativeUri.Replace("{mediaTypeExtension}", string.Empty);
+		    var objectNameForParameter = relativeUri.Substring(1).Replace("{", string.Empty).Replace("}", string.Empty);
 			objectNameForParameter = NetNamingMapper.GetObjectName(objectNameForParameter);
 			return objectNameForParameter;
 		}

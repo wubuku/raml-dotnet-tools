@@ -184,5 +184,14 @@ namespace MuleSoft.RAML.Tools.Properties {
                 return ((string)(this["EnumsTemplateTitle"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://library.mulesoft.com/#!/?types=api")]
+        public string RAMLExchangeUrl {
+            get {
+                return ((string)(this["RAMLExchangeUrl"]));
+            }
+        }
     }
 }
