@@ -304,13 +304,119 @@ namespace Raml.Tools.Tests
             var enums = new Dictionary<string, ApiEnum>();
             var obj = parser.Parse("name", schema, objects, warnings, enums);
 
-            Assert.IsNotNull(obj);
             Assert.AreEqual(1, obj.Properties.Count);
             Assert.AreEqual(1, objects.Count);
             Assert.AreEqual(1, objects.First().Value.Properties.Count);
             Assert.AreEqual(0, warnings.Count);
         }
 
+        [Test]
+        public void should_parse_not_required_as_nullable_v3()
+        {
+            const string schema = @"{
+        '$schema': 'http://json-schema.org/draft-03/schema#',
+        'type': 'object',
+        'properties': {
+            'readonly': 
+                { 
+                    'type' : 'boolean',
+                    'required': false
+                }
+            }
+        },
+    }";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
+
+            Assert.AreEqual("bool?", obj.Properties.First().Type);
+            Assert.AreEqual(0, objects.Count);
+            Assert.AreEqual(0, warnings.Count);
+        }
+
+        [Test]
+        public void should_parse_not_required_as_nullable_v3_except_string()
+        {
+            const string schema = @"{
+        '$schema': 'http://json-schema.org/draft-03/schema#',
+        'type': 'object',
+        'properties': {
+            'readonly': 
+                { 
+                    'type' : 'string',
+                    'required': false
+                }
+            }
+        },
+    }";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
+
+            Assert.AreEqual("string", obj.Properties.First().Type);
+            Assert.AreEqual(0, objects.Count);
+            Assert.AreEqual(0, warnings.Count);
+        }
+
+        [Test]
+        public void should_parse_required_as_not_nullable_v3()
+        {
+            const string schema = @"{
+        '$schema': 'http://json-schema.org/draft-03/schema#',
+        'type': 'object',
+        'properties': {
+            'readonly': 
+                { 
+                    'type' : 'integer',
+                    'required': true
+                }
+            }
+        },
+    }";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
+
+            Assert.AreEqual("int", obj.Properties.First().Type);
+            Assert.AreEqual(0, objects.Count);
+            Assert.AreEqual(0, warnings.Count);
+        }
+
+        [Test]
+        public void should_parse_not_required_as_nullable_v3_except_object()
+        {
+            const string schema = @"{
+        '$schema': 'http://json-schema.org/draft-03/schema#',
+        'type': 'object',
+        'properties': {
+            'readonly': 
+                { 
+                    'type' : 'any',
+                    'required': false
+                }
+            }
+        },
+    }";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
+
+            Assert.AreEqual("object", obj.Properties.First().Type);
+            Assert.AreEqual(0, objects.Count);
+            Assert.AreEqual(0, warnings.Count);
+        }
 
 	}
 }

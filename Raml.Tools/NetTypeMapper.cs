@@ -76,10 +76,6 @@ namespace Raml.Tools
 					"decimal"
 				},
 				{
-					"date",
-					"DateTime"
-				},
-				{
 					"number",
 					"decimal"
 				},

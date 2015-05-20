@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Odbc;
 using System.Linq;
 using Newtonsoft.Json.Schema;
 using Raml.Common;
@@ -167,9 +168,14 @@ namespace Raml.Tools
 
             if (isEnum) 
                 return enumName;
-            
-            if(!string.IsNullOrWhiteSpace(NetTypeMapper.Map(property.Value.Type)))
-                return NetTypeMapper.Map(property.Value.Type);
+
+            if (!string.IsNullOrWhiteSpace(NetTypeMapper.Map(property.Value.Type)))
+            {
+                var type = NetTypeMapper.Map(property.Value.Type);
+                type = IfNotRequiredMakeNullable(property, type);
+
+                return type;
+            }
 
             if (!string.IsNullOrWhiteSpace(property.Value.Id))
                 return NetNamingMapper.GetObjectName(property.Value.Id);
@@ -183,12 +189,33 @@ namespace Raml.Tools
                 return enumName;
 
             if (!string.IsNullOrWhiteSpace(NetTypeMapper.Map(property.Value.Type)))
-                return NetTypeMapper.Map(property.Value.Type);
+            {
+                var type = NetTypeMapper.Map(property.Value.Type);
+                type = IfNotRequiredMakeNullable(property, type);
+
+                return type;
+            }
 
             if (!string.IsNullOrWhiteSpace(property.Value.Id))
                 return NetNamingMapper.GetObjectName(property.Value.Id);
 
             return NetNamingMapper.GetObjectName(property.Key);
+        }
+
+        private static string IfNotRequiredMakeNullable(KeyValuePair<string, JsonSchema> property, string type)
+        {
+            if (property.Value.Required.HasValue && property.Value.Required.Value == false && type != "object" && type != "string")
+                type += "?";
+
+            return type;
+        }
+
+        private static string IfNotRequiredMakeNullable(KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property, string type)
+        {
+            if ((property.Value.Required == null || !property.Value.Required.Contains(property.Key)) && type != "object" && type != "string")
+                type += "?";
+
+            return type;
         }
 
         private void ParseComplexTypes(IDictionary<string, ApiObject> objects, Newtonsoft.JsonV4.Schema.JsonSchema schema, Newtonsoft.JsonV4.Schema.JsonSchema propertySchema, Property prop, KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property, IDictionary<string, ApiEnum> enums)
