@@ -281,5 +281,36 @@ namespace Raml.Tools.Tests
             Assert.AreEqual("Employee", obj.Properties[2].Type);
 	    }
 
+        [Test]
+        public void should_parse_array_in_type_object()
+        {
+            const string schema = @"{
+        '$schema': 'http://json-schema.org/draft-03/schema#',
+        'type': 'object',
+        'properties': {
+            'prop1': { 
+                'type': ['object', 'null'],
+                'properties':
+                 {
+                    'readonly': { 'type' : 'boolean' }
+                 }
+            }
+        },
+    }";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
+
+            Assert.IsNotNull(obj);
+            Assert.AreEqual(1, obj.Properties.Count);
+            Assert.AreEqual(1, objects.Count);
+            Assert.AreEqual(1, objects.First().Value.Properties.Count);
+            Assert.AreEqual(0, warnings.Count);
+        }
+
+
 	}
 }

@@ -193,7 +193,9 @@ namespace Raml.Tools
 
         private void ParseComplexTypes(IDictionary<string, ApiObject> objects, Newtonsoft.JsonV4.Schema.JsonSchema schema, Newtonsoft.JsonV4.Schema.JsonSchema propertySchema, Property prop, KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property, IDictionary<string, ApiEnum> enums)
 		{
-			if (propertySchema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Object && propertySchema.Properties != null)
+            if (propertySchema.Type.HasValue
+                && (propertySchema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Object || propertySchema.Type.Value.ToString().Contains("Object")) 
+                && propertySchema.Properties != null)
 			{
                 if (!string.IsNullOrWhiteSpace(schema.Id) && ids.Contains(schema.Id))
                     return;
@@ -205,7 +207,8 @@ namespace Raml.Tools
 			    ParseObject(type, propertySchema.Properties, objects, enums);
 				prop.Type = NetNamingMapper.GetObjectName(type);
 			}
-            else if (propertySchema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Object && propertySchema.OneOf != null && propertySchema.OneOf.Count > 0 && schema.Definitions != null && schema.Definitions.Count > 0)
+            else if (propertySchema.Type.HasValue
+                && propertySchema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Object && propertySchema.OneOf != null && propertySchema.OneOf.Count > 0 && schema.Definitions != null && schema.Definitions.Count > 0)
             {
                 string baseTypeName = NetNamingMapper.GetObjectName(property.Key);
 
@@ -434,7 +437,7 @@ namespace Raml.Tools
 
 		private void ParseComplexTypes(IDictionary<string, ApiObject> objects, JsonSchema schema, Property prop, KeyValuePair<string, JsonSchema> property, string key, IDictionary<string, ApiEnum> enums)
 		{
-			if (schema.Type == JsonSchemaType.Object && schema.Properties != null)
+			if (schema.Type.HasValue && (schema.Type == JsonSchemaType.Object || schema.Type.Value.ToString().Contains("Object")) && schema.Properties != null)
 			{
 			    if (!string.IsNullOrWhiteSpace(schema.Id) && ids.Contains(schema.Id))
                         return;
@@ -445,10 +448,12 @@ namespace Raml.Tools
 			    var type = string.IsNullOrWhiteSpace(property.Value.Id) ? key : property.Value.Id;
 			    ParseObject(type, schema.Properties, objects, enums);
 				prop.Type = NetNamingMapper.GetObjectName(type);
+                return;
 			}
 
-			if (schema.Type == JsonSchemaType.Array)
-				ParseArray(objects, schema, prop, property, enums);
+		    if (schema.Type == JsonSchemaType.Array)
+		        ParseArray(objects, schema, prop, property, enums);
+
 		}
 
 		private void ParseArray(IDictionary<string, ApiObject> objects, JsonSchema schema, Property prop, KeyValuePair<string, JsonSchema> property, IDictionary<string, ApiEnum> enums)
