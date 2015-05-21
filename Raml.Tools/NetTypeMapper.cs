@@ -82,6 +82,10 @@ namespace Raml.Tools
 				{
 					"any",
 					"object"
+				},
+				{
+					"date",
+					"DateTime"
 				}
 			};
 

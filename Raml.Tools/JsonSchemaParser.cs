@@ -1,10 +1,9 @@
+using Newtonsoft.Json.Schema;
+using Raml.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.Odbc;
 using System.Linq;
-using Newtonsoft.Json.Schema;
-using Raml.Common;
 
 namespace Raml.Tools
 {
@@ -170,25 +169,45 @@ namespace Raml.Tools
                 return enumName;
 
             if (!string.IsNullOrWhiteSpace(NetTypeMapper.Map(property.Value.Type)))
-            {
-                var type = NetTypeMapper.Map(property.Value.Type);
-                return IfNotRequiredMakeNullable(property, type);
-            }
+                return HandlePrimitiveType(property);
 
-            if (property.Value.Type != null && property.Value.Type.ToString().Contains(",") && property.Value.Type.ToString().Contains("Null") && !property.Value.Type.ToString().Contains("Object"))
-            {
-                var types = property.Value.Type.ToString().Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                if (types.Length == 2)
-                {
-                    var type = types[0] == "Null" ? NetTypeMapper.Map(types[1].ToLowerInvariant()) : NetTypeMapper.Map(types[0].ToLowerInvariant());
-                    return type != "string" ? type + "?" : type;
-                }
-            }
+            if (HasMultipleTypes(property))
+                return HandleMultipleTypes(property);
 
             if (!string.IsNullOrWhiteSpace(property.Value.Id))
                 return NetNamingMapper.GetObjectName(property.Value.Id);
 
             return NetNamingMapper.GetObjectName(property.Key);
+        }
+
+        private static string HandlePrimitiveType(KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property)
+        {
+            var type = NetTypeMapper.Map(property.Value.Type);
+            return IfNotRequiredMakeNullable(property, type);
+        }
+
+        private static string HandleMultipleTypes(KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property)
+        {
+            var type = "object";
+            var types = property.Value.Type.ToString().Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries);
+            if (types.Length == 2)
+            {
+                type = types[0] == "Null"
+                    ? NetTypeMapper.Map(types[1].ToLowerInvariant())
+                    : NetTypeMapper.Map(types[0].ToLowerInvariant());
+                type = IsNullableType(type) ? type + "?" : type;
+            }
+            return type;
+        }
+
+        private static bool IsNullableType(string type)
+        {
+            return type != "string";
+        }
+
+        private static bool HasMultipleTypes(KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property)
+        {
+            return property.Value.Type != null && property.Value.Type.ToString().Contains(",") && property.Value.Type.ToString().Contains("Null") && !property.Value.Type.ToString().Contains("Object");
         }
 
         private static string GetType(KeyValuePair<string, JsonSchema> property, bool isEnum, string enumName)
@@ -197,25 +216,40 @@ namespace Raml.Tools
                 return enumName;
 
             if (!string.IsNullOrWhiteSpace(NetTypeMapper.Map(property.Value.Type)))
-            {
-                var type = NetTypeMapper.Map(property.Value.Type);
-                return IfNotRequiredMakeNullable(property, type);
-            }
+                return HandlePrimitiveType(property);
 
-            if (property.Value.Type != null && property.Value.Type.ToString().Contains(",") && property.Value.Type.ToString().Contains("Null") && !property.Value.Type.ToString().Contains("Object"))
-            {
-                var types = property.Value.Type.ToString().Split(new []{","}, StringSplitOptions.RemoveEmptyEntries);
-                if (types.Length == 2)
-                {
-                    var type = types[0] == "Null" ? NetTypeMapper.Map(types[1].ToLowerInvariant()) : NetTypeMapper.Map(types[0].ToLowerInvariant());
-                    return type != "string" ? type + "?" : type;
-                }
-            }
+            if (HasMultipleTypes(property))
+                return HandleMultipleTypes(property);
 
             if (!string.IsNullOrWhiteSpace(property.Value.Id))
                 return NetNamingMapper.GetObjectName(property.Value.Id);
 
             return NetNamingMapper.GetObjectName(property.Key);
+        }
+
+        private static string HandlePrimitiveType(KeyValuePair<string, JsonSchema> property)
+        {
+            var type = NetTypeMapper.Map(property.Value.Type);
+            return IfNotRequiredMakeNullable(property, type);
+        }
+
+        private static string HandleMultipleTypes(KeyValuePair<string, JsonSchema> property)
+        {
+            var type = "object";
+            var types = property.Value.Type.ToString().Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries);
+            if (types.Length == 2)
+            {
+                type = types[0] == "Null"
+                    ? NetTypeMapper.Map(types[1].ToLowerInvariant())
+                    : NetTypeMapper.Map(types[0].ToLowerInvariant());
+                type = IsNullableType(type) ? type + "?" : type;
+            }
+            return type;
+        }
+
+        private static bool HasMultipleTypes(KeyValuePair<string, JsonSchema> property)
+        {
+            return property.Value.Type != null && property.Value.Type.ToString().Contains(",") && property.Value.Type.ToString().Contains("Null") && !property.Value.Type.ToString().Contains("Object");
         }
 
         private static string IfNotRequiredMakeNullable(KeyValuePair<string, JsonSchema> property, string type)
