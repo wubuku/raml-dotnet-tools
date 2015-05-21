@@ -57,6 +57,29 @@ namespace Raml.Tools.Tests
         }
 
         [TestMethod]
+        public async Task ShouldValidateNulls()
+        {
+            var content = new StringContent("[{ id : 1, name: 'Big Fish', director: 'Tim Burton', genre: null, cast: 'Ewan McGregor, Albert Finney, Billy Crudup', duration: null, storyline: 'none', language: 'English', rented: false }]",
+                Encoding.UTF8,
+                "application/json");
+
+            var response = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            response.Content = content;
+
+            var handler = new FakeHttpMessageHandler(response);
+            var client = new HttpClient(handler);
+            client.BaseAddress = new Uri("http://localhost");
+
+            var proxy = new Movies.MoviesApi(client);
+            proxy.SchemaValidation.RaiseExceptions = false;
+
+            var movies = await proxy.Movies.Get();
+
+            Assert.IsTrue(movies.SchemaValidation.Value.IsValid);
+
+        }
+
+        [TestMethod]
         public async Task ShouldIgnoreNonJsonSchemas()
         {
             var content = new StringContent("content",

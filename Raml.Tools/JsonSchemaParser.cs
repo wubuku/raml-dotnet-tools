@@ -172,9 +172,17 @@ namespace Raml.Tools
             if (!string.IsNullOrWhiteSpace(NetTypeMapper.Map(property.Value.Type)))
             {
                 var type = NetTypeMapper.Map(property.Value.Type);
-                type = IfNotRequiredMakeNullable(property, type);
+                return IfNotRequiredMakeNullable(property, type);
+            }
 
-                return type;
+            if (property.Value.Type != null && property.Value.Type.ToString().Contains(",") && property.Value.Type.ToString().Contains("Null") && !property.Value.Type.ToString().Contains("Object"))
+            {
+                var types = property.Value.Type.ToString().Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                if (types.Length == 2)
+                {
+                    var type = types[0] == "Null" ? NetTypeMapper.Map(types[1].ToLowerInvariant()) : NetTypeMapper.Map(types[0].ToLowerInvariant());
+                    return type != "string" ? type + "?" : type;
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(property.Value.Id))
@@ -191,9 +199,17 @@ namespace Raml.Tools
             if (!string.IsNullOrWhiteSpace(NetTypeMapper.Map(property.Value.Type)))
             {
                 var type = NetTypeMapper.Map(property.Value.Type);
-                type = IfNotRequiredMakeNullable(property, type);
+                return IfNotRequiredMakeNullable(property, type);
+            }
 
-                return type;
+            if (property.Value.Type != null && property.Value.Type.ToString().Contains(",") && property.Value.Type.ToString().Contains("Null") && !property.Value.Type.ToString().Contains("Object"))
+            {
+                var types = property.Value.Type.ToString().Split(new []{","}, StringSplitOptions.RemoveEmptyEntries);
+                if (types.Length == 2)
+                {
+                    var type = types[0] == "Null" ? NetTypeMapper.Map(types[1].ToLowerInvariant()) : NetTypeMapper.Map(types[0].ToLowerInvariant());
+                    return type != "string" ? type + "?" : type;
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(property.Value.Id))
