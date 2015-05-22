@@ -31,6 +31,22 @@ namespace RAML.WebApiExplorer
 				{
 					typeof (object),
 					"any"
+				},
+				{
+					typeof (int?),
+					"[\"integer\",\"null\"]"
+				},
+				{
+					typeof (bool?),
+					"[\"boolean\",\"null\"]"
+				},
+				{
+					typeof (decimal?),
+					"[\"number\",\"null\"]" // float
+				},
+				{
+					typeof (DateTime?),
+					"string"
 				}
 			};
 
