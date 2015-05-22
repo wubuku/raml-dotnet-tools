@@ -169,7 +169,7 @@ namespace Raml.Tools
                 return enumName;
 
             if (!string.IsNullOrWhiteSpace(NetTypeMapper.Map(property.Value.Type)))
-                return HandlePrimitiveType(property);
+                return NetTypeMapper.Map(property.Value.Type);
 
             if (HasMultipleTypes(property))
                 return HandleMultipleTypes(property);
@@ -178,12 +178,6 @@ namespace Raml.Tools
                 return NetNamingMapper.GetObjectName(property.Value.Id);
 
             return NetNamingMapper.GetObjectName(property.Key);
-        }
-
-        private static string HandlePrimitiveType(KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property)
-        {
-            var type = NetTypeMapper.Map(property.Value.Type);
-            return IfNotRequiredMakeNullable(property, type);
         }
 
         private static string HandleMultipleTypes(KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property)
@@ -216,7 +210,7 @@ namespace Raml.Tools
                 return enumName;
 
             if (!string.IsNullOrWhiteSpace(NetTypeMapper.Map(property.Value.Type)))
-                return HandlePrimitiveType(property);
+                return NetTypeMapper.Map(property.Value.Type);
 
             if (HasMultipleTypes(property))
                 return HandleMultipleTypes(property);
@@ -225,12 +219,6 @@ namespace Raml.Tools
                 return NetNamingMapper.GetObjectName(property.Value.Id);
 
             return NetNamingMapper.GetObjectName(property.Key);
-        }
-
-        private static string HandlePrimitiveType(KeyValuePair<string, JsonSchema> property)
-        {
-            var type = NetTypeMapper.Map(property.Value.Type);
-            return IfNotRequiredMakeNullable(property, type);
         }
 
         private static string HandleMultipleTypes(KeyValuePair<string, JsonSchema> property)
@@ -250,22 +238,6 @@ namespace Raml.Tools
         private static bool HasMultipleTypes(KeyValuePair<string, JsonSchema> property)
         {
             return property.Value.Type != null && property.Value.Type.ToString().Contains(",") && property.Value.Type.ToString().Contains("Null") && !property.Value.Type.ToString().Contains("Object");
-        }
-
-        private static string IfNotRequiredMakeNullable(KeyValuePair<string, JsonSchema> property, string type)
-        {
-            if (property.Value.Required.HasValue && property.Value.Required.Value == false && type != "object" && type != "string")
-                type += "?";
-
-            return type;
-        }
-
-        private static string IfNotRequiredMakeNullable(KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property, string type)
-        {
-            if ((property.Value.Required == null || !property.Value.Required.Contains(property.Key)) && type != "object" && type != "string")
-                type += "?";
-
-            return type;
         }
 
         private void ParseComplexTypes(IDictionary<string, ApiObject> objects, Newtonsoft.JsonV4.Schema.JsonSchema schema, Newtonsoft.JsonV4.Schema.JsonSchema propertySchema, Property prop, KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property, IDictionary<string, ApiEnum> enums)
