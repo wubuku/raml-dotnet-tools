@@ -22,7 +22,11 @@ namespace RAML.WebApiExplorer
 				},
 				{
 					typeof (decimal),
-					"\"number\"" // float
+					"\"number\""
+				},
+				{
+					typeof (float),
+					"\"number\""
 				},
 				{
 					typeof (DateTime),
@@ -42,7 +46,11 @@ namespace RAML.WebApiExplorer
 				},
 				{
 					typeof (decimal?),
-					"[\"number\",\"null\"]" // float
+					"[\"number\",\"null\"]"
+				},
+				{
+					typeof (float?),
+					"[\"number\",\"null\"]"
 				},
 				{
 					typeof (DateTime?),
@@ -67,7 +75,11 @@ namespace RAML.WebApiExplorer
 				},
 				{
 					typeof (decimal),
-					"number" // float
+					"number"
+				},
+				{
+					typeof (float),
+					"number"
 				},
 				{
 					typeof (DateTime),
@@ -88,6 +100,10 @@ namespace RAML.WebApiExplorer
 				{
 					typeof (decimal?),
 					"number" // float
+				},
+				{
+					typeof (float?),
+					"number"
 				},
 				{
 					typeof (DateTime?),
