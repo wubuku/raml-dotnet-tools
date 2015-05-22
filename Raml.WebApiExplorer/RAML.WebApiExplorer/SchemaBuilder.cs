@@ -210,7 +210,7 @@ namespace RAML.WebApiExplorer
                               "  \"type\": \"array\",\r\n".Indent(pad) +
                               "  \"items\": \r\n".Indent(pad) +
                               "  {\r\n".Indent(pad) +
-                              ("    \"type\": \"" + SchemaTypeMapper.Map(elementType) + "\"\r\n").Indent(pad) +
+                              ("    \"type\": " + SchemaTypeMapper.GetAttribute(elementType) + "\r\n").Indent(pad) +
                               "  }\r\n".Indent(pad) +
                               "}\r\n".Indent(pad);
             return arraySchema;
@@ -316,7 +316,7 @@ namespace RAML.WebApiExplorer
 		{
 	        var name = GetPropertyName(prop);
 
-	        var res = "\"" + name + "\": { \"type\": \"" + SchemaTypeMapper.Map(prop.PropertyType) + "\"";
+            var res = "\"" + name + "\": { \"type\": " + SchemaTypeMapper.GetAttribute(prop.PropertyType);
 			
 			if (IsNullable(prop.PropertyType))
 				res += ", \"required\": \"false\"";
@@ -354,7 +354,7 @@ namespace RAML.WebApiExplorer
 	    private static string BuildLastProperty(PropertyInfo prop, int pad)
 		{
             var name = GetPropertyName(prop);
-			var res = "\"" + name + "\": { \"type\": \"" + SchemaTypeMapper.Map(prop.PropertyType) + "\"";
+            var res = "\"" + name + "\": { \"type\": " + SchemaTypeMapper.GetAttribute(prop.PropertyType);
 
 			if (IsNullable(prop.PropertyType))
 				res += ", \"required\": \"false\"";

@@ -5,6 +5,51 @@ namespace RAML.WebApiExplorer
 {
 	public class SchemaTypeMapper
 	{
+        private static readonly IDictionary<Type, string> attributeConversion =
+    new Dictionary<Type, string>
+			{
+				{
+					typeof (int),
+					"\"integer\""
+				},
+				{
+					typeof (string),
+					"\"string\""
+				},
+				{
+					typeof (bool),
+					"\"boolean\""
+				},
+				{
+					typeof (decimal),
+					"\"number\"" // float
+				},
+				{
+					typeof (DateTime),
+					"\"string\""
+				},
+				{
+					typeof (object),
+					"\"any\""
+				},
+				{
+					typeof (int?),
+					"[\"integer\",\"null\"]"
+				},
+				{
+					typeof (bool?),
+					"[\"boolean\",\"null\"]"
+				},
+				{
+					typeof (decimal?),
+					"[\"number\",\"null\"]" // float
+				},
+				{
+					typeof (DateTime?),
+					"\"string\""
+				}
+			};
+
 		private static readonly IDictionary<Type, string> typeConversion =
 			new Dictionary<Type, string>
 			{
@@ -34,15 +79,15 @@ namespace RAML.WebApiExplorer
 				},
 				{
 					typeof (int?),
-					"[\"integer\",\"null\"]"
+					"integer"
 				},
 				{
 					typeof (bool?),
-					"[\"boolean\",\"null\"]"
+					"boolean"
 				},
 				{
 					typeof (decimal?),
-					"[\"number\",\"null\"]" // float
+					"number" // float
 				},
 				{
 					typeof (DateTime?),
@@ -54,5 +99,10 @@ namespace RAML.WebApiExplorer
 		{
 			return typeConversion.ContainsKey(type) ? typeConversion[type] : null;
 		}
+
+        public static string GetAttribute(Type type)
+        {
+            return attributeConversion.ContainsKey(type) ? attributeConversion[type] : null;
+        }
 	}
 }
