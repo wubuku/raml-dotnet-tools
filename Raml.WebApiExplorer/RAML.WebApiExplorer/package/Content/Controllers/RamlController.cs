@@ -7,12 +7,12 @@ namespace RAML.WebApiExplorer
 {
 	public class RamlController : Controller
 	{
-		public ActionResult Index()
+		public ActionResult Definition()
 		{
 			return View();
 		}
 
-		public ActionResult Raml()
+		public ActionResult Raw()
 		{
             var ramlContents = GetRamlContents();
 			return File(Encoding.UTF8.GetBytes(ramlContents), "text/raml");

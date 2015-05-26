@@ -1,6 +1,5 @@
-﻿using System;
-using Newtonsoft.Json.Schema;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using System;
 
 namespace RAML.WebApiExplorer.Tests
 {

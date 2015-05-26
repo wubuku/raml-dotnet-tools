@@ -193,5 +193,41 @@ namespace MuleSoft.RAML.Tools.Properties {
                 return ((string)(this["RAMLExchangeUrl"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("RAML.WebApiExplorer")]
+        public string RAMLWebApiExplorerPackageId {
+            get {
+                return ((string)(this["RAMLWebApiExplorerPackageId"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.0.0")]
+        public string RAMLWebApiExplorerPackageVersion {
+            get {
+                return ((string)(this["RAMLWebApiExplorerPackageVersion"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("RAML.Parser")]
+        public string RAMLParserPackageId {
+            get {
+                return ((string)(this["RAMLParserPackageId"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.8.101")]
+        public string RAMLParserPackageVersion {
+            get {
+                return ((string)(this["RAMLParserPackageVersion"]));
+            }
+        }
     }
 }
