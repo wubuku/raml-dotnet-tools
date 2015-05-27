@@ -88,7 +88,7 @@
         </Strings>
       </Button>
 
-      <!--<Button guid="guidMuleSoft_RAML_CmdExtractRAML" id="cmdExtractRAML" priority="0x0100" type="Button">
+      <Button guid="guidMuleSoft_RAML_CmdExtractRAML" id="cmdExtractRAML" priority="0x0100" type="Button">
         <Parent guid="guidMuleSoft_RAML_ProjectNode" id="ProjectNodeGroup" />
         <Icon guid="guidImages" id="bmpPic1" />
         <CommandFlag>DynamicVisibility</CommandFlag>
@@ -96,7 +96,7 @@
           <CommandName>cmdExtractRAML</CommandName>
           <ButtonText>Extract RAML...</ButtonText>
         </Strings>
-      </Button>-->
+      </Button>
 
     </Buttons>
 
@@ -148,10 +148,10 @@
       <IDSymbol name="cmdEnableMetadataOutput" value="0x0600" />
     </GuidSymbol>
 
-    <!--<GuidSymbol name="guidMuleSoft_RAML_CmdExtractRAML" value="{a1f4149f-0985-4a2c-88ad-0e747290b3a2}">
+    <GuidSymbol name="guidMuleSoft_RAML_CmdExtractRAML" value="{a1f4149f-0985-4a2c-88ad-0e747290b3a2}">
       <IDSymbol name="ProjectNodeGroup" value="0x1020"/>
       <IDSymbol name="cmdExtractRAML" value="0x0700" />
-    </GuidSymbol>-->
+    </GuidSymbol>
 
 
     <GuidSymbol name="guidImages" value="{59571131-f5d7-4e0a-b2da-973f343a7e28}" >

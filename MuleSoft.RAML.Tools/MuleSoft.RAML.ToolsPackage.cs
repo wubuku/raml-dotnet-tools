@@ -92,11 +92,11 @@ namespace MuleSoft.RAML.Tools
             enableRamlMetadataOutput.BeforeQueryStatus += AddReverseEngineeringCommandOnBeforeQueryStatus;
             mcs.AddCommand(enableRamlMetadataOutput);
 
-            //// Extract RAML (RAML WebApiExplorer) command
-            //extractRAMLCommandId = new CommandID(GuidList.guidMuleSoft_RAML_ExtractRAML, (int)PkgCmdIDList.cmdExtractRAML);
-            //var extractRAMLCommand = new OleMenuCommand(ExtractRAMLCallback, extractRAMLCommandId);
-            //extractRAMLCommand.BeforeQueryStatus += ExtractRAMLCommandOnBeforeQueryStatus;
-            //mcs.AddCommand(extractRAMLCommand);
+            // Extract RAML (RAML WebApiExplorer) command
+            extractRAMLCommandId = new CommandID(GuidList.guidMuleSoft_RAML_ExtractRAML, (int)PkgCmdIDList.cmdExtractRAML);
+            var extractRAMLCommand = new OleMenuCommand(ExtractRAMLCallback, extractRAMLCommandId);
+            extractRAMLCommand.BeforeQueryStatus += ExtractRAMLCommandOnBeforeQueryStatus;
+            mcs.AddCommand(extractRAMLCommand);
 
         }
 

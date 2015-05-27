@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Web.Http;
 using System.Windows.Documents;
 using System.Windows.Forms;
 using EnvDTE;
@@ -133,13 +135,35 @@ namespace MuleSoft.RAML.Tools
             // RAML.WebApiExplorer
             if (!installerServices.IsPackageInstalled(proj, ramlWebApiExplorerPackageId))
             {
-                installer.InstallPackage(nugetPackagesSource, proj, ramlWebApiExplorerPackageId, ramlWebApiExplorerPackageVersion, false);
+                installer.InstallPackage(@"c:\desarrollo\nuget\nugets\", proj, ramlWebApiExplorerPackageId, ramlWebApiExplorerPackageVersion, false);
             }
         }
 
         public void ExtractRAML()
         {
-            throw new NotImplementedException();
+            AddReverseEngineering();
+            var config = new HttpConfiguration();
+            config.Routes.MapHttpRoute("default", "{controller}/{id}", new { id = RouteParameter.Optional });
+            config.MapHttpAttributeRoutes();
+
+            var server = new HttpServer(config);
+            var client = new HttpClient(server);
+            var response = client.GetAsync("http://inmemoryhost.com/raml/raw").ConfigureAwait(false).GetAwaiter().GetResult();
+            var raml = response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            var dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.FileName = "generated.raml"; // Default file name
+            dlg.DefaultExt = ".raml"; // Default file extension
+            dlg.Filter = "RAML documents (.raml)|*.raml"; // Filter files by extension
+
+            // Show save file dialog box
+            var result = dlg.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == true)
+            {
+                // Save document
+                File.WriteAllText(dlg.FileName, raml);
+            }
         }
     }
 }
