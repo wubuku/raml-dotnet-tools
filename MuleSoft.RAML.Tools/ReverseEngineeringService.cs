@@ -133,7 +133,7 @@ namespace MuleSoft.RAML.Tools
             // RAML.WebApiExplorer
             if (!installerServices.IsPackageInstalled(proj, ramlWebApiExplorerPackageId))
             {
-                installer.InstallPackage(@"c:\desarrollo\nuget\nugets\", proj, ramlWebApiExplorerPackageId, ramlWebApiExplorerPackageVersion, false);
+                installer.InstallPackage(nugetPackagesSource, proj, ramlWebApiExplorerPackageId, ramlWebApiExplorerPackageVersion, false);
             }
         }
 
