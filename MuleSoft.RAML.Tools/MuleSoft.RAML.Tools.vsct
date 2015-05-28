@@ -84,7 +84,7 @@
         <CommandFlag>DynamicVisibility</CommandFlag>
         <Strings>
           <CommandName>cmdEnableMetadataOutput</CommandName>
-          <ButtonText>Enable RAML metada output</ButtonText>
+          <ButtonText>Enable RAML metadata output</ButtonText>
         </Strings>
       </Button>
 

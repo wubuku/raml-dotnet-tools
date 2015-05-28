@@ -9,7 +9,7 @@
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>
           This package is used by the RAML Tools for .NET Visual Studio extension to generate RAML metadata from an existing WebAPI implementation.
-          Got to Tools -> Extensions and Updates, then search for RAML in the Online gallery.
+          In Visual Studio, go to Tools -> Extensions and Updates, then search for RAML in the Online gallery.
       </description>
       <releaseNotes>RAML WebApi Explorer</releaseNotes>
       <copyright>MuleSoft Inc, Copyright (c) 2015</copyright>
