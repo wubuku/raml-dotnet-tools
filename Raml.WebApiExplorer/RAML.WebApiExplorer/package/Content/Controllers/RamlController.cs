@@ -7,7 +7,7 @@ namespace RAML.WebApiExplorer
 {
 	public class RamlController : Controller
 	{
-		public ActionResult Definition()
+		public ActionResult Index()
 		{
 			return View();
 		}
