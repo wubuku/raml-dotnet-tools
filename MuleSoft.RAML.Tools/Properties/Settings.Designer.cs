@@ -61,7 +61,7 @@ namespace MuleSoft.RAML.Tools.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("5.2.0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("5.1.2")]
         public string WebApiClientPackageVersion {
             get {
                 return ((string)(this["WebApiClientPackageVersion"]));
