@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Raml.Common;
 using Raml.Parser.Expressions;
 using Raml.Tools.WebApiGenerator;
 

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
+using Raml.Common;
 using Raml.Parser.Expressions;
 
 namespace Raml.Tools.ClientGenerator

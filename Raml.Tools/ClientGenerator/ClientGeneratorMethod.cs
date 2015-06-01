@@ -32,7 +32,7 @@ namespace Raml.Tools.ClientGenerator
 								  "\t\t/// </summary>\r\n";
 				}
 
-				xmlComment += "\t\t/// <param name=\"request\">" + RequestType + "</param>\r\n";
+				xmlComment += "\t\t/// <param name=\"request\">" + XmlCommentHelper.Escape(RequestType) + "</param>\r\n";
 				if (ReturnType != "string" && ReturnType != "HttpContent")
 					xmlComment += "\t\t/// <param name=\"responseFormatters\">response formmaters</param>\r\n";
 

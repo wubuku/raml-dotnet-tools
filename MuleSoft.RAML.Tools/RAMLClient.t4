@@ -1,6 +1,8 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ assembly name="$(binDir)Raml.Tools.dll" #>
+<#@ assembly name="$(binDir)RAML.Api.Core.dll" #>
 <#@ assembly name="System.Core" #>
+<#@ import namespace="Raml.Common" #>
 <#@ import namespace="Raml.Tools" #>
 <#@ import namespace="Raml.Tools.ClientGenerator" #>
 <#@ import namespace="System.Linq" #>
@@ -18,6 +20,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using RAML.Api.Core;
 using Raml.Common;
 
@@ -30,7 +33,7 @@ namespace $(namespace)
 		{
 #>
     /// <summary>
-    /// <#= classObject.Description #>
+    /// <#= XmlCommentHelper.Escape(classObject.Description) #>
     /// </summary>
 <#
 		}
@@ -138,7 +141,7 @@ namespace $(namespace)
             string validationCall = "new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)";
             string validationWithException = "";
 
-            if (method.ResponseType != "ApiResponse")
+            if (method.ResponseType != "ApiResponse" && method.ReturnTypeObject != null)
 			{
                 var jsonSchema = !method.ReturnTypeObject.IsMultiple ? 
 					String.Format("\"{0}\"", method.ReturnTypeObject.JSONSchema) : 
@@ -369,7 +372,7 @@ namespace $(namespace)
 	}
 #>
     /// <summary>
-    /// <#= model.Root.Description ?? string.Empty #>
+    /// <#= model.Root.Description == null ? string.Empty : XmlCommentHelper.Escape(model.Root.Description) #>
     /// </summary>
     public partial class <#= model.Root.Name #>
     {
@@ -473,6 +476,7 @@ namespace $(namespace)
 
 
 
+
 namespace $(namespace).Models
 {
 <#
@@ -482,7 +486,7 @@ foreach (var apiObject in model.Objects.Values)
 	{
 #>
     /// <summary>
-    /// <#= apiObject.Description #>
+    /// <#= XmlCommentHelper.Escape(apiObject.Description) #>
     /// </summary>
 <#
 	}	
@@ -511,7 +515,7 @@ foreach (var apiObject in model.Objects.Values)
 		foreach (var property in apiObject.Properties.Where(p => p.Type != null && p.Name != null && p.JSONSchema != null).ToArray())
 		{
 #>
-			{ HttpStatusCode.<#= property.StatusCode #>, "<#= property.JSONSchema #>"},
+			{ (HttpStatusCode)<#= (int)property.StatusCode #>, "<#= property.JSONSchema #>"},
 <#
         }
 #>
@@ -528,8 +532,8 @@ foreach (var apiObject in model.Objects.Values)
 		foreach (var property in apiObject.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 		{
 #>
-            names.Add(HttpStatusCode.<#= property.StatusCode #>, "<#= property.Name #>");
-            types.Add(HttpStatusCode.<#= property.StatusCode #>, typeof(<#= property.Type #>));
+            names.Add((HttpStatusCode)<#= (int)property.StatusCode #>, "<#= property.Name #>");
+            types.Add((HttpStatusCode)<#= (int)property.StatusCode #>, typeof(<#= property.Type #>));
 <#
 		}
 #>
@@ -543,7 +547,7 @@ foreach (var apiObject in model.Objects.Values)
 	    {
 #>
         /// <summary>
-        /// <#= property.Description #>
+        /// <#= XmlCommentHelper.Escape(property.Description) #>
         /// </summary>
 <#
     	}
@@ -551,8 +555,15 @@ foreach (var apiObject in model.Objects.Values)
 		{
 #>
 		[JsonProperty("<#= property.OriginalName #>")]
+<#		} 
+
+		if(property.IsEnum)
+		{
+#>
+		[JsonConverter(typeof(StringEnumConverter))]
 <#		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
+
 <#
 	}
 
@@ -569,7 +580,7 @@ foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any())
 	{
 #>
     /// <summary>
-    /// <#= header.Description #>
+    /// <#= XmlCommentHelper.Escape(header.Description) #>
     /// </summary>
 <#
 	}
@@ -584,7 +595,7 @@ foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any())
 	    {
 #>
         /// <summary>
-        /// <#= property.Description #>
+        /// <#= XmlCommentHelper.Escape(property.Description) #>
         /// </summary>
 <#
 		}
@@ -593,6 +604,12 @@ foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any())
 		{
 #>
 		[JsonProperty("<#= property.OriginalName #>")]
+<#		}
+
+		if(property.IsEnum)
+		{
+#>
+		[JsonConverter(typeof(StringEnumConverter))]
 <#		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
 <#
@@ -610,7 +627,7 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
 	{
 #>
     /// <summary>
-    /// <#= respHeader.Description #>
+    /// <#= XmlCommentHelper.Escape(respHeader.Description) #>
     /// </summary>
 <#
 	}
@@ -627,8 +644,8 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
 		foreach (var property in respHeader.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 		{
 #>
-            names.Add(HttpStatusCode.<#= property.StatusCode #>, "<#= property.Name #>");
-            types.Add(HttpStatusCode.<#= property.StatusCode #>, typeof(<#= property.Type #>));
+            names.Add((HttpStatusCode)<#= (int)property.StatusCode #>, "<#= property.Name #>");
+            types.Add((HttpStatusCode)<#= (int)property.StatusCode #>, typeof(<#= property.Type #>));
 <#
 		}
 #>
@@ -640,7 +657,7 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
 		foreach (var property in respHeader.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 		{
 #>
-		    if (statusCode == HttpStatusCode.<#= property.StatusCode #>)
+		    if (statusCode == (HttpStatusCode)<#= (int)property.StatusCode #>)
 		    {
 				var header = new <#= property.Type #>();
 			    foreach (var responseHeader in headers)
@@ -665,7 +682,7 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
 	    {
 #>
         /// <summary>
-        /// <#= property.Description #>
+        /// <#= XmlCommentHelper.Escape(property.Description) #>
         /// </summary>
 <#
 	    }
@@ -674,6 +691,12 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
 		{
 #>
 		[JsonProperty("<#= property.OriginalName #>")]
+<#		}
+
+		if(property.IsEnum)
+		{
+#>
+		[JsonConverter(typeof(StringEnumConverter))]
 <#		} #>
         public <#= property.Type #> <#= property.Name #> { get; set; }
 <#
@@ -692,7 +715,7 @@ foreach (var apiObject in model.ApiRequestObjects)
 	{
 #>
     /// <summary>
-    /// <#= apiObject.Description #>
+    /// <#= XmlCommentHelper.Escape(apiObject.Description) #>
     /// </summary>
 <#
 	}
@@ -718,7 +741,7 @@ foreach (var apiObject in model.ApiRequestObjects)
 	    {
 #>
         /// <summary>
-        /// <#= property.Description #>
+        /// <#= XmlCommentHelper.Escape(property.Description) #>
         /// </summary>
 <#
     	}
@@ -741,7 +764,7 @@ foreach (var apiObject in model.ApiResponseObjects)
 	{
 #>
     /// <summary>
-    /// <#= apiObject.Description #>
+    /// <#= XmlCommentHelper.Escape(apiObject.Description) #>
     /// </summary>
 <#
 	}
@@ -758,7 +781,7 @@ foreach (var apiObject in model.ApiResponseObjects)
 	    {
 #>
         /// <summary>
-        /// <#= property.Description #>
+        /// <#= XmlCommentHelper.Escape(property.Description) #>
         /// </summary>
 <#
     	}
@@ -833,6 +856,26 @@ foreach (var apiObject in model.ApiResponseObjects)
 #>
 
     } // end class
+
+<#
+}
+
+foreach (var apiEnum in model.Enums)
+{
+	if (!string.IsNullOrWhiteSpace(apiEnum.Description))
+	{
+#>
+    /// <summary>
+    /// <#= XmlCommentHelper.Escape(apiEnum.Description) #>
+    /// </summary>
+<#
+	}	
+#>
+	
+	public enum <#= apiEnum.Name #>
+	{
+		<#= string.Join(", ", apiEnum.Values) #>
+    }
 
 <#
 }

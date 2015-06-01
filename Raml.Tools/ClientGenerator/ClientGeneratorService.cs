@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Raml.Common;
 using Raml.Parser.Expressions;
 
 namespace Raml.Tools.ClientGenerator
@@ -39,6 +40,7 @@ namespace Raml.Tools.ClientGenerator
             classes = new Collection<ClassObject>();
             classesObjectsRegistry = new Dictionary<string, ClassObject>();
 			uriParameterObjects = new Dictionary<string, ApiObject>();
+            enums = new Dictionary<string, ApiEnum>();
 
             schemaRequestObjects = GetRequestObjects();
             schemaResponseObjects = GetResponseObjects();
@@ -76,7 +78,8 @@ namespace Raml.Tools.ClientGenerator
                        Warnings = warnings,
                        Classes = classObjects.Where(c => c.Name != rootClassName).ToArray(),
                        Root = classObjects.First(c => c.Name == rootClassName),
-					   UriParameterObjects = uriParameterObjects
+					   UriParameterObjects = uriParameterObjects,
+                       Enums = Enums
                    };
         }
 

@@ -144,7 +144,7 @@ namespace Raml.Tools.WebApiGenerator
 
 				if (ReturnType != null && ReturnType != "string")
 				{
-					xmlComment += "\t\t/// <returns>" + ReturnType + "</returns>\r\n";
+					xmlComment += "\t\t/// <returns>" + XmlCommentHelper.Escape(ReturnType) + "</returns>\r\n";
 				}
 
 				if (!string.IsNullOrWhiteSpace(xmlComment))

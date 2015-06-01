@@ -11,8 +11,12 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using MuleSoft.RAML.Tools.Properties;
 using NuGet.VisualStudio;
 using Raml.Common;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 namespace MuleSoft.RAML.Tools
 {
@@ -26,12 +30,21 @@ namespace MuleSoft.RAML.Tools
 	    private CommandID updateReferenceCmdId;
 	    private CommandID implementContractCommandId;
 	    private CommandID updateRAMLContractCommandId;
+        private CommandID enableRamlMetadataOutputCommandId;
+        private CommandID extractRAMLCommandId;
 
 	    public MuleSoft_RAML_ToolsPackage()
 	    {
 		    var message = string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this);
 		    Debug.WriteLine(message);
-	    }
+
+#if DEBUG
+        ServicePointManager.ServerCertificateValidationCallback = delegate(Object obj, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+        {
+          return (true);
+        };
+#endif
+      }
 
         protected override void Initialize()
         {
@@ -73,9 +86,42 @@ namespace MuleSoft.RAML.Tools
 			updateRAMLCommand.BeforeQueryStatus += UpdateRAMLCommandOnBeforeQueryStatus;
 			mcs.AddCommand(updateRAMLCommand);
 
+            // Enable RAML metadata output (RAML WebApiExplorer) command
+            enableRamlMetadataOutputCommandId = new CommandID(GuidList.guidMuleSoft_RAML_EnableMetadataOutput, (int)PkgCmdIDList.cmdEnableMetadataOutput);
+            var enableRamlMetadataOutput = new OleMenuCommand(EnableRamlMetadataOutputCallback, enableRamlMetadataOutputCommandId);
+            enableRamlMetadataOutput.BeforeQueryStatus += AddReverseEngineeringCommandOnBeforeQueryStatus;
+            mcs.AddCommand(enableRamlMetadataOutput);
+
+            //// Extract RAML (RAML WebApiExplorer) command
+            //extractRAMLCommandId = new CommandID(GuidList.guidMuleSoft_RAML_ExtractRAML, (int)PkgCmdIDList.cmdExtractRAML);
+            //var extractRAMLCommand = new OleMenuCommand(ExtractRAMLCallback, extractRAMLCommandId);
+            //extractRAMLCommand.BeforeQueryStatus += ExtractRAMLCommandOnBeforeQueryStatus;
+            //mcs.AddCommand(extractRAMLCommand);
+
         }
 
-	    private void UpdateRAMLContractCallback(object sender, EventArgs e)
+        private void ExtractRAMLCallback(object sender, EventArgs e)
+        {
+            ChangeCommandStatus(extractRAMLCommandId, false);
+
+            var service = new ReverseEngineeringService(ServiceProvider.GlobalProvider);
+            service.ExtractRAML();
+
+            ChangeCommandStatus(extractRAMLCommandId, true);
+        }
+
+        private void EnableRamlMetadataOutputCallback(object sender, EventArgs e)
+        {
+            ChangeCommandStatus(enableRamlMetadataOutputCommandId, false);
+
+            var service = new ReverseEngineeringService(ServiceProvider.GlobalProvider);
+            service.AddReverseEngineering();
+            System.Diagnostics.Process.Start("https://github.com/mulesoft-labs/raml-dotnet-tools#metadata");
+
+            ChangeCommandStatus(enableRamlMetadataOutputCommandId, true);
+        }
+
+        private void UpdateRAMLContractCallback(object sender, EventArgs e)
 	    {
 			ChangeCommandStatus(updateRAMLContractCommandId, false);
 
@@ -95,7 +141,7 @@ namespace MuleSoft.RAML.Tools
 	    private void AddRamlContractCallback(object sender, EventArgs e)
 	    {
 		    var ramlScaffoldUpdater = new RamlScaffoldService(new T4Service(ServiceProvider.GlobalProvider), ServiceProvider.GlobalProvider);
-		    var frm = new RamlChooser(ServiceProvider.GlobalProvider, ramlScaffoldUpdater.AddContract, "Add RAML Contract", true);
+		    var frm = new RamlChooser(ServiceProvider.GlobalProvider, ramlScaffoldUpdater.AddContract, "Add RAML Contract", true, Settings.Default.RAMLExchangeUrl);
 		    frm.ShowDialog();
 	    }
 
@@ -132,7 +178,7 @@ namespace MuleSoft.RAML.Tools
 		private void AddRamlReferenceCallback(object sender, EventArgs e)
 		{
 			var generationServices = new RamlReferenceService(ServiceProvider.GlobalProvider);
-			var ramlChooser = new RamlChooser(this, generationServices.AddRamlReference, "Add RAML Reference", false);
+			var ramlChooser = new RamlChooser(this, generationServices.AddRamlReference, "Add RAML Reference", false, Settings.Default.RAMLExchangeUrl);
 			ramlChooser.ShowDialog();
 		}
 
@@ -168,6 +214,33 @@ namespace MuleSoft.RAML.Tools
 	    {
 			ShowOrHideCommandContract(sender);
 	    }
+
+        private void ExtractRAMLCommandOnBeforeQueryStatus(object sender, EventArgs e)
+        {
+            var menuCommand = sender as OleMenuCommand;
+            if (menuCommand == null) return;
+
+            ShowAndEnableCommand(menuCommand, false);
+
+            if (!IsWebApiCoreInstalled())
+                return;
+
+            ShowAndEnableCommand(menuCommand, true);
+        }
+
+        private void AddReverseEngineeringCommandOnBeforeQueryStatus(object sender, EventArgs e)
+        {
+            var menuCommand = sender as OleMenuCommand;
+            if (menuCommand == null) return;
+
+            ShowAndEnableCommand(menuCommand, false);
+
+            if (!IsWebApiCoreInstalled())
+                return;
+
+            ShowAndEnableCommand(menuCommand, true);
+        }
+
 
 		private void AddRamlContractCommandOnBeforeQueryStatus(object sender, EventArgs eventArgs)
 		{
@@ -272,6 +345,41 @@ namespace MuleSoft.RAML.Tools
 
 			ShowAndEnableCommand(menuCommand, true);
 	    }
+
+        private static void ShowOrHideCommandReverseEngineering(object sender)
+        {
+            // get the menu that fired the event
+            var menuCommand = sender as OleMenuCommand;
+            if (menuCommand == null) return;
+
+            ShowAndEnableCommand(menuCommand, false);
+
+            IVsHierarchy hierarchy;
+            uint itemid;
+
+            if (!IsSingleProjectItemSelection(out hierarchy, out itemid)) return;
+            // Get the file path
+            string itemFullPath;
+            ((IVsProject)hierarchy).GetMkDocument(itemid, out itemFullPath);
+            var transformFileInfo = new FileInfo(itemFullPath);
+
+            var endsWithExtension = transformFileInfo.Name.EndsWith(".raml");
+
+            // if not leave the menu hidden
+            if (!endsWithExtension) return;
+
+            if (itemFullPath.Contains(RamlReferenceService.ApiReferencesFolderName))
+                return;
+
+            var folder = Path.GetDirectoryName(itemFullPath);
+            if (folder.EndsWith(InstallerServices.IncludesFolderName))
+                return;
+
+            if (!IsWebApiCoreInstalled())
+                return;
+
+            ShowAndEnableCommand(menuCommand, true);
+        }
 
 	    private static void ShowAndEnableCommand(OleMenuCommand menuCommand, bool visible)
 	    {

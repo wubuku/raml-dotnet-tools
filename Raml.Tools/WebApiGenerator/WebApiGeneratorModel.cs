@@ -55,6 +55,7 @@ namespace Raml.Tools.WebApiGenerator
 					.ToArray());
 			}
 		}
-	 
+
+	    public IEnumerable<ApiEnum> Enums { get; set; }
 	}
 }

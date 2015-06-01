@@ -77,16 +77,16 @@ namespace Raml.Tools
 					"decimal"
 				},
 				{
-					"date",
-					"DateTime"
-				},
-				{
 					"number",
 					"decimal"
 				},
 				{
 					"any",
 					"object"
+				},
+				{
+					"date",
+					"DateTime"
 				}
 			};
 
@@ -107,6 +107,9 @@ namespace Raml.Tools
 
 		public static bool IsPrimitiveType(string type)
 		{
+		    if (type.EndsWith("?"))
+		        type = type.Substring(0, type.Length - 1);
+
 			return typeStringConversion.Any(t => t.Value == type);
 		}
 
