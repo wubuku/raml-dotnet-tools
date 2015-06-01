@@ -294,6 +294,7 @@
                         <TextBox x:Name="txtURL"
                                  Style="{StaticResource DefaultTextBox}"
                                  Grid.Row="1"
+                                 TextWrapping="NoWrap"
 								 Grid.Column="1"
                                  Width="340"
 								 Margin="0,5,5,5" />
