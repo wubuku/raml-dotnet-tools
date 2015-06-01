@@ -13,7 +13,7 @@
 <#
 
 	var parser = new RamlParser();
-	var ramlFile = Host.ResolvePath(@"C:\desarrollo\mulesoft\raml-tests\ConsoleApplication2\ConsoleApplication2\API References\root\root.raml");
+	var ramlFile = Host.ResolvePath(@"movies.raml");
 	var raml = parser.Load(ramlFile);
 	var service = new ClientGeneratorService(raml, "MoviesApi");
 	var model = service.BuildModel();

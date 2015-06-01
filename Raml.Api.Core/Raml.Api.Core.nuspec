@@ -15,7 +15,7 @@
     <tags>RAML REST</tags>
 	<dependencies>
 	  <group targetFramework="net45">
-		<dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.0" />
+		<dependency id="Microsoft.AspNet.WebApi.Client" version="5.1.2" />
 	  </group>
 	</dependencies>
 	<frameworkAssemblies>
