@@ -51,7 +51,7 @@ namespace RAML.WebApiExplorer
 
 	    private void SerializeSchemas(StringBuilder sb, IEnumerable<IDictionary<string, string>> schemas)
 	    {
-            if(schemas == null || !schemas.Any())
+            if(schemas == null || !schemas.Any() || schemas.All(x => !x.Any()))
                 return;
 
 	        sb.AppendLine("schemas:");
@@ -77,7 +77,7 @@ namespace RAML.WebApiExplorer
 			foreach (var securityScheme in scheme)
 			{
 				sb.AppendLine(("- " + securityScheme.Key + ":").Indent(indent));
-				SerializeProperty(sb, "description", securityScheme.Value.Description, indent + 4);
+				SerializeDescriptionProperty(sb, securityScheme.Value.Description, indent + 4);
 				if (securityScheme.Value.Type != null && securityScheme.Value.Type.Any())
 					SerializeProperty(sb, "type", securityScheme.Value.Type.First().Key, indent + 4);
 
@@ -86,7 +86,22 @@ namespace RAML.WebApiExplorer
 			}
 		}
 
-		private void SerializeSecuritySettings(StringBuilder sb, SecuritySettings settings, int indent)
+        private void SerializeDescriptionProperty(StringBuilder sb, string description, int indentation)
+	    {
+            if (string.IsNullOrWhiteSpace(description))
+                return;
+
+            if (description.Contains(Environment.NewLine) || description.Contains("\r\n") || description.Contains("\n") || description.Contains("\r"))
+            {
+                SerializeMultilineProperty(sb, "description", description, indentation);
+                return;
+            }
+
+            sb.AppendFormat("{0}: {1}".Indent(indentation), "description", "\"" + description.Replace("\"", string.Empty) + "\"");
+            sb.AppendLine();
+	    }
+
+	    private void SerializeSecuritySettings(StringBuilder sb, SecuritySettings settings, int indent)
 		{
 			if(settings == null)
 				return;
@@ -150,7 +165,7 @@ namespace RAML.WebApiExplorer
 		{
 			sb.AppendLine((resource.RelativeUri + ":").Indent(indentation));
 			SerializeParameters(sb, "baseUriParameters", resource.BaseUriParameters, indentation + 2);
-			SerializeProperty(sb, "description", resource.Description, indentation + 2);
+            SerializeDescriptionProperty(sb, resource.Description, indentation + 2);
 			SerializeProperty(sb, "displayName", resource.DisplayName, indentation + 2);
 			SerializeProtocols(sb, resource.Protocols, indentation + 2);
 			SerializeParameters(sb, "uriParameters", resource.UriParameters, indentation + 2);
@@ -172,7 +187,7 @@ namespace RAML.WebApiExplorer
 		private void SerializeMethod(StringBuilder sb, Method method, int indentation)
 		{
 			sb.AppendLine((method.Verb + ":").Indent(indentation));
-			SerializeProperty(sb, "description", method.Description, indentation + 2);
+            SerializeDescriptionProperty(sb, method.Description, indentation + 2);
 			//SerializeType(sb, method.Type, indentation + 2);
 			
 			if (method.Headers != null)
@@ -209,7 +224,7 @@ namespace RAML.WebApiExplorer
 		private void SerializeMimeType(StringBuilder sb, KeyValuePair<string, MimeType> mimeType, int indentation)
 		{
 			sb.AppendLine((mimeType.Key + ":").Indent(indentation));
-			SerializeProperty(sb, "description", mimeType.Value.Description, indentation + 2);
+            SerializeDescriptionProperty(sb, mimeType.Value.Description, indentation + 2);
 			SerializeProperty(sb, "type", mimeType.Value.Type, indentation + 2);
 			SerializeParameters(sb, "formParameters", mimeType.Value.FormParameters, indentation + 2);
 			SerializeProperty(sb, "schema", mimeType.Value.Schema, indentation + 2);
@@ -231,7 +246,7 @@ namespace RAML.WebApiExplorer
 		private void SerializeResponse(StringBuilder sb, Response response, int indentation)
 		{
 			sb.AppendLine(response.Code.Indent(indentation) + ":");
-			SerializeProperty(sb, "description", response.Description, indentation + 2);
+            SerializeDescriptionProperty(sb, response.Description, indentation + 2);
 			SerializeBody(sb, response.Body, indentation + 2);
 		}
 
@@ -305,7 +320,7 @@ namespace RAML.WebApiExplorer
 		private void SerializeParameterProperties(StringBuilder sb, Parameter parameter, int indentation)
 		{
 			SerializeParameterProperty(sb, "default", parameter.Default, indentation + 2);
-			SerializeParameterProperty(sb, "description", parameter.Description, indentation + 2);
+            SerializeDescriptionProperty(sb, parameter.Description, indentation + 2);
 			SerializeParameterProperty(sb, "displayName", parameter.DisplayName, indentation + 2);
 			SerializeParameterProperty(sb, "example", parameter.Example, indentation + 2);
 			SerializeParameterProperty(sb, "pattern", parameter.Pattern, indentation + 2);
