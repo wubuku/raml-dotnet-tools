@@ -23,30 +23,16 @@ namespace Raml.Tools
 			          };
 			JsonSchema schema = null;
 			Newtonsoft.JsonV4.Schema.JsonSchema v4Schema = null;
-			try
-			{
-				schema = JsonSchema.Parse(jsonSchema);
-			}
-			catch (Exception exv3) // NewtonJson does not support Json Schema v4
-			{
-				try
-				{
-					schema = null;
-					v4Schema = Newtonsoft.JsonV4.Schema.JsonSchema.Parse(jsonSchema);
-				}
-				catch (Exception exv4)
-				{
-					//dynamic dynObj = JsonConvert.DeserializeObject(jsonSchema);
-					//foreach (var kv in dynObj)
-					//{
-					//	//TODO: manual parse schema ? or parse using example ?
-					//}
-					if (!warnings.ContainsKey(key))
-						warnings.Add(key, "Could not parse JSON Schema. v3 parser message: " + exv3.Message.Replace("\r\n", string.Empty).Replace("\n", string.Empty) + ". v4 parser message: " + exv4.Message.Replace("\r\n", string.Empty).Replace("\n", string.Empty));
-				}
-			}
+		    if (jsonSchema.Contains("\"oneOf\":"))
+		    {
+		        v4Schema = ParseV4Schema(key, jsonSchema, warnings);
+		    }
+		    else
+		    {
+		        schema = ParseV3OrV4Schema(key, jsonSchema, warnings, ref v4Schema);
+		    }
 
-			if (schema == null && v4Schema == null)
+		    if (schema == null && v4Schema == null)
 				return obj;
 
 			if (schema != null)
@@ -78,7 +64,52 @@ namespace Raml.Tools
 			return obj;
 		}
 
-		private void ParseObject(string key, IDictionary<string, JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums)
+        private static JsonSchema ParseV3OrV4Schema(string key, string jsonSchema, IDictionary<string, string> warnings, 
+            ref Newtonsoft.JsonV4.Schema.JsonSchema v4Schema)
+        {
+            JsonSchema schema = null;
+            try
+            {
+                schema = JsonSchema.Parse(jsonSchema);
+            }
+            catch (Exception exv3) // NewtonJson does not support Json Schema v4
+            {
+                try
+                {
+                    schema = null;
+                    v4Schema = Newtonsoft.JsonV4.Schema.JsonSchema.Parse(jsonSchema);
+                }
+                catch (Exception exv4)
+                {
+                    if (!warnings.ContainsKey(key))
+                        warnings.Add(key,
+                            "Could not parse JSON Schema. v3 parser message: " +
+                            exv3.Message.Replace("\r\n", string.Empty).Replace("\n", string.Empty) +
+                            ". v4 parser message: " +
+                            exv4.Message.Replace("\r\n", string.Empty).Replace("\n", string.Empty));
+                }
+            }
+            return schema;
+        }
+
+        private static Newtonsoft.JsonV4.Schema.JsonSchema ParseV4Schema(string key, string jsonSchema, IDictionary<string, string> warnings)
+        {
+            Newtonsoft.JsonV4.Schema.JsonSchema v4Schema = null;
+            try
+            {
+                v4Schema = Newtonsoft.JsonV4.Schema.JsonSchema.Parse(jsonSchema);
+            }
+            catch (Exception exv4)
+            {
+                if (!warnings.ContainsKey(key))
+                    warnings.Add(key,
+                        "Could not parse JSON Schema. " +
+                        exv4.Message.Replace("\r\n", string.Empty).Replace("\n", string.Empty));
+            }
+            return v4Schema;
+        }
+
+        private void ParseObject(string key, IDictionary<string, JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums)
 		{
 			if (schema == null)
 				return;
