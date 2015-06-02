@@ -1,12 +1,6 @@
-﻿using System;
+﻿using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Schema;
-using NUnit.Framework;
 
 namespace Raml.Tools.Tests
 {
@@ -22,68 +16,75 @@ namespace Raml.Tools.Tests
         }
 
         [Test]
-        public void should_parse_and_return_object()
-        {
-            var schema = string.Empty;
-            var apiObjects = new Dictionary<string, ApiObject>();
-            var apiObject = parser.Parse("key", schema, apiObjects);
-            Assert.IsNotNull(apiObject);
-        }
-
-        [Test]
-        public void should_name_object()
-        {
-            var schema = string.Empty;
-            var apiObjects = new Dictionary<string, ApiObject>();
-            var apiObject = parser.Parse("key", schema, apiObjects);
-            Assert.AreEqual("Key", apiObject.Name);
-        }
-
-        [Test]
         public void should_not_add_object_to_collection_when_no_properties()
         {
-            var schema = string.Empty;
+            const string emptySchema = "<xsd:schema targetNamespace=\"http://www.example.com/IPO\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:ipo=\"http://www.example.com/IPO\"></xsd:schema>";
             var apiObjects = new Dictionary<string, ApiObject>();
-            parser.Parse("key", schema, apiObjects);
+            parser.Parse(emptySchema, apiObjects);
             Assert.AreEqual(0, apiObjects.Count);
-        }
-
-        [Test]
-        public void should_avoid_key_duplication()
-        {
-            var schema = string.Empty;
-            var apiObjects = new Dictionary<string, ApiObject>
-            {
-                { "key", new ApiObject() }
-            };
-            parser.Parse("key", schema, apiObjects);
-            Assert.AreEqual(1, apiObjects.Count);
         }
 
         [Test]
         public void should_avoid_name_duplication()
         {
-            var schema = string.Empty;
+            var schema = File.ReadAllText(@"files\ipo.xsd");
             var apiObjects = new Dictionary<string, ApiObject>
             {
-                { "Key", new ApiObject() }
+                { "PurchaseOrderType", new ApiObject() }
             };
-            parser.Parse("key", schema, apiObjects);
-            Assert.AreEqual(1, apiObjects.Count);
+            parser.Parse(schema, apiObjects);
+            Assert.AreEqual(6, apiObjects.Count);
         }
 
         [Test]
         public void should_parse_properties()
         {
-            var schema = File.ReadAllText(@"C:\desarrollo\mulesoft\xmlschema2006-11-06\boeingData\ipo1\ipo.xsd");
+            var schema = File.ReadAllText(@"files\ipo.xsd");
+            var objects = new Dictionary<string, ApiObject>();
+            parser.Parse(schema, objects);
 
-            var apiObject = parser.Parse("key", schema, new Dictionary<string, ApiObject>());
-
-            Assert.AreEqual(5, apiObject.Properties.Count);
+            Assert.AreEqual(7, objects["PurchaseOrderType"].Properties.Count);
+            Assert.AreEqual(3, objects["AddressType"].Properties.Count);
         }
 
+        [Test]
+        public void should_parse_all_objects_in_schema_ipo()
+        {
+            var schema = File.ReadAllText(@"files\ipo.xsd");
+            var objects = new Dictionary<string, ApiObject>();
+            parser.Parse(schema, objects);
 
+            Assert.AreEqual(6, objects.Count);
+        }
 
+        [Test]
+        public void should_parse_all_objects_in_schema_75039()
+        {
+            var schema = File.ReadAllText(@"files\75039.xsd");
+            var objects = new Dictionary<string, ApiObject>();
+            parser.Parse(schema, objects);
 
+            Assert.AreEqual(1, objects.Count);
+        }
+
+        [Test]
+        public void should_parse_0_objects_when_only_annotations()
+        {
+            var schema = File.ReadAllText(@"files\annotations00101m1.xsd");
+            var objects = new Dictionary<string, ApiObject>();
+            parser.Parse(schema, objects);
+
+            Assert.AreEqual(0, objects.Count);
+        }
+
+        [Test]
+        public void should_parse_all_objects_in_schema_test67200()
+        {
+            var schema = File.ReadAllText(@"files\test67200.xsd");
+            var objects = new Dictionary<string, ApiObject>();
+            parser.Parse(schema, objects);
+
+            Assert.AreEqual(1, objects.Count);
+        }
     }
 }

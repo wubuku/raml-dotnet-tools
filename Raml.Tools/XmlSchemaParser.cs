@@ -1,98 +1,128 @@
-﻿using System;
+﻿using System.CodeDom;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Schema;
+using System.Xml.Serialization;
 
 namespace Raml.Tools
 {
     public class XmlSchemaParser
     {
-        public ApiObject Parse(string key, string schema, IDictionary<string, ApiObject> objects)
+        public ApiObject Parse(string schema, IDictionary<string, ApiObject> objects)
         {
-            var apiObject = new ApiObject
-            {
-                Name = NetNamingMapper.GetObjectName(key)
-            };
-
-            if (!objects.ContainsKey(key) && objects.All(o => o.Value.Name != apiObject.Name) && apiObject.Properties.Any())
-                objects.Add(key, apiObject);
-
-            var reader = new XmlTextReader(new StringReader(schema));
-            //reader.SchemaInfo.SchemaElement
-            var xmlSchema = XmlSchema.Read(reader, ValidationCallback);
-
-            apiObject.Properties = ParseProperties(xmlSchema.Items).ToList();
-
-            return apiObject;
+            var codeNamespace = ConvertXml(schema);
+            return ParseObjects(objects, codeNamespace);
         }
 
-        private IEnumerable<Property> ParseProperties(XmlSchemaObjectCollection items)
+        private static ApiObject ParseObjects(IDictionary<string, ApiObject> objects, CodeNamespace codeNamespace)
         {
-            var properties = new List<Property>();
-
-            foreach (var item in items)
+            ApiObject mainObject = null;
+            foreach (CodeTypeDeclaration typeDeclaration in codeNamespace.Types)
             {
-                var i = item.LineNumber;
-                if (item is XmlSchemaElement)
-                {
-                    var element = ((XmlSchemaElement)item);
+                var obj = new ApiObject {Name = typeDeclaration.Name};
 
-                    var prop = new Property
-                    {
-                        OriginalName = element.Name,
-                        Name = NetNamingMapper.GetPropertyName(element.Name),
-                        Type = NetTypeMapper.Map(element.SchemaTypeName),
-                    };
+                ParseProperties(typeDeclaration, obj);
 
-                    properties.Add(prop);
-                }
-                else if (item is XmlSchemaComplexType)
-                {
-                    var element = ((XmlSchemaComplexType)item);
+                if (objects.ContainsKey(obj.Name) || objects.Any(o => o.Value.Name == obj.Name) || !obj.Properties.Any()) 
+                    continue;
+                
+                objects.Add(obj.Name, obj);
 
-                    var prop = new Property
-                    {
-                        OriginalName = element.Name,
-                        Name = NetNamingMapper.GetPropertyName(element.Name),
-                        Type = element.Name,
-                    };
-
-                    properties.Add(prop);
-                }
-                else if (item is XmlSchemaSimpleType)
-                {
-                    var element = ((XmlSchemaSimpleType)item);
-                    var name = element.Name;
-                    var tpe = element.BaseXmlSchemaType;
-                    var tpe2 = element.Content;
-                    var parent = element.Parent;
-
-                    var prop = new Property
-                    {
-                        OriginalName = element.Name,
-                        Name = NetNamingMapper.GetPropertyName(element.Name),
-                        Type = element.Name,
-                    };
-
-                    properties.Add(prop);
-                }
-                var a = 1;
+                if (mainObject == null)
+                    mainObject = obj;
             }
-            return properties;
+            return mainObject;
         }
 
-        static void ValidationCallback(object sender, ValidationEventArgs args)
+        private static void ParseProperties(CodeTypeDeclaration typeDeclaration, ApiObject obj)
         {
-            if (args.Severity == XmlSeverityType.Warning)
-                Console.Write("WARNING: ");
-            else if (args.Severity == XmlSeverityType.Error)
-                Console.Write("ERROR: ");
-
-            Console.WriteLine(args.Message);
+            foreach (CodeTypeMember property in typeDeclaration.Members)
+            {
+                ParseProperty(property, obj);
+            }
         }
 
+        private static void ParseProperty(CodeTypeMember property, ApiObject obj)
+        {
+            var memberProperty = property as CodeMemberProperty;
+            if (memberProperty != null)
+            {
+                var prop = new Property
+                {
+                    Name = memberProperty.Name,
+                    Type = (memberProperty.Type.ArrayRank == 1)
+                        ? CollectionTypeHelper.GetCollectionType(memberProperty.Type.BaseType)
+                        : memberProperty.Type.BaseType
+                };
+                obj.Properties.Add(prop);
+            }
+        }
 
+        private static CodeNamespace ConvertXml(string schema)
+        {
+            var xsd = ReadSchema(schema);
+            var maps = ImportXmlTypeMappings(xsd);
+
+            var codeNamespace = ExportTypeMappings(maps);
+
+            return codeNamespace;
+        }
+
+        private static XmlSchema ReadSchema(string schema)
+        {
+            XmlSchema xsd;
+            using (var stream = new StringReader(schema))
+            {
+                xsd = XmlSchema.Read(stream, null);
+            }
+            return xsd;
+        }
+
+        private static CodeNamespace ExportTypeMappings(IEnumerable<XmlTypeMapping> maps)
+        {
+            var codeNamespace = new CodeNamespace("Generated");
+            var codeExporter = new XmlCodeExporter(codeNamespace);
+            foreach (var map in maps)
+            {
+                codeExporter.ExportTypeMapping(map);
+            }
+            return codeNamespace;
+        }
+
+        private static IEnumerable<XmlTypeMapping> ImportXmlTypeMappings(XmlSchema xsd)
+        {
+            var xsds = new XmlSchemas { xsd };
+            xsds.Compile(null, true);
+
+            var schemaImporter = new XmlSchemaImporter(xsds);
+            var maps = new List<XmlTypeMapping>();
+            maps.AddRange(ImportSchemaTypes(xsd, schemaImporter));
+            maps.AddRange(ImportTypeMappings(xsd, schemaImporter));
+            return maps;
+        }
+
+        private static IEnumerable<XmlTypeMapping> ImportTypeMappings(XmlSchema xsd, XmlSchemaImporter schemaImporter)
+        {
+            var maps = new Collection<XmlTypeMapping>();
+            foreach (XmlSchemaElement schemaElement in xsd.Elements.Values)
+            {
+                var importTypeMapping = schemaImporter.ImportTypeMapping(schemaElement.QualifiedName);
+                maps.Add(importTypeMapping);
+            }
+            return maps;
+        }
+
+        private static IEnumerable<XmlTypeMapping> ImportSchemaTypes(XmlSchema xsd, XmlSchemaImporter schemaImporter)
+        {
+            var maps = new Collection<XmlTypeMapping>();
+            foreach (XmlSchemaType schemaType in xsd.SchemaTypes.Values)
+            {
+                var importSchemaType = schemaImporter.ImportSchemaType(schemaType.QualifiedName);
+                maps.Add(importSchemaType);
+            }
+            return maps;
+        }
     }
 }

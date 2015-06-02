@@ -33,12 +33,13 @@ namespace Raml.Tools
 			return jsonSchemaParser.Parse(key, schema, objects, warnings, enums);
 		}
 
-
-
-		// TODO
 		private ApiObject ParseXmlSchema(string key, string schema, IDictionary<string, ApiObject> objects)
 		{
-			throw new System.NotImplementedException("XML Schema Parsing not implemented - " + key);
+		    var xmlSchemaParser = new XmlSchemaParser();
+            var  obj = xmlSchemaParser.Parse(schema, objects);
+            //TODO: check
+		    //obj.Name = NetNamingMapper.GetObjectName(key);
+		    return obj;
 		}
 
 	}
