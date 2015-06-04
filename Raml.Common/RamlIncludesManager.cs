@@ -7,15 +7,14 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
-using Raml.Tools;
 
 namespace Raml.Common
 {
 	public class RamlIncludesManager
 	{
-		private readonly char[] IncludeDirectiveTrimChars = { ' ', '"', '}', ']', ',' };
+		private readonly char[] includeDirectiveTrimChars = { ' ', '"', '}', ']', ',' };
 		private const string IncludeDirective = "!include";
-        private IDictionary<string, Task> downloadFileTasks = new Dictionary<string, Task>();
+        private readonly IDictionary<string, Task> downloadFileTasks = new Dictionary<string, Task>();
 
 	    private HttpClient client;
 	    private HttpClient Client
@@ -76,8 +75,8 @@ namespace Raml.Common
 				if (!line.Contains(IncludeDirective))
 					continue;
 
-				var indexOfInclude = line.IndexOf(IncludeDirective, System.StringComparison.Ordinal);
-				var includeSource = line.Substring(indexOfInclude + IncludeDirective.Length).Trim(IncludeDirectiveTrimChars);
+				var indexOfInclude = line.IndexOf(IncludeDirective, StringComparison.Ordinal);
+				var includeSource = line.Substring(indexOfInclude + IncludeDirective.Length).Trim(includeDirectiveTrimChars);
 
 				var destinationFilePath = GetDestinationFilePath(destinationFolder, includeSource);
 
@@ -128,9 +127,11 @@ namespace Raml.Common
 
 		    foreach (var includedFile in scopeIncludedFiles)
 		    {
-                // parse include for other includes
-		        downloadFileTasks[includedFile].WaitWithPumping();
+                if(downloadFileTasks.ContainsKey(includedFile))
+		            downloadFileTasks[includedFile].WaitWithPumping();
+
                 var nestedFileLines = File.ReadAllLines(includedFile);
+
                 Manage(nestedFileLines, destinationFolder, includedFiles, path, confirmOvewrite);
 		    }
 		}
@@ -150,17 +151,13 @@ namespace Raml.Common
 			return destinationFilePath;
 		}
 
-		private Uri DownloadFile(string ramlSourceUrl, string destinationFilePath, bool confirmOvewrite = false)
+		private void DownloadFile(string ramlSourceUrl, string destinationFilePath, bool confirmOvewrite = false)
 		{
 			Uri uri;
 			if (!Uri.TryCreate(ramlSourceUrl, UriKind.Absolute, out uri))
 				throw new UriFormatException("Invalid URL: " + ramlSourceUrl);
 
             downloadFileTasks.Add(destinationFilePath, GetContentsAsync(uri).ContinueWith(task => WriteFile(destinationFilePath, confirmOvewrite, task.Result)));
-
-		    //WriteFile(destinationFilePath, confirmOvewrite, contents);
-
-			return uri;
 		}
 
         private async Task<Uri> DownloadFileAsync(string ramlSourceUrl, string destinationFilePath, bool confirmOvewrite = false)
