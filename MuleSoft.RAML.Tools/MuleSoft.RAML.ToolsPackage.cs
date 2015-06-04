@@ -27,6 +27,7 @@ namespace MuleSoft.RAML.Tools
 	[ProvideAutoLoad("f1536ef8-92ec-443c-9ed7-fdadf150da82")]
     public sealed class MuleSoft_RAML_ToolsPackage : Package
     {
+        private CommandID addReferenceInApiFolderCmdId;
 	    private CommandID updateReferenceCmdId;
 	    private CommandID implementContractCommandId;
 	    private CommandID updateRAMLContractCommandId;
@@ -56,17 +57,22 @@ namespace MuleSoft.RAML.Tools
             var mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
 	        if (null == mcs) return;
 
-	        // Add RAML Reference command
+	        // Add RAML Reference command in References
 	        var addRamlRefCommandId = new CommandID(GuidList.guidMuleSoft_RAML_ReferencesNode, (int)PkgCmdIDList.cmdRAMLGenerator);
 	        var addRamlRefCommand = new MenuCommand(AddRamlReferenceCallback, addRamlRefCommandId );
 	        mcs.AddCommand( addRamlRefCommand );
+
+            // Add RAML Reference command in Api References Folder
+            addReferenceInApiFolderCmdId = new CommandID(GuidList.guidMuleSoft_RAML_FolderNode, (int)PkgCmdIDList.cmdRAMLGenerator2);
+            var addReferenceCommand = new OleMenuCommand(AddRamlReferenceCallback, addReferenceInApiFolderCmdId);
+            addReferenceCommand.BeforeQueryStatus += AddRamlRefCommand_BeforeQueryStatus;
+            mcs.AddCommand(addReferenceCommand);
 
 			// Update RAML Reference command
 	        updateReferenceCmdId = new CommandID(GuidList.guidMuleSoft_RAML_FileNode, (int)PkgCmdIDList.cmdUpdateRAMLReference);
 	        var updateReferenceCommand = new OleMenuCommand(UpdateRamlRefCallback, updateReferenceCmdId);
 	        updateReferenceCommand.BeforeQueryStatus += UpdateRamlRefCommand_BeforeQueryStatus;
 			mcs.AddCommand(updateReferenceCommand);
-
 
 			// Add RAML Contract command
 			var addRamlContractCmdId = new CommandID(GuidList.guidMuleSoft_RAML_ProjectNode, (int)PkgCmdIDList.cmdAddContract);
@@ -205,6 +211,11 @@ namespace MuleSoft.RAML.Tools
 			ChangeCommandStatus(updateReferenceCmdId, true);
 		}
 
+        private void AddRamlRefCommand_BeforeQueryStatus(object sender, EventArgs e)
+        {
+            ShowOrHideCommandAddRefApiFolder(sender);
+        }
+
 		private void UpdateRAMLCommandOnBeforeQueryStatus(object sender, EventArgs e)
 		{
 			ShowOrHideCommandContract(sender);
@@ -278,6 +289,30 @@ namespace MuleSoft.RAML.Tools
 			var menuCmd = mcs.FindCommand(commandId);
 			if (menuCmd != null) menuCmd.Enabled = enable;
 		}
+
+        private static void ShowOrHideCommandAddRefApiFolder(object sender)
+        {
+            // get the menu that fired the event
+            var menuCommand = sender as OleMenuCommand;
+            if (menuCommand == null) return;
+
+            ShowAndEnableCommand(menuCommand, false);
+
+            IVsHierarchy hierarchy;
+            uint itemid;
+
+            if (!IsSingleProjectItemSelection(out hierarchy, out itemid)) return;
+            // Get the file path
+            string itemFullPath;
+            ((IVsProject)hierarchy).GetMkDocument(itemid, out itemFullPath);
+
+            var folder = Path.GetDirectoryName(itemFullPath);
+            if (!folder.EndsWith(Settings.Default.ApiReferencesFolderName))
+                return;
+
+            ShowAndEnableCommand(menuCommand, true);
+        }
+
 
 		private static void ShowOrHideCommand(object sender, string containingFolderName)
 		{
