@@ -393,17 +393,17 @@ There are three ways to access the information about your API:
 === Api Console
 
 Run the web application and navigate to /raml to see the Api Console. 
-+
-image::./docimages/RAML_NET_ApiConsole.png[align="center", width="550"]
-+
+
+image::./docimages/RAML_NET_ApiConsole.png[align="center"]
+
 You can navigate by clicking on the buttons, you can see the request and responses and try the availabe methods for each resource.
 
 === Seeing the raw RAML
 
 If you wish to view the RAML that is generated from your API, run your web app and navigate to /raml/raw
-+
-image::./docimages/RAML_NET_RAML.png[align="center", width="550"]
-+
+
+image::./docimages/RAML_NET_RAML.png[align="center"]
+
 
 === Downloading the RAML
 
