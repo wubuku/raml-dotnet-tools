@@ -386,20 +386,24 @@ For the Web API there are a several templates under "Contracts/Templates":
 == Metadata
 
 RAML metadata output lets you to extract a RAML definition out of your WebApi app. To enable it please right click on your project and choose "Enable RAML metadata output" command.
-This will add a RamlController, some start up configurations, a razor view, and scripts, css, and other required files.
-There are three ways to access the information: 
+This will add a RamlController, some start up configurations, a razor view and other required files (css, js, etc.).
+There are three ways to access the information about your API:
 
 
 === Api Console
 
 Run the web application and navigate to /raml to see the Api Console. 
++
 image::./docimages/RAML_NET_ApiConsole.png[align="center", width="550"] 
++
 You can navigate by clicking on the buttons, you can see the request and responses and try the availabe methods for each resource.
 
 === Seeing the raw RAML
 
 If you wish to view the RAML that is generated from your API, run your web app and navigate to /raml/raw
++
 image::./docimages/RAML_NET_RAML.png[align="center", width="550"] 
++
 
 === Downloading the RAML
 
@@ -415,15 +419,15 @@ In order to do this you will have to modify the GetRamlContents method of your R
 [source, c#]
 ----
     private static string GetRamlContents()
-		{
-			var config = GlobalConfiguration.Configuration;
-			var apiExplorer = config.Services.GetApiExplorer();
-			var apiExplorerService = new ApiExplorerService(apiExplorer, config.VirtualPathRoot);
-			var ramlDocument = apiExplorerService.GetRaml();
-			var ramlContents = new RamlSerializer().Serialize(ramlDocument);
+        {
+            var config = GlobalConfiguration.Configuration;
+            var apiExplorer = config.Services.GetApiExplorer();
+            var apiExplorerService = new ApiExplorerService(apiExplorer, config.VirtualPathRoot);
+            var ramlDocument = apiExplorerService.GetRaml();
+            var ramlContents = new RamlSerializer().Serialize(ramlDocument);
 
-			return ramlContents;
-		}
+            return ramlContents;
+        }
 ----
 
 
@@ -438,23 +442,23 @@ There are two authorization grants "code" and "token" and a single scope "all".
 [source, c#]
 ----
     // set OAuth security scheme descriptor:  headers, query parameters and responses
-	var descriptor = new SecuritySchemeDescriptor
-	{
-		QueryParameters = new Dictionary<string, Parameter>
-				                            {
-					                            {
-						                            "access_token",
-						                            new Parameter
-						                            {
-							                            Type = "string",
-														Required = true
-						                            }
-					                            }
-				                            }
-	};
+    var descriptor = new SecuritySchemeDescriptor
+    {
+        QueryParameters = new Dictionary<string, Parameter>
+                                            {
+                                                {
+                                                    "access_token",
+                                                    new Parameter
+                                                    {
+                                                        Type = "string",
+                                                        Required = true
+                                                    }
+                                                }
+                                            }
+    };
 
     // set OAuth 2 endpoints, grants, scopes and descriptor
-	apiExplorerService.UseOAuth2("/oauth/authorize", "/oauth/access_token",
+    apiExplorerService.UseOAuth2("/oauth/authorize", "/oauth/access_token",
                                 new[] {"code", "token"}, new[] {"all"}, descriptor);
 
 ----
@@ -478,43 +482,43 @@ Combining all this toghether you Raml action would look like this:
 
 [source, c#]
 ----
-  private static string GetRamlContents()
-	{
-		var config = GlobalConfiguration.Configuration;
-		var apiExplorer = config.Services.GetApiExplorer();
-		var apiExplorerService = new ApiExplorerService(apiExplorer, config.VirtualPathRoot);
+    private static string GetRamlContents()
+    {
+        var config = GlobalConfiguration.Configuration;
+        var apiExplorer = config.Services.GetApiExplorer();
+        var apiExplorerService = new ApiExplorerService(apiExplorer, config.VirtualPathRoot);
 
         // use HTTPS only
-		apiExplorerService.Protocols = new[] { Protocol.HTTPS };
+        apiExplorerService.Protocols = new[] { Protocol.HTTPS };
 
         // use OAuth 2 for all resources
-		apiExplorerService.SecuredBy = new[] { "oauth_2_0" };
+        apiExplorerService.SecuredBy = new[] { "oauth_2_0" };
 
         // set OAuth security scheme descriptor:  headers, query parameters and responses
-		var descriptor = new SecuritySchemeDescriptor
-		{
-			QueryParameters = new Dictionary<string, Parameter>
-				                                {
-					                                {
-						                                "access_token",
-						                                new Parameter
-						                                {
-							                                Type = "string",
-															Required = true
-						                                }
-					                                }
-				                                }
-		};
+        var descriptor = new SecuritySchemeDescriptor
+        {
+            QueryParameters = new Dictionary<string, Parameter>
+                                                {
+                                                    {
+                                                        "access_token",
+                                                        new Parameter
+                                                        {
+                                                            Type = "string",
+                                                            Required = true
+                                                        }
+                                                    }
+                                                }
+        };
 
         // set OAuth 2 endpoints, grants, scopes and descriptor
-		apiExplorerService.UseOAuth2("https://api.movies.com/oauth/authorize",
-			"https://api.movies.com/oauth/access_token", new[] {"code", "token"}, new[] {"all"}, descriptor);
+        apiExplorerService.UseOAuth2("https://api.movies.com/oauth/authorize",
+            "https://api.movies.com/oauth/access_token", new[] {"code", "token"}, new[] {"all"}, descriptor);
 
-		var ramlDocument = apiExplorerService.GetRaml();
-		var ramlContents = new RamlSerializer().Serialize(ramlDocument);
+        var ramlDocument = apiExplorerService.GetRaml();
+        var ramlContents = new RamlSerializer().Serialize(ramlDocument);
 
-		return ramlContents;
-	}
+        return ramlContents;
+    }
 ----
 
 For using OAuth 1 you can use the **UseOAuth1** method. For other security schemes or further customization you can user the **SetSecurityScheme** method or the **SecuritySchemes** property.
@@ -524,10 +528,10 @@ For example, to set the root level documentation
 
 [source, c#]
 ----
-	apiExplorerService.SetRamlProperties = raml =>
-			                                {
-				                                raml.Documentation = "Documentation is availabe at http://documentation.org"
-			                                }
+    apiExplorerService.SetRamlProperties = raml =>
+                                            {
+                                                raml.Documentation = "Documentation is availabe at http://documentation.org"
+                                            }
 ----
 
 For customizing your RAML only for specific resources you have three action available: **SetMethodProperties**, **SetResourceProperties**, **SetResourcePropertiesByAction** and **SetResourcePropertiesByController**.
