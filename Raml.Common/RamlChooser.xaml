@@ -141,9 +141,7 @@
             <Image Source="images/raml.png" Grid.Row="0" Grid.Column="1" Margin="10" Stretch="None"></Image>
 
             <Grid Grid.Row="1" Grid.Column="1"
-				  Visibility="{Binding ElementName=RamlChooserWindow, Path=ContractUseCaseVisibility}"
-				  Margin="0, 5, 0, 5"
-				  x:Name="newRamlGrid">
+				  Margin="0, 5, 0, 5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
@@ -157,12 +155,14 @@
                 <RadioButton Content="New RAML contract"
 							 x:Name="newRamlRadioButton"
 							 Checked="NewRaml_Checked"
+                             Visibility="{Binding ElementName=RamlChooserWindow, Path=ContractUseCaseVisibility}"
 							 Style="{StaticResource DefaultRadioButton}"
 							 GroupName="MainOption"
                              Margin="0,0,0,5"
 							 Grid.Row="1" />
 
-               <Grid Grid.Row="2">
+               <Grid Grid.Row="2"
+                     Visibility="{Binding ElementName=RamlChooserWindow, Path=ContractUseCaseVisibility}">
                    <Grid.ColumnDefinitions>
                        <ColumnDefinition Width="Auto"></ColumnDefinition>
                         <ColumnDefinition Width="*"></ColumnDefinition>
