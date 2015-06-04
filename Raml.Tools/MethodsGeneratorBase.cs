@@ -15,13 +15,20 @@ namespace Raml.Tools
 		protected readonly UriParametersGenerator uriParametersGenerator = new UriParametersGenerator();
 
 		protected readonly RamlDocument raml;
+	    protected readonly IDictionary<string, ApiObject> schemaResponseObjects;
+	    protected readonly IDictionary<string, ApiObject> schemaRequestObjects;
+	    private readonly IDictionary<string, string> linkKeysWithObjectNames;
 
-		protected MethodsGeneratorBase(RamlDocument raml)
-		{
-			this.raml = raml;
-		}
+	    protected MethodsGeneratorBase(RamlDocument raml, IDictionary<string, ApiObject> schemaResponseObjects,
+            IDictionary<string, ApiObject> schemaRequestObjects, IDictionary<string, string> linkKeysWithObjectNames)
+        {
+            this.raml = raml;
+            this.schemaResponseObjects = schemaResponseObjects;
+	        this.schemaRequestObjects = schemaRequestObjects;
+	        this.linkKeysWithObjectNames = linkKeysWithObjectNames;
+        }
 
-		protected string GetReturnType(string key, Method method, Resource resource, IDictionary<string, ApiObject> schemaResponseObjects, string fullUrl)
+	    protected string GetReturnType(string key, Method method, Resource resource, string fullUrl)
 		{
 			if (!method.Responses.Any(r => r.Body != null && r.Body.Any(b => !string.IsNullOrWhiteSpace(b.Value.Schema))))
 				return "string";
@@ -30,7 +37,7 @@ namespace Raml.Tools
 				.Where(r => r.Body != null && r.Body.Any(b => !string.IsNullOrWhiteSpace(b.Value.Schema)))
 				.ToArray();
 
-			var returnType = HandleMultipleSchemaType(responses, resource, method, key, schemaResponseObjects, fullUrl);
+			var returnType = HandleMultipleSchemaType(responses, resource, method, key, fullUrl);
 
 			if (!string.IsNullOrWhiteSpace(returnType))
 				return returnType;
@@ -38,9 +45,9 @@ namespace Raml.Tools
 			return "string";
 		}
 
-		private string HandleMultipleSchemaType(IEnumerable<Response> responses, Resource resource, Method method, string key, IDictionary<string, ApiObject> schemaResponseObjects, string fullUrl)
+		private string HandleMultipleSchemaType(IEnumerable<Response> responses, Resource resource, Method method, string key, string fullUrl)
 		{
-			var properties = GetProperties(responses, resource, method, key, schemaResponseObjects, fullUrl);
+			var properties = GetProperties(responses, resource, method, key, fullUrl);
 
 			if (properties.Count == 0)
 				return "string";
@@ -61,24 +68,23 @@ namespace Raml.Tools
 			return name;
 		}
 
-		private List<Property> GetProperties(IEnumerable<Response> responses, Resource resource, Method method, string key, IDictionary<string, ApiObject> schemaResponseObjects, string fullUrl)
+		private List<Property> GetProperties(IEnumerable<Response> responses, Resource resource, Method method, string key, string fullUrl)
 		{
 			var properties = new List<Property>();
 			foreach (var response in responses)
 			{
-				AddProperty(resource, method, key, schemaResponseObjects, response, properties, fullUrl);
+				AddProperty(resource, method, key, response, properties, fullUrl);
 			}
 			return properties;
 		}
 
-		private void AddProperty(Resource resource, Method method, string key, IDictionary<string, ApiObject> schemaResponseObjects,
-			Response response, List<Property> properties, string fullUrl)
+		private void AddProperty(Resource resource, Method method, string key, Response response, ICollection<Property> properties, string fullUrl)
 		{
 			var mimeType = GeneratorServiceHelper.GetMimeType(response);
 			if (mimeType == null)
 				return;
 
-			var type = GetReturnTypeFromResponse(method, resource, mimeType, key, response.Code, schemaResponseObjects, fullUrl);
+			var type = GetReturnTypeFromResponse(method, resource, mimeType, key, response.Code, fullUrl);
 			if (string.IsNullOrWhiteSpace(type))
 				return;
 
@@ -95,7 +101,7 @@ namespace Raml.Tools
 			properties.Add(property);
 		}
 
-		protected static string GetComment(Resource resource, BasicInfo method)
+		protected string GetComment(Resource resource, BasicInfo method)
 		{
 			var description = resource.Description;
 			if (!string.IsNullOrWhiteSpace(method.Description))
@@ -110,33 +116,55 @@ namespace Raml.Tools
 		}
 
 
-		private string GetReturnTypeFromResponse(Method method, Resource resource, MimeType mimeType, string key, string responseCode, IDictionary<string, ApiObject> schemaResponseObjects, string fullUrl)
+		private string GetReturnTypeFromResponse(Method method, Resource resource, MimeType mimeType, string key, string responseCode, string fullUrl)
 		{
-			var returnType = GetNamedReturnType(method, resource, mimeType, schemaResponseObjects, fullUrl);
+			var returnType = GetNamedReturnType(method, resource, mimeType, fullUrl);
 
 			if (!string.IsNullOrWhiteSpace(returnType))
 				return returnType;
 
-			returnType = GetReturnTypeFromResourceType(method, resource, key, responseCode, schemaResponseObjects, fullUrl);
+			returnType = GetReturnTypeFromResourceType(method, resource, key, responseCode, fullUrl);
 
 			if (!string.IsNullOrWhiteSpace(returnType))
 				return returnType;
 
-		    if (schemaResponseObjects.ContainsKey(key) && schemaResponseObjects[key].Properties.Any())
-		        return schemaResponseObjects[key].IsArray
-		            ? CollectionTypeHelper.GetCollectionType(schemaResponseObjects[key].Name)
-		            : schemaResponseObjects[key].Name;
+		    if (ResponseHasKey(key))
+		        return GetReturnTypeFromResponseByKey(key);
 
 			var responseKey = key + ParserHelpers.GetStatusCode(responseCode) + GeneratorServiceBase.ResponseContentSuffix;
-		    if (schemaResponseObjects.ContainsKey(responseKey) && schemaResponseObjects[responseKey].Properties.Any())
-		        return schemaResponseObjects[responseKey].IsArray
-		            ? CollectionTypeHelper.GetCollectionType(schemaResponseObjects[responseKey].Name)
-		            : schemaResponseObjects[responseKey].Name;
+            if (ResponseHasKey(responseKey))
+                return GetReturnTypeFromResponseByKey(responseKey);
 
-			return returnType;
+		    if (linkKeysWithObjectNames.ContainsKey(key))
+		    {
+		        var linkedKey = linkKeysWithObjectNames[key];
+                if (ResponseHasKey(linkedKey))
+                    return GetReturnTypeFromResponseByKey(linkedKey);
+		    }
+
+            if (linkKeysWithObjectNames.ContainsKey(responseKey))
+            {
+                var linkedKey = linkKeysWithObjectNames[responseKey];
+                if (ResponseHasKey(linkedKey))
+                    return GetReturnTypeFromResponseByKey(linkedKey);
+            }
+
+		    return returnType;
 		}
 
-		protected Verb GetResourceTypeVerb(Method method, Resource resource)
+	    private bool ResponseHasKey(string key)
+	    {
+	        return schemaResponseObjects.ContainsKey(key) && schemaResponseObjects[key].Properties.Any();
+	    }
+
+	    private string GetReturnTypeFromResponseByKey(string key)
+	    {
+	        return schemaResponseObjects[key].IsArray
+	            ? CollectionTypeHelper.GetCollectionType(schemaResponseObjects[key].Name)
+	            : schemaResponseObjects[key].Name;
+	    }
+
+	    protected Verb GetResourceTypeVerb(Method method, Resource resource)
 		{
 			var resourceTypes = raml.ResourceTypes.First(rt => rt.ContainsKey(resource.GetResourceType()));
 			var resourceType = resourceTypes[resource.GetResourceType()];
@@ -167,7 +195,7 @@ namespace Raml.Tools
 			return verb;
 		}
 
-		private string GetReturnTypeFromResourceType(Method method, Resource resource, string key, string responseCode, IDictionary<string, ApiObject> schemaResponseObjects, string fullUrl)
+		private string GetReturnTypeFromResourceType(Method method, Resource resource, string key, string responseCode, string fullUrl)
 		{
 			var returnType = string.Empty;
 			if (resource.Type == null || !resource.Type.Any() ||
@@ -187,49 +215,59 @@ namespace Raml.Tools
 			var resourceTypeMimeType = GeneratorServiceHelper.GetMimeType(response);
 			if (resourceTypeMimeType != null)
 			{
-				returnType = GetReturnTypeFromResponseWithoutCheckingResourceTypes(method, resource, resourceTypeMimeType, key, responseCode, schemaResponseObjects, fullUrl);
+				returnType = GetReturnTypeFromResponseWithoutCheckingResourceTypes(method, resource, resourceTypeMimeType, key, responseCode, fullUrl);
 			}
 			return returnType;
 		}
 
 		// avois infinite recursion
-		private string GetReturnTypeFromResponseWithoutCheckingResourceTypes(Method method, Resource resource, MimeType mimeType, string key, string responseCode, IDictionary<string, ApiObject> schemaResponseObjects, string fullUrl)
+		private string GetReturnTypeFromResponseWithoutCheckingResourceTypes(Method method, Resource resource, MimeType mimeType, string key, string responseCode, string fullUrl)
 		{
-			var returnType = GetNamedReturnType(method, resource, mimeType, schemaResponseObjects, fullUrl);
+			var returnType = GetNamedReturnType(method, resource, mimeType, fullUrl);
 
 			if (!string.IsNullOrWhiteSpace(returnType))
 				return returnType;
 
-		    if (schemaResponseObjects.ContainsKey(key) && schemaResponseObjects[key].Properties.Any())
-		        return schemaResponseObjects[key].IsArray
-		            ? CollectionTypeHelper.GetCollectionType(schemaResponseObjects[key].Name)
-		            : schemaResponseObjects[key].Name;
+            if (ResponseHasKey(key))
+                return GetReturnTypeFromResponseByKey(key);
 
-			var responseKey = key + ParserHelpers.GetStatusCode(responseCode) + GeneratorServiceBase.ResponseContentSuffix;
-		    if (schemaResponseObjects.ContainsKey(responseKey) && schemaResponseObjects[responseKey].Properties.Any())
-		        return schemaResponseObjects[responseKey].IsArray
-		            ? CollectionTypeHelper.GetCollectionType(schemaResponseObjects[responseKey].Name)
-		            : schemaResponseObjects[responseKey].Name;
+            var responseKey = key + ParserHelpers.GetStatusCode(responseCode) + GeneratorServiceBase.ResponseContentSuffix;
+            if (ResponseHasKey(responseKey))
+                return GetReturnTypeFromResponseByKey(responseKey);
+
+            if (linkKeysWithObjectNames.ContainsKey(key))
+            {
+                var linkedKey = linkKeysWithObjectNames[key];
+                if (ResponseHasKey(linkedKey))
+                    return GetReturnTypeFromResponseByKey(linkedKey);
+            }
+
+            if (linkKeysWithObjectNames.ContainsKey(responseKey))
+            {
+                var linkedKey = linkKeysWithObjectNames[responseKey];
+                if (ResponseHasKey(linkedKey))
+                    return GetReturnTypeFromResponseByKey(linkedKey);
+            }
 
 			return returnType;
 		}
 
 
-		private string GetNamedReturnType(Method method, Resource resource, MimeType mimeType, IDictionary<string, ApiObject> schemaResponseObjects, string fullUrl)
+		private string GetNamedReturnType(Method method, Resource resource, MimeType mimeType, string fullUrl)
 		{
 			var returnType = string.Empty;
 			if (mimeType.Schema.Contains("<<") && mimeType.Schema.Contains(">>"))
 			{
-			    returnType = GetReturnTypeFromParameter(method, resource, mimeType, schemaResponseObjects, fullUrl, returnType);
+			    returnType = GetReturnTypeFromParameter(method, resource, mimeType, fullUrl, returnType);
 			}
 			else if (!mimeType.Schema.Contains("<") && !mimeType.Schema.Contains("{"))
 			{
-			    returnType = GetReturnTypeFromName(mimeType, schemaResponseObjects, returnType);
+			    returnType = GetReturnTypeFromName(mimeType, returnType);
 			}
 		    return returnType;
 		}
 
-	    private static string GetReturnTypeFromName(MimeType mimeType, IDictionary<string, ApiObject> schemaResponseObjects, string returnType)
+	    private string GetReturnTypeFromName(MimeType mimeType, string returnType)
 	    {
 	        var type = mimeType.Schema.ToLowerInvariant();
 	        if (schemaResponseObjects.Values.Any(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type.ToLowerInvariant()))
@@ -240,8 +278,7 @@ namespace Raml.Tools
 	        return returnType;
 	    }
 
-	    private string GetReturnTypeFromParameter(Method method, Resource resource, MimeType mimeType,
-	        IDictionary<string, ApiObject> schemaResponseObjects, string fullUrl, string returnType)
+	    private string GetReturnTypeFromParameter(Method method, Resource resource, MimeType mimeType, string fullUrl, string returnType)
 	    {
 	        var type = schemaParameterParser.Parse(mimeType.Schema, resource, method, fullUrl);
 	        if (schemaResponseObjects.Values.Any(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type.ToLowerInvariant()))
@@ -255,12 +292,12 @@ namespace Raml.Tools
 	    }
 
 
-	    protected GeneratorParameter GetParameter(string key, Method method, Resource resource, IDictionary<string, ApiObject> schemaRequestObjects, string fullUrl)
+	    protected GeneratorParameter GetParameter(string key, Method method, Resource resource, string fullUrl)
 		{
 			var schema = GetJsonSchemaOrDefault(method.Body);
 			if (schema != null)
 			{
-				var generatorParameter = GetGeneratorParameterWhenNamed(method, resource, schemaRequestObjects, schema, fullUrl);
+				var generatorParameter = GetGeneratorParameterWhenNamed(method, resource, schema, fullUrl);
 				if (generatorParameter != null) 
 					return generatorParameter;
 			}
@@ -270,51 +307,70 @@ namespace Raml.Tools
 				var verb = GetResourceTypeVerb(method, resource);
 				if (verb != null && verb.Body != null && !string.IsNullOrWhiteSpace(verb.Body.Schema))
 				{
-					var generatorParameter = GetGeneratorParameterWhenNamed(method, resource, schemaRequestObjects, verb.Body.Schema, fullUrl);
+					var generatorParameter = GetGeneratorParameterWhenNamed(method, resource, verb.Body.Schema, fullUrl);
 					if (generatorParameter != null)
 						return generatorParameter;
 				}
 			}
 
-			if (schemaRequestObjects.ContainsKey(key) && schemaRequestObjects[key].Properties.Any())
-				return new GeneratorParameter
-				       {
-					       Name = schemaRequestObjects[key].Name.ToLower(),
-					       Type = schemaRequestObjects[key].Name,
-					       Description = schemaRequestObjects[key].Description
-				       };
+			if (RequestHasKey(key))
+				return GetGeneratorParameterByKey(key);
 
 			var requestKey = key + GeneratorServiceBase.RequestContentSuffix;
-			if (schemaRequestObjects.ContainsKey(requestKey) && schemaRequestObjects[requestKey].Properties.Any())
-				return new GeneratorParameter
-				       {
-					       Name = schemaRequestObjects[requestKey].Name.ToLower(),
-					       Type = schemaRequestObjects[requestKey].Name,
-					       Description = schemaRequestObjects[requestKey].Description
-				       };
+			if (RequestHasKey(requestKey))
+				return GetGeneratorParameterByKey(requestKey);
+
+	        if (linkKeysWithObjectNames.ContainsKey(key))
+	        {
+                var linkedKey = linkKeysWithObjectNames[key];
+                if (RequestHasKey(linkedKey))
+                    return GetGeneratorParameterByKey(linkedKey);           
+	        }
+
+            if (linkKeysWithObjectNames.ContainsKey(requestKey))
+            {
+                var linkedKey = linkKeysWithObjectNames[requestKey];
+                if (RequestHasKey(linkedKey))
+                    return GetGeneratorParameterByKey(linkedKey);
+            }
 
 			return new GeneratorParameter {Name = "json", Type = "string"};
 		}
 
-		private GeneratorParameter GetGeneratorParameterWhenNamed(Method method, Resource resource, IDictionary<string, ApiObject> schemaRequestObjects,
+	    private GeneratorParameter GetGeneratorParameterByKey(string key)
+	    {
+	        return new GeneratorParameter
+	        {
+	            Name = schemaRequestObjects[key].Name.ToLower(),
+	            Type = schemaRequestObjects[key].Name,
+	            Description = schemaRequestObjects[key].Description
+	        };
+	    }
+
+	    private bool RequestHasKey(string key)
+	    {
+	        return schemaRequestObjects.ContainsKey(key) && schemaRequestObjects[key].Properties.Any();
+	    }
+
+	    private GeneratorParameter GetGeneratorParameterWhenNamed(Method method, Resource resource,
 			string schema, string fullUrl)
 		{
 			if (schema.Contains("<<") && schema.Contains(">>"))
 			{
-				var generatorParameter = GetParameterByParametrizedName(method, resource, schemaRequestObjects, schema, fullUrl);
+				var generatorParameter = GetParameterByParametrizedName(method, resource, schema, fullUrl);
 				if (generatorParameter != null)
 					return generatorParameter;
 			}
 			else if (!schema.Contains("<") && !schema.Contains("{"))
 			{
-				var generatorParameter = GetParameterByName(schemaRequestObjects, schema);
+				var generatorParameter = GetParameterByName(schema);
 				if (generatorParameter != null)
 					return generatorParameter;
 			}
 			return null;
 		}
 
-		private static GeneratorParameter GetParameterByName(IDictionary<string, ApiObject> schemaRequestObjects, string schema)
+		private GeneratorParameter GetParameterByName(string schema)
 		{
 			GeneratorParameter generatorParameter = null;
 
@@ -332,8 +388,7 @@ namespace Raml.Tools
 			return generatorParameter;
 		}
 
-		private GeneratorParameter GetParameterByParametrizedName(Method method, Resource resource,
-			IDictionary<string, ApiObject> schemaRequestObjects, string schema, string fullUrl)
+		private GeneratorParameter GetParameterByParametrizedName(Method method, Resource resource, string schema, string fullUrl)
 		{
 			GeneratorParameter generatorParameter = null;
 			var type = schemaParameterParser.Parse(schema, resource, method, fullUrl);
@@ -369,7 +424,7 @@ namespace Raml.Tools
 			return null;
 		}
 
-		protected static bool IsVerbForMethod(Method method)
+		protected bool IsVerbForMethod(Method method)
 		{
 			if (method.Verb == null)
 				return true;

@@ -9,10 +9,9 @@ namespace Raml.Tools.WebApiGenerator
 {
 	public class WebApiGeneratorService : GeneratorServiceBase
 	{
-		private readonly WebApiMethodsGenerator webApiMethodsGenerator;
+		private WebApiMethodsGenerator webApiMethodsGenerator;
 		public WebApiGeneratorService(RamlDocument raml) : base(raml)
 		{
-			webApiMethodsGenerator = new WebApiMethodsGenerator(raml);
 		}
 
 		public WebApiGeneratorModel BuildModel()
@@ -26,6 +25,8 @@ namespace Raml.Tools.WebApiGenerator
 
 			CleanProperties(schemaRequestObjects);
 			CleanProperties(schemaResponseObjects);
+
+            webApiMethodsGenerator = new WebApiMethodsGenerator(raml, schemaResponseObjects, schemaRequestObjects, linkKeysWithObjectNames);
 
 			var controllers = GetControllers().ToArray();
 
@@ -74,7 +75,7 @@ namespace Raml.Tools.WebApiGenerator
 				// when the resource is a parameter dont generate a class but add it's methods and children to the parent
 				if (resource.RelativeUri.StartsWith("/{") && resource.RelativeUri.EndsWith("}"))
 				{
-					var generatedMethods = webApiMethodsGenerator.GetMethods(resource, fullUrl, rootController, rootController.Name, schemaResponseObjects, schemaRequestObjects);
+					var generatedMethods = webApiMethodsGenerator.GetMethods(resource, fullUrl, rootController, rootController.Name);
 					foreach (var method in generatedMethods)
 					{
 						rootController.Methods.Add(method);
@@ -95,7 +96,7 @@ namespace Raml.Tools.WebApiGenerator
 						Description = resource.Description,
 					};
 
-					var methods = webApiMethodsGenerator.GetMethods(resource, fullUrl, controller, controller.Name, schemaResponseObjects, schemaRequestObjects);
+					var methods = webApiMethodsGenerator.GetMethods(resource, fullUrl, controller, controller.Name);
 					foreach (var method in methods)
 					{
 						controller.Methods.Add(method);
@@ -123,7 +124,7 @@ namespace Raml.Tools.WebApiGenerator
 
 				var fullUrl = GetUrl(url, resource.RelativeUri);
 
-				var methods = webApiMethodsGenerator.GetMethods(resource, fullUrl, parentController, parentController.Name, schemaResponseObjects, schemaRequestObjects);
+				var methods = webApiMethodsGenerator.GetMethods(resource, fullUrl, parentController, parentController.Name);
 				foreach (var method in methods)
 				{
 					parentController.Methods.Add(method);
