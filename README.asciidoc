@@ -349,8 +349,6 @@ public partial class MoviesController : IMoviesController
 
 The IMoviesController interface implemented by the controller represents the contract. You can provide, for example, the implementation code for the Get method and return a list of available movies in the catalog.
 
-
-
 == Customizing the generated code
 
 RAML Tools for .NET uses T4 templates for code generation of client and service implementation.
@@ -383,6 +381,172 @@ For the Web API there are a several templates under "Contracts/Templates":
 - *ApiControllerInterface.t4*: the interface that the controller implements.
 
 - *ApiModel.t4*: template for the request and response content models.
+
+
+== Metadata
+
+RAML metadata output lets you to extract a RAML definition out of your WebApi app. To enable it please right click on your project and choose "Enable RAML metadata output" command.
+This will add a RamlController, some start up configurations, a razor view, and scripts, css, and other required files.
+There are three ways to access the information: 
+
+
+=== Api Console
+
+Run the web application and navigate to /raml to see the Api Console. 
+image::./docimages/RAML_NET_ApiConsole.png[align="center", width="550"] 
+You can navigate by clicking on the buttons, you can see the request and responses and try the availabe methods for each resource.
+
+=== Seeing the raw RAML
+
+If you wish to view the RAML that is generated from your API, run your web app and navigate to /raml/raw
+image::./docimages/RAML_NET_RAML.png[align="center", width="550"] 
+
+=== Downloading the RAML
+
+If you wish to download the RAML as a file, run your web app and navigate to /raml/download, this will prompt you to choose the location and file name.
+
+
+=== Customizing the generated RAML
+
+Some aspects of your API like security are not automatically detected. You can customize the RAML generation process to further adjust it to your API.
+
+In order to do this you will have to modify the GetRamlContents method of your RamlController class.
+
+[source, c#]
+----
+    private static string GetRamlContents()
+		{
+			var config = GlobalConfiguration.Configuration;
+			var apiExplorer = config.Services.GetApiExplorer();
+			var apiExplorerService = new ApiExplorerService(apiExplorer, config.VirtualPathRoot);
+			var ramlDocument = apiExplorerService.GetRaml();
+			var ramlContents = new RamlSerializer().Serialize(ramlDocument);
+
+			return ramlContents;
+		}
+----
+
+
+You can set the security schemes of your API, this is an example for OAuth2.
+First it creates a **SecuritySchemeDescriptor** where you can set the query parameters, headers and responses.
+In this case it defines a single query parameter called "access_token".
+
+Then it calls the **UseOAuth2** method and sets the endpoints, grants, scopes and previously created security scheme descriptor.
+In this example the authorization URL is "/oauth/authorize", the access token URL is "/oauth/access_token".
+There are two authorization grants "code" and "token" and a single scope "all".
+
+[source, c#]
+----
+    // set OAuth security scheme descriptor:  headers, query parameters and responses
+	var descriptor = new SecuritySchemeDescriptor
+	{
+		QueryParameters = new Dictionary<string, Parameter>
+				                            {
+					                            {
+						                            "access_token",
+						                            new Parameter
+						                            {
+							                            Type = "string",
+														Required = true
+						                            }
+					                            }
+				                            }
+	};
+
+    // set OAuth 2 endpoints, grants, scopes and descriptor
+	apiExplorerService.UseOAuth2("/oauth/authorize", "/oauth/access_token",
+                                new[] {"code", "token"}, new[] {"all"}, descriptor);
+
+----
+
+You can set the protocols for the while API by setting the **Protocols** property of the ApiExplorerService instance.
+For example for using HTTPS only in all of your API you would do this:
+
+[source, c#]
+----
+    apiExplorerService.Protocols = new[] { Protocol.HTTPS };
+----
+
+In a similar fashion if you want to set all of your resources to be accessed with OAuth 2 you can set the **SecuredBy** property of the ApiExplorerService instance.
+
+[source, c#]
+----
+    apiExplorerService.SecuredBy = new[] { "oauth_2_0" };
+----
+
+Combining all this toghether you Raml action would look like this:
+
+[source, c#]
+----
+  private static string GetRamlContents()
+	{
+		var config = GlobalConfiguration.Configuration;
+		var apiExplorer = config.Services.GetApiExplorer();
+		var apiExplorerService = new ApiExplorerService(apiExplorer, config.VirtualPathRoot);
+
+        // use HTTPS only
+		apiExplorerService.Protocols = new[] { Protocol.HTTPS };
+
+        // use OAuth 2 for all resources
+		apiExplorerService.SecuredBy = new[] { "oauth_2_0" };
+
+        // set OAuth security scheme descriptor:  headers, query parameters and responses
+		var descriptor = new SecuritySchemeDescriptor
+		{
+			QueryParameters = new Dictionary<string, Parameter>
+				                                {
+					                                {
+						                                "access_token",
+						                                new Parameter
+						                                {
+							                                Type = "string",
+															Required = true
+						                                }
+					                                }
+				                                }
+		};
+
+        // set OAuth 2 endpoints, grants, scopes and descriptor
+		apiExplorerService.UseOAuth2("https://api.movies.com/oauth/authorize",
+			"https://api.movies.com/oauth/access_token", new[] {"code", "token"}, new[] {"all"}, descriptor);
+
+		var ramlDocument = apiExplorerService.GetRaml();
+		var ramlContents = new RamlSerializer().Serialize(ramlDocument);
+
+		return ramlContents;
+	}
+----
+
+For using OAuth 1 you can use the **UseOAuth1** method. For other security schemes or further customization you can user the **SetSecurityScheme** method or the **SecuritySchemes** property.
+
+Other global properties can be set using the **SetRamlProperties** action.
+For example, to set the root level documentation
+
+[source, c#]
+----
+	apiExplorerService.SetRamlProperties = raml =>
+			                                {
+				                                raml.Documentation = "Documentation is availabe at http://documentation.org"
+			                                }
+----
+
+For customizing your RAML only for specific resources you have three action available: **SetMethodProperties**, **SetResourceProperties**, **SetResourcePropertiesByAction** and **SetResourcePropertiesByController**.
+
+For example for setting OAuth 2 for the movies POST action you could do this:
+
+[source, c#]
+----
+apiExplorerService.SetMethodProperties = (apiDescription, method) =>
+    {
+      if (apiDescription.RelativePath == "movies" && method.Verb == "post")
+        {
+            method.SecuredBy = new [] {"oauth_2_0"};
+        }
+
+    };
+----
+
+You can also modify the Body or the Responses using the same strategy.
 
 
 
