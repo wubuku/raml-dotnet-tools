@@ -13,7 +13,8 @@ namespace Raml.Tools
 			if (obj == null)
 				return null;
 
-			obj.Name = NetNamingMapper.GetObjectName(key);
+            if(string.IsNullOrWhiteSpace(obj.Name))
+			    obj.Name = NetNamingMapper.GetObjectName(key);
 
 			return obj;
 		}
@@ -37,8 +38,10 @@ namespace Raml.Tools
 		{
 		    var xmlSchemaParser = new XmlSchemaParser();
             var  obj = xmlSchemaParser.Parse(schema, objects);
-            //TODO: check
-		    //obj.Name = NetNamingMapper.GetObjectName(key);
+
+            if (obj != null && !objects.ContainsKey(key))
+		        objects.Add(key, obj); // to associate that key with the main XML Schema object
+
 		    return obj;
 		}
 

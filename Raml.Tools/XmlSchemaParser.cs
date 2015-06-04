@@ -25,13 +25,13 @@ namespace Raml.Tools
 
                 ParseProperties(typeDeclaration, obj);
 
+                if (mainObject == null && obj.Properties.Any())
+                    mainObject = obj;
+
                 if (objects.ContainsKey(obj.Name) || objects.Any(o => o.Value.Name == obj.Name) || !obj.Properties.Any()) 
                     continue;
                 
                 objects.Add(obj.Name, obj);
-
-                if (mainObject == null)
-                    mainObject = obj;
             }
             return mainObject;
         }
