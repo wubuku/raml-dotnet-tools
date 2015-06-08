@@ -3,6 +3,7 @@ using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using EnvDTE;
@@ -205,11 +206,35 @@ namespace MuleSoft.RAML.Tools
 		    if(!templatesManager.ConfirmWhenIncompatibleClientTemplate(generatedFolderPath))
                 return;
 
-			var dte = (DTE2)GetService(typeof(SDTE));
-			dte.ExecuteCommand("Project.RunCustomTool");
+            //if (Unauthorized(ramlFilePath))
+            //{
+            //    var generationServices = new RamlReferenceService(ServiceProvider.GlobalProvider);
+            //    var ramlChooser = new RamlChooser(this, generationServices.AddRamlReference, "Update RAML Reference", false,
+            //        Settings.Default.RAMLExchangeUrl);
+            //    ramlChooser.ShowDialog();
+            //}
+            //else
+            //{
+		        var dte = (DTE2) GetService(typeof (SDTE));
+		        dte.ExecuteCommand("Project.RunCustomTool");
+            //}
 
-			ChangeCommandStatus(updateReferenceCmdId, true);
+		    ChangeCommandStatus(updateReferenceCmdId, true);
 		}
+
+        private bool Unauthorized(string ramlFilePath)
+        {
+            var refFilePath = InstallerServices.GetRefFilePath(ramlFilePath);
+            var ramlSource = RamlReferenceReader.GetRamlSource(refFilePath);
+            if (!ramlSource.StartsWith("http"))
+                return false;
+
+            var client = new HttpClient();
+            var task = client.SendAsync(new HttpRequestMessage(HttpMethod.Get, ramlSource));
+            task.WaitWithPumping();
+            var result = task.ConfigureAwait(false).GetAwaiter().GetResult();
+            return result.StatusCode == HttpStatusCode.Unauthorized;
+        }
 
         private void AddRamlRefCommand_BeforeQueryStatus(object sender, EventArgs e)
         {

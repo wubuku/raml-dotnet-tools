@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,7 +15,7 @@ namespace Raml.Common
 	{
 		private readonly char[] includeDirectiveTrimChars = { ' ', '"', '}', ']', ',' };
 		private const string IncludeDirective = "!include";
-        private readonly IDictionary<string, Task> downloadFileTasks = new Dictionary<string, Task>();
+        private readonly IDictionary<string, Task<string>> downloadFileTasks = new Dictionary<string, Task<string>>();
 
 	    private HttpClient client;
 	    private HttpClient Client
@@ -36,10 +37,21 @@ namespace Raml.Common
 			if (ramlSource.StartsWith("http"))
 			{
 				var destinationFilePath = GetDestinationFilePath(Path.GetTempPath(), ramlSource);
+                Uri uri;
+                if (!Uri.TryCreate(ramlSource, UriKind.Absolute, out uri))
+                    throw new UriFormatException("Invalid URL: " + ramlSource);
 
-			    var task = DownloadFileAsync(ramlSource, destinationFilePath);
-                task.WaitWithPumping();
-			    var uri = task.ConfigureAwait(false).GetAwaiter().GetResult();
+                var downloadTask = Client.GetAsync(uri);
+                downloadTask.WaitWithPumping();
+			    var result = downloadTask.ConfigureAwait(false).GetAwaiter().GetResult();
+			    if (!result.IsSuccessStatusCode)
+			        return new RamlIncludesManagerResult(result.StatusCode);
+
+                var readTask = result.Content.ReadAsStringAsync();
+                readTask.WaitWithPumping();
+			    var contents = readTask.ConfigureAwait(false).GetAwaiter().GetResult();
+
+                WriteFile(destinationFilePath, confirmOverrite, contents);
 
 				path = uri.AbsolutePath;
 				if (ramlSource.Contains("/"))
@@ -60,8 +72,6 @@ namespace Raml.Common
 				Directory.CreateDirectory(destinationFolder);
 
 			Manage(lines, destinationFolder, includedFiles, path, confirmOverrite);
-
-		    //Task.WaitAll(downloadFileTasks.ToArray());
 
 			return new RamlIncludesManagerResult(string.Join(Environment.NewLine, lines), includedFiles);
 		}
@@ -127,10 +137,12 @@ namespace Raml.Common
 
 		    foreach (var includedFile in scopeIncludedFiles)
 		    {
-                if(downloadFileTasks.ContainsKey(includedFile))
+		        if (downloadFileTasks.ContainsKey(includedFile))
+		        {
 		            downloadFileTasks[includedFile].WaitWithPumping();
-
-                var nestedFileLines = File.ReadAllLines(includedFile);
+                    WriteFile(includedFile, confirmOvewrite, downloadFileTasks[includedFile].ConfigureAwait(false).GetAwaiter().GetResult());
+		        }
+		        var nestedFileLines = File.ReadAllLines(includedFile);
 
                 Manage(nestedFileLines, destinationFolder, includedFiles, path, confirmOvewrite);
 		    }
@@ -157,23 +169,9 @@ namespace Raml.Common
 			if (!Uri.TryCreate(ramlSourceUrl, UriKind.Absolute, out uri))
 				throw new UriFormatException("Invalid URL: " + ramlSourceUrl);
 
-            downloadFileTasks.Add(destinationFilePath, GetContentsAsync(uri).ContinueWith(task => WriteFile(destinationFilePath, confirmOvewrite, task.Result)));
+            downloadFileTasks.Add(destinationFilePath, GetContentsAsync(uri));
 		}
-
-        private async Task<Uri> DownloadFileAsync(string ramlSourceUrl, string destinationFilePath, bool confirmOvewrite = false)
-        {
-            Uri uri;
-            if (!Uri.TryCreate(ramlSourceUrl, UriKind.Absolute, out uri))
-                throw new UriFormatException("Invalid URL: " + ramlSourceUrl);
-
-            await GetContentsAsync(uri).ContinueWith(task => WriteFile(destinationFilePath, confirmOvewrite, task.Result));
-
-            //WriteFile(destinationFilePath, confirmOvewrite, contents);
-
-            return uri;
-        }
-
-
+        
 	    private static void WriteFile(string destinationFilePath, bool confirmOvewrite, string contents)
 	    {
 	        if (File.Exists(destinationFilePath) && confirmOvewrite)
@@ -215,10 +213,9 @@ namespace Raml.Common
 			return includeSource.StartsWith("http") || (!string.IsNullOrWhiteSpace(path) && path.StartsWith("http"));
 		}
 
-        public async Task<string> GetContentsAsync(Uri uri)
+        public Task<string> GetContentsAsync(Uri uri)
         {
-            var downloadTask = await Client.GetStringAsync(uri).ConfigureAwait(false);
-            return downloadTask;
+            return Client.GetStringAsync(uri);
         }
 	}
 }
