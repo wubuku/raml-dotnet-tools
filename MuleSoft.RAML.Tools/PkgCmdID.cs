@@ -13,5 +13,6 @@ namespace MuleSoft.RAML.Tools
 		public const uint cmdUpdateRAMLContract = 0x500;
         public const uint cmdEnableMetadataOutput = 0x600;
         public const uint cmdExtractRAML = 0x700;
+        public const uint cmdDisableMetadataOutput = 0x800;
     };
 }

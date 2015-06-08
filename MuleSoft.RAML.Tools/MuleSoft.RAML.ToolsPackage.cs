@@ -33,6 +33,7 @@ namespace MuleSoft.RAML.Tools
 	    private CommandID implementContractCommandId;
 	    private CommandID updateRAMLContractCommandId;
         private CommandID enableRamlMetadataOutputCommandId;
+        private CommandID disableRamlMetadataOutputCommandId;
         private CommandID extractRAMLCommandId;
 
 	    public MuleSoft_RAML_ToolsPackage()
@@ -99,12 +100,28 @@ namespace MuleSoft.RAML.Tools
             enableRamlMetadataOutput.BeforeQueryStatus += AddReverseEngineeringCommandOnBeforeQueryStatus;
             mcs.AddCommand(enableRamlMetadataOutput);
 
+            // Disable RAML metadata output (RAML WebApiExplorer) command
+            disableRamlMetadataOutputCommandId = new CommandID(GuidList.guidMuleSoft_RAML_DisableMetadataOutput, (int)PkgCmdIDList.cmdDisableMetadataOutput);
+            var disableRamlMetadataOutput = new OleMenuCommand(DisableRamlMetadataOutputCallback, disableRamlMetadataOutputCommandId);
+            disableRamlMetadataOutput.BeforeQueryStatus += RemoveReverseEngineeringCommandOnBeforeQueryStatus;
+            mcs.AddCommand(disableRamlMetadataOutput);
+
             //// Extract RAML (RAML WebApiExplorer) command
             //extractRAMLCommandId = new CommandID(GuidList.guidMuleSoft_RAML_ExtractRAML, (int)PkgCmdIDList.cmdExtractRAML);
             //var extractRAMLCommand = new OleMenuCommand(ExtractRAMLCallback, extractRAMLCommandId);
             //extractRAMLCommand.BeforeQueryStatus += ExtractRAMLCommandOnBeforeQueryStatus;
             //mcs.AddCommand(extractRAMLCommand);
 
+        }
+
+        private void DisableRamlMetadataOutputCallback(object sender, EventArgs e)
+        {
+            ChangeCommandStatus(enableRamlMetadataOutputCommandId, false);
+
+            var service = new ReverseEngineeringService(ServiceProvider.GlobalProvider);
+            service.RemoveReverseEngineering();
+
+            ChangeCommandStatus(enableRamlMetadataOutputCommandId, true);
         }
 
         private void ExtractRAMLCallback(object sender, EventArgs e)
@@ -274,11 +291,27 @@ namespace MuleSoft.RAML.Tools
             if (!IsWebApiCoreInstalled())
                 return;
 
+            if (IsWebApiExplorerInstalled())
+                return;
+
+            ShowAndEnableCommand(menuCommand, true);
+        }
+
+        private void RemoveReverseEngineeringCommandOnBeforeQueryStatus(object sender, EventArgs e)
+        {
+            var menuCommand = sender as OleMenuCommand;
+            if (menuCommand == null) return;
+
+            ShowAndEnableCommand(menuCommand, false);
+
+            if (!IsWebApiExplorerInstalled())
+                return;
+
             ShowAndEnableCommand(menuCommand, true);
         }
 
 
-		private void AddRamlContractCommandOnBeforeQueryStatus(object sender, EventArgs eventArgs)
+        private void AddRamlContractCommandOnBeforeQueryStatus(object sender, EventArgs eventArgs)
 		{
 			var menuCommand = sender as OleMenuCommand;
 			if (menuCommand == null) return;
@@ -290,6 +323,16 @@ namespace MuleSoft.RAML.Tools
 
 			ShowAndEnableCommand(menuCommand, true);
 		}
+
+        private bool IsWebApiExplorerInstalled()
+        {
+            var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
+            var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+            var componentModel = (IComponentModel)ServiceProvider.GlobalProvider.GetService(typeof(SComponentModel));
+            var installerServices = componentModel.GetService<IVsPackageInstallerServices>();
+            var isWebApiCoreInstalled = installerServices.IsPackageInstalled(proj, "RAML.WebApiExplorer");
+            return isWebApiCoreInstalled;
+        }
 
 	    private static bool IsWebApiCoreInstalled()
 	    {

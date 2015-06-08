@@ -98,7 +98,17 @@
         </Strings>
       </Button>
 
-      <!--<Button guid="guidMuleSoft_RAML_CmdExtractRAML" id="cmdExtractRAML" priority="0x0100" type="Button">
+        <Button guid="guidMuleSoft_RAML_DisableMetadataOutput" id="cmdDisableMetadataOutput" priority="0x0100" type="Button">
+            <Parent guid="guidMuleSoft_RAML_ProjectNode" id="ProjectNodeGroup" />
+            <Icon guid="guidImages" id="bmpPic1" />
+            <CommandFlag>DynamicVisibility</CommandFlag>
+            <Strings>
+                <CommandName>cmdDisableMetadataOutput</CommandName>
+                <ButtonText>Disable RAML metadata output</ButtonText>
+            </Strings>
+        </Button>
+
+        <!--<Button guid="guidMuleSoft_RAML_CmdExtractRAML" id="cmdExtractRAML" priority="0x0100" type="Button">
         <Parent guid="guidMuleSoft_RAML_ProjectNode" id="ProjectNodeGroup" />
         <Icon guid="guidImages" id="bmpPic1" />
         <CommandFlag>DynamicVisibility</CommandFlag>
@@ -162,13 +172,18 @@
       <IDSymbol name="cmdEnableMetadataOutput" value="0x0600" />
     </GuidSymbol>
 
+      <GuidSymbol name="guidMuleSoft_RAML_DisableMetadataOutput" value="{9345ba25-7345-4be0-81eb-d365fe004dea}">
+          <IDSymbol name="ProjectNodeGroup" value="0x1020"/>
+          <IDSymbol name="cmdDisableMetadataOutput" value="0x0800" />
+      </GuidSymbol>
+      
     <!--<GuidSymbol name="guidMuleSoft_RAML_CmdExtractRAML" value="{a1f4149f-0985-4a2c-88ad-0e747290b3a2}">
       <IDSymbol name="ProjectNodeGroup" value="0x1020"/>
       <IDSymbol name="cmdExtractRAML" value="0x0700" />
     </GuidSymbol>-->
+      
 
-
-    <GuidSymbol name="guidImages" value="{59571131-f5d7-4e0a-b2da-973f343a7e28}" >
+      <GuidSymbol name="guidImages" value="{59571131-f5d7-4e0a-b2da-973f343a7e28}" >
       <IDSymbol name="bmpPic1" value="1" />
       <IDSymbol name="bmpPic2" value="2" />
       <IDSymbol name="bmpPicSearch" value="3" />
