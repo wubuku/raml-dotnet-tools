@@ -85,10 +85,20 @@ namespace $(namespace)
 <#
 		            foreach (var property in method.Query.Properties)
 		            {
+                        if(property.Type == "bool" || property.Type == "bool?")
+                        {
+#>
+                if(<#= method.Query.Name.ToLower() #>.<#= property.Name #> != null)
+					url += "&<#= property.OriginalName #>=" + <#= method.Query.Name.ToLower() #>.<#= property.Name #>.ToString().ToLower();
+<#
+                        }
+                        else
+                        {
 #>
                 if(<#= method.Query.Name.ToLower() #>.<#= property.Name #> != null)
 					url += "&<#= property.OriginalName #>=" + <#= method.Query.Name.ToLower() #>.<#= property.Name #>;
 <#
+                        }
         		    }
 #>
             }
@@ -232,10 +242,20 @@ namespace $(namespace)
 <#
 		            foreach (var property in method.Query.Properties)
 		            {
+                        if(property.Type == "bool" || property.Type == "bool?")
+                        {
+#>
+                if(request.Query.<#= property.Name #> != null)
+                    url += "&<#= property.OriginalName ?? property.Name #>=" + request.Query.<#= property.Name #>.ToString().ToLower();
+<#
+                        }
+                        else
+                        {
 #>
                 if(request.Query.<#= property.Name #> != null)
                     url += "&<#= property.OriginalName ?? property.Name #>=" + request.Query.<#= property.Name #>;
 <#
+                        }
 		            }
 #>
             }
