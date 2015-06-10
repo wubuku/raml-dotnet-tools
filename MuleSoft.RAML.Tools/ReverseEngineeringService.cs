@@ -140,5 +140,75 @@ namespace MuleSoft.RAML.Tools
         {
             throw new NotImplementedException();
         }
+
+        public void RemoveReverseEngineering()
+        {
+            try
+            {
+                ActivityLog.LogInformation(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, "Disable RAML metadata output process started");
+                var dte = serviceProvider.GetService(typeof(SDTE)) as DTE;
+                var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+
+                UninstallNugetAndDependencies(proj);
+                ActivityLog.LogInformation(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, "Nuget package uninstalled");
+
+                RemovXmlCommentsDocumentation(proj);
+                ActivityLog.LogInformation(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, "XML comments documentation removed");
+            }
+            catch (Exception ex)
+            {
+                ActivityLog.LogError(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource,
+                    VisualStudioAutomationHelper.GetExceptionInfo(ex));
+                MessageBox.Show("Error when trying to disable RAML metadata output. " + ex.Message);
+                throw;
+            }
+        }
+
+        private void UninstallNugetAndDependencies(Project proj)
+        {
+            var componentModel = (IComponentModel)serviceProvider.GetService(typeof(SComponentModel));
+            var installerServices = componentModel.GetService<IVsPackageInstallerServices>();
+            var installer = componentModel.GetService<IVsPackageUninstaller>();
+
+            // Uninstall RAML.WebApiExplorer
+            if (installerServices.IsPackageInstalled(proj, ramlWebApiExplorerPackageId))
+            {
+                installer.UninstallPackage(proj, ramlWebApiExplorerPackageId, false);
+            }
+        }
+
+        private void RemovXmlCommentsDocumentation(Project proj)
+        {
+            RemoveXmlCommentsInWebApiConfig(proj);
+            RemoveXmlDocumentationFileInProject(proj);
+        }
+
+        private static void RemoveXmlCommentsInWebApiConfig(Project proj)
+        {
+            var appStart = proj.ProjectItems.Cast<ProjectItem>().FirstOrDefault(i => i.Name == "App_Start");
+            if (appStart == null) return;
+
+            var webApiConfig = appStart.ProjectItems.Cast<ProjectItem>().FirstOrDefault(i => i.Name == "WebApiConfig.cs");
+            if (webApiConfig == null) return;
+
+            var path = webApiConfig.FileNames[0];
+            var content = File.ReadAllText(path);
+
+            if (!content.Contains("DocumentationProviderConfig.IncludeXmlComments"))
+                return;
+
+            content = content.Replace("RAML.WebApiExplorer.DocumentationProviderConfig.IncludeXmlComments();", string.Empty);
+
+            File.WriteAllText(path, content);
+        }
+
+        private static void RemoveXmlDocumentationFileInProject(Project proj)
+        {
+            var config = proj.ConfigurationManager.ActiveConfiguration;
+            var configProps = config.Properties;
+            var prop = configProps.Item("DocumentationFile");
+            prop.Value = string.Empty;
+        }
+
     }
 }
