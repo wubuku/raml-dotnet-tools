@@ -23,7 +23,7 @@
 					Value="5" />
             <Setter Property="Margin"
 					Value="5,0,5,0" />
-            <Setter Property="MinHeight" Value="250"></Setter>
+            <Setter Property="Height" Value="300"></Setter>
             <Setter Property="IsReadOnly"
 					Value="True" />
             <Setter Property="IsTabStop"
@@ -40,10 +40,6 @@
 
         <Style x:Key="DefaultLabel"
 			   TargetType="{x:Type Label}">
-            <Setter Property="Margin"
-					Value="5,5,5,5" />
-            <Setter Property="HorizontalAlignment"
-					Value="Right" />
             <Setter Property="FontSize" Value="13"></Setter>
             <Setter Property="Foreground" Value="DimGray"></Setter>
         </Style>
@@ -51,41 +47,44 @@
         <Style x:Key="Button"
 			   TargetType="{x:Type Button}">
             <Setter Property="Margin"
-					Value="0,10,0,10" />
+					Value="10" />
             <Setter Property="Height"
 					Value="50" />
             <Setter Property="FontSize"
 					Value="13"></Setter>
-            <Setter Property="BorderThickness" Value="0,0,0,4"></Setter>
+            <Setter Property="BorderThickness" Value="0"></Setter>
             <Setter Property="Foreground" Value="DimGray"></Setter>
             <Setter Property="Background" Value="White"></Setter>
         </Style>
 
+
         <Style x:Key="DefaultButton"
 			   TargetType="{x:Type Button}">
             <Setter Property="Margin"
-					Value="0,10,0,10" />
+					Value="0,0,0,0" />
             <Setter Property="Height"
-					Value="50" />
+					Value="25" />
+            <Setter Property="Width"
+					Value="40" />
             <Setter Property="Background"
-					Value="DodgerBlue" />
+					Value="#00A2DF" />
+            <Setter Property="BorderThickness" 
+                    Value="0"></Setter>
             <Setter Property="Foreground"
-					Value="Gainsboro" />
-            <Setter Property="BorderThickness" Value="0,0,0,4"></Setter>
+					Value="WhiteSmoke" />
             <Setter Property="FontSize"
 					Value="13"></Setter>
         </Style>
 
         <Style x:Key="DefaultTextBox"
 			   TargetType="{x:Type TextBox}">
-            <Setter Property="Margin"
-					Value="5,15,5,15" />
+            <Setter Property="Margin" Value="0,0,5,0"></Setter>
             <Setter Property="HorizontalAlignment"
-					Value="Left" />
+					Value="Stretch" />
             <Setter Property="Height"
-					Value="23" />
+					Value="25" />
             <Setter Property="TextWrapping"
-					Value="Wrap" />
+					Value="NoWrap" />
 
         </Style>
 
@@ -116,10 +115,10 @@
             <Label Content="Filename"
 							   Style="{StaticResource DefaultLabel}"
 							   Grid.Column="1"
-							   Grid.Row="0" />
+							   Grid.Row="0"
+                               Margin="5" />
             <TextBox x:Name="txtFileName"
 								 Style="{StaticResource DefaultTextBox}"
-								 Margin="0,5,0,5"
 								 Grid.Column="2"
 								 Grid.Row="0"
 								 Width="220" />
@@ -128,10 +127,10 @@
 							   Content="Namespace"
 							   Style="{StaticResource DefaultLabel}"
 							   Grid.Column="1"
-							   Grid.Row="1" />
+							   Grid.Row="1"
+                               Margin="5" />
             <TextBox x:Name="txtNamespace"
 								 Style="{StaticResource DefaultTextBox}"
-								 Margin="0,5,0,5"
 								 Grid.Column="2"
 								 Grid.Row="1"
 								 Width="220" />
