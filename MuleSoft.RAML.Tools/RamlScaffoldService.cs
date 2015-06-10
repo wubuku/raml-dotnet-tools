@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
@@ -26,8 +27,10 @@ namespace MuleSoft.RAML.Tools
 		private readonly IT4Service t4Service;
 		private readonly IServiceProvider serviceProvider;
 		private readonly TemplatesManager templatesManager = new TemplatesManager();
+	    private static readonly string ContractsFolder = Path.DirectorySeparatorChar + Settings.Default.ContractsFolderName + Path.DirectorySeparatorChar;
+	    private static readonly string IncludesFolder = Path.DirectorySeparatorChar + "includes" + Path.DirectorySeparatorChar;
 
-		public RamlScaffoldService(IT4Service t4Service, IServiceProvider serviceProvider)
+	    public RamlScaffoldService(IT4Service t4Service, IServiceProvider serviceProvider)
 		{
 			this.t4Service = t4Service;
 			this.serviceProvider = serviceProvider;
@@ -68,7 +71,6 @@ namespace MuleSoft.RAML.Tools
                 return;
 
 			var extensionPath = Path.GetDirectoryName(GetType().Assembly.Location) + Path.DirectorySeparatorChar;
-
 			
 			AddOrUpdateModels(targetNamespace, generatedFolderPath, ramlItem, model, folderItem, extensionPath);
 
@@ -80,6 +82,81 @@ namespace MuleSoft.RAML.Tools
 
 		    AddOrUpdateControllerImplementations(targetNamespace, generatedFolderPath, proj, model, folderItem, extensionPath);
 		}
+
+	    public static void TriggerScaffoldOnRamlChanged(Document document)
+	    {
+	        if (!IsInContractsFolder(document)) 
+                return;
+
+	        ScaffoldMainRamlFiles(GetMainRamlFiles(document));
+	    }
+
+	    private static void ScaffoldMainRamlFiles(IEnumerable<string> ramlFiles)
+	    {
+	        var globalProvider = ServiceProvider.GlobalProvider;
+	        var service = new RamlScaffoldService(new T4Service(globalProvider), ServiceProvider.GlobalProvider);
+	        foreach (var ramlFile in ramlFiles)
+	        {
+	            var refFilePath = InstallerServices.GetRefFilePath(ramlFile);
+	            service.Scaffold(ramlFile, RamlReferenceReader.GetRamlNamespace(refFilePath), Path.GetFileName(ramlFile));
+	        }
+	    }
+
+	    private static IEnumerable<string> GetMainRamlFiles(Document document)
+	    {
+	        var path = document.Path.ToLowerInvariant();
+
+	        if (IsMainRamlFile(document, path))
+                return new [] {document.FullName};
+
+	        var ramlItems = GetMainRamlFileFromProject();
+	        return GetItemsWithReferenceFiles(ramlItems);
+	    }
+
+	    private static bool IsMainRamlFile(Document document, string path)
+	    {
+	        return !path.EndsWith(IncludesFolder) && document.Name.ToLowerInvariant().EndsWith(".raml") && HasReferenceFile(document.FullName);
+	    }
+
+	    private static IEnumerable<string> GetItemsWithReferenceFiles(IEnumerable<ProjectItem> ramlItems)
+	    {
+	        var items = new List<string>();
+	        foreach (var item in ramlItems)
+	        {
+	            if (HasReferenceFile(item.FileNames[0]))
+	                items.Add(item.FileNames[0]);
+	        }
+	        return items;
+	    }
+
+	    private static bool HasReferenceFile(string ramlFilePath)
+	    {
+	        var refFilePath = InstallerServices.GetRefFilePath(ramlFilePath);
+	        var hasReferenceFile = !string.IsNullOrWhiteSpace(refFilePath) && File.Exists(refFilePath);
+	        return hasReferenceFile;
+	    }
+
+	    private static IEnumerable<ProjectItem> GetMainRamlFileFromProject()
+	    {
+            var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
+	        var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+	        var contractsItem =
+	            proj.ProjectItems.Cast<ProjectItem>().FirstOrDefault(i => i.Name == Settings.Default.ContractsFolderName);
+
+	        if (contractsItem == null)
+	            throw new InvalidOperationException("Could not find main RAML file");
+
+	        var ramlItems = contractsItem.ProjectItems.Cast<ProjectItem>().Where(i => i.Name.EndsWith(".raml")).ToArray();
+	        if (!ramlItems.Any())
+	            throw new InvalidOperationException("Could not find main RAML file");
+
+	        return ramlItems;
+	    }
+
+	    private static bool IsInContractsFolder(Document document)
+	    {
+	        return document.Path.ToLowerInvariant().Contains(ContractsFolder.ToLowerInvariant());
+	    }
 
 	    private void AddOrUpdateControllerImplementations(string targetNamespace, string generatedFolderPath, Project proj,
 	        WebApiGeneratorModel model, ProjectItem folderItem, string extensionPath)
@@ -161,30 +238,20 @@ namespace MuleSoft.RAML.Tools
 
 	    public void UpdateRaml(string ramlFilePath)
 		{
+            var dte = serviceProvider.GetService(typeof(SDTE)) as DTE;
+            var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+            var generatedFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + ContractsFolderName + Path.DirectorySeparatorChar;
+
 			var refFilePath = InstallerServices.GetRefFilePath(ramlFilePath);
+            var includesFolderPath = generatedFolderPath + Path.DirectorySeparatorChar + InstallerServices.IncludesFolderName;
 			var ramlSource = RamlReferenceReader.GetRamlSource(refFilePath);
-			var contents = GetRamlContentsFromSource(ramlSource);
-
-			File.WriteAllText(ramlFilePath, contents);
-		}
-
-		private static string GetRamlContentsFromSource(string ramlSource)
-		{
-			if (ramlSource.StartsWith("http"))
-				return RamlContentsFromWebSource(ramlSource);
-			
-			return File.ReadAllText(ramlSource);
-		}
-
-		private static string RamlContentsFromWebSource(string ramlSource)
-		{
-			Uri uri;
-			if (Uri.TryCreate(ramlSource, UriKind.Absolute, out uri))
-				return Downloader.GetContents(uri);
-
-			var errorMessage = "Invalid Url specified: " + uri.AbsoluteUri;
-			ActivityLog.LogError(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, errorMessage);
-			throw new UriFormatException(errorMessage);
+	        var includesManager = new RamlIncludesManager();
+	        var result = includesManager.Manage(ramlSource, includesFolderPath);
+	        if (result.IsSuccess)
+	        {
+	            File.WriteAllText(ramlFilePath, result.ModifiedContents);
+	            Scaffold(ramlFilePath, RamlReferenceReader.GetRamlNamespace(refFilePath), Path.GetFileName(ramlFilePath));
+	        }
 		}
 
 		private void AddContractFromFile(string ramlFilePath, string targetNamespace, string ramlSource, bool? doNotScaffold, ProjectItem folderItem, string folderPath, string targetFilename)

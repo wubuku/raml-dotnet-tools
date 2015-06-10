@@ -11,7 +11,6 @@ namespace MuleSoft.RAML.Tools
         public const string guidMuleSoft_RAML_ReferencesNodeString = "9556bec5-0574-49ed-a2f7-9c427687cc44";
         public const string guidMuleSoft_RAML_FolderNodeString = "b16d5c80-c404-423c-aa1b-ecf5b58f89bd";
 		public const string guidMuleSoft_RAML_FileNodeString = "61eff566-9e0e-4197-b9c4-8b0dab685768";
-		public const string guidMuleSoft_RAML_CmdImplementContractString = "a1da1a77-77da-4ab8-8180-9b9e37c059a1";
 		public const string guidMuleSoft_RAML_ProjectNodeString = "50f8cbf6-aacf-457d-aa89-0bc300a9b7ae";
 		public const string guidMuleSoft_RAML_UpdateRAMLContractString = "14c03645-17a8-49ae-b301-6a619f3942d9";
         public const string guidMuleSoft_RAML_EnableMetadataOutputString = "30206c8b-b59e-477f-929e-d47376b779b7";
@@ -21,7 +20,6 @@ namespace MuleSoft.RAML.Tools
         public static readonly Guid guidMuleSoft_RAML_ReferencesNode = new Guid(guidMuleSoft_RAML_ReferencesNodeString);
         public static readonly Guid guidMuleSoft_RAML_FolderNode = new Guid(guidMuleSoft_RAML_FolderNodeString);
 		public static readonly Guid guidMuleSoft_RAML_FileNode = new Guid(guidMuleSoft_RAML_FileNodeString);
-		public static readonly Guid guidMuleSoft_RAML_CmdImplementContract = new Guid(guidMuleSoft_RAML_CmdImplementContractString);
 		public static readonly Guid guidMuleSoft_RAML_ProjectNode = new Guid(guidMuleSoft_RAML_ProjectNodeString);
 		public static readonly Guid guidMuleSoft_RAML_CmdUpdateRAMLContract = new Guid(guidMuleSoft_RAML_UpdateRAMLContractString);
         public static readonly Guid guidMuleSoft_RAML_EnableMetadataOutput = new Guid(guidMuleSoft_RAML_EnableMetadataOutputString);
