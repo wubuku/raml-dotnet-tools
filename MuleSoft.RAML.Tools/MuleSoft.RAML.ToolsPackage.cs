@@ -22,7 +22,7 @@ namespace MuleSoft.RAML.Tools
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(GuidList.guidMuleSoft_RAML_ToolsPackagePkgString)]
 	[ProvideAutoLoad("f1536ef8-92ec-443c-9ed7-fdadf150da82")]
-    public sealed class MuleSoft_RAML_ToolsPackage : Package
+    public sealed class MuleSoft_RAML_ToolsPackage : Package, IVsThreadedWaitDialogCallback
     {
         private CommandID addReferenceInApiFolderCmdId;
 	    private CommandID updateReferenceCmdId;
@@ -30,9 +30,9 @@ namespace MuleSoft.RAML.Tools
         private CommandID enableRamlMetadataOutputCommandId;
         private CommandID disableRamlMetadataOutputCommandId;
         //private CommandID extractRAMLCommandId;
-        private bool alreadyAttachedOnDocumentSave;
         private static Events events;
         private static DocumentEvents documentEvents;
+        private IVsThreadedWaitDialog3 attachingDialog;
 
         public MuleSoft_RAML_ToolsPackage()
 	    {
@@ -101,22 +101,22 @@ namespace MuleSoft.RAML.Tools
             //extractRAMLCommand.BeforeQueryStatus += ExtractRAMLCommandOnBeforeQueryStatus;
             //mcs.AddCommand(extractRAMLCommand);
 
-            if (!alreadyAttachedOnDocumentSave)
-            {
-                var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
-                events = dte.Events;
-                documentEvents = events.DocumentEvents;
-                documentEvents.DocumentSaved += RamlScaffoldService.TriggerScaffoldOnRamlChanged;
-                alreadyAttachedOnDocumentSave = true;
-            }
+            var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
+            events = dte.Events;
+            documentEvents = events.DocumentEvents;
+            documentEvents.DocumentSaved += RamlScaffoldService.TriggerScaffoldOnRamlChanged;
         }
 
         private void DisableRamlMetadataOutputCallback(object sender, EventArgs e)
         {
             ChangeCommandStatus(enableRamlMetadataOutputCommandId, false);
 
+            StartProgressBar("Disable RAML metada output", "Uninstalling...", "Processing...");
+
             var service = new ReverseEngineeringService(ServiceProvider.GlobalProvider);
             service.RemoveReverseEngineering();
+
+            StopProgressBar();
 
             ChangeCommandStatus(enableRamlMetadataOutputCommandId, true);
         }
@@ -135,10 +135,14 @@ namespace MuleSoft.RAML.Tools
         {
             ChangeCommandStatus(enableRamlMetadataOutputCommandId, false);
 
+            StartProgressBar("Enable RAML metada output", "Installing...", "Processing...");
+
             var service = new ReverseEngineeringService(ServiceProvider.GlobalProvider);
             service.AddReverseEngineering();
-            System.Diagnostics.Process.Start("https://github.com/mulesoft-labs/raml-dotnet-tools#metadata");
 
+            StopProgressBar();
+
+            System.Diagnostics.Process.Start("https://github.com/mulesoft-labs/raml-dotnet-tools#metadata");
             ChangeCommandStatus(enableRamlMetadataOutputCommandId, true);
         }
 
@@ -511,6 +515,38 @@ namespace MuleSoft.RAML.Tools
 				}
 			}
 		}
+
+        public void OnCanceled()
+        {
+            StopProgressBar();
+        }
+
+        private void StopProgressBar()
+        {
+            if (attachingDialog != null)
+            {
+                var canceled = 0;
+                attachingDialog.EndWaitDialog(out canceled);
+                attachingDialog = null;
+            }
+        }
+
+        private void StartProgressBar(string title, string message, string progressMessage)
+        {
+            var dialogFactory = GetService(typeof(SVsThreadedWaitDialogFactory)) as IVsThreadedWaitDialogFactory;
+            IVsThreadedWaitDialog2 dialog = null;
+            if (dialogFactory != null)
+            {
+                dialogFactory.CreateInstance(out dialog);
+            }
+
+            attachingDialog = (IVsThreadedWaitDialog3)dialog;
+
+            attachingDialog.StartWaitDialogWithCallback(title,
+                message, string.Empty, null,
+                progressMessage, true, 0,
+                true, 0, 0, this);
+        }
 
     }
 }

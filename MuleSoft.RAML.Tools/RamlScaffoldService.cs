@@ -63,7 +63,7 @@ namespace MuleSoft.RAML.Tools
 			var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
 
 			var folderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, ContractsFolderName);
-			var ramlItem = folderItem.ProjectItems.Cast<ProjectItem>().First(i => i.Name == ramlFileName);
+			var ramlItem = folderItem.ProjectItems.Cast<ProjectItem>().First(i => i.Name.ToLowerInvariant() == ramlFileName.ToLowerInvariant());
 			var generatedFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + ContractsFolderName + Path.DirectorySeparatorChar;
 
             if (!templatesManager.ConfirmWhenIncompatibleServerTemplate(generatedFolderPath,
