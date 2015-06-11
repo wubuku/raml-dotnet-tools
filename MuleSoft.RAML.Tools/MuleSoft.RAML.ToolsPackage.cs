@@ -1,11 +1,4 @@
-﻿using System;
-using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using EnvDTE;
+﻿using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
@@ -14,9 +7,13 @@ using Microsoft.VisualStudio.Shell.Interop;
 using MuleSoft.RAML.Tools.Properties;
 using NuGet.VisualStudio;
 using Raml.Common;
+using System;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Net;
-using System.Security.Cryptography.X509Certificates;
-using System.Net.Security;
+using System.Runtime.InteropServices;
 
 namespace MuleSoft.RAML.Tools
 {
@@ -25,24 +22,25 @@ namespace MuleSoft.RAML.Tools
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(GuidList.guidMuleSoft_RAML_ToolsPackagePkgString)]
 	[ProvideAutoLoad("f1536ef8-92ec-443c-9ed7-fdadf150da82")]
-    public sealed class MuleSoft_RAML_ToolsPackage : Package
+    public sealed class MuleSoft_RAML_ToolsPackage : Package, IVsThreadedWaitDialogCallback
     {
+        private CommandID addReferenceInApiFolderCmdId;
 	    private CommandID updateReferenceCmdId;
-	    private CommandID implementContractCommandId;
-	    private CommandID updateRAMLContractCommandId;
+	    private CommandID updateRamlContractCommandId;
         private CommandID enableRamlMetadataOutputCommandId;
-        private CommandID extractRAMLCommandId;
+        private CommandID disableRamlMetadataOutputCommandId;
+        //private CommandID extractRAMLCommandId;
+        private static Events events;
+        private static DocumentEvents documentEvents;
+        private IVsThreadedWaitDialog3 attachingDialog;
 
-	    public MuleSoft_RAML_ToolsPackage()
+        public MuleSoft_RAML_ToolsPackage()
 	    {
 		    var message = string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this);
 		    Debug.WriteLine(message);
 
 #if DEBUG
-        ServicePointManager.ServerCertificateValidationCallback = delegate(Object obj, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
-        {
-          return (true);
-        };
+        ServicePointManager.ServerCertificateValidationCallback = (obj, certificate, chain, errors) => true;
 #endif
       }
 
@@ -56,10 +54,16 @@ namespace MuleSoft.RAML.Tools
             var mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
 	        if (null == mcs) return;
 
-	        // Add RAML Reference command
+	        // Add RAML Reference command in References
 	        var addRamlRefCommandId = new CommandID(GuidList.guidMuleSoft_RAML_ReferencesNode, (int)PkgCmdIDList.cmdRAMLGenerator);
 	        var addRamlRefCommand = new MenuCommand(AddRamlReferenceCallback, addRamlRefCommandId );
 	        mcs.AddCommand( addRamlRefCommand );
+
+            // Add RAML Reference command in Api References Folder
+            addReferenceInApiFolderCmdId = new CommandID(GuidList.guidMuleSoft_RAML_FolderNode, (int)PkgCmdIDList.cmdRAMLGenerator2);
+            var addReferenceCommand = new OleMenuCommand(AddRamlReferenceCallback, addReferenceInApiFolderCmdId);
+            addReferenceCommand.BeforeQueryStatus += AddRamlRefCommand_BeforeQueryStatus;
+            mcs.AddCommand(addReferenceCommand);
 
 			// Update RAML Reference command
 	        updateReferenceCmdId = new CommandID(GuidList.guidMuleSoft_RAML_FileNode, (int)PkgCmdIDList.cmdUpdateRAMLReference);
@@ -67,24 +71,17 @@ namespace MuleSoft.RAML.Tools
 	        updateReferenceCommand.BeforeQueryStatus += UpdateRamlRefCommand_BeforeQueryStatus;
 			mcs.AddCommand(updateReferenceCommand);
 
-
 			// Add RAML Contract command
 			var addRamlContractCmdId = new CommandID(GuidList.guidMuleSoft_RAML_ProjectNode, (int)PkgCmdIDList.cmdAddContract);
 			var addRamlContractCommand = new OleMenuCommand(AddRamlContractCallback, addRamlContractCmdId);
 			addRamlContractCommand.BeforeQueryStatus += AddRamlContractCommandOnBeforeQueryStatus;
 			mcs.AddCommand(addRamlContractCommand);
 
-			// Implement RAML Contract command
-	        implementContractCommandId = new CommandID(GuidList.guidMuleSoft_RAML_CmdImplementContract, (int) PkgCmdIDList.cmdImplementContract);
-	        var implementContractCommand = new OleMenuCommand(ImplementContractCallback, implementContractCommandId);
-			implementContractCommand.BeforeQueryStatus += ImplementContractCommandOnBeforeQueryStatus;
-			mcs.AddCommand(implementContractCommand);
-
 			// Update RAML from source (Contract/Server) command
-			updateRAMLContractCommandId = new CommandID(GuidList.guidMuleSoft_RAML_CmdUpdateRAMLContract, (int)PkgCmdIDList.cmdUpdateRAMLContract);
-			var updateRAMLCommand = new OleMenuCommand(UpdateRAMLContractCallback, updateRAMLContractCommandId);
-			updateRAMLCommand.BeforeQueryStatus += UpdateRAMLCommandOnBeforeQueryStatus;
-			mcs.AddCommand(updateRAMLCommand);
+			updateRamlContractCommandId = new CommandID(GuidList.guidMuleSoft_RAML_CmdUpdateRAMLContract, (int)PkgCmdIDList.cmdUpdateRAMLContract);
+			var updateRamlCommand = new OleMenuCommand(UpdateRamlContractCallback, updateRamlContractCommandId);
+			updateRamlCommand.BeforeQueryStatus += UpdateRAMLCommandOnBeforeQueryStatus;
+			mcs.AddCommand(updateRamlCommand);
 
             // Enable RAML metadata output (RAML WebApiExplorer) command
             enableRamlMetadataOutputCommandId = new CommandID(GuidList.guidMuleSoft_RAML_EnableMetadataOutput, (int)PkgCmdIDList.cmdEnableMetadataOutput);
@@ -92,38 +89,66 @@ namespace MuleSoft.RAML.Tools
             enableRamlMetadataOutput.BeforeQueryStatus += AddReverseEngineeringCommandOnBeforeQueryStatus;
             mcs.AddCommand(enableRamlMetadataOutput);
 
+            // Disable RAML metadata output (RAML WebApiExplorer) command
+            disableRamlMetadataOutputCommandId = new CommandID(GuidList.guidMuleSoft_RAML_DisableMetadataOutput, (int)PkgCmdIDList.cmdDisableMetadataOutput);
+            var disableRamlMetadataOutput = new OleMenuCommand(DisableRamlMetadataOutputCallback, disableRamlMetadataOutputCommandId);
+            disableRamlMetadataOutput.BeforeQueryStatus += RemoveReverseEngineeringCommandOnBeforeQueryStatus;
+            mcs.AddCommand(disableRamlMetadataOutput);
+
             //// Extract RAML (RAML WebApiExplorer) command
             //extractRAMLCommandId = new CommandID(GuidList.guidMuleSoft_RAML_ExtractRAML, (int)PkgCmdIDList.cmdExtractRAML);
             //var extractRAMLCommand = new OleMenuCommand(ExtractRAMLCallback, extractRAMLCommandId);
             //extractRAMLCommand.BeforeQueryStatus += ExtractRAMLCommandOnBeforeQueryStatus;
             //mcs.AddCommand(extractRAMLCommand);
 
+            var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
+            events = dte.Events;
+            documentEvents = events.DocumentEvents;
+            documentEvents.DocumentSaved += RamlScaffoldService.TriggerScaffoldOnRamlChanged;
         }
 
-        private void ExtractRAMLCallback(object sender, EventArgs e)
+        private void DisableRamlMetadataOutputCallback(object sender, EventArgs e)
         {
-            ChangeCommandStatus(extractRAMLCommandId, false);
+            ChangeCommandStatus(enableRamlMetadataOutputCommandId, false);
+
+            StartProgressBar("Disable RAML metada output", "Uninstalling...", "Processing...");
 
             var service = new ReverseEngineeringService(ServiceProvider.GlobalProvider);
-            service.ExtractRAML();
+            service.RemoveReverseEngineering();
 
-            ChangeCommandStatus(extractRAMLCommandId, true);
+            StopProgressBar();
+
+            ChangeCommandStatus(enableRamlMetadataOutputCommandId, true);
         }
+
+        //private void ExtractRAMLCallback(object sender, EventArgs e)
+        //{
+        //    ChangeCommandStatus(extractRAMLCommandId, false);
+
+        //    var service = new ReverseEngineeringService(ServiceProvider.GlobalProvider);
+        //    service.ExtractRAML();
+
+        //    ChangeCommandStatus(extractRAMLCommandId, true);
+        //}
 
         private void EnableRamlMetadataOutputCallback(object sender, EventArgs e)
         {
             ChangeCommandStatus(enableRamlMetadataOutputCommandId, false);
 
+            StartProgressBar("Enable RAML metada output", "Installing...", "Processing...");
+
             var service = new ReverseEngineeringService(ServiceProvider.GlobalProvider);
             service.AddReverseEngineering();
-            System.Diagnostics.Process.Start("https://github.com/mulesoft-labs/raml-dotnet-tools#metadata");
 
+            StopProgressBar();
+
+            System.Diagnostics.Process.Start("https://github.com/mulesoft-labs/raml-dotnet-tools#metadata");
             ChangeCommandStatus(enableRamlMetadataOutputCommandId, true);
         }
 
-        private void UpdateRAMLContractCallback(object sender, EventArgs e)
+        private void UpdateRamlContractCallback(object sender, EventArgs e)
 	    {
-			ChangeCommandStatus(updateRAMLContractCommandId, false);
+			ChangeCommandStatus(updateRamlContractCommandId, false);
 
 			// Get the file path
 			uint itemid;
@@ -135,7 +160,7 @@ namespace MuleSoft.RAML.Tools
 			var ramlScaffoldUpdater = new RamlScaffoldService(new T4Service(ServiceProvider.GlobalProvider), ServiceProvider.GlobalProvider);
 			ramlScaffoldUpdater.UpdateRaml(ramlFilePath);
 
-			ChangeCommandStatus(updateRAMLContractCommandId, true);
+			ChangeCommandStatus(updateRamlContractCommandId, true);
 	    }
 
 	    private void AddRamlContractCallback(object sender, EventArgs e)
@@ -144,36 +169,6 @@ namespace MuleSoft.RAML.Tools
 		    var frm = new RamlChooser(ServiceProvider.GlobalProvider, ramlScaffoldUpdater.AddContract, "Add RAML Contract", true, Settings.Default.RAMLExchangeUrl);
 		    frm.ShowDialog();
 	    }
-
-
-
-	    private void ImplementContractCallback(object sender, EventArgs e)
-		{
-			ChangeCommandStatus(implementContractCommandId, false);
-
-			// Get the file path
-			uint itemid;
-			IVsHierarchy hierarchy;
-			if (!IsSingleProjectItemSelection(out hierarchy, out itemid)) return;
-			string ramlFilePath;
-			((IVsProject)hierarchy).GetMkDocument(itemid, out ramlFilePath);
-
-		    var refFilePath = Path.Combine(Path.GetDirectoryName(ramlFilePath), Path.GetFileNameWithoutExtension(ramlFilePath) + ".ref");
-			var targetNamespace = RamlReferenceReader.GetRamlNamespace(refFilePath);
-
-		    try
-		    {
-			    var scaffolder = new RamlScaffoldService(new T4Service(ServiceProvider.GlobalProvider),
-				    ServiceProvider.GlobalProvider);
-			    scaffolder.Scaffold(ramlFilePath, targetNamespace, Path.GetFileName(ramlFilePath));
-		    }
-		    catch (Exception ex)
-		    {
-			    MessageBox.Show(ex.Message, "Error");
-		    }
-
-			ChangeCommandStatus(implementContractCommandId, true);
-		}
 
 		private void AddRamlReferenceCallback(object sender, EventArgs e)
 		{
@@ -199,34 +194,58 @@ namespace MuleSoft.RAML.Tools
 		    if(!templatesManager.ConfirmWhenIncompatibleClientTemplate(generatedFolderPath))
                 return;
 
-			var dte = (DTE2)GetService(typeof(SDTE));
-			dte.ExecuteCommand("Project.RunCustomTool");
+            //if (Unauthorized(ramlFilePath))
+            //{
+            //    var generationServices = new RamlReferenceService(ServiceProvider.GlobalProvider);
+            //    var ramlChooser = new RamlChooser(this, generationServices.AddRamlReference, "Update RAML Reference", false,
+            //        Settings.Default.RAMLExchangeUrl);
+            //    ramlChooser.ShowDialog();
+            //}
+            //else
+            //{
+		        var dte = (DTE2) GetService(typeof (SDTE));
+		        dte.ExecuteCommand("Project.RunCustomTool");
+            //}
 
-			ChangeCommandStatus(updateReferenceCmdId, true);
+		    ChangeCommandStatus(updateReferenceCmdId, true);
 		}
+
+        //private bool Unauthorized(string ramlFilePath)
+        //{
+        //    var refFilePath = InstallerServices.GetRefFilePath(ramlFilePath);
+        //    var ramlSource = RamlReferenceReader.GetRamlSource(refFilePath);
+        //    if (!ramlSource.StartsWith("http"))
+        //        return false;
+
+        //    var client = new HttpClient();
+        //    var task = client.SendAsync(new HttpRequestMessage(HttpMethod.Get, ramlSource));
+        //    task.WaitWithPumping();
+        //    var result = task.ConfigureAwait(false).GetAwaiter().GetResult();
+        //    return result.StatusCode == HttpStatusCode.Unauthorized;
+        //}
+
+        private void AddRamlRefCommand_BeforeQueryStatus(object sender, EventArgs e)
+        {
+            ShowOrHideCommandAddRefApiFolder(sender);
+        }
 
 		private void UpdateRAMLCommandOnBeforeQueryStatus(object sender, EventArgs e)
 		{
 			ShowOrHideCommandContract(sender);
 		}
 
-	    private void ImplementContractCommandOnBeforeQueryStatus(object sender, EventArgs eventArgs)
-	    {
-			ShowOrHideCommandContract(sender);
-	    }
+        //private void ExtractRAMLCommandOnBeforeQueryStatus(object sender, EventArgs e)
+        //{
+        //    var menuCommand = sender as OleMenuCommand;
+        //    if (menuCommand == null) return;
 
-        private void ExtractRAMLCommandOnBeforeQueryStatus(object sender, EventArgs e)
-        {
-            var menuCommand = sender as OleMenuCommand;
-            if (menuCommand == null) return;
+        //    ShowAndEnableCommand(menuCommand, false);
 
-            ShowAndEnableCommand(menuCommand, false);
+        //    if (!IsWebApiCoreInstalled())
+        //        return;
 
-            if (!IsWebApiCoreInstalled())
-                return;
-
-            ShowAndEnableCommand(menuCommand, true);
-        }
+        //    ShowAndEnableCommand(menuCommand, true);
+        //}
 
         private void AddReverseEngineeringCommandOnBeforeQueryStatus(object sender, EventArgs e)
         {
@@ -238,11 +257,27 @@ namespace MuleSoft.RAML.Tools
             if (!IsWebApiCoreInstalled())
                 return;
 
+            if (IsWebApiExplorerInstalled())
+                return;
+
+            ShowAndEnableCommand(menuCommand, true);
+        }
+
+        private void RemoveReverseEngineeringCommandOnBeforeQueryStatus(object sender, EventArgs e)
+        {
+            var menuCommand = sender as OleMenuCommand;
+            if (menuCommand == null) return;
+
+            ShowAndEnableCommand(menuCommand, false);
+
+            if (!IsWebApiExplorerInstalled())
+                return;
+
             ShowAndEnableCommand(menuCommand, true);
         }
 
 
-		private void AddRamlContractCommandOnBeforeQueryStatus(object sender, EventArgs eventArgs)
+        private void AddRamlContractCommandOnBeforeQueryStatus(object sender, EventArgs eventArgs)
 		{
 			var menuCommand = sender as OleMenuCommand;
 			if (menuCommand == null) return;
@@ -254,6 +289,16 @@ namespace MuleSoft.RAML.Tools
 
 			ShowAndEnableCommand(menuCommand, true);
 		}
+
+        private bool IsWebApiExplorerInstalled()
+        {
+            var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
+            var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+            var componentModel = (IComponentModel)ServiceProvider.GlobalProvider.GetService(typeof(SComponentModel));
+            var installerServices = componentModel.GetService<IVsPackageInstallerServices>();
+            var isWebApiCoreInstalled = installerServices.IsPackageInstalled(proj, "RAML.WebApiExplorer");
+            return isWebApiCoreInstalled;
+        }
 
 	    private static bool IsWebApiCoreInstalled()
 	    {
@@ -278,6 +323,30 @@ namespace MuleSoft.RAML.Tools
 			var menuCmd = mcs.FindCommand(commandId);
 			if (menuCmd != null) menuCmd.Enabled = enable;
 		}
+
+        private static void ShowOrHideCommandAddRefApiFolder(object sender)
+        {
+            // get the menu that fired the event
+            var menuCommand = sender as OleMenuCommand;
+            if (menuCommand == null) return;
+
+            ShowAndEnableCommand(menuCommand, false);
+
+            IVsHierarchy hierarchy;
+            uint itemid;
+
+            if (!IsSingleProjectItemSelection(out hierarchy, out itemid)) return;
+            // Get the file path
+            string itemFullPath;
+            ((IVsProject)hierarchy).GetMkDocument(itemid, out itemFullPath);
+
+            var folder = Path.GetDirectoryName(itemFullPath);
+            if (!folder.EndsWith(Settings.Default.ApiReferencesFolderName))
+                return;
+
+            ShowAndEnableCommand(menuCommand, true);
+        }
+
 
 		private static void ShowOrHideCommand(object sender, string containingFolderName)
 		{
@@ -346,40 +415,40 @@ namespace MuleSoft.RAML.Tools
 			ShowAndEnableCommand(menuCommand, true);
 	    }
 
-        private static void ShowOrHideCommandReverseEngineering(object sender)
-        {
-            // get the menu that fired the event
-            var menuCommand = sender as OleMenuCommand;
-            if (menuCommand == null) return;
+        //private static void ShowOrHideCommandReverseEngineering(object sender)
+        //{
+        //    // get the menu that fired the event
+        //    var menuCommand = sender as OleMenuCommand;
+        //    if (menuCommand == null) return;
 
-            ShowAndEnableCommand(menuCommand, false);
+        //    ShowAndEnableCommand(menuCommand, false);
 
-            IVsHierarchy hierarchy;
-            uint itemid;
+        //    IVsHierarchy hierarchy;
+        //    uint itemid;
 
-            if (!IsSingleProjectItemSelection(out hierarchy, out itemid)) return;
-            // Get the file path
-            string itemFullPath;
-            ((IVsProject)hierarchy).GetMkDocument(itemid, out itemFullPath);
-            var transformFileInfo = new FileInfo(itemFullPath);
+        //    if (!IsSingleProjectItemSelection(out hierarchy, out itemid)) return;
+        //    // Get the file path
+        //    string itemFullPath;
+        //    ((IVsProject)hierarchy).GetMkDocument(itemid, out itemFullPath);
+        //    var transformFileInfo = new FileInfo(itemFullPath);
 
-            var endsWithExtension = transformFileInfo.Name.EndsWith(".raml");
+        //    var endsWithExtension = transformFileInfo.Name.EndsWith(".raml");
 
-            // if not leave the menu hidden
-            if (!endsWithExtension) return;
+        //    // if not leave the menu hidden
+        //    if (!endsWithExtension) return;
 
-            if (itemFullPath.Contains(RamlReferenceService.ApiReferencesFolderName))
-                return;
+        //    if (itemFullPath.Contains(RamlReferenceService.ApiReferencesFolderName))
+        //        return;
 
-            var folder = Path.GetDirectoryName(itemFullPath);
-            if (folder.EndsWith(InstallerServices.IncludesFolderName))
-                return;
+        //    var folder = Path.GetDirectoryName(itemFullPath);
+        //    if (folder.EndsWith(InstallerServices.IncludesFolderName))
+        //        return;
 
-            if (!IsWebApiCoreInstalled())
-                return;
+        //    if (!IsWebApiCoreInstalled())
+        //        return;
 
-            ShowAndEnableCommand(menuCommand, true);
-        }
+        //    ShowAndEnableCommand(menuCommand, true);
+        //}
 
 	    private static void ShowAndEnableCommand(OleMenuCommand menuCommand, bool visible)
 	    {
@@ -392,8 +461,8 @@ namespace MuleSoft.RAML.Tools
 			hierarchy = null;
 			itemid = VSConstants.VSITEMID_NIL;
 
-		    var monitorSelection = Package.GetGlobalService(typeof(SVsShellMonitorSelection)) as IVsMonitorSelection;
-			var solution = Package.GetGlobalService(typeof(SVsSolution)) as IVsSolution;
+		    var monitorSelection = GetGlobalService(typeof(SVsShellMonitorSelection)) as IVsMonitorSelection;
+			var solution = GetGlobalService(typeof(SVsSolution)) as IVsSolution;
 			if (monitorSelection == null || solution == null)
 			{
 				return false;
@@ -423,9 +492,9 @@ namespace MuleSoft.RAML.Tools
 				hierarchy = Marshal.GetObjectForIUnknown(hierarchyPtr) as IVsHierarchy;
 				if (hierarchy == null) return false;
 
-				Guid guidProjectID;
+				Guid guidProjectId;
 
-				if (ErrorHandler.Failed(solution.GetGuidOfProject(hierarchy, out guidProjectID)))
+				if (ErrorHandler.Failed(solution.GetGuidOfProject(hierarchy, out guidProjectId)))
 				{
 					return false; // hierarchy is not a project inside the Solution if it does not have a ProjectID Guid
 				}
@@ -446,6 +515,38 @@ namespace MuleSoft.RAML.Tools
 				}
 			}
 		}
+
+        public void OnCanceled()
+        {
+            StopProgressBar();
+        }
+
+        private void StopProgressBar()
+        {
+            if (attachingDialog != null)
+            {
+                var canceled = 0;
+                attachingDialog.EndWaitDialog(out canceled);
+                attachingDialog = null;
+            }
+        }
+
+        private void StartProgressBar(string title, string message, string progressMessage)
+        {
+            var dialogFactory = GetService(typeof(SVsThreadedWaitDialogFactory)) as IVsThreadedWaitDialogFactory;
+            IVsThreadedWaitDialog2 dialog = null;
+            if (dialogFactory != null)
+            {
+                dialogFactory.CreateInstance(out dialog);
+            }
+
+            attachingDialog = (IVsThreadedWaitDialog3)dialog;
+
+            attachingDialog.StartWaitDialogWithCallback(title,
+                message, string.Empty, null,
+                progressMessage, true, 0,
+                true, 0, 0, this);
+        }
 
     }
 }

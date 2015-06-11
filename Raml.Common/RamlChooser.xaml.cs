@@ -55,7 +55,7 @@ namespace Raml.Common
 			Title = title;
 			IsContractUseCase = isContractUseCase;
             btnOk.IsEnabled = false;
-			Height = isContractUseCase ? 620 : 525;
+			Height = isContractUseCase ? 570 : 475;
 			OnPropertyChanged("Height");
 		}
 

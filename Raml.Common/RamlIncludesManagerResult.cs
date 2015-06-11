@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Net;
 
 namespace Raml.Common
 {
@@ -8,9 +9,18 @@ namespace Raml.Common
 		{
 			ModifiedContents = modifiedContents;
 			IncludedFiles = includedFiles;
+		    IsSuccess = true;
 		}
 
-		public string ModifiedContents { get; private set; }
+        public RamlIncludesManagerResult(HttpStatusCode statusCode)
+        {
+            StatusCode = statusCode;
+            IncludedFiles = new List<string>();
+        }
+
+	    public string ModifiedContents { get; private set; }
 		public IEnumerable<string> IncludedFiles { get; private set; }
+	    public bool IsSuccess { get; private set; }
+	    public HttpStatusCode StatusCode { get; private set; }
 	}
 }

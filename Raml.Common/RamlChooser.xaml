@@ -7,51 +7,15 @@
 				 x:Class="Raml.Common.RamlChooser"
 				 x:Name="RamlChooserWindow"
                  Background="Gainsboro"
-				 Width="620"
+				 Width="600"
 				 ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
-        <Style x:Key="TextBlockStyle"
-			   TargetType="{x:Type TextBox}">
-            <Setter Property="Background"
-					Value="{x:Null}" />
-            <Setter Property="BorderBrush"
-					Value="Black" />
-            <Setter Property="BorderThickness"
-					Value="1" />
-            <Setter Property="Padding"
-					Value="5" />
-            <Setter Property="Margin"
-					Value="5,0,5,0" />
-            <Setter Property="MinHeight" Value="250"></Setter>
-            <Setter Property="IsReadOnly"
-					Value="True" />
-            <Setter Property="IsTabStop"
-					Value="False" />
-            <Setter Property="Focusable"
-					Value="False" />
-            <Setter Property="VerticalAlignment"
-					Value="Top" />
-            <Setter Property="SnapsToDevicePixels"
-					Value="True" />
-            <Setter Property="TextWrapping"
-					Value="Wrap" />
-        </Style>
-
+        
         <Style x:Key="DefaultLabel"
 			   TargetType="{x:Type Label}">
-            <Setter Property="Margin"
-					Value="5,5,5,5" />
             <Setter Property="FontSize" Value="13"></Setter>
             <Setter Property="Foreground" Value="DimGray"></Setter>
-        </Style>
-
-        <Style x:Key="Label"
-			   TargetType="{x:Type Label}">
-            <Setter Property="Margin"
-					Value="5,5,5,5" />
-            <Setter Property="FontSize" Value="11"></Setter>
-            <Setter Property="Foreground" Value="Black"></Setter>
         </Style>
 
         <Style x:Key="MainButttonLabel"
@@ -61,7 +25,7 @@
             <Setter Property="HorizontalAlignment"
 					Value="Center" />
             <Setter Property="FontSize" Value="16"></Setter>
-            <Setter Property="Foreground" Value="DodgerBlue"></Setter>
+            <Setter Property="Foreground" Value="#00A2DF"></Setter>
         </Style>
 
         <Style x:Key="SecondaryButtonLabel"
@@ -78,12 +42,12 @@
         <Style x:Key="BigButton"
 			   TargetType="{x:Type Button}">
             <Setter Property="Margin"
-					Value="0,10,0,10" />
-            <Setter Property="BorderThickness" Value="0,0,0,4"></Setter>
+					Value="0" />
+            <Setter Property="BorderThickness" Value="0"></Setter>
             <Setter Property="Foreground" Value="DimGray"></Setter>
             <Setter Property="Background" Value="White"></Setter>
             <Setter Property="Height" Value="220"></Setter>
-            <Setter Property="Width" Value="180"></Setter>
+            <Setter Property="Width" Value="190"></Setter>
         </Style>
 
 
@@ -95,7 +59,7 @@
 					Value="50" />
             <Setter Property="FontSize"
 					Value="13"></Setter>
-            <Setter Property="BorderThickness" Value="0,0,0,4"></Setter>
+            <Setter Property="BorderThickness" Value="0"></Setter>
             <Setter Property="Foreground" Value="DimGray"></Setter>
             <Setter Property="Background" Value="White"></Setter>
         </Style>
@@ -109,23 +73,42 @@
             <Setter Property="Width"
 					Value="40" />
             <Setter Property="Background"
-					Value="DodgerBlue" />
+					Value="#00A2DF" />
+            <Setter Property="BorderThickness" 
+                    Value="0"></Setter>
             <Setter Property="Foreground"
-					Value="Gainsboro" />
+					Value="WhiteSmoke" />
+            <Setter Property="FontSize"
+					Value="13"></Setter>
+        </Style>
+
+        <Style x:Key="CommonButton"
+			   TargetType="{x:Type Button}">
+            <Setter Property="Margin"
+					Value="0,0,0,0" />
+            <Setter Property="Height"
+					Value="25" />
+            <Setter Property="Width"
+					Value="40" />
+            <Setter Property="Background"
+					Value="WhiteSmoke" />
+            <Setter Property="Foreground"
+                    Value="DimGray"></Setter>
+            <Setter Property="BorderBrush"
+                    Value="DimGray"></Setter>
             <Setter Property="FontSize"
 					Value="13"></Setter>
         </Style>
 
         <Style x:Key="DefaultTextBox"
 			   TargetType="{x:Type TextBox}">
-            <Setter Property="Margin"
-					Value="5,15,5,15" />
+            <Setter Property="Margin" Value="0,0,5,0"></Setter>
             <Setter Property="HorizontalAlignment"
-					Value="Left" />
+					Value="Stretch" />
             <Setter Property="Height"
-					Value="23" />
+					Value="25" />
             <Setter Property="TextWrapping"
-					Value="Wrap" />
+					Value="NoWrap" />
 
         </Style>
 
@@ -135,17 +118,15 @@
 					Value="12" />
             <Setter Property="FontWeight"
 					Value="Bold" />
-            <Setter Property="Margin"
-					Value="5" />
-
         </Style>
+        
     </Window.Resources>
 
     <Grid>
-        <Grid Margin="0, 5, 0, 5">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"></ColumnDefinition>
-                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="100"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -157,60 +138,57 @@
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Image Source="images/raml.png" Grid.Row="0" Grid.Column="1" Margin="10"></Image>
+            <Image Source="images/raml.png" Grid.Row="0" Grid.Column="1" Margin="10" Stretch="None"></Image>
 
             <Grid Grid.Row="1" Grid.Column="1"
-				  Visibility="{Binding ElementName=RamlChooserWindow, Path=ContractUseCaseVisibility}"
-				  Margin="0, 5, 0, 5"
-				  x:Name="newRamlGrid">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-
-                <RadioButton Content="New RAML contract"
-							 x:Name="newRamlRadioButton"
-							 Checked="NewRaml_Checked"
-							 Grid.ColumnSpan="2"
-                             Grid.Column="0"
-							 Style="{StaticResource DefaultRadioButton}"
-							 GroupName="MainOption"
-							 Grid.Row="1" />
-
-                <Label Content="Title:"
-					   Style="{StaticResource DefaultLabel}"
-					   Grid.Column="0"
-					   Grid.Row="2" />
-
-                <TextBox x:Name="txtTitle"
-						 Grid.Row="2"
-						 Grid.Column="1"
-						 Style="{StaticResource DefaultTextBox}"
-						 TextChanged="Title_OnTextChanged"
-						 Width="250"
-						 Margin="0,5,5,5" />
-
-                <Button Content="OK"
-									x:Name="btnOk"
-									Style="{StaticResource DefaultButton}"
-                                    Grid.Row="2"
-									Grid.Column="2"
-									Click="btnOk_Click" />
-            </Grid>
-
-            <Grid Row="2" Grid.Column="1"
 				  Margin="0, 5, 0, 5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
+
+                <RadioButton Content="New RAML contract"
+							 x:Name="newRamlRadioButton"
+							 Checked="NewRaml_Checked"
+                             Visibility="{Binding ElementName=RamlChooserWindow, Path=ContractUseCaseVisibility}"
+							 Style="{StaticResource DefaultRadioButton}"
+							 GroupName="MainOption"
+                             Margin="0,0,0,5"
+							 Grid.Row="1" />
+
+               <Grid Grid.Row="2"
+                     Visibility="{Binding ElementName=RamlChooserWindow, Path=ContractUseCaseVisibility}">
+                   <Grid.ColumnDefinitions>
+                       <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                <Label Content="Title:"
+					   Style="{StaticResource DefaultLabel}"
+                       Margin="0,5"
+					   Grid.Column="0" />
+
+                <TextBox x:Name="txtTitle"
+						 Grid.Column="1"
+						 Style="{StaticResource DefaultTextBox}"
+						 TextChanged="Title_OnTextChanged"
+						  />
+
+                <Button Content="OK"
+									x:Name="btnOk"
+									Style="{StaticResource CommonButton}"
+									Grid.Column="2"
+									Click="btnOk_Click" />
+
+                </Grid>
+
+
 
                 <RadioButton Content="Existing RAML contract"
 							 x:Name="existingRamlRadioButton"
@@ -218,25 +196,19 @@
 							 Style="{StaticResource DefaultRadioButton}"
 							 Visibility="{Binding ElementName=RamlChooserWindow, Path=ContractUseCaseVisibility}"
 							 GroupName="MainOption"
-							 Grid.Row="0" />
+                             Margin="0,14,0,10"
+							 Grid.Row="3" />
 
-                <Grid Grid.Row="1"
-					  x:Name="browseRamlGrid"
-					  Margin="0, 5, 0, 5">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+                <Grid Grid.Row="4"
+					  x:Name="browseRamlGrid">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
                         <ColumnDefinition Width="Auto"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
 
                     <Button Grid.Column="0"
-                            Grid.Row="0"
                             Style="{StaticResource BigButton}"
 							x:Name="LibraryButton"
                             Click="LibraryButton_OnClick">
@@ -254,8 +226,7 @@
 
                     <Button 
                                 Style="{StaticResource BigButton}"
-								Grid.Column="1"
-                                Grid.Row="0"
+								Grid.Column="2"
 								x:Name="BrowseButton"
 								Click="btnChooseFile_Click" >
                         <Grid>
@@ -275,48 +246,42 @@
 
                     </Button>
 
-                    <Grid Grid.Row="1" ColumnSpan="2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition></RowDefinition>
-                            <RowDefinition></RowDefinition>
-                        </Grid.RowDefinitions>
-
-                        <Label Content="or enter the URL of a RAML definition:"
-							   Style="{StaticResource DefaultLabel}"
-							   Grid.Column="0"
-                               Grid.ColumnSpan="2"/>
-
-                        <TextBox x:Name="txtURL"
-                                 Style="{StaticResource DefaultTextBox}"
-                                 Grid.Row="1"
-                                 TextWrapping="NoWrap"
-								 Grid.Column="1"
-                                 Width="340"
-								 Margin="0,5,5,5" />
-
-                        <Button 
-								Style="{StaticResource DefaultButton}"
-								x:Name="GoButton"
-                                Content="OK"
-                            Grid.Row="1"
-								Grid.Column="2"
-								HorizontalAlignment="Left"
-								Click="GoButton_Click" >
-                        </Button>
-
-
-                    </Grid>
 
 
 
 
 
                 </Grid>
+
+
+                <Label Content="or enter the URL of a RAML definition:"
+							   Style="{StaticResource DefaultLabel}"
+                               Margin="0,16,0,4"
+                               Grid.Row="5" />
+
+                <Grid Grid.Row="6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="txtURL"
+                                 Style="{StaticResource DefaultTextBox}"
+								 Grid.Column="0" />
+
+                    <Button 
+								Style="{StaticResource DefaultButton}"
+								x:Name="GoButton"
+                                Content="OK"
+								Grid.Column="1"
+								Click="GoButton_Click" >
+                    </Button>
+
+
+                </Grid>
+
+
+
 
             </Grid>
 
