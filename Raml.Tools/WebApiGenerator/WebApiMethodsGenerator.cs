@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Raml.Common;
 using Raml.Parser.Expressions;
 using Raml.Tools.WebApiGenerator;
 
@@ -8,11 +9,13 @@ namespace Raml.Tools
 {
 	public class WebApiMethodsGenerator : MethodsGeneratorBase
 	{
-		public WebApiMethodsGenerator(RamlDocument raml) : base(raml)
+        public WebApiMethodsGenerator(RamlDocument raml, IDictionary<string, ApiObject> schemaResponseObjects, 
+            IDictionary<string, ApiObject> schemaRequestObjects, IDictionary<string, string> linkKeysWithObjectNames)
+            : base(raml, schemaResponseObjects, schemaRequestObjects, linkKeysWithObjectNames)
 		{
 		}
 
-		public IEnumerable<ControllerMethod> GetMethods(Resource resource, string url, ControllerObject parent, string objectName, IDictionary<string, ApiObject> schemaResponseObjects, IDictionary<string, ApiObject> schemaRequestObjects)
+		public IEnumerable<ControllerMethod> GetMethods(Resource resource, string url, ControllerObject parent, string objectName)
 		{
 			var methodsNames = new List<string>();
 			if (parent != null && parent.Methods != null)
@@ -24,7 +27,7 @@ namespace Raml.Tools
 
 			foreach (var method in resource.Methods)
 			{
-				var generatedMethod = BuildControllerMethod(url, method, resource, parent, schemaResponseObjects, schemaRequestObjects);
+				var generatedMethod = BuildControllerMethod(url, method, resource, parent);
 
 				if (IsVerbForMethod(method))
 				{
@@ -45,16 +48,16 @@ namespace Raml.Tools
 			return generatorMethods;
 		}
 
-		private ControllerMethod BuildControllerMethod(string url, Method method, Resource resource, ControllerObject parent, IDictionary<string, ApiObject> schemaResponseObjects, IDictionary<string, ApiObject> schemaRequestObjects)
+		private ControllerMethod BuildControllerMethod(string url, Method method, Resource resource, ControllerObject parent)
 		{
 			var relativeUri = UrlGeneratorHelper.GetRelativeUri(url, parent.PrefixUri);
 
 			return new ControllerMethod
 			{
 				Name = NetNamingMapper.GetMethodName(method.Verb ?? "Get" + resource.RelativeUri),
-				Parameter = GetParameter(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, schemaRequestObjects, url),
+				Parameter = GetParameter(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, url),
 				UriParameters = uriParametersGenerator.GetUriParameters(resource, url),
-				ReturnType = GetReturnType(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, schemaResponseObjects, url),
+				ReturnType = GetReturnType(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, url),
 				Comment = GetComment(resource, method),
 				Url = relativeUri,
 				Verb = NetNamingMapper.Capitalize(method.Verb),

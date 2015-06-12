@@ -61,7 +61,7 @@ namespace MuleSoft.RAML.Tools.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("5.2.0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("5.1.2")]
         public string WebApiClientPackageVersion {
             get {
                 return ((string)(this["WebApiClientPackageVersion"]));
@@ -88,7 +88,7 @@ namespace MuleSoft.RAML.Tools.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.9.2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.9.3")]
         public string RAMLApiCorePackageVersion {
             get {
                 return ((string)(this["RAMLApiCorePackageVersion"]));
@@ -115,7 +115,7 @@ namespace MuleSoft.RAML.Tools.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.1")]
         public string ServerTemplatesVersion {
             get {
                 return ((string)(this["ServerTemplatesVersion"]));
@@ -124,7 +124,7 @@ namespace MuleSoft.RAML.Tools.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.1")]
         public string ClientTemplatesVersion {
             get {
                 return ((string)(this["ClientTemplatesVersion"]));
@@ -173,6 +173,60 @@ namespace MuleSoft.RAML.Tools.Properties {
         public string ControllerImplementationTemplateTitle {
             get {
                 return ((string)(this["ControllerImplementationTemplateTitle"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Enums")]
+        public string EnumsTemplateTitle {
+            get {
+                return ((string)(this["EnumsTemplateTitle"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://library.mulesoft.com/#!/?types=api")]
+        public string RAMLExchangeUrl {
+            get {
+                return ((string)(this["RAMLExchangeUrl"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("RAML.WebApiExplorer")]
+        public string RAMLWebApiExplorerPackageId {
+            get {
+                return ((string)(this["RAMLWebApiExplorerPackageId"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.0.1")]
+        public string RAMLWebApiExplorerPackageVersion {
+            get {
+                return ((string)(this["RAMLWebApiExplorerPackageVersion"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("RAML.Parser")]
+        public string RAMLParserPackageId {
+            get {
+                return ((string)(this["RAMLParserPackageId"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.8.101")]
+        public string RAMLParserPackageVersion {
+            get {
+                return ((string)(this["RAMLParserPackageVersion"]));
             }
         }
     }

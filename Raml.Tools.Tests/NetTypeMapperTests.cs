@@ -25,9 +25,10 @@ namespace Raml.Tools.Tests
 		}
 
 		[Test]
-		public void ShouldConvertToDateTime()
+		public void ShouldConvertToDecimal()
 		{
 			Assert.AreEqual("decimal", NetTypeMapper.Map(JsonSchemaType.Float));
 		}
+
 	}
 }

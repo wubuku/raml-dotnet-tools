@@ -1,10 +1,4 @@
-﻿using System;
-using System.CodeDom.Compiler;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows;
+﻿using System.Net;
 using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Designer.Interfaces;
@@ -13,8 +7,14 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using MuleSoft.RAML.Tools.Properties;
 using Raml.Common;
-using Raml.Tools;
 using Raml.Tools.ClientGenerator;
+using System;
+using System.CodeDom.Compiler;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows;
 using IServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 
 namespace MuleSoft.RAML.Tools
@@ -79,9 +79,15 @@ namespace MuleSoft.RAML.Tools
 				var refFilePath = InstallerServices.GetRefFilePath(wszInputFilePath);
 				var ramlSource = RamlReferenceReader.GetRamlSource(refFilePath);
 
-				var globalProvider = Microsoft.VisualStudio.Shell.ServiceProvider.GlobalProvider;
+				var globalProvider = ServiceProvider.GlobalProvider;
 				var destFolderItem = GetDestinationFolderItem(wszInputFilePath, globalProvider);
-				UpdateRamlAndIncludedFiles(wszInputFilePath, destFolderItem, ramlSource, containingFolder);
+				var result = UpdateRamlAndIncludedFiles(wszInputFilePath, destFolderItem, ramlSource, containingFolder);
+			    if (!result.IsSuccess)
+			    {
+                    MessageBox.Show("Error when tryng to download " + ramlSource + " - Status Code: " + Enum.GetName(typeof(HttpStatusCode), result.StatusCode));
+                    pcbOutput = 0;
+                    return VSConstants.E_ABORT;
+			    }
 
 				var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
 				var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
@@ -151,7 +157,7 @@ namespace MuleSoft.RAML.Tools
 			return directoryName.Substring(0, directoryName.LastIndexOf(Path.DirectorySeparatorChar)) + Path.DirectorySeparatorChar + "Templates";
 		}
 
-		private static void UpdateRamlAndIncludedFiles(string ramlFilePath, ProjectItem destFolderItem, string ramlSource, string containingFolder)
+		private static RamlIncludesManagerResult UpdateRamlAndIncludedFiles(string ramlFilePath, ProjectItem destFolderItem, string ramlSource, string containingFolder)
 		{
 			var includesFolderItem = destFolderItem.ProjectItems.Cast<ProjectItem>().FirstOrDefault(i => i.Name == InstallerServices.IncludesFolderName);
 
@@ -160,14 +166,18 @@ namespace MuleSoft.RAML.Tools
 			var includeManager = new RamlIncludesManager();
 			var result = includeManager.Manage(ramlSource, containingFolder + Path.DirectorySeparatorChar + InstallerServices.IncludesFolderName);
 
-			UpdateRamlFile(ramlFilePath, result.ModifiedContents);
+		    if (!result.IsSuccess) 
+                return result;
 
-			InstallerServices.AddNewIncludedFiles(result, includesFolderItem, destFolderItem);
+		    UpdateRamlFile(ramlFilePath, result.ModifiedContents);
+
+		    InstallerServices.AddNewIncludedFiles(result, includesFolderItem, destFolderItem);
+		    return result;
 		}
 
 		private static ClientGeneratorModel GetGeneratorModel(string wszInputFilePath, RamlInfo ramlInfo)
 		{
-			var rootName = Raml.Tools.NetNamingMapper.GetObjectName(Path.GetFileNameWithoutExtension(wszInputFilePath));
+			var rootName = NetNamingMapper.GetObjectName(Path.GetFileNameWithoutExtension(wszInputFilePath));
 			if (!rootName.ToLower().Contains("client"))
 				rootName += "Client";
 			var model = new ClientGeneratorService(ramlInfo.RamlDocument, rootName).BuildModel();
@@ -207,7 +217,7 @@ namespace MuleSoft.RAML.Tools
 			IntPtr punk = Marshal.GetIUnknownForObject(site);
 			int hr = Marshal.QueryInterface(punk, ref riid, out ppvSite);
 			Marshal.Release(punk);
-			Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(hr);
+			ErrorHandler.ThrowOnFailure(hr);
 		}
 
 		public void SetSite(object pUnkSite)

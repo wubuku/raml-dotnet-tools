@@ -3,13 +3,6 @@
 
 
 
-
-
-
-
-
-
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,16 +14,15 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using RAML.Api.Core;
 using Raml.Common;
 
 namespace Movies
 {
-
     /// <summary>
     /// rent a movie
     /// </summary>
-
     public partial class Rent
     {
         private readonly MoviesApi proxy;
@@ -40,8 +32,6 @@ namespace Movies
             this.proxy = proxy;
         }
 
-
-
         /// <summary>
 		/// rent a movie
 		/// </summary>
@@ -51,32 +41,24 @@ namespace Movies
         {
 
             var url = "movies/{id}/rent";
-
             url = url.Replace("{id}", id.ToString());
-
             var req = new HttpRequestMessage(HttpMethod.Put, url);
-
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-
             req.Content = new StringContent(json);
-
 	        var response = await proxy.Client.SendAsync(req);
-
 
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
 
         }
-
 
         /// <summary>
 		/// rent a movie
@@ -86,24 +68,18 @@ namespace Movies
         {
 
             var url = "movies/{id}/rent";
-
 			if(request.UriParameters == null)
 				throw new InvalidOperationException("Uri Parameters cannot be null");               
-
 
 			if(request.UriParameters.Id == null)
 				throw new InvalidOperationException("Uri Parameter Id cannot be null");
 
             url = url.Replace("{id}", request.UriParameters.Id.ToString());
-
             var req = new HttpRequestMessage(HttpMethod.Put, url);
-
 
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-
             if(request.RawHeaders != null)
             {
                 foreach(var header in request.RawHeaders)
@@ -111,31 +87,23 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
-
             req.Content = request.Content;
-
 	        var response = await proxy.Client.SendAsync(req);
-
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers,
-
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
-
         }
 
-
     }
-
 
     /// <summary>
     /// return a movie
     /// </summary>
-
     public partial class Return
     {
         private readonly MoviesApi proxy;
@@ -144,8 +112,6 @@ namespace Movies
         {
             this.proxy = proxy;
         }
-
-
 
         /// <summary>
 		/// return a movie
@@ -156,32 +122,24 @@ namespace Movies
         {
 
             var url = "movies/{id}/return";
-
             url = url.Replace("{id}", id.ToString());
-
             var req = new HttpRequestMessage(HttpMethod.Put, url);
-
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-
             req.Content = new StringContent(json);
-
 	        var response = await proxy.Client.SendAsync(req);
-
 
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
 
         }
-
 
         /// <summary>
 		/// return a movie
@@ -191,24 +149,18 @@ namespace Movies
         {
 
             var url = "movies/{id}/return";
-
 			if(request.UriParameters == null)
 				throw new InvalidOperationException("Uri Parameters cannot be null");               
-
 
 			if(request.UriParameters.Id == null)
 				throw new InvalidOperationException("Uri Parameter Id cannot be null");
 
             url = url.Replace("{id}", request.UriParameters.Id.ToString());
-
             var req = new HttpRequestMessage(HttpMethod.Put, url);
-
 
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-
             if(request.RawHeaders != null)
             {
                 foreach(var header in request.RawHeaders)
@@ -216,26 +168,19 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
-
             req.Content = request.Content;
-
 	        var response = await proxy.Client.SendAsync(req);
-
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers,
-
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
-
         }
 
-
     }
-
 
     public partial class Wishlist
     {
@@ -246,8 +191,6 @@ namespace Movies
             this.proxy = proxy;
         }
 
-
-
         /// <summary>
 		/// gets the current user movies wishlist
 		/// </summary>
@@ -255,28 +198,31 @@ namespace Movies
         {
 
             var url = "movies/wishlist";
-
             var req = new HttpRequestMessage(HttpMethod.Get, url);
-
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-
 	        var response = await proxy.Client.SendAsync(req);
-
+			
+			if (proxy.SchemaValidation.Enabled)
+		    {
+				if(proxy.SchemaValidation.RaiseExceptions) 
+				{
+					await SchemaValidator.ValidateWithExceptionAsync("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content);
+				}
+					
+			}
 
             return new Models.WishlistGetResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content), true)
                                             };
 
         }
-
 
         /// <summary>
 		/// gets the current user movies wishlist
@@ -287,15 +233,11 @@ namespace Movies
         {
 
             var url = "movies/wishlist";
-
             var req = new HttpRequestMessage(HttpMethod.Get, url);
-
 
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-
             if(request.RawHeaders != null)
             {
                 foreach(var header in request.RawHeaders)
@@ -303,23 +245,25 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
-
 	        var response = await proxy.Client.SendAsync(req);
-
+			if (proxy.SchemaValidation.Enabled && proxy.SchemaValidation.RaiseExceptions)
+            {
+				if(proxy.SchemaValidation.RaiseExceptions)
+				{
+					await SchemaValidator.ValidateWithExceptionAsync("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content);
+				}
+				
+            }
             return new Models.WishlistGetResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers,
-
 	                                            Formatters = responseFormatters,
-
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content), true)
                                             };
-
         }
-
 
         /// <summary>
 		/// add a movie to the current user movies wishlist
@@ -330,32 +274,24 @@ namespace Movies
         {
 
             var url = "movies/wishlist/{id}";
-
             url = url.Replace("{id}", id.ToString());
-
             var req = new HttpRequestMessage(HttpMethod.Post, url);
-
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-
             req.Content = new StringContent(json);
-
 	        var response = await proxy.Client.SendAsync(req);
-
 
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
 
         }
-
 
         /// <summary>
 		/// add a movie to the current user movies wishlist
@@ -365,24 +301,18 @@ namespace Movies
         {
 
             var url = "movies/wishlist/{id}";
-
 			if(request.UriParameters == null)
 				throw new InvalidOperationException("Uri Parameters cannot be null");               
-
 
 			if(request.UriParameters.Id == null)
 				throw new InvalidOperationException("Uri Parameter Id cannot be null");
 
             url = url.Replace("{id}", request.UriParameters.Id.ToString());
-
             var req = new HttpRequestMessage(HttpMethod.Post, url);
-
 
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-
             if(request.RawHeaders != null)
             {
                 foreach(var header in request.RawHeaders)
@@ -390,23 +320,17 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
-
             req.Content = request.Content;
-
 	        var response = await proxy.Client.SendAsync(req);
-
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers,
-
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
-
         }
-
 
         /// <summary>
 		/// removes a movie from the current user movies wishlist
@@ -416,30 +340,23 @@ namespace Movies
         {
 
             var url = "movies/wishlist/{id}";
-
             url = url.Replace("{id}", id.ToString());
-
             var req = new HttpRequestMessage(HttpMethod.Delete, url);
-
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-
 	        var response = await proxy.Client.SendAsync(req);
-
 
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
 
         }
-
 
         /// <summary>
 		/// removes a movie from the current user movies wishlist
@@ -449,24 +366,18 @@ namespace Movies
         {
 
             var url = "movies/wishlist/{id}";
-
 			if(request.UriParameters == null)
 				throw new InvalidOperationException("Uri Parameters cannot be null");               
-
 
 			if(request.UriParameters.Id == null)
 				throw new InvalidOperationException("Uri Parameter Id cannot be null");
 
             url = url.Replace("{id}", request.UriParameters.Id.ToString());
-
             var req = new HttpRequestMessage(HttpMethod.Delete, url);
-
 
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-
             if(request.RawHeaders != null)
             {
                 foreach(var header in request.RawHeaders)
@@ -474,24 +385,18 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
-
 	        var response = await proxy.Client.SendAsync(req);
-
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers,
-
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
-
         }
 
-
     }
-
 
     public partial class Rented
     {
@@ -502,8 +407,6 @@ namespace Movies
             this.proxy = proxy;
         }
 
-
-
         /// <summary>
 		/// gets the user rented movies
 		/// </summary>
@@ -511,23 +414,28 @@ namespace Movies
         {
 
             var url = "movies/rented";
-
             var req = new HttpRequestMessage(HttpMethod.Get, url);
-
 	        var response = await proxy.Client.SendAsync(req);
-
+			
+			if (proxy.SchemaValidation.Enabled)
+		    {
+				if(proxy.SchemaValidation.RaiseExceptions) 
+				{
+					await SchemaValidator.ValidateWithExceptionAsync("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content);
+				}
+					
+			}
 
             return new Models.RentedGetResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content), true)
                                             };
 
         }
-
 
         /// <summary>
 		/// gets the user rented movies
@@ -538,9 +446,7 @@ namespace Movies
         {
 
             var url = "movies/rented";
-
             var req = new HttpRequestMessage(HttpMethod.Get, url);
-
 
             if(request.RawHeaders != null)
             {
@@ -549,26 +455,27 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
-
 	        var response = await proxy.Client.SendAsync(req);
-
+			if (proxy.SchemaValidation.Enabled && proxy.SchemaValidation.RaiseExceptions)
+            {
+				if(proxy.SchemaValidation.RaiseExceptions)
+				{
+					await SchemaValidator.ValidateWithExceptionAsync("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content);
+				}
+				
+            }
             return new Models.RentedGetResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers,
-
 	                                            Formatters = responseFormatters,
-
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content), true)
                                             };
-
         }
 
-
     }
-
 
     public partial class Available
     {
@@ -579,8 +486,6 @@ namespace Movies
             this.proxy = proxy;
         }
 
-
-
         /// <summary>
 		/// get all movies that are not currently rented
 		/// </summary>
@@ -588,23 +493,28 @@ namespace Movies
         {
 
             var url = "movies/available";
-
             var req = new HttpRequestMessage(HttpMethod.Get, url);
-
 	        var response = await proxy.Client.SendAsync(req);
-
+			
+			if (proxy.SchemaValidation.Enabled)
+		    {
+				if(proxy.SchemaValidation.RaiseExceptions) 
+				{
+					await SchemaValidator.ValidateWithExceptionAsync("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content);
+				}
+					
+			}
 
             return new Models.AvailableGetResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content), true)
                                             };
 
         }
-
 
         /// <summary>
 		/// get all movies that are not currently rented
@@ -615,9 +525,7 @@ namespace Movies
         {
 
             var url = "movies/available";
-
             var req = new HttpRequestMessage(HttpMethod.Get, url);
-
 
             if(request.RawHeaders != null)
             {
@@ -626,26 +534,27 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
-
 	        var response = await proxy.Client.SendAsync(req);
-
+			if (proxy.SchemaValidation.Enabled && proxy.SchemaValidation.RaiseExceptions)
+            {
+				if(proxy.SchemaValidation.RaiseExceptions)
+				{
+					await SchemaValidator.ValidateWithExceptionAsync("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content);
+				}
+				
+            }
             return new Models.AvailableGetResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers,
-
 	                                            Formatters = responseFormatters,
-
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content), true)
                                             };
-
         }
 
-
     }
-
 
     public partial class Movies
     {
@@ -655,23 +564,26 @@ namespace Movies
         {
             this.proxy = proxy;
         }
-
         public virtual Wishlist Wishlist
         {
             get { return new Wishlist(proxy); }
         }
-
         public virtual Rented Rented
         {
             get { return new Rented(proxy); }
         }
-
         public virtual Available Available
         {
             get { return new Available(proxy); }
         }
-
-
+        public virtual Rent Rent
+        {
+            get { return new Rent(proxy); }
+        }
+        public virtual Return Return
+        {
+            get { return new Return(proxy); }
+        }
 
         /// <summary>
 		/// gets all movies in the catalogue
@@ -680,23 +592,28 @@ namespace Movies
         {
 
             var url = "movies";
-
             var req = new HttpRequestMessage(HttpMethod.Get, url);
-
 	        var response = await proxy.Client.SendAsync(req);
-
+			
+			if (proxy.SchemaValidation.Enabled)
+		    {
+				if(proxy.SchemaValidation.RaiseExceptions) 
+				{
+					await SchemaValidator.ValidateWithExceptionAsync(Models.MoviesGetResponse.GetSchema(response.StatusCode), response.Content);
+				}
+					
+			}
 
             return new Models.MoviesGetResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid(Models.MoviesGetResponse.GetSchema(response.StatusCode), response.Content), true)
                                             };
 
         }
-
 
         /// <summary>
 		/// gets all movies in the catalogue
@@ -707,9 +624,7 @@ namespace Movies
         {
 
             var url = "movies";
-
             var req = new HttpRequestMessage(HttpMethod.Get, url);
-
 
             if(request.Headers != null)
             {
@@ -718,23 +633,25 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, header.Value);
                 }
             }
-
 	        var response = await proxy.Client.SendAsync(req);
-
+			if (proxy.SchemaValidation.Enabled && proxy.SchemaValidation.RaiseExceptions)
+            {
+				if(proxy.SchemaValidation.RaiseExceptions)
+				{
+					await SchemaValidator.ValidateWithExceptionAsync(Models.MoviesGetResponse.GetSchema(response.StatusCode), response.Content);
+				}
+				
+            }
             return new Models.MoviesGetResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers,
-
 	                                            Formatters = responseFormatters,
-
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid(Models.MoviesGetResponse.GetSchema(response.StatusCode), response.Content), true)
                                             };
-
         }
-
 
         /// <summary>
 		/// adds a movie to the catalogue
@@ -744,30 +661,23 @@ namespace Movies
         {
 
             var url = "movies";
-
             var req = new HttpRequestMessage(HttpMethod.Post, url);
-
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-
             req.Content = new ObjectContent(typeof(Models.MoviesPostRequestContent), moviespostrequestcontent, new JsonMediaTypeFormatter());
-
 	        var response = await proxy.Client.SendAsync(req);
-
 
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
 
         }
-
 
         /// <summary>
 		/// adds a movie to the catalogue
@@ -777,15 +687,11 @@ namespace Movies
         {
 
             var url = "movies";
-
             var req = new HttpRequestMessage(HttpMethod.Post, url);
-
 
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
-
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-
             if(request.RawHeaders != null)
             {
                 foreach(var header in request.RawHeaders)
@@ -793,26 +699,20 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
-
             if(request.Formatter == null)
                 request.Formatter = new JsonMediaTypeFormatter();
 
             req.Content = new ObjectContent(typeof(Models.MoviesPostRequestContent), request.Content, request.Formatter);
-
 	        var response = await proxy.Client.SendAsync(req);
-
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers,
-
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
-
         }
-
 
         /// <summary>
 		/// get the info of a movie
@@ -822,30 +722,32 @@ namespace Movies
         {
 
             var url = "movies/{id}";
-
             url = url.Replace("{id}", id.ToString());
-
             var req = new HttpRequestMessage(HttpMethod.Get, url);
-
 	        var response = await proxy.Client.SendAsync(req);
-
+			
+			if (proxy.SchemaValidation.Enabled)
+		    {
+				if(proxy.SchemaValidation.RaiseExceptions) 
+				{
+					await SchemaValidator.ValidateWithExceptionAsync(Models.MoviesGetByIdResponse.GetSchema(response.StatusCode), response.Content);
+				}
+					
+			}
 
             var headers = new Models.MultipleGetByIdHeader();
             headers.SetProperties(response.Headers, response.StatusCode);
-
             return new Models.MoviesGetByIdResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 Headers = headers, 
-
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid(Models.MoviesGetByIdResponse.GetSchema(response.StatusCode), response.Content), true)
                                             };
 
         }
-
 
         /// <summary>
 		/// get the info of a movie
@@ -856,18 +758,14 @@ namespace Movies
         {
 
             var url = "movies/{id}";
-
 			if(request.UriParameters == null)
 				throw new InvalidOperationException("Uri Parameters cannot be null");               
-
 
 			if(request.UriParameters.Id == null)
 				throw new InvalidOperationException("Uri Parameter Id cannot be null");
 
             url = url.Replace("{id}", request.UriParameters.Id.ToString());
-
             var req = new HttpRequestMessage(HttpMethod.Get, url);
-
 
             if(request.RawHeaders != null)
             {
@@ -876,28 +774,28 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
-
 	        var response = await proxy.Client.SendAsync(req);
-
+			if (proxy.SchemaValidation.Enabled && proxy.SchemaValidation.RaiseExceptions)
+            {
+				if(proxy.SchemaValidation.RaiseExceptions)
+				{
+					await SchemaValidator.ValidateWithExceptionAsync(Models.MoviesGetByIdResponse.GetSchema(response.StatusCode), response.Content);
+				}
+				
+            }
             var headers = new Models.MultipleGetByIdHeader();
             headers.SetProperties(response.Headers, response.StatusCode);
-
             return new Models.MoviesGetByIdResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 Headers = headers, 
-
                                                 RawHeaders = response.Headers,
-
 	                                            Formatters = responseFormatters,
-
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid(Models.MoviesGetByIdResponse.GetSchema(response.StatusCode), response.Content), true)
                                             };
-
         }
-
 
         /// <summary>
 		/// update the info of a movie
@@ -908,27 +806,21 @@ namespace Movies
         {
 
             var url = "movies/{id}";
-
             url = url.Replace("{id}", id.ToString());
-
             var req = new HttpRequestMessage(HttpMethod.Put, url);
-
             req.Content = new ObjectContent(typeof(Models.IdPutRequestContent), idputrequestcontent, new JsonMediaTypeFormatter());
-
 	        var response = await proxy.Client.SendAsync(req);
-
 
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
 
         }
-
 
         /// <summary>
 		/// update the info of a movie
@@ -938,18 +830,14 @@ namespace Movies
         {
 
             var url = "movies/{id}";
-
 			if(request.UriParameters == null)
 				throw new InvalidOperationException("Uri Parameters cannot be null");               
-
 
 			if(request.UriParameters.Id == null)
 				throw new InvalidOperationException("Uri Parameter Id cannot be null");
 
             url = url.Replace("{id}", request.UriParameters.Id.ToString());
-
             var req = new HttpRequestMessage(HttpMethod.Put, url);
-
 
             if(request.RawHeaders != null)
             {
@@ -958,26 +846,20 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
-
             if(request.Formatter == null)
                 request.Formatter = new JsonMediaTypeFormatter();
 
             req.Content = new ObjectContent(typeof(Models.IdPutRequestContent), request.Content, request.Formatter);
-
 	        var response = await proxy.Client.SendAsync(req);
-
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers,
-
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
-
         }
-
 
         /// <summary>
 		/// remove a movie from the catalogue
@@ -987,25 +869,20 @@ namespace Movies
         {
 
             var url = "movies/{id}";
-
             url = url.Replace("{id}", id.ToString());
-
             var req = new HttpRequestMessage(HttpMethod.Delete, url);
-
 	        var response = await proxy.Client.SendAsync(req);
-
 
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
 
         }
-
 
         /// <summary>
 		/// remove a movie from the catalogue
@@ -1015,18 +892,14 @@ namespace Movies
         {
 
             var url = "movies/{id}";
-
 			if(request.UriParameters == null)
 				throw new InvalidOperationException("Uri Parameters cannot be null");               
-
 
 			if(request.UriParameters.Id == null)
 				throw new InvalidOperationException("Uri Parameter Id cannot be null");
 
             url = url.Replace("{id}", request.UriParameters.Id.ToString());
-
             var req = new HttpRequestMessage(HttpMethod.Delete, url);
-
 
             if(request.RawHeaders != null)
             {
@@ -1035,24 +908,18 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
-
 	        var response = await proxy.Client.SendAsync(req);
-
             return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers,
-
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
-
         }
 
-
     }
-
 
     public partial class Search
     {
@@ -1063,70 +930,69 @@ namespace Movies
             this.proxy = proxy;
         }
 
-
-
         /// <summary>
 		/// search movies by name or director
 		/// </summary>
-		/// <param name="getsearchquery">query properties</param>
-        public virtual async Task<Models.SearchGetResponse> Get(Models.GetSearchQuery getsearchquery)
+		/// <param name="json"></param>
+		/// <param name="postsearchquery">query properties</param>
+        public virtual async Task<Models.SearchPostResponse> Post(string json, Models.PostSearchQuery postsearchquery)
         {
 
             var url = "search";
-
-            if(getsearchquery != null)
+            if(postsearchquery != null)
             {
                 url += "?";
-
-                if(getsearchquery.Name != null)
-					url += "&Name=" + getsearchquery.Name;
-
-                if(getsearchquery.Director != null)
-					url += "&Director=" + getsearchquery.Director;
-
+                if(postsearchquery.Name != null)
+					url += "&name=" + postsearchquery.Name;
+                if(postsearchquery.Director != null)
+					url += "&director=" + postsearchquery.Director;
+                if(postsearchquery.Rented != null)
+					url += "&rented=" + postsearchquery.Rented.ToString().ToLower();
             }
-
-            var req = new HttpRequestMessage(HttpMethod.Get, url);
-
+            var req = new HttpRequestMessage(HttpMethod.Post, url);
+            req.Content = new StringContent(json);
 	        var response = await proxy.Client.SendAsync(req);
+			
+			if (proxy.SchemaValidation.Enabled)
+		    {
+				if(proxy.SchemaValidation.RaiseExceptions) 
+				{
+					await SchemaValidator.ValidateWithExceptionAsync("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content);
+				}
+					
+			}
 
-
-            return new Models.SearchGetResponse  
+            return new Models.SearchPostResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content), true)
                                             };
 
         }
 
-
         /// <summary>
 		/// search movies by name or director
 		/// </summary>
-		/// <param name="request">Models.SearchGetRequest</param>
+		/// <param name="request">Models.SearchPostRequest</param>
 		/// <param name="responseFormatters">response formmaters</param>
-        public virtual async Task<Models.SearchGetResponse> Get(Models.SearchGetRequest request, IEnumerable<MediaTypeFormatter> responseFormatters = null)
+        public virtual async Task<Models.SearchPostResponse> Post(Models.SearchPostRequest request, IEnumerable<MediaTypeFormatter> responseFormatters = null)
         {
 
             var url = "search";
-
             if(request.Query != null)
             {
                 url += "?";
-
                 if(request.Query.Name != null)
                     url += "&name=" + request.Query.Name;
-
                 if(request.Query.Director != null)
                     url += "&director=" + request.Query.Director;
-
+                if(request.Query.Rented != null)
+                    url += "&rented=" + request.Query.Rented.ToString().ToLower();
             }
-
-            var req = new HttpRequestMessage(HttpMethod.Get, url);
-
+            var req = new HttpRequestMessage(HttpMethod.Post, url);
 
             if(request.RawHeaders != null)
             {
@@ -1135,36 +1001,42 @@ namespace Movies
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
-
+            req.Content = request.Content;
 	        var response = await proxy.Client.SendAsync(req);
-
-            return new Models.SearchGetResponse  
+			if (proxy.SchemaValidation.Enabled && proxy.SchemaValidation.RaiseExceptions)
+            {
+				if(proxy.SchemaValidation.RaiseExceptions)
+				{
+					await SchemaValidator.ValidateWithExceptionAsync("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content);
+				}
+				
+            }
+            return new Models.SearchPostResponse  
                                             {
                                                 RawContent = response.Content,
-
                                                 RawHeaders = response.Headers,
-
 	                                            Formatters = responseFormatters,
-
                                                 StatusCode = response.StatusCode,
-                                                ReasonPhrase = response.ReasonPhrase
+                                                ReasonPhrase = response.ReasonPhrase,
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid("{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}", response.Content), true)
                                             };
-
         }
 
-
     }
-
 
     /// <summary>
     /// Main class for grouping root resources. Nested resources are defined as properties. The constructor can optionally receive an URL and HttpClient instance to override the default ones.
     /// </summary>
     public partial class MoviesApi
     {
+
+		public SchemaValidationSettings SchemaValidation { get; private set; } 
+
         protected readonly HttpClient client;
         public const string BaseUri = "http://movies.com/api/";
 
         internal HttpClient Client { get { return client; } }
+
 
 
 
@@ -1176,10 +1048,15 @@ namespace Movies
    		private string oauthAccessTokenUrl = "https://localhost:8081/oauth/access_token";
 		public string OAuthAccessTokenUrl { get { return oauthAccessTokenUrl; } set { oauthAccessTokenUrl = value; } }
 
-
         public MoviesApi(string endpointUrl)
         {
-            if(string.IsNullOrWhiteSpace(endpointUrl))
+            SchemaValidation = new SchemaValidationSettings
+			{
+				Enabled = true,
+				RaiseExceptions = true
+			};
+
+			if(string.IsNullOrWhiteSpace(endpointUrl))
                 throw new ArgumentException("You must specify the endpoint URL", "endpointUrl");
 
 			if (endpointUrl.Contains("{"))
@@ -1203,34 +1080,25 @@ namespace Movies
                 throw new InvalidOperationException("You must set the BaseAddress property of the HttpClient instance");
 
             client = httpClient;
+
+			SchemaValidation = new SchemaValidationSettings
+			{
+				Enabled = true,
+				RaiseExceptions = true
+			};
         }
 
         
-
         public virtual Movies Movies
         {
             get { return new Movies(this); }
         }
                 
-
-        public virtual Rent Rent
-        {
-            get { return new Rent(this); }
-        }
-                
-
-        public virtual Return Return
-        {
-            get { return new Return(this); }
-        }
-                
-
         public virtual Search Search
         {
             get { return new Search(this); }
         }
                 
-
 
 
 		public void AddDefaultRequestHeader(string name, string value)
@@ -1256,10 +1124,8 @@ namespace Movies
 
 namespace Movies.Models
 {
-
-    public partial class MoviesPostRequestContent 
+    public partial class  MoviesPostRequestContent 
     {
-
 		[JsonProperty("id")]
         public int Id { get; set; }
 
@@ -1287,10 +1153,8 @@ namespace Movies.Models
 
     } // end class
 
-
-    public partial class IdPutRequestContent 
+    public partial class  IdPutRequestContent 
     {
-
 		[JsonProperty("id")]
         public int Id { get; set; }
 
@@ -1318,57 +1182,8 @@ namespace Movies.Models
 
     } // end class
 
-
-    public partial class MoviesGetOKResponseContent 
+    public partial class  MoviesGetOKResponseContent 
     {
-
-		[JsonProperty("id")]
-        public int Id { get; set; }
-
-		[JsonProperty("name")]
-        public string Name { get; set; }
-
-		[JsonProperty("director")]
-        public string Director { get; set; }
-
-		[JsonProperty("genre")]
-        public string Genre { get; set; }
-
-		[JsonProperty("cast")]
-        public string Cast { get; set; }
-
-		[JsonProperty("duration")]
-        public decimal Duration { get; set; }
-
-		[JsonProperty("storyline")]
-        public string Storyline { get; set; }
-
-		[JsonProperty("language")]
-        public string Language { get; set; }
-
-		[JsonProperty("rented")]
-        public bool Rented { get; set; }
-
-
-    } // end class
-
-
-    public partial class MoviesGetBadRequestResponseContent 
-    {
-
-		[JsonProperty("error")]
-        public string Error { get; set; }
-
-		[JsonProperty("code")]
-        public int Code { get; set; }
-
-
-    } // end class
-
-
-    public partial class IdGetOKResponseContent 
-    {
-
 		[JsonProperty("id")]
         public int Id { get; set; }
 
@@ -1399,10 +1214,8 @@ namespace Movies.Models
 
     } // end class
 
-
-    public partial class IdGetBadRequestResponseContent 
+    public partial class  MoviesGetBadRequestResponseContent 
     {
-
 		[JsonProperty("error")]
         public string Error { get; set; }
 
@@ -1412,10 +1225,51 @@ namespace Movies.Models
 
     } // end class
 
-
-    public partial class IdGetNotFoundResponseContent 
+    public partial class  IdGetOKResponseContent 
     {
+		[JsonProperty("id")]
+        public int Id { get; set; }
 
+		[JsonProperty("name")]
+        public string Name { get; set; }
+
+		[JsonProperty("director")]
+        public string Director { get; set; }
+
+		[JsonProperty("genre")]
+        public string Genre { get; set; }
+
+		[JsonProperty("cast")]
+        public string Cast { get; set; }
+
+		[JsonProperty("duration")]
+        public decimal Duration { get; set; }
+
+		[JsonProperty("storyline")]
+        public string Storyline { get; set; }
+
+		[JsonProperty("language")]
+        public string Language { get; set; }
+
+		[JsonProperty("rented")]
+        public bool Rented { get; set; }
+
+
+    } // end class
+
+    public partial class  IdGetBadRequestResponseContent 
+    {
+		[JsonProperty("error")]
+        public string Error { get; set; }
+
+		[JsonProperty("code")]
+        public int Code { get; set; }
+
+
+    } // end class
+
+    public partial class  IdGetNotFoundResponseContent 
+    {
 		[JsonProperty("id")]
         public int Id { get; set; }
 
@@ -1428,10 +1282,8 @@ namespace Movies.Models
 
     } // end class
 
-
-    public partial class WishlistGetOKResponseContent 
+    public partial class  WishlistGetOKResponseContent 
     {
-
 		[JsonProperty("id")]
         public int Id { get; set; }
 
@@ -1462,10 +1314,8 @@ namespace Movies.Models
 
     } // end class
 
-
-    public partial class RentedGetOKResponseContent 
+    public partial class  RentedGetOKResponseContent 
     {
-
 		[JsonProperty("id")]
         public int Id { get; set; }
 
@@ -1496,10 +1346,8 @@ namespace Movies.Models
 
     } // end class
 
-
-    public partial class AvailableGetOKResponseContent 
+    public partial class  AvailableGetOKResponseContent 
     {
-
 		[JsonProperty("id")]
         public int Id { get; set; }
 
@@ -1530,10 +1378,8 @@ namespace Movies.Models
 
     } // end class
 
-
-    public partial class SearchGetOKResponseContent 
+    public partial class  SearchPostOKResponseContent 
     {
-
 		[JsonProperty("id")]
         public int Id { get; set; }
 
@@ -1563,55 +1409,63 @@ namespace Movies.Models
 
 
     } // end class
-
 
     /// <summary>
     /// Multiple Response Types MoviesGetOKResponseContent, MoviesGetBadRequestResponseContent
     /// </summary>
-
-    public partial class MultipleMoviesGet : ApiMultipleResponse
+    public partial class  MultipleMoviesGet : ApiMultipleResponse
     {
+        static readonly Dictionary<HttpStatusCode, string> schemas = new Dictionary<HttpStatusCode, string>
+        {
+			{ (HttpStatusCode)200, "{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": \"string\" },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": \"number\" },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}"},
+			{ (HttpStatusCode)400, "{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"object\",  \"description\": \"bad request error\",  \"properties\":     {      \"error\": { \"type\": \"string\"},      \"code\": { \"type\": \"integer\" }    }  }"},
+		};
+        
+		public static string GetSchema(HttpStatusCode statusCode)
+        {
+            return schemas.ContainsKey(statusCode) ? schemas[statusCode] : string.Empty;
+        }
         
         public MultipleMoviesGet()
         {
-
-            names.Add(HttpStatusCode.OK, "MoviesGetOKResponseContent");
-            types.Add(HttpStatusCode.OK, typeof(MoviesGetOKResponseContent[]));
-
-            names.Add(HttpStatusCode.BadRequest, "MoviesGetBadRequestResponseContent");
-            types.Add(HttpStatusCode.BadRequest, typeof(MoviesGetBadRequestResponseContent));
-
+            names.Add((HttpStatusCode)200, "MoviesGetOKResponseContent");
+            types.Add((HttpStatusCode)200, typeof(IList<MoviesGetOKResponseContent>));
+            names.Add((HttpStatusCode)400, "MoviesGetBadRequestResponseContent");
+            types.Add((HttpStatusCode)400, typeof(MoviesGetBadRequestResponseContent));
         }
-
-        public MoviesGetOKResponseContent[] MoviesGetOKResponseContent { get; set; }
+        public IList<MoviesGetOKResponseContent> MoviesGetOKResponseContent { get; set; }
 
         public MoviesGetBadRequestResponseContent MoviesGetBadRequestResponseContent { get; set; }
 
 
     } // end class
 
-
     /// <summary>
     /// Multiple Response Types IdGetOKResponseContent, IdGetBadRequestResponseContent, IdGetNotFoundResponseContent
     /// </summary>
-
-    public partial class MultipleIdGet : ApiMultipleResponse
+    public partial class  MultipleIdGet : ApiMultipleResponse
     {
+        static readonly Dictionary<HttpStatusCode, string> schemas = new Dictionary<HttpStatusCode, string>
+        {
+			{ (HttpStatusCode)200, "{   \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"object\",  \"description\": \"a movie\",  \"properties\": {    \"id\": { \"type\": \"integer\"},    \"name\": { \"type\": \"string\"},    \"director\": { \"type\": \"string\"},    \"genre\": { \"type\": \"string\" },    \"cast\":{ \"type\": \"string\" },    \"duration\":{ \"type\": \"number\" },    \"storyline\":{ \"type\": \"string\" },    \"language\":{ \"type\": \"string\" },    \"rented\":{ \"type\": \"boolean\" }  }}"},
+			{ (HttpStatusCode)400, "{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"object\",  \"description\": \"bad request error\",  \"properties\":     {      \"error\": { \"type\": \"string\"},      \"code\": { \"type\": \"integer\" }    }  }"},
+			{ (HttpStatusCode)404, "{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"object\",  \"description\": \"not found\",  \"properties\":     {      \"id\": { \"type\": \"integer\" },      \"error\": { \"type\": \"string\"},      \"code\": { \"type\": \"integer\" }    }  }"},
+		};
+        
+		public static string GetSchema(HttpStatusCode statusCode)
+        {
+            return schemas.ContainsKey(statusCode) ? schemas[statusCode] : string.Empty;
+        }
         
         public MultipleIdGet()
         {
-
-            names.Add(HttpStatusCode.OK, "IdGetOKResponseContent");
-            types.Add(HttpStatusCode.OK, typeof(IdGetOKResponseContent));
-
-            names.Add(HttpStatusCode.BadRequest, "IdGetBadRequestResponseContent");
-            types.Add(HttpStatusCode.BadRequest, typeof(IdGetBadRequestResponseContent));
-
-            names.Add(HttpStatusCode.NotFound, "IdGetNotFoundResponseContent");
-            types.Add(HttpStatusCode.NotFound, typeof(IdGetNotFoundResponseContent));
-
+            names.Add((HttpStatusCode)200, "IdGetOKResponseContent");
+            types.Add((HttpStatusCode)200, typeof(IdGetOKResponseContent));
+            names.Add((HttpStatusCode)400, "IdGetBadRequestResponseContent");
+            types.Add((HttpStatusCode)400, typeof(IdGetBadRequestResponseContent));
+            names.Add((HttpStatusCode)404, "IdGetNotFoundResponseContent");
+            types.Add((HttpStatusCode)404, typeof(IdGetNotFoundResponseContent));
         }
-
         public IdGetOKResponseContent IdGetOKResponseContent { get; set; }
 
         public IdGetBadRequestResponseContent IdGetBadRequestResponseContent { get; set; }
@@ -1621,143 +1475,113 @@ namespace Movies.Models
 
     } // end class
 
-
-    public partial class GetSearchQuery 
+    public partial class  PostSearchQuery 
     {
-
         /// <summary>
         /// Name of the movie
         /// </summary>
-
 		[JsonProperty("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// Director of the movie
         /// </summary>
-
 		[JsonProperty("director")]
         public string Director { get; set; }
+
+		[JsonProperty("rented")]
+        public bool? Rented { get; set; }
 
 
     } // end class
 
-
     /// <summary>
     /// Uri Parameters for resource /{id}
     /// </summary>
-
-    public partial class MoviesIdUriParameters 
+    public partial class  MoviesIdUriParameters 
     {
-
 		[JsonProperty("id")]
         public string Id { get; set; }
 
 
     } // end class
-
 
     /// <summary>
     /// Uri Parameters for resource /rent
     /// </summary>
-
-    public partial class MoviesIdRentUriParameters 
+    public partial class  MoviesIdRentUriParameters 
     {
-
 		[JsonProperty("id")]
         public string Id { get; set; }
 
 
     } // end class
-
 
     /// <summary>
     /// Uri Parameters for resource /return
     /// </summary>
-
-    public partial class MoviesIdReturnUriParameters 
+    public partial class  MoviesIdReturnUriParameters 
     {
-
 		[JsonProperty("id")]
         public string Id { get; set; }
 
 
     } // end class
-
 
     /// <summary>
     /// Uri Parameters for resource /{id}
     /// </summary>
-
-    public partial class MoviesWishlistIdUriParameters 
+    public partial class  MoviesWishlistIdUriParameters 
     {
-
 		[JsonProperty("id")]
         public string Id { get; set; }
 
 
     } // end class
 
-
     public partial class GetMoviesHeader : ApiHeader
     {
 
-
 		[JsonProperty("user")]
         public string User { get; set; }
-
 		[JsonProperty("code")]
         public int? Code { get; set; }
 
-
     } // end class
-
 
     public partial class GetByIdMoviesOKResponseHeader : ApiResponseHeader
     {
-
 		[JsonProperty("code")]
         public int? Code { get; set; }
-
 		[JsonProperty("created")]
         public DateTime? Created { get; set; }
 
-
     } // end class
-
 
     public partial class GetByIdMoviesBadRequestResponseHeader : ApiResponseHeader
     {
-
 		[JsonProperty("code")]
         public int? Code { get; set; }
 
-
     } // end class
-
 
     /// <summary>
     /// Multiple Header Types GetByIdMoviesOKResponseHeader, GetByIdMoviesBadRequestResponseHeader
     /// </summary>
-
     public partial class MultipleGetByIdHeader : ApiMultipleObject
     {
         
         public MultipleGetByIdHeader()
         {
-
-            names.Add(HttpStatusCode.OK, "GetByIdMoviesOKResponseHeader");
-            types.Add(HttpStatusCode.OK, typeof(GetByIdMoviesOKResponseHeader));
-
-            names.Add(HttpStatusCode.BadRequest, "GetByIdMoviesBadRequestResponseHeader");
-            types.Add(HttpStatusCode.BadRequest, typeof(GetByIdMoviesBadRequestResponseHeader));
-
+            names.Add((HttpStatusCode)200, "GetByIdMoviesOKResponseHeader");
+            types.Add((HttpStatusCode)200, typeof(GetByIdMoviesOKResponseHeader));
+            names.Add((HttpStatusCode)400, "GetByIdMoviesBadRequestResponseHeader");
+            types.Add((HttpStatusCode)400, typeof(GetByIdMoviesBadRequestResponseHeader));
         }
 
 		public void SetProperties(HttpResponseHeaders headers, HttpStatusCode statusCode)
 	    {
-
-		    if (statusCode == HttpStatusCode.OK)
+		    if (statusCode == (HttpStatusCode)200)
 		    {
 				var header = new GetByIdMoviesOKResponseHeader();
 			    foreach (var responseHeader in headers)
@@ -1769,8 +1593,7 @@ namespace Movies.Models
 			    this.GetByIdMoviesOKResponseHeader = header;
 				return;
 		    }
-
-		    if (statusCode == HttpStatusCode.BadRequest)
+		    if (statusCode == (HttpStatusCode)400)
 		    {
 				var header = new GetByIdMoviesBadRequestResponseHeader();
 			    foreach (var responseHeader in headers)
@@ -1782,344 +1605,250 @@ namespace Movies.Models
 			    this.GetByIdMoviesBadRequestResponseHeader = header;
 				return;
 		    }
-
 	    }
-
         public GetByIdMoviesOKResponseHeader GetByIdMoviesOKResponseHeader { get; set; }
-
         public GetByIdMoviesBadRequestResponseHeader GetByIdMoviesBadRequestResponseHeader { get; set; }
 
-
     } // end class
-
 
     /// <summary>
     /// Request object for method Put of class Rent
     /// </summary>
-
     public partial class RentPutRequest : ApiRequest
     {
         public RentPutRequest(MoviesIdRentUriParameters UriParameters, HttpContent Content = null, MediaTypeFormatter Formatter = null)
         {
-
             this.Content = Content;
-
             this.Formatter = Formatter;
-
             this.UriParameters = UriParameters;
-
         }
-
 
         /// <summary>
         /// Request content
         /// </summary>
-
         public HttpContent Content { get; set; }
-
         /// <summary>
         /// Request formatter
         /// </summary>
-
         public MediaTypeFormatter Formatter { get; set; }
-
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
-
         public MoviesIdRentUriParameters UriParameters { get; set; }
 
-
     } // end class
-
 
     /// <summary>
     /// Request object for method Put of class Return
     /// </summary>
-
     public partial class ReturnPutRequest : ApiRequest
     {
         public ReturnPutRequest(MoviesIdReturnUriParameters UriParameters, HttpContent Content = null, MediaTypeFormatter Formatter = null)
         {
-
             this.Content = Content;
-
             this.Formatter = Formatter;
-
             this.UriParameters = UriParameters;
-
         }
-
 
         /// <summary>
         /// Request content
         /// </summary>
-
         public HttpContent Content { get; set; }
-
         /// <summary>
         /// Request formatter
         /// </summary>
-
         public MediaTypeFormatter Formatter { get; set; }
-
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
-
         public MoviesIdReturnUriParameters UriParameters { get; set; }
 
-
     } // end class
-
 
     /// <summary>
     /// Request object for method Post of class Wishlist
     /// </summary>
-
     public partial class WishlistPostRequest : ApiRequest
     {
         public WishlistPostRequest(MoviesWishlistIdUriParameters UriParameters, HttpContent Content = null, MediaTypeFormatter Formatter = null)
         {
-
             this.Content = Content;
-
             this.Formatter = Formatter;
-
             this.UriParameters = UriParameters;
-
         }
-
 
         /// <summary>
         /// Request content
         /// </summary>
-
         public HttpContent Content { get; set; }
-
         /// <summary>
         /// Request formatter
         /// </summary>
-
         public MediaTypeFormatter Formatter { get; set; }
-
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
-
         public MoviesWishlistIdUriParameters UriParameters { get; set; }
 
-
     } // end class
-
 
     /// <summary>
     /// Request object for method Delete of class Wishlist
     /// </summary>
-
     public partial class WishlistDeleteRequest : ApiRequest
     {
         public WishlistDeleteRequest(MoviesWishlistIdUriParameters UriParameters)
         {
-
             this.UriParameters = UriParameters;
-
         }
-
 
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
-
         public MoviesWishlistIdUriParameters UriParameters { get; set; }
 
-
     } // end class
-
 
     /// <summary>
     /// Request object for method Get of class Movies
     /// </summary>
-
     public partial class MoviesGetRequest : ApiRequest
     {
         public MoviesGetRequest(GetMoviesHeader Headers = null)
         {
-
             this.Headers = Headers;
-
         }
-
 
         /// <summary>
         /// Typed Request headers
         /// </summary>
-
         public GetMoviesHeader Headers { get; set; }
 
-
     } // end class
-
 
     /// <summary>
     /// Request object for method Post of class Movies
     /// </summary>
-
     public partial class MoviesPostRequest : ApiRequest
     {
         public MoviesPostRequest(MoviesPostRequestContent Content = null, MediaTypeFormatter Formatter = null)
         {
-
             this.Content = Content;
-
             this.Formatter = Formatter;
-
         }
-
 
         /// <summary>
         /// Request content
         /// </summary>
-
         public MoviesPostRequestContent Content { get; set; }
-
         /// <summary>
         /// Request formatter
         /// </summary>
-
         public MediaTypeFormatter Formatter { get; set; }
 
-
     } // end class
-
 
     /// <summary>
     /// Request object for method GetById of class Movies
     /// </summary>
-
     public partial class MoviesGetByIdRequest : ApiRequest
     {
         public MoviesGetByIdRequest(MoviesIdUriParameters UriParameters)
         {
-
             this.UriParameters = UriParameters;
-
         }
-
 
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
-
         public MoviesIdUriParameters UriParameters { get; set; }
 
-
     } // end class
-
 
     /// <summary>
     /// Request object for method Put of class Movies
     /// </summary>
-
     public partial class MoviesPutRequest : ApiRequest
     {
         public MoviesPutRequest(MoviesIdUriParameters UriParameters, IdPutRequestContent Content = null, MediaTypeFormatter Formatter = null)
         {
-
             this.Content = Content;
-
             this.Formatter = Formatter;
-
             this.UriParameters = UriParameters;
-
         }
-
 
         /// <summary>
         /// Request content
         /// </summary>
-
         public IdPutRequestContent Content { get; set; }
-
         /// <summary>
         /// Request formatter
         /// </summary>
-
         public MediaTypeFormatter Formatter { get; set; }
-
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
-
         public MoviesIdUriParameters UriParameters { get; set; }
 
-
     } // end class
-
 
     /// <summary>
     /// Request object for method Delete of class Movies
     /// </summary>
-
     public partial class MoviesDeleteRequest : ApiRequest
     {
         public MoviesDeleteRequest(MoviesIdUriParameters UriParameters)
         {
-
             this.UriParameters = UriParameters;
-
         }
-
 
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
-
         public MoviesIdUriParameters UriParameters { get; set; }
-
 
     } // end class
 
-
     /// <summary>
-    /// Request object for method Get of class Search
+    /// Request object for method Post of class Search
     /// </summary>
-
-    public partial class SearchGetRequest : ApiRequest
+    public partial class SearchPostRequest : ApiRequest
     {
-        public SearchGetRequest(GetSearchQuery Query = null)
+        public SearchPostRequest(HttpContent Content = null, MediaTypeFormatter Formatter = null, PostSearchQuery Query = null)
         {
-
+            this.Content = Content;
+            this.Formatter = Formatter;
             this.Query = Query;
-
         }
 
-
+        /// <summary>
+        /// Request content
+        /// </summary>
+        public HttpContent Content { get; set; }
+        /// <summary>
+        /// Request formatter
+        /// </summary>
+        public MediaTypeFormatter Formatter { get; set; }
         /// <summary>
         /// Request query string properties
         /// </summary>
-
-        public GetSearchQuery Query { get; set; }
-
+        public PostSearchQuery Query { get; set; }
 
     } // end class
-
 
     /// <summary>
     /// Response object for method Get of class Wishlist
     /// </summary>
 
-
     public partial class WishlistGetResponse : ApiResponse
     {
 
 
-
-	    private WishlistGetOKResponseContent[] typedContent;
+	    private IList<WishlistGetOKResponseContent> typedContent;
         /// <summary>
         /// Typed Response content
         /// </summary>
-        public WishlistGetOKResponseContent[] Content 
+        public IList<WishlistGetOKResponseContent> Content 
     	{
 	        get
 	        {
@@ -2127,33 +1856,32 @@ namespace Movies.Models
 			        return typedContent;
 
 		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<WishlistGetOKResponseContent[]>(Formatters)
-                            : RawContent.ReadAsAsync<WishlistGetOKResponseContent[]>();
-		        task.Wait();
+                            ? RawContent.ReadAsAsync<IList<WishlistGetOKResponseContent>>(Formatters).ConfigureAwait(false)
+                            : RawContent.ReadAsAsync<IList<WishlistGetOKResponseContent>>().ConfigureAwait(false);
+		        
 		        typedContent = task.GetAwaiter().GetResult();
 		        return typedContent;
 	        }
 	    }
 
+		
+
 
     } // end class
-
 
     /// <summary>
     /// Response object for method Get of class Rented
     /// </summary>
 
-
     public partial class RentedGetResponse : ApiResponse
     {
 
 
-
-	    private RentedGetOKResponseContent[] typedContent;
+	    private IList<RentedGetOKResponseContent> typedContent;
         /// <summary>
         /// Typed Response content
         /// </summary>
-        public RentedGetOKResponseContent[] Content 
+        public IList<RentedGetOKResponseContent> Content 
     	{
 	        get
 	        {
@@ -2161,33 +1889,32 @@ namespace Movies.Models
 			        return typedContent;
 
 		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<RentedGetOKResponseContent[]>(Formatters)
-                            : RawContent.ReadAsAsync<RentedGetOKResponseContent[]>();
-		        task.Wait();
+                            ? RawContent.ReadAsAsync<IList<RentedGetOKResponseContent>>(Formatters).ConfigureAwait(false)
+                            : RawContent.ReadAsAsync<IList<RentedGetOKResponseContent>>().ConfigureAwait(false);
+		        
 		        typedContent = task.GetAwaiter().GetResult();
 		        return typedContent;
 	        }
 	    }
 
+		
+
 
     } // end class
-
 
     /// <summary>
     /// Response object for method Get of class Available
     /// </summary>
 
-
     public partial class AvailableGetResponse : ApiResponse
     {
 
 
-
-	    private AvailableGetOKResponseContent[] typedContent;
+	    private IList<AvailableGetOKResponseContent> typedContent;
         /// <summary>
         /// Typed Response content
         /// </summary>
-        public AvailableGetOKResponseContent[] Content 
+        public IList<AvailableGetOKResponseContent> Content 
     	{
 	        get
 	        {
@@ -2195,26 +1922,25 @@ namespace Movies.Models
 			        return typedContent;
 
 		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<AvailableGetOKResponseContent[]>(Formatters)
-                            : RawContent.ReadAsAsync<AvailableGetOKResponseContent[]>();
-		        task.Wait();
+                            ? RawContent.ReadAsAsync<IList<AvailableGetOKResponseContent>>(Formatters).ConfigureAwait(false)
+                            : RawContent.ReadAsAsync<IList<AvailableGetOKResponseContent>>().ConfigureAwait(false);
+		        
 		        typedContent = task.GetAwaiter().GetResult();
 		        return typedContent;
 	        }
 	    }
 
+		
+
 
     } // end class
-
 
     /// <summary>
     /// Response object for method Get of class Movies
     /// </summary>
 
-
     public partial class MoviesGetResponse : ApiResponse
     {
-
 
 	    private MultipleMoviesGet typedContent;
         /// <summary>
@@ -2229,34 +1955,33 @@ namespace Movies.Models
 
 		        typedContent = new MultipleMoviesGet();
 		        var task = Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode), Formatters)
-                            : RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode));
-		        task.Wait();
+                            ? RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode), Formatters).ConfigureAwait(false)
+                            : RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode)).ConfigureAwait(false);
+		        
 		        var content = task.GetAwaiter().GetResult();
 		        typedContent.SetPropertyByStatusCode(StatusCode, content);
 		        return typedContent;
 	        }
-    	}        
-
+    	}  
+		
+		public static string GetSchema(HttpStatusCode statusCode)
+        {
+            return MultipleMoviesGet.GetSchema(statusCode);
+        }      
 
     } // end class
-
 
     /// <summary>
     /// Response object for method GetById of class Movies
     /// </summary>
 
-
     public partial class MoviesGetByIdResponse : ApiResponse
     {
-
 
         /// <summary>
         /// Typed Response headers (defined in RAML)
         /// </summary>
-
         public Models.MultipleGetByIdHeader Headers { get; set; }
-
 	    private MultipleIdGet typedContent;
         /// <summary>
         /// Typed response content
@@ -2270,34 +1995,35 @@ namespace Movies.Models
 
 		        typedContent = new MultipleIdGet();
 		        var task = Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode), Formatters)
-                            : RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode));
-		        task.Wait();
+                            ? RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode), Formatters).ConfigureAwait(false)
+                            : RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode)).ConfigureAwait(false);
+		        
 		        var content = task.GetAwaiter().GetResult();
 		        typedContent.SetPropertyByStatusCode(StatusCode, content);
 		        return typedContent;
 	        }
-    	}        
-
+    	}  
+		
+		public static string GetSchema(HttpStatusCode statusCode)
+        {
+            return MultipleIdGet.GetSchema(statusCode);
+        }      
 
     } // end class
 
-
     /// <summary>
-    /// Response object for method Get of class Search
+    /// Response object for method Post of class Search
     /// </summary>
 
-
-    public partial class SearchGetResponse : ApiResponse
+    public partial class SearchPostResponse : ApiResponse
     {
 
 
-
-	    private SearchGetOKResponseContent[] typedContent;
+	    private IList<SearchPostOKResponseContent> typedContent;
         /// <summary>
         /// Typed Response content
         /// </summary>
-        public SearchGetOKResponseContent[] Content 
+        public IList<SearchPostOKResponseContent> Content 
     	{
 	        get
 	        {
@@ -2305,17 +2031,18 @@ namespace Movies.Models
 			        return typedContent;
 
 		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<SearchGetOKResponseContent[]>(Formatters)
-                            : RawContent.ReadAsAsync<SearchGetOKResponseContent[]>();
-		        task.Wait();
+                            ? RawContent.ReadAsAsync<IList<SearchPostOKResponseContent>>(Formatters).ConfigureAwait(false)
+                            : RawContent.ReadAsAsync<IList<SearchPostOKResponseContent>>().ConfigureAwait(false);
+		        
 		        typedContent = task.GetAwaiter().GetResult();
 		        return typedContent;
 	        }
 	    }
 
+		
+
 
     } // end class
-
 
 
 } // end Models namespace

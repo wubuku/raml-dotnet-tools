@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Raml.Common;
 using Raml.Parser.Expressions;
 using Raml.Tools.ClientGenerator;
 

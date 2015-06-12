@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using Raml.Common;
 using Raml.Parser.Expressions;
 using Raml.Tools.Pluralization;
 
@@ -18,10 +19,12 @@ namespace Raml.Tools
 		protected readonly SchemaParameterParser schemaParameterParser = new SchemaParameterParser(new EnglishPluralizationService());
 		protected IDictionary<string, ApiObject> schemaRequestObjects = new Dictionary<string, ApiObject>();
 		protected IDictionary<string, ApiObject> schemaResponseObjects = new Dictionary<string, ApiObject>();
+        protected IDictionary<string, string> linkKeysWithObjectNames = new Dictionary<string, string>();
 
 		protected readonly ApiObjectsCleaner apiObjectsCleaner;		
 
 		protected IDictionary<string, string> warnings;
+	    protected IDictionary<string, ApiEnum> enums;
 		protected readonly RamlDocument raml;
 		protected ICollection<string> classesNames;
 		protected IDictionary<string, ApiObject> uriParameterObjects;
@@ -29,6 +32,8 @@ namespace Raml.Tools
 		public const string ResponseContentSuffix = "ResponseContent";
 
 		public RamlDocument ParsedContent { get { return raml; } }
+
+        public IEnumerable<ApiEnum> Enums { get { return enums.Values; } }
 
 		protected GeneratorServiceBase(RamlDocument raml)
 		{
@@ -50,22 +55,22 @@ namespace Raml.Tools
 
 
 
-		private void ParseResourceTypesRequests(IDictionary<string, ApiObject> objects)
+        private void ParseResourceTypesRequests()
 		{
 			foreach (var resourceType in raml.ResourceTypes)
 			{
 				foreach (var type in resourceType)
 				{
-					if (type.Value.Post != null) ParseRequests(objects, type, type.Value.Post);
-					if (type.Value.Put != null) ParseRequests(objects, type, type.Value.Put);
-					if (type.Value.Delete != null) ParseRequests(objects, type, type.Value.Delete);
-					if (type.Value.Patch != null) ParseRequests(objects, type, type.Value.Patch);
-					if (type.Value.Options != null) ParseRequests(objects, type, type.Value.Options);
+					if (type.Value.Post != null) ParseRequests(type, type.Value.Post);
+					if (type.Value.Put != null) ParseRequests(type, type.Value.Put);
+					if (type.Value.Delete != null) ParseRequests(type, type.Value.Delete);
+					if (type.Value.Patch != null) ParseRequests(type, type.Value.Patch);
+					if (type.Value.Options != null) ParseRequests(type, type.Value.Options);
 				}
 			}
 		}
 
-		private void ParseRequests(IDictionary<string, ApiObject> objects, KeyValuePair<string, ResourceType> type, Verb verb)
+        private void ParseRequests(KeyValuePair<string, ResourceType> type, Verb verb)
 		{
 			if (verb.Body == null)
 				return;
@@ -75,14 +80,12 @@ namespace Raml.Tools
 				return;
 
 			var key = type.Key + "-" + name.ToLower() + RequestContentSuffix;
-			var obj = objectParser.ParseObject(key, verb.Body.Schema, objects, warnings);
+            var obj = objectParser.ParseObject(key, verb.Body.Schema, schemaRequestObjects, warnings, enums);
 
-			// Avoid duplicated keys and names
-			if (obj != null && !objects.ContainsKey(key) && objects.All(o => o.Value.Name != obj.Name) && obj.Properties.Any())
-				objects.Add(key, obj);
+            AddObjectToObjectCollectionOrLink(obj, key, schemaRequestObjects);
 		}
 
-		private void ParseTraitsResponses(IDictionary<string, ApiObject> objects)
+        private void ParseTraitsResponses()
 		{
 			foreach (var trait in raml.Traits)
 			{
@@ -93,11 +96,9 @@ namespace Raml.Tools
 						foreach (var mimeType in response.Body)
 						{
 							var key = mimeType.Key + " " + mimeType.Value.Type + ResponseContentSuffix;
-							var obj = objectParser.ParseObject(key, mimeType.Value.Schema, objects, warnings);
+                            var obj = objectParser.ParseObject(key, mimeType.Value.Schema, schemaResponseObjects, warnings, enums);
 
-							// Avoid duplicated keys and names
-							if (obj != null && !objects.ContainsKey(key) && objects.All(o => o.Value.Name != obj.Name) && obj.Properties.Any())
-								objects.Add(key, obj);
+                            AddObjectToObjectCollectionOrLink(obj, key, schemaResponseObjects);
 						}
 					}
 				}
@@ -105,23 +106,23 @@ namespace Raml.Tools
 		}
 
 
-		private void ParseResourceTypesResponses(IDictionary<string, ApiObject> objects)
+		private void ParseResourceTypesResponses()
 		{
 			foreach (var resourceType in raml.ResourceTypes)
 			{
 				foreach (var type in resourceType)
 				{
-					if (type.Value.Get != null) ParseResponses(objects, type, type.Value.Get);
-					if (type.Value.Post != null) ParseResponses(objects, type, type.Value.Post);
-					if (type.Value.Put != null) ParseResponses(objects, type, type.Value.Put);
-					if (type.Value.Delete != null) ParseResponses(objects, type, type.Value.Delete);
-					if (type.Value.Patch != null) ParseResponses(objects, type, type.Value.Patch);
-					if (type.Value.Options != null) ParseResponses(objects, type, type.Value.Options);
+					if (type.Value.Get != null) ParseResponses(type, type.Value.Get);
+					if (type.Value.Post != null) ParseResponses(type, type.Value.Post);
+					if (type.Value.Put != null) ParseResponses(type, type.Value.Put);
+					if (type.Value.Delete != null) ParseResponses(type, type.Value.Delete);
+					if (type.Value.Patch != null) ParseResponses(type, type.Value.Patch);
+					if (type.Value.Options != null) ParseResponses(type, type.Value.Options);
 				}
 			}
 		}
 
-		private void ParseResponses(IDictionary<string, ApiObject> objects, KeyValuePair<string, ResourceType> type, Verb verb)
+        private void ParseResponses(KeyValuePair<string, ResourceType> type, Verb verb)
 		{
 			if (verb.Responses == null)
 				return;
@@ -139,16 +140,15 @@ namespace Raml.Tools
 
 				var mimeType = GeneratorServiceHelper.GetMimeType(response);
 
-				var obj = objectParser.ParseObject(key, mimeType.Schema, objects, warnings);
-				// Avoid duplicated keys and names
-				if (obj != null && !objects.ContainsKey(key) && objects.All(o => o.Value.Name != obj.Name) && obj.Properties.Any())
-					objects.Add(key, obj);
+                var obj = objectParser.ParseObject(key, mimeType.Schema, schemaResponseObjects, warnings, enums);
+
+                AddObjectToObjectCollectionOrLink(obj, key, schemaResponseObjects);
 			}
 		}
 
 
 
-		private void ParseResourceRequestsRecursively(IDictionary<string, ApiObject> objects, IEnumerable<Resource> resources)
+		private void ParseResourceRequestsRecursively(IEnumerable<Resource> resources)
 		{
 			foreach (var resource in resources)
 			{
@@ -159,19 +159,17 @@ namespace Raml.Tools
 						foreach (var kv in method.Body.Where(b => b.Value.Schema != null))
 						{
 							var key = GeneratorServiceHelper.GetKeyForResource(method, resource) + RequestContentSuffix;
-							if (objects.ContainsKey(key)) 
+							if (schemaRequestObjects.ContainsKey(key)) 
 								continue;
 
-							var obj = objectParser.ParseObject(key, kv.Value.Schema, objects, warnings);
+                            var obj = objectParser.ParseObject(key, kv.Value.Schema, schemaRequestObjects, warnings, enums);
 
-							// Avoid duplicated names and objects without properties
-							if (obj != null && objects.All(o => o.Value.Name != obj.Name) && obj.Properties.Any())
-								objects.Add(key, obj);
+                            AddObjectToObjectCollectionOrLink(obj, key, schemaRequestObjects);                                
 						}
 					}
 				}
 				if (resource.Resources != null)
-					ParseResourceRequestsRecursively(objects, resource.Resources);
+					ParseResourceRequestsRecursively(resource.Resources);
 			}
 		}
 
@@ -180,36 +178,36 @@ namespace Raml.Tools
 		protected IDictionary<string, ApiObject> GetRequestObjects()
 		{
 			ParseSchemas(schemaRequestObjects);
-			ParseResourcesRequests(schemaRequestObjects);
-			ParseResourceTypesRequests(schemaRequestObjects);
+			ParseResourcesRequests();
+			ParseResourceTypesRequests();
 
 			return schemaRequestObjects;
 		}
 
-		private void ParseResourcesRequests(IDictionary<string, ApiObject> objects)
+		private void ParseResourcesRequests()
 		{
 			var resources = raml.Resources;
-			ParseResourceRequestsRecursively(objects, resources);
+			ParseResourceRequestsRecursively(resources);
 		}
 
 
 		protected IDictionary<string, ApiObject> GetResponseObjects()
 		{
 			ParseSchemas(schemaResponseObjects);
-			ParseResourceTypesResponses(schemaResponseObjects);
-			ParseTraitsResponses(schemaResponseObjects);
-			ParseResourcesResponses(schemaResponseObjects);
+			ParseResourceTypesResponses();
+			ParseTraitsResponses();
+			ParseResourcesResponses();
 
 			return schemaResponseObjects;
 		}
 
-		private void ParseResourcesResponses(IDictionary<string, ApiObject> apiObjects)
+		private void ParseResourcesResponses()
 		{
 			var resources = raml.Resources;
-			ParseResourceResponsesRecursively(apiObjects, resources);
+			ParseResourceResponsesRecursively(resources);
 		}
 
-		private void ParseResourceResponsesRecursively(IDictionary<string, ApiObject> objects, IEnumerable<Resource> resources)
+		private void ParseResourceResponsesRecursively(IEnumerable<Resource> resources)
 		{
 			foreach (var resource in resources)
 			{
@@ -222,24 +220,37 @@ namespace Raml.Tools
 							foreach (var kv in response.Body.Where(b => b.Value.Schema != null))
 							{
 								var key = GeneratorServiceHelper.GetKeyForResource(method, resource) + ParserHelpers.GetStatusCode(response.Code) + ResponseContentSuffix;
-								if (objects.ContainsKey(key)) continue;
+                                if (schemaResponseObjects.ContainsKey(key)) continue;
 
-								var obj = objectParser.ParseObject(key, kv.Value.Schema, objects, warnings);
+                                var obj = objectParser.ParseObject(key, kv.Value.Schema, schemaResponseObjects, warnings, enums);
 
-								// Avoid duplicated names and objects without properties
-								if (obj != null && objects.All(o => o.Value.Name != obj.Name) && obj.Properties.Any())
-									objects.Add(key, obj);
+							    AddObjectToObjectCollectionOrLink(obj, key, schemaResponseObjects);
 							}
 						}
 					}
 				}
 				if (resource.Resources != null)
-					ParseResourceResponsesRecursively(objects, resource.Resources);
+					ParseResourceResponsesRecursively(resource.Resources);
 			}
 		}
 
+	    private void AddObjectToObjectCollectionOrLink(ApiObject obj, string key, IDictionary<string, ApiObject> objects)
+	    {
+            if (obj == null || !obj.Properties.Any())
+                return;
 
-		protected void CleanProperties(IDictionary<string, ApiObject> apiObjects)
+            if (objects.All(o => o.Value.Name != obj.Name))
+	        {
+                objects.Add(key, obj);
+	        }
+	        else
+	        {
+	            if (!linkKeysWithObjectNames.ContainsKey(key))
+	                linkKeysWithObjectNames.Add(key, obj.Name);
+	        }
+	    }
+
+	    protected void CleanProperties(IDictionary<string, ApiObject> apiObjects)
 		{
 			var keys = apiObjects.Keys.ToList();
 			var apiObjectsCount = keys.Count - 1;
@@ -254,7 +265,9 @@ namespace Raml.Tools
 					if (!string.IsNullOrWhiteSpace(type) && IsCollectionType(type))
 						type = CollectionTypeHelper.GetBaseType(type);
 
-					if (!NetTypeMapper.IsPrimitiveType(type) && schemaResponseObjects.All(o => o.Value.Name != type) && schemaRequestObjects.All(o => o.Value.Name != type))
+					if (!NetTypeMapper.IsPrimitiveType(type) && schemaResponseObjects.All(o => o.Value.Name != type) 
+                        && schemaRequestObjects.All(o => o.Value.Name != type)
+                        && enums.All(e => e.Value.Name != type))
 						apiObject.Properties.Remove(prop);
 				}
                 //if (!apiObject.Properties.Any())
@@ -276,11 +289,9 @@ namespace Raml.Tools
 					if (objects.ContainsKey(kv.Key)) 
 						continue;
 
-					var obj = objectParser.ParseObject(kv.Key, kv.Value, objects, warnings);
+					var obj = objectParser.ParseObject(kv.Key, kv.Value, objects, warnings, enums);
 						
-					// Avoid duplicated names and objects without properties
-					if (obj != null && objects.All(o => o.Value.Name != obj.Name) && obj.Properties.Any())
-						objects.Add(kv.Key, obj);
+                    AddObjectToObjectCollectionOrLink(obj, kv.Key, objects);
 				}
 			}
 		}
@@ -348,7 +359,8 @@ namespace Raml.Tools
 
 		private static string GetObjectNameForParameter(Resource resource)
 		{
-			var objectNameForParameter = resource.RelativeUri.Substring(1).Replace("{", string.Empty).Replace("}", string.Empty);
+		    var relativeUri = resource.RelativeUri.Replace("{mediaTypeExtension}", string.Empty);
+		    var objectNameForParameter = relativeUri.Substring(1).Replace("{", string.Empty).Replace("}", string.Empty);
 			objectNameForParameter = NetNamingMapper.GetObjectName(objectNameForParameter);
 			return objectNameForParameter;
 		}

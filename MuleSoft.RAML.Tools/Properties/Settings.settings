@@ -15,7 +15,7 @@
       <Value Profile="(Default)">Microsoft.AspNet.WebApi.Client</Value>
     </Setting>
     <Setting Name="WebApiClientPackageVersion" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">5.2.0</Value>
+      <Value Profile="(Default)">5.1.2</Value>
     </Setting>
     <Setting Name="ContractsFolderName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Contracts</Value>
@@ -24,7 +24,7 @@
       <Value Profile="(Default)">RAML.Api.Core</Value>
     </Setting>
     <Setting Name="RAMLApiCorePackageVersion" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">0.9.2</Value>
+      <Value Profile="(Default)">0.9.3</Value>
     </Setting>
     <Setting Name="ApiReferencesFolderName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">API References</Value>
@@ -33,10 +33,10 @@
       <Value Profile="(Default)">RAMLClient.t4</Value>
     </Setting>
     <Setting Name="ServerTemplatesVersion" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">0.1</Value>
+      <Value Profile="(Default)">1.1</Value>
     </Setting>
     <Setting Name="ClientTemplatesVersion" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">0.1</Value>
+      <Value Profile="(Default)">1.1</Value>
     </Setting>
     <Setting Name="ClientTemplateTitle" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Client Proxy T4 Template</Value>
@@ -52,6 +52,24 @@
     </Setting>
     <Setting Name="ControllerImplementationTemplateTitle" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Controller Implementation</Value>
+    </Setting>
+    <Setting Name="EnumsTemplateTitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Enums</Value>
+    </Setting>
+    <Setting Name="RAMLExchangeUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://library.mulesoft.com/#!/?types=api</Value>
+    </Setting>
+    <Setting Name="RAMLWebApiExplorerPackageId" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">RAML.WebApiExplorer</Value>
+    </Setting>
+    <Setting Name="RAMLWebApiExplorerPackageVersion" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">1.0.1</Value>
+    </Setting>
+    <Setting Name="RAMLParserPackageId" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">RAML.Parser</Value>
+    </Setting>
+    <Setting Name="RAMLParserPackageVersion" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">0.8.101</Value>
     </Setting>
   </Settings>
 </SettingsFile>

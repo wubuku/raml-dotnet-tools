@@ -3,19 +3,32 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
+using Raml.Common;
 using Raml.Parser.Expressions;
 
 namespace Raml.Tools.ClientGenerator
 {
 	public class ClientMethodsGenerator : MethodsGeneratorBase
 	{
-		private readonly string DefaultHeaderType = typeof(HttpResponseHeaders).Name;
+	    private readonly IDictionary<string, ApiObject> uriParameterObjects;
+	    private readonly IDictionary<string, ApiObject> queryObjects;
+	    private readonly IDictionary<string, ApiObject> headerObjects;
+	    private readonly IDictionary<string, ApiObject> responseHeadersObjects;
+	    private readonly string defaultHeaderType = typeof(HttpResponseHeaders).Name;
 
-		public ClientMethodsGenerator(RamlDocument raml) : base(raml)
-		{
-		}
+        public ClientMethodsGenerator(RamlDocument raml, IDictionary<string, ApiObject> schemaResponseObjects, 
+            IDictionary<string, ApiObject> uriParameterObjects, IDictionary<string, ApiObject> queryObjects, 
+            IDictionary<string, ApiObject> headerObjects, IDictionary<string, ApiObject> responseHeadersObjects,
+            IDictionary<string, ApiObject> schemaRequestObjects, IDictionary<string, string> linkKeysWithObjectNames)
+            : base(raml, schemaResponseObjects, schemaRequestObjects, linkKeysWithObjectNames)
+        {
+            this.uriParameterObjects = uriParameterObjects;
+            this.queryObjects = queryObjects;
+            this.headerObjects = headerObjects;
+            this.responseHeadersObjects = responseHeadersObjects;
+        }
 
-		public ICollection<ClientGeneratorMethod> GetMethods(Resource resource, string url, ClassObject parent, string objectName, IDictionary<string, ApiObject> schemaResponseObjects, IDictionary<string, ApiObject> uriParameterObjects, IDictionary<string, ApiObject> queryObjects, IDictionary<string, ApiObject> headerObjects, IDictionary<string, ApiObject> responseHeadersObjects, IDictionary<string, ApiObject> schemaRequestObjects)
+	    public ICollection<ClientGeneratorMethod> GetMethods(Resource resource, string url, ClassObject parent, string objectName)
 		{
 			var methodsNames = new List<string>();
 			if (parent != null)
@@ -27,18 +40,16 @@ namespace Raml.Tools.ClientGenerator
 
 			foreach (var method in resource.Methods)
 			{
-				AddGeneratedMethod(resource, url, objectName, schemaResponseObjects, uriParameterObjects, queryObjects,
-					headerObjects, responseHeadersObjects, method, methodsNames, generatorMethods, schemaRequestObjects);
+				AddGeneratedMethod(resource, url, objectName, method, methodsNames, generatorMethods);
 			}
 
 			return generatorMethods;
 		}
 
-		private void AddGeneratedMethod(Resource resource, string url, string objectName, IDictionary<string, ApiObject> schemaResponseObjects,
-			IDictionary<string, ApiObject> uriParameterObjects, IDictionary<string, ApiObject> queryObjects, IDictionary<string, ApiObject> headerObjects,
-			IDictionary<string, ApiObject> responseHeadersObjects, Method method, List<string> methodsNames, ICollection<ClientGeneratorMethod> generatorMethods, IDictionary<string, ApiObject> schemaRequestObjects)
+		private void AddGeneratedMethod(Resource resource, string url, string objectName, Method method, ICollection<string> methodsNames, 
+            ICollection<ClientGeneratorMethod> generatorMethods)
 		{
-			var generatedMethod = BuildClassMethod(url, method, resource, schemaRequestObjects, schemaResponseObjects);
+			var generatedMethod = BuildClassMethod(url, method, resource);
 			if (generatedMethod.ReturnType != "string")
 			{
                 var returnType = CollectionTypeHelper.GetBaseType(generatedMethod.ReturnType);
@@ -55,23 +66,23 @@ namespace Raml.Tools.ClientGenerator
 			if (methodsNames.Contains(generatedMethod.Name))
 				generatedMethod.Name = GetUniqueName(methodsNames, generatedMethod.Name, resource.RelativeUri);
 
-			GetQueryParameters(objectName, method, generatedMethod, queryObjects);
+			GetQueryParameters(objectName, method, generatedMethod);
 
-			GetHeaders(objectName, method, generatedMethod, headerObjects);
+			GetHeaders(objectName, method, generatedMethod);
 
-			GetResponseHeaders(objectName, generatedMethod, method, responseHeadersObjects);
+			GetResponseHeaders(objectName, generatedMethod, method);
 
 			generatorMethods.Add(generatedMethod);
 			methodsNames.Add(generatedMethod.Name);
 		}
 
-	    private ClientGeneratorMethod BuildClassMethod(string url, Method method, Resource resource, IDictionary<string, ApiObject> schemaRequestObjects, IDictionary<string, ApiObject> schemaResponseObjects)
+	    private ClientGeneratorMethod BuildClassMethod(string url, Method method, Resource resource)
 		{
 			var generatedMethod = new ClientGeneratorMethod
 			{
 				Name = NetNamingMapper.GetMethodName(method.Verb ?? "Get" + resource.RelativeUri),
-				ReturnType = GetReturnType(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, schemaResponseObjects, url),
-				Parameter = GetParameter(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, schemaRequestObjects, url),
+				ReturnType = GetReturnType(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, url),
+				Parameter = GetParameter(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, url),
 				Comment = GetComment(resource, method),
 				Url = url,
 				Verb = NetNamingMapper.Capitalize(method.Verb),
@@ -95,7 +106,7 @@ namespace Raml.Tools.ClientGenerator
 			return generatedMethod.ReturnTypeObject.Properties.First().Type;
 		}
 
-		private void GetQueryParameters(string objectName, Method method, ClientGeneratorMethod generatedMethod, IDictionary<string, ApiObject> queryObjects)
+		private void GetQueryParameters(string objectName, Method method, ClientGeneratorMethod generatedMethod)
 		{
 			if (method.QueryParameters != null && method.QueryParameters.Any())
 			{
@@ -106,7 +117,7 @@ namespace Raml.Tools.ClientGenerator
 			}
 		}
 
-		private void GetHeaders(string objectName, Method method, ClientGeneratorMethod generatedMethod, IDictionary<string, ApiObject> headerObjects)
+		private void GetHeaders(string objectName, Method method, ClientGeneratorMethod generatedMethod)
 		{
 			if (method.Headers != null && method.Headers.Any())
 			{
@@ -116,7 +127,7 @@ namespace Raml.Tools.ClientGenerator
 			}
 		}
 
-		private void GetResponseHeaders(string objectName, ClientGeneratorMethod generatedMethod, Method method, IDictionary<string, ApiObject> responseHeadersObjects)
+		private void GetResponseHeaders(string objectName, ClientGeneratorMethod generatedMethod, Method method)
 		{
 			generatedMethod.ResponseHeaders = new Dictionary<HttpStatusCode, ApiObject>();
 			foreach (var resp in method.Responses.Where(r => r.Headers != null && r.Headers.Any()))
@@ -128,7 +139,7 @@ namespace Raml.Tools.ClientGenerator
 
 			if (!generatedMethod.ResponseHeaders.Any())
 			{
-				generatedMethod.ResponseHeaderType = DefaultHeaderType;
+				generatedMethod.ResponseHeaderType = defaultHeaderType;
 			}
 			else if (generatedMethod.ResponseHeaders.Count == 1)
 			{
@@ -136,11 +147,11 @@ namespace Raml.Tools.ClientGenerator
 			}
 			else
 			{
-				CreateMultipleType(generatedMethod, responseHeadersObjects);
+				CreateMultipleType(generatedMethod);
 			}
 		}
 
-		private void CreateMultipleType(ClientGeneratorMethod generatedMethod, IDictionary<string, ApiObject> responseHeadersObjects)
+		private void CreateMultipleType(ClientGeneratorMethod generatedMethod)
 		{
 			var properties = BuildProperties(generatedMethod);
 

@@ -36,12 +36,13 @@ namespace Raml.Tools.Tests
 			var queryObjects = new Dictionary<string, ApiObject>();
 			var headerObjects = new Dictionary<string, ApiObject>();
 			var responseHeadersObjects = new Dictionary<string, ApiObject>();
+		    var linkedKeyWithObjectNames = new Dictionary<string, string>();
 			var classObject = new ClassObject();
 
-			var generator = new ClientMethodsGenerator(ramlDocument);
+            var generator = new ClientMethodsGenerator(ramlDocument, schemaResponseObjects,
+                uriParameterObjects, queryObjects, headerObjects, responseHeadersObjects, schemaRequestObjects, linkedKeyWithObjectNames);
 
-			var generatorMethods = generator.GetMethods(resource, "/", classObject, "Test", schemaResponseObjects,
-				uriParameterObjects, queryObjects, headerObjects, responseHeadersObjects, schemaRequestObjects);
+			var generatorMethods = generator.GetMethods(resource, "/", classObject, "Test");
 
 			Assert.AreEqual(2, generatorMethods.Count);
 		}

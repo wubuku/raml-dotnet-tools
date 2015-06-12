@@ -25,7 +25,7 @@ namespace RAML.Api.Core
 
         public static async Task<SchemaValidationResults> IsValidAsync(string rawSchema, HttpContent content)
         {
-            if (!content.Headers.ContentType.MediaType.Equals("application/json",
+            if (content.Headers.ContentType == null || !content.Headers.ContentType.MediaType.Equals("application/json",
                 StringComparison.InvariantCultureIgnoreCase))
             {
                 return new SchemaValidationResults(true, new List<string>());
@@ -37,7 +37,7 @@ namespace RAML.Api.Core
 
         public static SchemaValidationResults IsValid(string rawSchema, HttpContent content)
         {
-            if (!content.Headers.ContentType.MediaType.Equals("application/json",
+            if (content.Headers.ContentType == null || !content.Headers.ContentType.MediaType.Equals("application/json",
                 StringComparison.InvariantCultureIgnoreCase))
             {
                 return new SchemaValidationResults(true, new List<string>());

@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Raml.Common;
 using Raml.Parser.Expressions;
 
 namespace Raml.Tools.ClientGenerator
 {
     public class ClientGeneratorService : GeneratorServiceBase
     {
-		private readonly ClientMethodsGenerator clientMethodsGenerator;
+		private ClientMethodsGenerator clientMethodsGenerator;
 
         private readonly string rootClassName;
 
@@ -28,7 +29,6 @@ namespace Raml.Tools.ClientGenerator
 	    public ClientGeneratorService(RamlDocument raml, string rootClassName)
             : base(raml)
 	    {
-		    clientMethodsGenerator = new ClientMethodsGenerator(raml);
             this.rootClassName = rootClassName;
         }
 
@@ -39,12 +39,16 @@ namespace Raml.Tools.ClientGenerator
             classes = new Collection<ClassObject>();
             classesObjectsRegistry = new Dictionary<string, ClassObject>();
 			uriParameterObjects = new Dictionary<string, ApiObject>();
+            enums = new Dictionary<string, ApiEnum>();
 
             schemaRequestObjects = GetRequestObjects();
             schemaResponseObjects = GetResponseObjects();
 
             CleanProperties(schemaRequestObjects);
             CleanProperties(schemaResponseObjects);
+
+            clientMethodsGenerator = new ClientMethodsGenerator(raml, schemaResponseObjects, uriParameterObjects,
+                queryObjects, headerObjects, responseHeadersObjects, schemaRequestObjects, linkKeysWithObjectNames);
 
             var parentClass = new ClassObject { Name = rootClassName, Description = "Main class for grouping root resources. Nested resources are defined as properties. The constructor can optionally receive an URL and HttpClient instance to override the default ones." };
             classesNames.Add(parentClass.Name);
@@ -76,7 +80,8 @@ namespace Raml.Tools.ClientGenerator
                        Warnings = warnings,
                        Classes = classObjects.Where(c => c.Name != rootClassName).ToArray(),
                        Root = classObjects.First(c => c.Name == rootClassName),
-					   UriParameterObjects = uriParameterObjects
+					   UriParameterObjects = uriParameterObjects,
+                       Enums = Enums
                    };
         }
 
@@ -103,9 +108,7 @@ namespace Raml.Tools.ClientGenerator
                 // when the resource is a parameter dont generate a class but add it's methods and children to the parent
                 if (resource.RelativeUri.StartsWith("/{") && resource.RelativeUri.EndsWith("}"))
                 {
-	                var generatedMethods = clientMethodsGenerator.GetMethods(resource, fullUrl, parentClass,
-		                parentClass.Name, schemaResponseObjects, uriParameterObjects, queryObjects, headerObjects,
-		                responseHeadersObjects, schemaRequestObjects);
+	                var generatedMethods = clientMethodsGenerator.GetMethods(resource, fullUrl, parentClass, parentClass.Name);
 
                     foreach (var method in generatedMethods)
                     {
@@ -125,8 +128,7 @@ namespace Raml.Tools.ClientGenerator
                                    Name = GetUniqueObjectName(resource, parent),
                                    Description = resource.Description
                                };
-	            classObj.Methods = clientMethodsGenerator.GetMethods(resource, fullUrl, null, classObj.Name,
-		            schemaResponseObjects, uriParameterObjects, queryObjects, headerObjects, responseHeadersObjects, schemaRequestObjects);
+	            classObj.Methods = clientMethodsGenerator.GetMethods(resource, fullUrl, null, classObj.Name);
 
                 classObj.Children = GetClasses(resource.Resources, resource, classObj, fullUrl);
                 

@@ -99,12 +99,39 @@ namespace Raml.Tools.Tests
             var parser = new JsonSchemaParser();
             var warnings = new Dictionary<string, string>();
             var objects = new Dictionary<string, ApiObject>();
-            var obj = parser.Parse("name", schema, objects, warnings);
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
 
             Assert.AreEqual(0, warnings.Count);
             Assert.AreEqual("Name", obj.Name);
-
         }
+
+	    [Test]
+	    public void should_parse_enums()
+	    {
+	        const string schema = @"{
+          'id': 'http://some.site.somewhere/entry-schema#',
+          '$schema': 'http://json-schema.org/draft-03/schema#',
+          'description': 'schema for an fstab entry',
+          'type': 'object',
+          'properties': {
+              'fstype': {
+                  'enum': [ 'ext3', 'ext4', 'btrfs' ]
+              },
+              'readonly': { 'type': 'boolean' }
+          },
+      }";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
+
+            Assert.AreEqual(0, warnings.Count);
+            Assert.AreEqual(2, obj.Properties.Count);
+            Assert.AreEqual(1, enums.Count);
+	    }
 
 		[Test]
 		public void should_parse_schema_when_object()
@@ -125,7 +152,8 @@ namespace Raml.Tools.Tests
 			 var parser = new JsonSchemaParser();
 			 var warnings = new Dictionary<string, string>();
 			 var objects = new Dictionary<string, ApiObject>();
-			 var obj = parser.Parse("name", schema, objects, warnings);
+             var enums = new Dictionary<string, ApiEnum>();
+			 var obj = parser.Parse("name", schema, objects, warnings, enums);
 			 Assert.AreEqual(0, warnings.Count);
 			 Assert.AreEqual("Name", obj.Name);
 			 Assert.IsFalse(obj.IsArray);
@@ -156,7 +184,8 @@ namespace Raml.Tools.Tests
 			var parser = new JsonSchemaParser();
 			var warnings = new Dictionary<string, string>();
 			var objects = new Dictionary<string, ApiObject>();
-			var obj = parser.Parse("name", schema, objects, warnings);
+            var enums = new Dictionary<string, ApiEnum>();
+			var obj = parser.Parse("name", schema, objects, warnings, enums);
 			Assert.AreEqual(0, warnings.Count);
 			Assert.AreEqual("Name", obj.Name);
 			Assert.IsTrue(obj.IsArray);
@@ -187,9 +216,199 @@ namespace Raml.Tools.Tests
             var parser = new JsonSchemaParser();
             var warnings = new Dictionary<string, string>();
             var objects = new Dictionary<string, ApiObject>();
-            var obj = parser.Parse("name", schema, objects, warnings);
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
             Assert.AreEqual("to-address-id", obj.Properties.First(p => p.Name == "Toaddressid").OriginalName);
             Assert.AreEqual("order_item_id", obj.Properties.First(p => p.Name == "Order_item_id").OriginalName);
         }
+
+	    [Test]
+	    public void should_parse_recursive_schemas()
+	    {
+	        var schema = "      { \r\n" +
+	                     "        \"$schema\": \"http://json-schema.org/draft-03/schema\",\r\n" +
+	                     "        \"type\": \"object\",\r\n" +
+	                     "        \"id\": \"Customer\",\r\n" +
+	                     "        \"properties\": {\r\n" +
+	                     "          \"Id\": { \"type\": \"integer\"},\r\n" +
+	                     "          \"Company\": { \"type\": \"string\"},\r\n" +
+	                     "          \"SupportRepresentant\":\r\n" +
+	                     "            { \r\n" +
+	                     "              \"type\": \"object\",\r\n" +
+	                     "              \"id\": \"Employee\",\r\n" +
+	                     "              \"properties\": {\r\n" +
+	                     "                \"Id\": { \"type\": \"integer\"},\r\n" +
+	                     "                \"Title\": { \"type\": \"string\"},\r\n" +
+	                     "                \"BirthDate\": { \"type\": \"string\"},\r\n" +
+	                     "                \"HireDate\": { \"type\": \"string\"},\r\n" +
+	                     "                \"ReportsTo\":\r\n" +
+	                     "                  { \"$ref\": \"Employee\" },\r\n" +
+	                     "                \"FirstName\": { \"type\": \"string\"},\r\n" +
+	                     "                \"LastName\": { \"type\": \"string\"},\r\n" +
+	                     "                \"Address\": { \"type\": \"string\"},\r\n" +
+	                     "                \"City\": { \"type\": \"string\"},\r\n" +
+	                     "                \"State\": { \"type\": \"string\"},\r\n" +
+	                     "                \"Country\": { \"type\": \"string\"},\r\n" +
+	                     "                \"PostalCode\": { \"type\": \"string\"},\r\n" +
+	                     "                \"Phone\": { \"type\": \"string\"},\r\n" +
+	                     "                \"Fax\": { \"type\": \"string\"},\r\n" +
+	                     "                \"Email\": { \"type\": \"string\"}\r\n" +
+	                     "              }\r\n" +
+	                     "            },\r\n" +
+	                     "          \"FirstName\": { \"type\": \"string\"},\r\n" +
+	                     "          \"LastName\": { \"type\": \"string\"},\r\n" +
+	                     "          \"Address\": { \"type\": \"string\"},\r\n" +
+	                     "          \"City\": { \"type\": \"string\"},\r\n" +
+	                     "          \"State\": { \"type\": \"string\"},\r\n" +
+	                     "          \"Country\": { \"type\": \"string\"},\r\n" +
+	                     "          \"PostalCode\": { \"type\": \"string\"},\r\n" +
+	                     "          \"Phone\": { \"type\": \"string\"},\r\n" +
+	                     "          \"Fax\": { \"type\": \"string\"},\r\n" +
+	                     "          \"Email\": { \"type\": \"string\"}\r\n" +
+	                     "        }\r\n" +
+	                     "      }";
+            
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
+            Assert.AreEqual(1, objects.Count);
+            Assert.AreEqual("Employee", objects.First().Value.Name);
+            Assert.AreEqual("Employee", objects.First().Value.Properties[4].Type);
+            Assert.AreEqual("SupportRepresentant", obj.Properties[2].Name);
+            Assert.AreEqual("Employee", obj.Properties[2].Type);
+	    }
+
+        [Test]
+        public void should_parse_array_in_type_object()
+        {
+            const string schema = @"{
+        '$schema': 'http://json-schema.org/draft-03/schema#',
+        'type': 'object',
+        'properties': {
+            'prop1': { 
+                'type': ['object', 'null'],
+                'properties':
+                 {
+                    'readonly': { 'type' : 'boolean' }
+                 }
+            }
+        },
+    }";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
+
+            Assert.AreEqual(1, obj.Properties.Count);
+            Assert.AreEqual("Prop1", obj.Properties.First().Type);
+            Assert.AreEqual(1, objects.Count);
+            Assert.AreEqual(1, objects.First().Value.Properties.Count);
+            Assert.AreEqual(0, warnings.Count);
+        }
+
+        [Test]
+        public void should_parse_array_in_type_integer()
+        {
+            const string schema = @"{
+        '$schema': 'http://json-schema.org/draft-03/schema#',
+        'type': 'object',
+        'properties': {
+            'prop1': { 
+                'type': ['integer', 'null']
+            }
+        },
+    }";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
+
+            Assert.AreEqual(1, obj.Properties.Count);
+            Assert.AreEqual("int?", obj.Properties.First().Type);
+            Assert.AreEqual(0, warnings.Count);
+        }
+
+        [Test]
+        public void should_parse_array_in_type_number()
+        {
+            const string schema = @"{
+        '$schema': 'http://json-schema.org/draft-03/schema#',
+        'type': 'object',
+        'properties': {
+            'prop1': { 
+                'type': ['number', 'null']
+            }
+        },
+    }";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
+
+            Assert.AreEqual(1, obj.Properties.Count);
+            Assert.AreEqual("decimal?", obj.Properties.First().Type);
+            Assert.AreEqual(0, warnings.Count);
+        }
+
+        [Test]
+        public void should_parse_array_in_type_boolean()
+        {
+            const string schema = @"{
+        '$schema': 'http://json-schema.org/draft-03/schema#',
+        'type': 'object',
+        'properties': {
+            'prop1': { 
+                'type': ['null', 'boolean']
+            }
+        },
+    }";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
+
+            Assert.AreEqual(1, obj.Properties.Count);
+            Assert.AreEqual("bool?", obj.Properties.First().Type); 
+            Assert.AreEqual(0, warnings.Count);
+        }
+
+        [Test]
+        public void should_parse_array_in_type_string()
+        {
+            const string schema = @"{
+        '$schema': 'http://json-schema.org/draft-03/schema#',
+        'type': 'object',
+        'properties': {
+            'prop1': { 
+                'type': ['string', 'null']
+            }
+        },
+    }";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums);
+
+            Assert.AreEqual(1, obj.Properties.Count);
+            Assert.AreEqual("string", obj.Properties.First().Type); 
+            Assert.AreEqual(0, warnings.Count);
+        }
+
+
+
+
 	}
 }
