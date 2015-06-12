@@ -191,7 +191,7 @@ image::./docimages/RAML_NETAddRAMLContractScreen.png[align="center", width="550"
 
 == Updating the ASP.NET Web API
 
-The tool also supports updating the generated ASP.NET Web API when a change is made to the RAML definition. This lets you keep the contract definition in a RAML file with the implementation, both staying in sync. Right-click  the RAML contract file under Contracts, and select the option *Implement RAML Contract*. This command  only affects the existing .NET contract interfaces and adds ASP.NET Web API controller implementations for any new resource in the RAML definition. The existing controller implementations  remain untouched.
+The tool also supports updating the generated ASP.NET Web API when a change is made to the RAML definition. This lets you keep the contract definition in a RAML file with the implementation, so that both stay in sync. Right-click  the RAML contract file under Contracts, and select the option *Implement RAML Contract*. This command  only affects the existing .NET contract interfaces and adds ASP.NET Web API controller implementations for any new resource in the RAML definition. The existing controller implementations  remain untouched.
 
 
 == Implementing a Controller in ASP.NET Web API
@@ -204,7 +204,7 @@ public partial class MoviesController : IMoviesController
 {
 
     /// <summary>
-    /// gets all movies in the catalogue
+    /// Gets all movies in the catalogue
     /// </summary>
     /// <returns>IList<MoviesGetOKResponseContent></returns>
     public IHttpActionResult Get()
@@ -216,10 +216,10 @@ public partial class MoviesController : IMoviesController
     }
 
     /// <summary>
-    /// adds a movie to the catalogue
+    /// Adds a movie to the catalog
     /// </summary>
     /// <param name="moviespostrequestcontent"></param>
-    /// <param name="access_token">Used to send a valid OAuth 2 access token. Do not use together with the &quot;Authorization&quot; header </param>
+    /// <param name="access_token">Sends a valid OAuth v2 access token. Do not use together with the &quot;Authorization&quot; header </param>
     public IHttpActionResult Post(Models.MoviesPostRequestContent moviespostrequestcontent,[FromUri] string access_token = null)
     {
         // TODO: implement Post - route: movies/
@@ -227,7 +227,7 @@ public partial class MoviesController : IMoviesController
     }
 
     /// <summary>
-    /// get the info of a movie
+    /// Get the info of a movie
     /// </summary>
     /// <param name="id"></param>
     /// <returns>IdGetOKResponseContent</returns>
@@ -240,7 +240,7 @@ public partial class MoviesController : IMoviesController
     }
 
     /// <summary>
-    /// update the info of a movie
+    /// Update the info of a movie
     /// </summary>
     /// <param name="idputrequestcontent"></param>
     /// <param name="id"></param>
@@ -251,7 +251,7 @@ public partial class MoviesController : IMoviesController
     }
 
     /// <summary>
-    /// remove a movie from the catalogue
+    /// Remove a movie from the catalog
     /// </summary>
     /// <param name="id"></param>
     public IHttpActionResult Delete([FromUri] string id)
@@ -261,11 +261,11 @@ public partial class MoviesController : IMoviesController
     }
 
     /// <summary>
-    /// rent a movie
+    /// Rent a movie
     /// </summary>
     /// <param name="json"></param>
     /// <param name="id"></param>
-    /// <param name="access_token">Used to send a valid OAuth 2 access token. Do not use together with the &quot;Authorization&quot; header </param>
+    /// <param name="access_token">Sends a valid OAuth 2 access token. Do not use together with the &quot;Authorization&quot; header </param>
     public IHttpActionResult PutRent(string json,[FromUri] string id,[FromUri] string access_token = null)
     {
         // TODO: implement PutRent - route: movies/{id}/rent
@@ -277,7 +277,7 @@ public partial class MoviesController : IMoviesController
     /// </summary>
     /// <param name="json"></param>
     /// <param name="id"></param>
-    /// <param name="access_token">Used to send a valid OAuth 2 access token. Do not use together with the &quot;Authorization&quot; header </param>
+    /// <param name="access_token">Sends a valid OAuth v2 access token. Do not use together with the &quot;Authorization&quot; header </param>
     public IHttpActionResult PutReturn(string json,[FromUri] string id,[FromUri] string access_token = null)
     {
         // TODO: implement PutReturn - route: movies/{id}/return
@@ -287,7 +287,7 @@ public partial class MoviesController : IMoviesController
     /// <summary>
     /// gets the current user movies wishlist
     /// </summary>
-    /// <param name="access_token">Used to send a valid OAuth 2 access token. Do not use together with the &quot;Authorization&quot; header </param>
+    /// <param name="access_token">Sends a valid OAuth v2 access token. Do not use together with the &quot;Authorization&quot; header </param>
     /// <returns>IList<WishlistGetOKResponseContent></returns>
     public IHttpActionResult GetWishlist([FromUri] string access_token = null)
     {
@@ -298,11 +298,11 @@ public partial class MoviesController : IMoviesController
     }
 
     /// <summary>
-    /// add a movie to the current user movies wishlist
+    /// Add a movie to the current user movies wishlist
     /// </summary>
     /// <param name="json"></param>
     /// <param name="id"></param>
-    /// <param name="access_token">Used to send a valid OAuth 2 access token. Do not use together with the &quot;Authorization&quot; header </param>
+    /// <param name="access_token">Sends a valid OAuth 2 access token. Do not use together with the &quot;Authorization&quot; header </param>
     public IHttpActionResult PostById(string json,[FromUri] string id,[FromUri] string access_token = null)
     {
         // TODO: implement PostById - route: movies/wishlist/{id}
@@ -310,10 +310,10 @@ public partial class MoviesController : IMoviesController
     }
 
     /// <summary>
-    /// removes a movie from the current user movies wishlist
+    /// Removes a movie from the current user movies wishlist
     /// </summary>
     /// <param name="id"></param>
-    /// <param name="access_token">Used to send a valid OAuth 2 access token. Do not use together with the &quot;Authorization&quot; header </param>
+    /// <param name="access_token">Sends a valid OAuth v2 access token. Do not use together with the &quot;Authorization&quot; header </param>
     public IHttpActionResult DeleteById([FromUri] string id,[FromUri] string access_token = null)
     {
         // TODO: implement DeleteById - route: movies/wishlist/{id}
@@ -321,7 +321,7 @@ public partial class MoviesController : IMoviesController
     }
 
     /// <summary>
-    /// gets the user rented movies
+    /// Gets the user rented movies
     /// </summary>
     /// <returns>IList<RentedGetOKResponseContent></returns>
     public IHttpActionResult GetRented()
@@ -333,7 +333,7 @@ public partial class MoviesController : IMoviesController
     }
 
     /// <summary>
-    /// get all movies that are not currently rented
+    /// Get all movies that are not currently rented
     /// </summary>
     /// <returns>IList<AvailableGetOKResponseContent></returns>
     public IHttpActionResult GetAvailable()
@@ -347,25 +347,25 @@ public partial class MoviesController : IMoviesController
 }
 ----
 
-The IMoviesController interface implemented by the controller represents the contract. You can provide, for example, the implementation code for the Get method and return a list of available movies in the catalog.
+The `IMoviesController` interface implemented by the controller represents the contract. You can provide, for example, the implementation code for the Get method and return a list of available movies in the catalog.
 
-== Customizing the generated code
+== Customizing the Generated Code
 
 RAML Tools for .NET uses T4 templates for code generation of client and service implementation.
 The T4 templates are now placed in your project folder to be able to easily customize them.
 
-If you customize a template be sure to add this file to your VCS repository.
+If you customize a template, be sure to add this file to your VCS repository.
 
-Each template has a header with the tile, version and hash, please do not modify this information as is used to check for customization and compatibility with new versions.
+Each template has a header with the title, version, and hash. Do not modify this information as it's used to check for customization and compatibility with new versions.
 
-=== Compatibility with new versions of the templates
+=== Compatibility With New Versions of the Templates
 
-When upgrading the tool if the template has changed a compatibility check is performed. If you have customized the template and the new version of the template is compatible with your current one, then you are given the option to override or continue using your customized template.
+When upgrading the tool if the template has changed, a compatibility check is performed. If you have customized the template and the new version of the template is compatible with your current one, you are given the option to override or continue using your customized template.
 
-In case your customized template is no longer compatible, then you are given the choice to override the template or stop the process. In the latter, you must uninstall the new version of the tool and reinstall the previous one.
+In case your customized template is no longer compatible,  you are given the choice to override the template or stop the process. In the latter, you must uninstall the new version of the tool and reinstall the previous one.
 
 
-=== Customizing the generated code for the client
+=== Customizing the Generated Code for the Client
 
 For the client there is a single template containing all the generated code, the *RAMLClient.t4* file is placed under "API References/Templates".
 
@@ -385,36 +385,36 @@ For the Web API there are a several templates under "Contracts/Templates":
 
 == Metadata
 
-RAML metadata output lets you to extract a RAML definition out of your WebApi app. To enable it please right click on your project and choose "Enable RAML metadata output" command.
-This will add a RamlController, some start up configurations, a razor view and other required files (css, js, etc.).
-There are three ways to access the information about your API:
+RAML metadata output lets you extract a RAML definition for your Web API app. To enable metadata output, right-click your project and choose *Enable RAML metadata output* command.
+This adds a `RamlController`, start up configurations, a razor view and other required files (css, js, etc.).
+The next sections list the three ways you can access the information about your API.
 
 
 === Api Console
 
-Run the web application and navigate to /raml to see the Api Console. 
+Run the web application and navigate to `/raml` to see the API Console. 
 
 image::./docimages/RAML_NET_ApiConsole.png[align="center"]
 
-You can navigate by clicking on the buttons, you can see the request and responses and try the availabe methods for each resource.
+You can navigate by clicking the buttons, you can see the request and responses, and try the available methods for each resource.
 
-=== Seeing the raw RAML
+=== Viewing the rRaw RAML
 
-If you wish to view the RAML that is generated from your API, run your web app and navigate to /raml/raw
+If you wish to view the RAML that is generated from your API, run your web app and navigate to `/raml/raw`.
 
 image::./docimages/RAML_NET_RAML.png[align="center"]
 
 
 === Downloading the RAML
 
-If you wish to download the RAML as a file, run your web app and navigate to /raml/download, this will prompt you to choose the location and file name.
+If you wish to download the RAML as a file, run your web app and navigate to `/raml/download`. This prompts you to choose the location and file name.
 
 
-=== Customizing the generated RAML
+=== Customizing the Generated RAML
 
-Some aspects of your API like security are not automatically detected. You can customize the RAML generation process to further adjust it to your API.
+Some aspects of your API like security are not automatically detected. You can customize the RAML generation process and further adjust it to your API.
 
-In order to do this you will have to modify the GetRamlContents method of your RamlController class.
+To do this, modify the GetRamlContents method of your RamlController class.
 
 [source, c#]
 ----
@@ -431,39 +431,40 @@ In order to do this you will have to modify the GetRamlContents method of your R
 ----
 
 
-You can set the security schemes of your API, this is an example for OAuth2.
-First it creates a **SecuritySchemeDescriptor** where you can set the query parameters, headers and responses.
+You can set the security schemes of your API, this is an example for OAuth v2.
+First it creates a *SecuritySchemeDescriptor* where you can set the query parameters, headers, and responses.
 In this case it defines a single query parameter called "access_token".
 
-Then it calls the **UseOAuth2** method and sets the endpoints, grants, scopes and previously created security scheme descriptor.
-In this example the authorization URL is "/oauth/authorize", the access token URL is "/oauth/access_token".
-There are two authorization grants "code" and "token" and a single scope "all".
+Then it calls the *UseOAuth2* method, which sets the endpoints, grants, scopes, and the previously created security scheme descriptor.
+
+In this example the authorization URL is `/oauth/authorize`, the access token URL is `/oauth/access_token`.
+There are two authorization grants *code* and *token*, and a single scope *all*.
 
 [source, c#]
 ----
-    // set OAuth security scheme descriptor:  headers, query parameters and responses
+    // Set OAuth security scheme descriptor:  headers, query parameters, and responses
     var descriptor = new SecuritySchemeDescriptor
     {
         QueryParameters = new Dictionary<string, Parameter>
-                                            {
-                                                {
-                                                    "access_token",
-                                                    new Parameter
-                                                    {
-                                                        Type = "string",
-                                                        Required = true
-                                                    }
-                                                }
-                                            }
+          {
+              {
+                  "access_token",
+                  new Parameter
+                  {
+                      Type = "string",
+                      Required = true
+                  }
+              }
+          }
     };
 
-    // set OAuth 2 endpoints, grants, scopes and descriptor
+    // Set OAuth v2 endpoints, grants, scopes and descriptor
     apiExplorerService.UseOAuth2("/oauth/authorize", "/oauth/access_token",
-                                new[] {"code", "token"}, new[] {"all"}, descriptor);
+                new[] {"code", "token"}, new[] {"all"}, descriptor);
 
 ----
 
-You can set the protocols for the while API by setting the **Protocols** property of the ApiExplorerService instance.
+You can set the protocols for the web API by setting the *Protocols* property of the ApiExplorerService instance.
 For example for using HTTPS only in all of your API you would do this:
 
 [source, c#]
@@ -471,14 +472,14 @@ For example for using HTTPS only in all of your API you would do this:
     apiExplorerService.Protocols = new[] { Protocol.HTTPS };
 ----
 
-In a similar fashion if you want to set all of your resources to be accessed with OAuth 2 you can set the **SecuredBy** property of the ApiExplorerService instance.
+In a similar fashion if you want to set all of your resources to be accessed with OAuth v2, you can set the *SecuredBy* property of the ApiExplorerService instance.
 
 [source, c#]
 ----
     apiExplorerService.SecuredBy = new[] { "oauth_2_0" };
 ----
 
-Combining all this toghether you Raml action would look like this:
+Combining all this toghether, your RAML action should look like this:
 
 [source, c#]
 ----
@@ -488,29 +489,29 @@ Combining all this toghether you Raml action would look like this:
         var apiExplorer = config.Services.GetApiExplorer();
         var apiExplorerService = new ApiExplorerService(apiExplorer, config.VirtualPathRoot);
 
-        // use HTTPS only
+        // Use HTTPS only
         apiExplorerService.Protocols = new[] { Protocol.HTTPS };
 
-        // use OAuth 2 for all resources
+        // Use OAuth 2 for all resources
         apiExplorerService.SecuredBy = new[] { "oauth_2_0" };
 
-        // set OAuth security scheme descriptor:  headers, query parameters and responses
+        // Set OAuth security scheme descriptor: headers, query parameters, and responses
         var descriptor = new SecuritySchemeDescriptor
         {
             QueryParameters = new Dictionary<string, Parameter>
-                                                {
-                                                    {
-                                                        "access_token",
-                                                        new Parameter
-                                                        {
-                                                            Type = "string",
-                                                            Required = true
-                                                        }
-                                                    }
-                                                }
+                {
+                    {
+                        "access_token",
+                        new Parameter
+                        {
+                            Type = "string",
+                            Required = true
+                        }
+                    }
+                }
         };
 
-        // set OAuth 2 endpoints, grants, scopes and descriptor
+        // Set OAuth v2 endpoints, grants, scopes, and descriptor
         apiExplorerService.UseOAuth2("https://api.movies.com/oauth/authorize",
             "https://api.movies.com/oauth/access_token", new[] {"code", "token"}, new[] {"all"}, descriptor);
 
@@ -521,22 +522,22 @@ Combining all this toghether you Raml action would look like this:
     }
 ----
 
-For using OAuth 1 you can use the **UseOAuth1** method. For other security schemes or further customization you can user the **SetSecurityScheme** method or the **SecuritySchemes** property.
+If using OAuth v1, you can use the *UseOAuth1* method. For other security schemes or further customization, you can use the *SetSecurityScheme* method or the *SecuritySchemes* property.
 
-Other global properties can be set using the **SetRamlProperties** action.
-For example, to set the root level documentation
+Other global properties can be set using the *SetRamlProperties* action.
+For example, to set the root level documentation:
 
 [source, c#]
 ----
     apiExplorerService.SetRamlProperties = raml =>
-                                            {
-                                                raml.Documentation = "Documentation is availabe at http://documentation.org"
-                                            }
+        {
+            raml.Documentation = "Documentation is availabe at http://documentation.org"
+        }
 ----
 
-For customizing your RAML only for specific resources you have three action available: **SetMethodProperties**, **SetResourceProperties**, **SetResourcePropertiesByAction** and **SetResourcePropertiesByController**.
+For customizing your RAML only for specific resources, you have three action available: *SetMethodProperties*, *SetResourceProperties*, *SetResourcePropertiesByAction*, and *SetResourcePropertiesByController*.
 
-For example for setting OAuth 2 for the movies POST action you could do this:
+For example for setting OAuth v2 for the movies POST action, you can do this:
 
 [source, c#]
 ----
@@ -556,18 +557,18 @@ You can also modify the Body or the Responses using the same strategy.
 
 == FAQ
 
-Q: What are the differences between the RAML Parser for .NET and RAML Tools for .NET?
+*What are the differences between the RAML Parser for .NET and RAML Tools for .NET?*
 
-A: The RAML Parser takes a text based RAML definition and returns an Abstract Syntax Tree (An object model representing the resources/methods in the RAML definition). The RAML Tools leverage this model in code generation templates to provide strongly typed classes for the consumption or implementation of the API itself.
+The RAML Parser takes a text based RAML definition and returns an Abstract Syntax Tree (An object model representing the resources/methods in the RAML definition). The RAML Tools leverage this model in code generation templates to provide strongly typed classes for the consumption or implementation of the API itself.
 
-Q: Which languages can the tools generate code for?
+*Which languages can the tools generate code for?*
 
-A: Currently, C# is the only output language supported. This generated code can however simply be contained within a separate assembly, and the types exposed then consumed from any CLR language.
+Currently, C# is the only output language supported. This generated code can however simply be contained within a separate assembly, and the types exposed then consumed from any CLR language.
 
-Q: Can I customize the code-generation templates?
+*Can I customize the code-generation templates?*
 
-A: Yes, RAML Tools for .NET uses T4 templates for code generation of client and service implementation. See the appropriate sections for guidance on where and how to customize templates.
+Yes, RAML Tools for .NET uses T4 templates for code generation of client and service implementation. See the appropriate sections for guidance on where and how to customize templates.
 
-Q: I already have an API built using ASP.NET WebApi - how do I adopt RAML for my project?
+*I already have an API built using ASP.NET WebApi - how do I adopt RAML for my project?*
 
-A: The reverse engineering scenario is under development, and is released soon. This allows you to extract a RAML definition for an existing WebApi project, allowing consumers of your API to quickly generate a client using the RAML Tools.
+The reverse engineering scenario is under development, and will be released soon. This allows you to extract a RAML definition for an existing WebApi project, allowing consumers of your API to quickly generate a client using the RAML Tools.
