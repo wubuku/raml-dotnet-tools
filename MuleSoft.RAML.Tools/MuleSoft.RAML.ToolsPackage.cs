@@ -111,7 +111,7 @@ namespace MuleSoft.RAML.Tools
         {
             ChangeCommandStatus(enableRamlMetadataOutputCommandId, false);
 
-            StartProgressBar("Disable RAML metada output", "Uninstalling...", "Processing...");
+            StartProgressBar("Disable RAML metadata output", "Uninstalling...", "Processing...");
 
             var service = new ReverseEngineeringService(ServiceProvider.GlobalProvider);
             service.RemoveReverseEngineering();
@@ -135,7 +135,7 @@ namespace MuleSoft.RAML.Tools
         {
             ChangeCommandStatus(enableRamlMetadataOutputCommandId, false);
 
-            StartProgressBar("Enable RAML metada output", "Installing...", "Processing...");
+            StartProgressBar("Enable RAML metadata output", "Installing...", "Processing...");
 
             var service = new ReverseEngineeringService(ServiceProvider.GlobalProvider);
             service.AddReverseEngineering();
