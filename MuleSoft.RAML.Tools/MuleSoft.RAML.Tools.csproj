@@ -178,7 +178,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="RamlClientTool.cs" />
-    <Compile Include="RamlReferenceReader.cs" />
     <Compile Include="RamlScaffoldService.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
