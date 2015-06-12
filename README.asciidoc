@@ -152,9 +152,7 @@ For more advanced scenarios in which several JSON schemas are associated with a 
 [source, c#]
 ----
 var okContent = movieResponse.Content.IdGetOKResponseContent;
-
 var badReqContent = movieResponse.Content.IdGetBadRequestResponseContent;
-
 var notFoundContent = movieResponse.Content.IdGetNotFoundResponseContent;
 ----
 
@@ -370,17 +368,17 @@ In case your customized template is no longer compatible,  you are given the cho
 For the client there is a single template containing all the generated code, the *RAMLClient.t4* file is placed under "API References/Templates".
 
 
-=== Customizing the generated code for the Asp.Net Web API
+=== Customizing the Generated cCode for the Asp.Net Web API
 
 For the Web API there are a several templates under "Contracts/Templates":
 
-- *ApiControllerImplementation.t4*: this generates the skeleton of the controller, this is the place where you implement your code.
+- *ApiControllerImplementation.t4*: Generates the skeleton of the controller, this is the place where you implement your code.
 
-- *ApiControllerBase.t4*: this class delegates the to the methods on the controller implementation class (ApiControllerImplementation).
+- *ApiControllerBase.t4*: This class delegates the to the methods on the controller implementation class (ApiControllerImplementation).
 
-- *ApiControllerInterface.t4*: the interface that the controller implements.
+- *ApiControllerInterface.t4*: The interface that the controller implements.
 
-- *ApiModel.t4*: template for the request and response content models.
+- *ApiModel.t4*: Template for the request and response content models.
 
 
 == Metadata
@@ -398,7 +396,7 @@ image::./docimages/RAML_NET_ApiConsole.png[align="center"]
 
 You can navigate by clicking the buttons, you can see the request and responses, and try the available methods for each resource.
 
-=== Viewing the rRaw RAML
+=== Viewing the Raw RAML
 
 If you wish to view the RAML that is generated from your API, run your web app and navigate to `/raml/raw`.
 
@@ -479,7 +477,7 @@ In a similar fashion if you want to set all of your resources to be accessed wit
     apiExplorerService.SecuredBy = new[] { "oauth_2_0" };
 ----
 
-Combining all this toghether, your RAML action should look like this:
+Combining all this together, your RAML action should look like:
 
 [source, c#]
 ----
