@@ -170,6 +170,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeGeneratorRegistrationAttribute.cs" />
+    <Compile Include="RamlPropertiesExtender\RamlPropertiesExtenderProvider.cs" />
+    <Compile Include="RamlPropertiesExtender\RamlProperties.cs" />
     <Compile Include="RamlReferenceService.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
