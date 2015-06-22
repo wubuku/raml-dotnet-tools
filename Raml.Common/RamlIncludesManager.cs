@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,7 +15,7 @@ namespace Raml.Common
 		private readonly char[] includeDirectiveTrimChars = { ' ', '"', '}', ']', ',' };
 		private const string IncludeDirective = "!include";
         private readonly IDictionary<string, Task<string>> downloadFileTasks = new Dictionary<string, Task<string>>();
-        private IDictionary<string, string> relativePaths = new Dictionary<string, string>();
+        private readonly IDictionary<string, string> relativePaths = new Dictionary<string, string>();
 
 	    private HttpClient client;
 	    private HttpClient Client
@@ -88,10 +87,9 @@ namespace Raml.Common
 				if (!line.Contains(IncludeDirective))
 					continue;
 
-				var indexOfInclude = line.IndexOf(IncludeDirective, StringComparison.Ordinal);
-				var includeSource = line.Substring(indexOfInclude + IncludeDirective.Length).Trim(includeDirectiveTrimChars);
+				var includeSource = GetIncludePath(line);
 
-				var destinationFilePath = GetDestinationFilePath(destinationFolder, includeSource);
+			    var destinationFilePath = GetDestinationFilePath(destinationFolder, includeSource);
 
 			    if (!includedFiles.Contains(destinationFilePath))
 			    {
@@ -141,7 +139,7 @@ namespace Raml.Common
 				lines[i] = lines[i].Replace(includeSource, GetPathWithoutDriveLetter(destinationFilePath));
 			}
 
-            File.WriteAllLines(writeToFilePath, lines);
+            File.WriteAllText(writeToFilePath, string.Join(Environment.NewLine, lines).Trim());
 
 		    foreach (var includedFile in scopeIncludedFiles)
 		    {
@@ -158,6 +156,17 @@ namespace Raml.Common
                 Manage(nestedFileLines, destinationFolder, includedFiles, path, relativePath, includedFile, confirmOvewrite);
 		    }
 		}
+
+	    private string GetIncludePath(string line)
+	    {
+	        var indexOfInclude = line.IndexOf(IncludeDirective, StringComparison.Ordinal);
+	        var includeSource = line.Substring(indexOfInclude + IncludeDirective.Length).Trim(includeDirectiveTrimChars);
+	        includeSource = includeSource.Replace(Environment.NewLine, string.Empty);
+            includeSource = includeSource.Replace("\r\n", string.Empty);
+            includeSource = includeSource.Replace("\n", string.Empty);
+            includeSource = includeSource.Replace("\r", string.Empty);
+	        return includeSource;
+	    }
 
 	    private static string ResolveFullPath(string path, string relativePath, string includeSource)
 	    {
@@ -222,7 +231,7 @@ namespace Raml.Common
             return filename;
         }
 
-		private void DownloadFile(string ramlSourceUrl, string destinationFilePath, bool confirmOvewrite = false)
+		private void DownloadFile(string ramlSourceUrl, string destinationFilePath)
 		{
 			Uri uri;
 			if (!Uri.TryCreate(ramlSourceUrl, UriKind.Absolute, out uri))
@@ -240,14 +249,14 @@ namespace Raml.Common
 	            {
 	                if (File.Exists(destinationFilePath))
 	                    new FileInfo(destinationFilePath).IsReadOnly = false;
-	                File.WriteAllText(destinationFilePath, contents);
+	                File.WriteAllText(destinationFilePath, contents.Trim());
 	            }
 	        }
 	        else
 	        {
 	            if (File.Exists(destinationFilePath))
 	                new FileInfo(destinationFilePath).IsReadOnly = false;
-	            File.WriteAllText(destinationFilePath, contents);
+	            File.WriteAllText(destinationFilePath, contents.Trim());
 	        }
 	    }
 
