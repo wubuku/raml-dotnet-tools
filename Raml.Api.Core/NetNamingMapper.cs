@@ -26,6 +26,9 @@ namespace Raml.Common
 			name = ReplaceSpecialChars(name, "/");
 			name = ReplaceSpecialChars(name, "_");
 			name = ReplaceSpecialChars(name, ":");
+            name = ReplaceSpecialChars(name, "(");
+            name = ReplaceSpecialChars(name, ")");
+            name = ReplaceSpecialChars(name, "'");
 
 			name = ReplaceSpecialChars(name, "{");
 			name = ReplaceSpecialChars(name, "}");
@@ -79,6 +82,9 @@ namespace Raml.Common
 			name = ReplaceSpecialChars(name, "\\");
 			name = ReplaceSpecialChars(name, "/");
 			name = ReplaceSpecialChars(name, "_");
+            name = ReplaceSpecialChars(name, "(");
+            name = ReplaceSpecialChars(name, ")");
+            name = ReplaceSpecialChars(name, "'");
 			name = ReplaceUriParameters(name);
 			name = name.Replace(":", string.Empty);
 			name = RemoveIndalidChars(name);

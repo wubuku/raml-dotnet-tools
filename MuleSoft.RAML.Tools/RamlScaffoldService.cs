@@ -46,8 +46,7 @@ namespace MuleSoft.RAML.Tools
 			if (string.IsNullOrWhiteSpace(parameters.RamlSource) && !string.IsNullOrWhiteSpace(parameters.RamlTitle))
 				AddEmptyContract(parameters.TargetFileName, parameters.RamlTitle, folderItem, generatedFolderPath, parameters.TargetNamespace, parameters.TargetFileName);
 			else
-				AddContractFromFile(parameters.RamlFilePath, parameters.TargetNamespace, parameters.RamlSource,
-					parameters.DoNotScaffold, folderItem, generatedFolderPath, parameters.TargetFileName);
+				AddContractFromFile(parameters.RamlFilePath, parameters.TargetNamespace, parameters.RamlSource, folderItem, generatedFolderPath, parameters.TargetFileName);
 		}
 
 
@@ -254,7 +253,7 @@ namespace MuleSoft.RAML.Tools
 	        }
 		}
 
-		private void AddContractFromFile(string ramlFilePath, string targetNamespace, string ramlSource, bool? doNotScaffold, ProjectItem folderItem, string folderPath, string targetFilename)
+		private void AddContractFromFile(string ramlFilePath, string targetNamespace, string ramlSource, ProjectItem folderItem, string folderPath, string targetFilename)
 		{
 			InstallerServices.AddRefFile(ramlFilePath, targetNamespace, ramlSource, folderPath, targetFilename);
 
@@ -276,11 +275,10 @@ namespace MuleSoft.RAML.Tools
 			//var oldIncludedFiles = existingIncludeItems.Where(item => !result.IncludedFiles.Contains(item.FileNames[0]));
 			//InstallerServices.RemoveSubItemsAndAssociatedFiles(oldIncludedFiles);
 
-			var ramlProjItem = AddOrUpdateRamlFile(result.ModifiedContents, folderItem, folderPath, Path.GetFileName(ramlFilePath));
+			var ramlProjItem = AddOrUpdateRamlFile(result.ModifiedContents, folderItem, folderPath, targetFilename);
 			InstallerServices.RemoveSubItemsAndAssociatedFiles(ramlProjItem);
 
-			if (doNotScaffold == null || !doNotScaffold.Value)
-				Scaffold(ramlProjItem.FileNames[0], targetNamespace, Path.GetFileName(ramlFilePath));
+			Scaffold(ramlProjItem.FileNames[0], targetNamespace, targetFilename);
 		}
 
 		private static ProjectItem AddOrUpdateRamlFile(string modifiedContents, ProjectItem folderItem, string folderPath, string ramlFileName)

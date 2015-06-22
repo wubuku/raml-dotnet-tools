@@ -24,7 +24,7 @@
       <Value Profile="(Default)">RAML.Api.Core</Value>
     </Setting>
     <Setting Name="RAMLApiCorePackageVersion" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">0.9.2</Value>
+      <Value Profile="(Default)">0.9.3</Value>
     </Setting>
     <Setting Name="ApiReferencesFolderName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">API References</Value>
@@ -33,7 +33,7 @@
       <Value Profile="(Default)">RAMLClient.t4</Value>
     </Setting>
     <Setting Name="ServerTemplatesVersion" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">1.0</Value>
+      <Value Profile="(Default)">1.1</Value>
     </Setting>
     <Setting Name="ClientTemplatesVersion" Type="System.String" Scope="Application">
       <Value Profile="(Default)">1.1</Value>
@@ -63,7 +63,7 @@
       <Value Profile="(Default)">RAML.WebApiExplorer</Value>
     </Setting>
     <Setting Name="RAMLWebApiExplorerPackageVersion" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">1.0.0</Value>
+      <Value Profile="(Default)">1.0.1</Value>
     </Setting>
     <Setting Name="RAMLParserPackageId" Type="System.String" Scope="Application">
       <Value Profile="(Default)">RAML.Parser</Value>

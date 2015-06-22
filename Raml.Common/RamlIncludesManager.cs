@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,6 +15,7 @@ namespace Raml.Common
 		private readonly char[] includeDirectiveTrimChars = { ' ', '"', '}', ']', ',' };
 		private const string IncludeDirective = "!include";
         private readonly IDictionary<string, Task<string>> downloadFileTasks = new Dictionary<string, Task<string>>();
+        private readonly IDictionary<string, string> relativePaths = new Dictionary<string, string>();
 
 	    private HttpClient client;
 	    private HttpClient Client
@@ -34,9 +34,11 @@ namespace Raml.Common
 			string path;
 
 			string[] lines;
+
+            var destinationFilePath = GetDestinationFilePath(Path.GetTempPath(), ramlSource);
+
 			if (ramlSource.StartsWith("http"))
 			{
-				var destinationFilePath = GetDestinationFilePath(Path.GetTempPath(), ramlSource);
                 Uri uri;
                 if (!Uri.TryCreate(ramlSource, UriKind.Absolute, out uri))
                     throw new UriFormatException("Invalid URL: " + ramlSource);
@@ -71,12 +73,12 @@ namespace Raml.Common
 			if (lines.Any(l => l.Contains(IncludeDirective)) && !Directory.Exists(destinationFolder))
 				Directory.CreateDirectory(destinationFolder);
 
-			Manage(lines, destinationFolder, includedFiles, path, confirmOverrite);
+			Manage(lines, destinationFolder, includedFiles, path, path, destinationFilePath, confirmOverrite);
 
 			return new RamlIncludesManagerResult(string.Join(Environment.NewLine, lines), includedFiles);
 		}
 
-		private void Manage(IList<string> lines, string destinationFolder, ICollection<string> includedFiles, string path, bool confirmOvewrite)
+		private void Manage(IList<string> lines, string destinationFolder, ICollection<string> includedFiles, string path, string relativePath, string writeToFilePath, bool confirmOvewrite)
 		{
 		    var scopeIncludedFiles = new Collection<string>();
 			for (var i = 0; i < lines.Count; i++)
@@ -85,10 +87,9 @@ namespace Raml.Common
 				if (!line.Contains(IncludeDirective))
 					continue;
 
-				var indexOfInclude = line.IndexOf(IncludeDirective, StringComparison.Ordinal);
-				var includeSource = line.Substring(indexOfInclude + IncludeDirective.Length).Trim(includeDirectiveTrimChars);
+				var includeSource = GetIncludePath(line);
 
-				var destinationFilePath = GetDestinationFilePath(destinationFolder, includeSource);
+			    var destinationFilePath = GetDestinationFilePath(destinationFolder, includeSource);
 
 			    if (!includedFiles.Contains(destinationFilePath))
 			    {
@@ -103,8 +104,11 @@ namespace Raml.Common
 			            var fullPathIncludeSource = includeSource;
 			            // if relative does not exist, try with full path
 			            if (!File.Exists(includeSource))
-			                fullPathIncludeSource = Path.Combine(path, includeSource);
-
+			            {
+			                fullPathIncludeSource = ResolveFullPath(path, relativePath, includeSource);
+                            if(!relativePaths.ContainsKey(destinationFilePath))
+                                relativePaths.Add(destinationFilePath, Path.GetDirectoryName(fullPathIncludeSource));
+			            }
 
 			            // copy file to dest folder
 			            if (File.Exists(destinationFilePath) && confirmOvewrite)
@@ -135,6 +139,8 @@ namespace Raml.Common
 				lines[i] = lines[i].Replace(includeSource, GetPathWithoutDriveLetter(destinationFilePath));
 			}
 
+            File.WriteAllText(writeToFilePath, string.Join(Environment.NewLine, lines).Trim());
+
 		    foreach (var includedFile in scopeIncludedFiles)
 		    {
 		        if (downloadFileTasks.ContainsKey(includedFile))
@@ -142,13 +148,67 @@ namespace Raml.Common
 		            downloadFileTasks[includedFile].WaitWithPumping();
                     WriteFile(includedFile, confirmOvewrite, downloadFileTasks[includedFile].ConfigureAwait(false).GetAwaiter().GetResult());
 		        }
+		        if (relativePaths.ContainsKey(includedFile))
+		            relativePath = relativePaths[includedFile];
+
 		        var nestedFileLines = File.ReadAllLines(includedFile);
 
-                Manage(nestedFileLines, destinationFolder, includedFiles, path, confirmOvewrite);
+                Manage(nestedFileLines, destinationFolder, includedFiles, path, relativePath, includedFile, confirmOvewrite);
 		    }
 		}
 
-		private static string GetPathWithoutDriveLetter(string destinationFilePath)
+	    private string GetIncludePath(string line)
+	    {
+	        var indexOfInclude = line.IndexOf(IncludeDirective, StringComparison.Ordinal);
+	        var includeSource = line.Substring(indexOfInclude + IncludeDirective.Length).Trim(includeDirectiveTrimChars);
+	        includeSource = includeSource.Replace(Environment.NewLine, string.Empty);
+            includeSource = includeSource.Replace("\r\n", string.Empty);
+            includeSource = includeSource.Replace("\n", string.Empty);
+            includeSource = includeSource.Replace("\r", string.Empty);
+	        return includeSource;
+	    }
+
+	    private static string ResolveFullPath(string path, string relativePath, string includeSource)
+	    {
+            // copy values ! DO NOT MODIFY original values !
+	        var includeToUse = includeSource;
+
+	        var pathToUse = GoUpIfTwoDots(includeSource, relativePath);
+            includeToUse = includeToUse.Replace("../", string.Empty);
+            includeToUse = includeToUse.Replace('/', Path.DirectorySeparatorChar);
+            var fullPath = Path.Combine(pathToUse, includeToUse);
+            if (File.Exists(fullPath))
+                return fullPath;
+
+            includeToUse = includeSource.Replace("../", string.Empty);
+            includeToUse = includeToUse.Replace('/', Path.DirectorySeparatorChar);
+            return Path.Combine(path, includeToUse);
+	    }
+
+	    private static string GoUpIfTwoDots(string includeToUse, string pathToUse)
+	    {
+	        if (!includeToUse.StartsWith("../")) 
+                return pathToUse;
+
+	        pathToUse = GoUpOneFolder(pathToUse);
+	        includeToUse = RemoveTwoDots(includeToUse);
+	        return GoUpIfTwoDots(includeToUse, pathToUse);
+	    }
+
+	    private static string RemoveTwoDots(string includeToUse)
+	    {
+	        includeToUse = includeToUse.Substring(3);
+	        return includeToUse;
+	    }
+
+	    private static string GoUpOneFolder(string pathToUse)
+	    {
+	        pathToUse = pathToUse.TrimEnd(Path.DirectorySeparatorChar);
+	        pathToUse = pathToUse.Substring(0, pathToUse.LastIndexOf(Path.DirectorySeparatorChar));
+	        return pathToUse;
+	    }
+
+	    private static string GetPathWithoutDriveLetter(string destinationFilePath)
 		{
 			return destinationFilePath.Substring(1,1) == ":" ? destinationFilePath.Substring(2) : destinationFilePath;
 		}
@@ -163,7 +223,15 @@ namespace Raml.Common
 			return destinationFilePath;
 		}
 
-		private void DownloadFile(string ramlSourceUrl, string destinationFilePath, bool confirmOvewrite = false)
+        private static string GetFileName(string ramlSource)
+        {
+            var filename = Path.GetFileName(ramlSource);
+            if (string.IsNullOrWhiteSpace(filename))
+                filename = NetNamingMapper.GetObjectName(ramlSource) + ".raml"; //TODO: check
+            return filename;
+        }
+
+		private void DownloadFile(string ramlSourceUrl, string destinationFilePath)
 		{
 			Uri uri;
 			if (!Uri.TryCreate(ramlSourceUrl, UriKind.Absolute, out uri))
@@ -181,24 +249,16 @@ namespace Raml.Common
 	            {
 	                if (File.Exists(destinationFilePath))
 	                    new FileInfo(destinationFilePath).IsReadOnly = false;
-	                File.WriteAllText(destinationFilePath, contents);
+	                File.WriteAllText(destinationFilePath, contents.Trim());
 	            }
 	        }
 	        else
 	        {
 	            if (File.Exists(destinationFilePath))
 	                new FileInfo(destinationFilePath).IsReadOnly = false;
-	            File.WriteAllText(destinationFilePath, contents);
+	            File.WriteAllText(destinationFilePath, contents.Trim());
 	        }
 	    }
-
-	    private static string GetFileName(string ramlSource)
-		{
-			var filename = Path.GetFileName(ramlSource);
-			if (string.IsNullOrWhiteSpace(filename))
-				filename = NetNamingMapper.GetObjectName(ramlSource) + ".raml"; //TODO: check
-			return filename;
-		}
 
 		private static string GetFullWebSource(string path, string includeSource)
 		{

@@ -145,6 +145,8 @@
             <TextBox Grid.Row="3"
                      Grid.ColumnSpan="4"
 							 ScrollViewer.VerticalScrollBarVisibility="Visible"
+                             ScrollViewer.HorizontalScrollBarVisibility="Visible"
+                             Width="500"
 							 Text=""
 							 Style="{StaticResource TextBlockStyle}"
 							 x:Name="ResourcesLabel" />
