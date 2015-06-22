@@ -44,8 +44,11 @@ namespace Raml.Tools.ClientGenerator
             schemaRequestObjects = GetRequestObjects();
             schemaResponseObjects = GetResponseObjects();
 
-            CleanProperties(schemaRequestObjects);
-            CleanProperties(schemaResponseObjects);
+            //if (!UsesXmlSchemas())
+            //{
+                CleanProperties(schemaRequestObjects);
+                CleanProperties(schemaResponseObjects);
+            //}
 
             clientMethodsGenerator = new ClientMethodsGenerator(raml, schemaResponseObjects, uriParameterObjects,
                 queryObjects, headerObjects, responseHeadersObjects, schemaRequestObjects, linkKeysWithObjectNames);
@@ -61,7 +64,8 @@ namespace Raml.Tools.ClientGenerator
 	        var apiRequestObjects = apiRequestGenerator.Generate(classObjects);
 			var apiResponseObjects = apiResponseGenerator.Generate(classObjects);
 
-			CleanNotUsedObjects(classObjects);
+            //if(!UsesXmlSchemas())
+			    CleanNotUsedObjects(classObjects);
 
             return new ClientGeneratorModel
                    {
@@ -85,8 +89,22 @@ namespace Raml.Tools.ClientGenerator
                    };
         }
 
+        //private bool UsesXmlSchemas()
+        //{
+        //    if (!string.IsNullOrWhiteSpace(raml.MediaType) && raml.MediaType.Contains("xml"))
+        //        return true;
 
-		private void CleanNotUsedObjects(IEnumerable<ClassObject> classes)
+        //    if(schemaRequestObjects.Values.Any(o => !string.IsNullOrWhiteSpace(o.JSONSchema)))
+        //        return false;
+
+        //    if (schemaResponseObjects.Values.Any(o => !string.IsNullOrWhiteSpace(o.JSONSchema)))
+        //        return false;
+
+        //    return false;
+        //}
+
+
+        private void CleanNotUsedObjects(IEnumerable<ClassObject> classes)
 		{
 			apiObjectsCleaner.CleanObjects(classes, schemaRequestObjects, apiObjectsCleaner.IsUsedAsParameterInAnyMethod);
 
