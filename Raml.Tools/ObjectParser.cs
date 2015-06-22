@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Raml.Common;
 
@@ -29,6 +30,9 @@ namespace Raml.Tools
 
 			if (schema.Trim().StartsWith("<"))
 				return ParseXmlSchema(key, schema, objects);
+
+            if (!schema.Contains("{"))
+                return null;
 
 			return jsonSchemaParser.Parse(key, schema, objects, warnings, enums);
 		}
