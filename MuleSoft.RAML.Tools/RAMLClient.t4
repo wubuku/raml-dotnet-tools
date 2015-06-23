@@ -494,11 +494,11 @@ namespace $(namespace)
 } // end namespace
 
 <#
-foreach (var apiObject in model.Objects.Values.Where(o => !string.IsNullOrWhitespace(o.GeneratedCode)))
+foreach (var apiObject in model.Objects.Values.Where(o => !string.IsNullOrWhiteSpace(o.GeneratedCode)))
 {
 #>
 
-<#= o.GeneratedCode #>
+<#= apiObject.GeneratedCode #>
 
 <#
 }
@@ -507,7 +507,7 @@ foreach (var apiObject in model.Objects.Values.Where(o => !string.IsNullOrWhites
 namespace $(namespace).Models
 {
 <#
-foreach (var apiObject in model.Objects.Values.Where(o => string.IsNullOrWhitespace(o.GeneratedCode)))
+foreach (var apiObject in model.Objects.Values.Where(o => string.IsNullOrWhiteSpace(o.GeneratedCode)))
 {
 	if (!string.IsNullOrWhiteSpace(apiObject.Description))
 	{

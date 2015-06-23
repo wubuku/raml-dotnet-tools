@@ -44,7 +44,7 @@ namespace Raml.Tools
             {
                 var obj = new ApiObject {Name = typeDeclaration.Name};
 
-                if (objects.ContainsKey(obj.Name) || objects.Any(o => o.Value.Name == obj.Name) || !obj.Properties.Any()) 
+                if (objects.ContainsKey(obj.Name) || objects.Any(o => o.Value.Name == obj.Name))
                     return true;
                 
                 objects.Add(obj.Name, obj);
