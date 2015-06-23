@@ -26,8 +26,8 @@ namespace Raml.Tools.ClientGenerator
 		private readonly ApiRequestObjectsGenerator apiRequestGenerator = new ApiRequestObjectsGenerator();
 		private readonly ApiResponseObjectsGenerator apiResponseGenerator = new ApiResponseObjectsGenerator();
 
-	    public ClientGeneratorService(RamlDocument raml, string rootClassName)
-            : base(raml)
+	    public ClientGeneratorService(RamlDocument raml, string rootClassName, string targetNamespace)
+            : base(raml, targetNamespace)
 	    {
             this.rootClassName = rootClassName;
         }

@@ -20,7 +20,7 @@ namespace Raml.Common
 					return null;
 				}
 
-				var model = new WebApiGeneratorService(ramlInfo.RamlDocument).BuildModel();
+				var model = new WebApiGeneratorService(ramlInfo.RamlDocument, targetNamespace).BuildModel();
 				var filename = Path.GetFileName(ramlSource);
 				if (string.IsNullOrWhiteSpace(filename))
 					filename = "source.raml";

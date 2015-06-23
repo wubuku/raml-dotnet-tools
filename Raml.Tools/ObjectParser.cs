@@ -7,9 +7,9 @@ namespace Raml.Tools
 	{
 		private readonly JsonSchemaParser jsonSchemaParser = new JsonSchemaParser();
 
-		public ApiObject ParseObject(string key, string value, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings, IDictionary<string, ApiEnum> enums)
+		public ApiObject ParseObject(string key, string value, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings, IDictionary<string, ApiEnum> enums, string targetNamespace)
 		{
-			var obj = ParseSchema(key, value, objects, warnings, enums);
+			var obj = ParseSchema(key, value, objects, warnings, enums, targetNamespace);
 			if (obj == null)
 				return null;
 
@@ -19,7 +19,7 @@ namespace Raml.Tools
 			return obj;
 		}
 
-		private ApiObject ParseSchema(string key, string schema, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings, IDictionary<string, ApiEnum> enums)
+		private ApiObject ParseSchema(string key, string schema, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings, IDictionary<string, ApiEnum> enums, string targetNamespace)
 		{
 			if (schema == null)
 				return null;
@@ -29,15 +29,18 @@ namespace Raml.Tools
 				return null;
 
 			if (schema.Trim().StartsWith("<"))
-				return ParseXmlSchema(key, schema, objects);
+				return ParseXmlSchema(key, schema, objects, targetNamespace);
 
 			return jsonSchemaParser.Parse(key, schema, objects, warnings, enums);
 		}
 
-		private ApiObject ParseXmlSchema(string key, string schema, IDictionary<string, ApiObject> objects)
+		private ApiObject ParseXmlSchema(string key, string schema, IDictionary<string, ApiObject> objects, string targetNamespace)
 		{
+            if(objects.ContainsKey(key))
+                return null;
+
 		    var xmlSchemaParser = new XmlSchemaParser();
-            var  obj = xmlSchemaParser.Parse(schema, objects);
+            var  obj = xmlSchemaParser.Parse(key, schema, objects, targetNamespace);
 
             if (obj != null && !objects.ContainsKey(key))
 		        objects.Add(key, obj); // to associate that key with the main XML Schema object

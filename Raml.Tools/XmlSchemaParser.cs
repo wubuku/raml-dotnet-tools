@@ -1,71 +1,63 @@
-﻿using System.CodeDom;
+﻿using Microsoft.CSharp;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using Raml.Common;
 
 namespace Raml.Tools
 {
     public class XmlSchemaParser
     {
-        public ApiObject Parse(string schema, IDictionary<string, ApiObject> objects)
+        public ApiObject Parse(string key, string schema, IDictionary<string, ApiObject> objects, string targetNamespace)
         {
-            var codeNamespace = ConvertXml(schema);
-            return ParseObjects(objects, codeNamespace);
+            var codeNamespace = ConvertXml(schema, targetNamespace);
+            CodeGenerator.ValidateIdentifiers(codeNamespace);
+            var code = GenerateCode(codeNamespace);
+            
+            if(HasDuplicatedObjects(objects, codeNamespace))
+                return null;
+
+            return new ApiObject { Name = NetNamingMapper.GetObjectName(key), GeneratedCode = code };
         }
 
-        private static ApiObject ParseObjects(IDictionary<string, ApiObject> objects, CodeNamespace codeNamespace)
+        private static string GenerateCode(CodeNamespace codeNamespace)
         {
-            ApiObject mainObject = null;
+            var codeProvider = new CSharpCodeProvider();
+
+            string code;
+            using (var writer = new StringWriter())
+            {
+                codeProvider.GenerateCodeFromNamespace(codeNamespace, writer, new CodeGeneratorOptions());
+                code = writer.GetStringBuilder().ToString();
+            }
+            return code;
+        }
+
+        private static bool HasDuplicatedObjects(IDictionary<string, ApiObject> objects, CodeNamespace codeNamespace)
+        {
             foreach (CodeTypeDeclaration typeDeclaration in codeNamespace.Types)
             {
                 var obj = new ApiObject {Name = typeDeclaration.Name};
 
-                ParseProperties(typeDeclaration, obj);
-
-                if (mainObject == null && obj.Properties.Any())
-                    mainObject = obj;
-
                 if (objects.ContainsKey(obj.Name) || objects.Any(o => o.Value.Name == obj.Name) || !obj.Properties.Any()) 
-                    continue;
+                    return true;
                 
                 objects.Add(obj.Name, obj);
             }
-            return mainObject;
+            return false;
         }
 
-        private static void ParseProperties(CodeTypeDeclaration typeDeclaration, ApiObject obj)
-        {
-            foreach (CodeTypeMember property in typeDeclaration.Members)
-            {
-                ParseProperty(property, obj);
-            }
-        }
-
-        private static void ParseProperty(CodeTypeMember property, ApiObject obj)
-        {
-            var memberProperty = property as CodeMemberProperty;
-            if (memberProperty != null)
-            {
-                var prop = new Property
-                {
-                    Name = memberProperty.Name,
-                    Type = (memberProperty.Type.ArrayRank == 1)
-                        ? CollectionTypeHelper.GetCollectionType(memberProperty.Type.BaseType)
-                        : memberProperty.Type.BaseType
-                };
-                obj.Properties.Add(prop);
-            }
-        }
-
-        private static CodeNamespace ConvertXml(string schema)
+        private static CodeNamespace ConvertXml(string schema, string targetNamespace)
         {
             var xsd = ReadSchema(schema);
             var maps = ImportXmlTypeMappings(xsd);
 
-            var codeNamespace = ExportTypeMappings(maps);
+            var codeNamespace = ExportTypeMappings(maps, targetNamespace);
 
             return codeNamespace;
         }
@@ -80,9 +72,9 @@ namespace Raml.Tools
             return xsd;
         }
 
-        private static CodeNamespace ExportTypeMappings(IEnumerable<XmlTypeMapping> maps)
+        private static CodeNamespace ExportTypeMappings(IEnumerable<XmlTypeMapping> maps, string targetNamespace)
         {
-            var codeNamespace = new CodeNamespace("Generated");
+            var codeNamespace = new CodeNamespace(targetNamespace);
             var codeExporter = new XmlCodeExporter(codeNamespace);
             foreach (var map in maps)
             {

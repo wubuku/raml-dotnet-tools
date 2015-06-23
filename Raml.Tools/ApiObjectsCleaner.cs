@@ -23,6 +23,10 @@ namespace Raml.Tools
 			foreach (var key in keys)
 			{
 				var apiObject = objects[key];
+
+                if (!string.IsNullOrWhiteSpace(apiObject.GeneratedCode))
+                    continue;
+
 				if (checkAction(controllers, apiObject))
 					continue;
 
@@ -39,6 +43,10 @@ namespace Raml.Tools
 			foreach (var key in keys)
 			{
 				var apiObject = objects[key];
+                
+                if(!string.IsNullOrWhiteSpace(apiObject.GeneratedCode))
+                    continue;
+
 				if (checkAction(classes, apiObject))
 					continue;
 

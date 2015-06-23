@@ -12,17 +12,17 @@ schemas:
       200:
         body:
           application/atom+xml:
-            schema: atom
+            schema: feedType
             example: !include files/contacts.xml
   post:
     body: 
       application/atom+xml:
-        schema: atom
+        schema: feedType
         example: !include files/contact-request.xml
     responses:
       201:
         description: Created
         body:
           application/atom+xml:
-            schema: atom
+            schema: feedType
             example: !include files/contact.xml

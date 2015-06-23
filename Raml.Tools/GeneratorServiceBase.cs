@@ -1,11 +1,10 @@
+using Raml.Common;
+using Raml.Parser.Expressions;
+using Raml.Tools.Pluralization;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net;
-using Raml.Common;
-using Raml.Parser.Expressions;
-using Raml.Tools.Pluralization;
 
 namespace Raml.Tools
 {
@@ -26,7 +25,8 @@ namespace Raml.Tools
 		protected IDictionary<string, string> warnings;
 	    protected IDictionary<string, ApiEnum> enums;
 		protected readonly RamlDocument raml;
-		protected ICollection<string> classesNames;
+	    private readonly string targetNamespace;
+	    protected ICollection<string> classesNames;
 		protected IDictionary<string, ApiObject> uriParameterObjects;
 		public const string RequestContentSuffix = "RequestContent";
 		public const string ResponseContentSuffix = "ResponseContent";
@@ -35,10 +35,11 @@ namespace Raml.Tools
 
         public IEnumerable<ApiEnum> Enums { get { return enums.Values; } }
 
-		protected GeneratorServiceBase(RamlDocument raml)
+		protected GeneratorServiceBase(RamlDocument raml, string targetNamespace)
 		{
 			this.raml = raml;
-			apiObjectsCleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects);
+		    this.targetNamespace = targetNamespace;
+		    apiObjectsCleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects);
 		}
 
 
@@ -80,7 +81,7 @@ namespace Raml.Tools
 				return;
 
 			var key = type.Key + "-" + name.ToLower() + RequestContentSuffix;
-            var obj = objectParser.ParseObject(key, verb.Body.Schema, schemaRequestObjects, warnings, enums);
+            var obj = objectParser.ParseObject(key, verb.Body.Schema, schemaRequestObjects, warnings, enums, targetNamespace);
 
             AddObjectToObjectCollectionOrLink(obj, key, schemaRequestObjects);
 		}
@@ -96,7 +97,7 @@ namespace Raml.Tools
 						foreach (var mimeType in response.Body)
 						{
 							var key = mimeType.Key + " " + mimeType.Value.Type + ResponseContentSuffix;
-                            var obj = objectParser.ParseObject(key, mimeType.Value.Schema, schemaResponseObjects, warnings, enums);
+                            var obj = objectParser.ParseObject(key, mimeType.Value.Schema, schemaResponseObjects, warnings, enums, targetNamespace);
 
                             AddObjectToObjectCollectionOrLink(obj, key, schemaResponseObjects);
 						}
@@ -140,7 +141,7 @@ namespace Raml.Tools
 
 				var mimeType = GeneratorServiceHelper.GetMimeType(response);
 
-                var obj = objectParser.ParseObject(key, mimeType.Schema, schemaResponseObjects, warnings, enums);
+                var obj = objectParser.ParseObject(key, mimeType.Schema, schemaResponseObjects, warnings, enums, targetNamespace);
 
                 AddObjectToObjectCollectionOrLink(obj, key, schemaResponseObjects);
 			}
@@ -162,7 +163,7 @@ namespace Raml.Tools
 							if (schemaRequestObjects.ContainsKey(key)) 
 								continue;
 
-                            var obj = objectParser.ParseObject(key, kv.Value.Schema, schemaRequestObjects, warnings, enums);
+                            var obj = objectParser.ParseObject(key, kv.Value.Schema, schemaRequestObjects, warnings, enums, targetNamespace);
 
                             AddObjectToObjectCollectionOrLink(obj, key, schemaRequestObjects);                                
 						}
@@ -222,7 +223,7 @@ namespace Raml.Tools
 								var key = GeneratorServiceHelper.GetKeyForResource(method, resource) + ParserHelpers.GetStatusCode(response.Code) + ResponseContentSuffix;
                                 if (schemaResponseObjects.ContainsKey(key)) continue;
 
-                                var obj = objectParser.ParseObject(key, kv.Value.Schema, schemaResponseObjects, warnings, enums);
+                                var obj = objectParser.ParseObject(key, kv.Value.Schema, schemaResponseObjects, warnings, enums, targetNamespace);
 
 							    AddObjectToObjectCollectionOrLink(obj, key, schemaResponseObjects);
 							}
@@ -270,8 +271,6 @@ namespace Raml.Tools
                         && enums.All(e => e.Value.Name != type))
 						apiObject.Properties.Remove(prop);
 				}
-                //if (!apiObject.Properties.Any())
-                //    apiObjects.Remove(keys[i]);
 			}
 		}
 
@@ -289,7 +288,7 @@ namespace Raml.Tools
 					if (objects.ContainsKey(kv.Key)) 
 						continue;
 
-					var obj = objectParser.ParseObject(kv.Key, kv.Value, objects, warnings, enums);
+					var obj = objectParser.ParseObject(kv.Key, kv.Value, objects, warnings, enums, targetNamespace);
 						
                     AddObjectToObjectCollectionOrLink(obj, kv.Key, objects);
 				}

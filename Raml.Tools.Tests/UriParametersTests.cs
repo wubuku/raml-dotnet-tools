@@ -59,7 +59,7 @@ namespace Raml.Tools.Tests
 
 			doc.Resources = resources;
 
-			var service = new ClientGeneratorService(doc, "test");
+			var service = new ClientGeneratorService(doc, "test", "NamespaceTest");
 			var model = service.BuildModel();
 
 			Assert.AreEqual(1, model.UriParameterObjects.Count);
@@ -117,7 +117,7 @@ namespace Raml.Tools.Tests
 
             doc.Resources = resources;
 
-            var service = new ClientGeneratorService(doc, "test");
+            var service = new ClientGeneratorService(doc, "test", "TestNs");
             var model = service.BuildModel();
 
             Assert.AreEqual("code-oneOne", model.UriParameterObjects.First().Value.Properties.First(p => p.Name == "CodeoneOne").OriginalName);

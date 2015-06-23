@@ -223,7 +223,7 @@ namespace Raml.Tools.Tests
 		private static async Task<WebApiGeneratorModel> GetTestGeneratedModel()
 		{
 			var raml = await new RamlParser().LoadAsync("files/test.raml");
-			var model = new WebApiGeneratorService(raml).BuildModel();
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
 
 			return model;
 		}
@@ -231,7 +231,7 @@ namespace Raml.Tools.Tests
 		private static async Task<WebApiGeneratorModel> GetBoxGeneratedModel()
 		{
 			var raml = await new RamlParser().LoadAsync("files/box.raml");
-			var model = new WebApiGeneratorService(raml).BuildModel();
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
 
 			return model;
 		}
@@ -241,7 +241,7 @@ namespace Raml.Tools.Tests
 		{
 			var raml = await new RamlParser().LoadAsync("files/large.raml");
 
-			var model = new WebApiGeneratorService(raml).BuildModel();
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
 			return model;
 		}
 
@@ -249,7 +249,7 @@ namespace Raml.Tools.Tests
 		{
 			var raml = await new RamlParser().LoadAsync("files/regression.raml");
 
-			var model = new WebApiGeneratorService(raml).BuildModel();
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
 			return model;
 		}
 
@@ -257,41 +257,41 @@ namespace Raml.Tools.Tests
 		{
 			var parser = new RamlParser();
 			var raml = await parser.LoadAsync("files/congo-drones-5-f.raml");
-			return new WebApiGeneratorService(raml).BuildModel();
+            return new WebApiGeneratorService(raml, "TestNs").BuildModel();
 		}
 
 		private async Task<WebApiGeneratorModel> GetInstagramGeneratedModel()
 		{
 			var parser = new RamlParser();
 			var raml = await parser.LoadAsync("files/instagram.raml");
-			return new WebApiGeneratorService(raml).BuildModel();
+            return new WebApiGeneratorService(raml, "TestNs").BuildModel();
 		}
 
 		private async Task<WebApiGeneratorModel> GetTwitterGeneratedModel()
 		{
 			var parser = new RamlParser();
 			var raml = await parser.LoadAsync("files/twitter.raml");
-			return new WebApiGeneratorService(raml).BuildModel();
+            return new WebApiGeneratorService(raml, "TestNs").BuildModel();
 		}
 
 		private async Task<WebApiGeneratorModel> GetGitHubGeneratedModel()
 		{
 			var parser = new RamlParser();
 			var raml = await parser.LoadAsync("files/github.raml");
-			return new WebApiGeneratorService(raml).BuildModel();
+            return new WebApiGeneratorService(raml, "TestNs").BuildModel();
 		}
 
 		private async Task<WebApiGeneratorModel> GetContactsGeneratedModel()
 		{
 			var parser = new RamlParser();
 			var raml = await parser.LoadAsync("files/contacts.raml");
-			return new WebApiGeneratorService(raml).BuildModel();
+            return new WebApiGeneratorService(raml, "TestNs").BuildModel();
 		}
 
 		private static async Task<WebApiGeneratorModel> GetMoviesGeneratedModel()
 		{
 			var raml = await new RamlParser().LoadAsync("files/movies.raml");
-			var model = new WebApiGeneratorService(raml).BuildModel();
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
 
 			return model;
 		}
@@ -299,7 +299,7 @@ namespace Raml.Tools.Tests
 		private static async Task<WebApiGeneratorModel> GetDarsGeneratedModel()
 		{
 			var raml = await new RamlParser().LoadAsync("files/dars.raml");
-			var model = new WebApiGeneratorService(raml).BuildModel();
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
 
 			return model;
 		}
@@ -307,7 +307,7 @@ namespace Raml.Tools.Tests
 		private static async Task<WebApiGeneratorModel> GetSchemaTestsGeneratedModel()
 		{
 			var raml = await new RamlParser().LoadAsync("files/schematests.raml");
-			var model = new WebApiGeneratorService(raml).BuildModel();
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
 
 			return model;
 		}

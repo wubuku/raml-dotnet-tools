@@ -99,7 +99,7 @@ namespace Raml.Tools.Tests
 
 			doc.Resources = resources;
 
-			var service = new ClientGeneratorService(doc, "test");
+            var service = new ClientGeneratorService(doc, "test", "TestNs");
 			var model = service.BuildModel();
 			Assert.AreEqual(2, model.UriParameterObjects.Count);
 
@@ -162,7 +162,7 @@ namespace Raml.Tools.Tests
 
 			doc.Resources = resources;
 
-			var service = new ClientGeneratorService(doc, "test");
+            var service = new ClientGeneratorService(doc, "test", "TestNs");
 			var model = service.BuildModel();
 			Assert.AreEqual(2, model.UriParameterObjects.Count);
 
