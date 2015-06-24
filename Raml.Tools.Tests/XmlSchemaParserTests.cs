@@ -20,31 +20,22 @@ namespace Raml.Tools.Tests
         {
             const string emptySchema = "<xsd:schema targetNamespace=\"http://www.example.com/IPO\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:ipo=\"http://www.example.com/IPO\"></xsd:schema>";
             var apiObjects = new Dictionary<string, ApiObject>();
-            parser.Parse("key", emptySchema, apiObjects, "Generated");
+            var obj = parser.Parse("key", emptySchema, apiObjects, "Generated");
+            Assert.AreEqual(null, obj);
             Assert.AreEqual(0, apiObjects.Count);
         }
 
         [Test]
-        public void should_avoid_name_duplication()
+        public void should_avoid_types_duplication()
         {
             var schema = File.ReadAllText(@"files\ipo.xsd");
             var apiObjects = new Dictionary<string, ApiObject>
             {
                 { "PurchaseOrderType", new ApiObject() }
             };
-            parser.Parse("key", schema, apiObjects, "Generated");
-            Assert.AreEqual(6, apiObjects.Count);
-        }
-
-        [Test]
-        public void should_parse_properties()
-        {
-            var schema = File.ReadAllText(@"files\ipo.xsd");
-            var objects = new Dictionary<string, ApiObject>();
-            parser.Parse("key", schema, objects, "Generated");
-
-            Assert.AreEqual(7, objects["PurchaseOrderType"].Properties.Count);
-            Assert.AreEqual(3, objects["AddressType"].Properties.Count);
+            var obj = parser.Parse("key", schema, apiObjects, "Generated");
+            Assert.AreEqual(null, obj);
+            Assert.AreEqual(1, apiObjects.Count);
         }
 
         [Test]
@@ -52,9 +43,9 @@ namespace Raml.Tools.Tests
         {
             var schema = File.ReadAllText(@"files\ipo.xsd");
             var objects = new Dictionary<string, ApiObject>();
-            parser.Parse("key", schema, objects, "Generated");
-
-            Assert.AreEqual(6, objects.Count);
+            var obj = parser.Parse("key", schema, objects, "Generated");
+            Assert.IsFalse(string.IsNullOrWhiteSpace(obj.GeneratedCode));
+            Assert.AreEqual(11, objects.Count);
         }
 
         [Test]
@@ -64,7 +55,7 @@ namespace Raml.Tools.Tests
             var objects = new Dictionary<string, ApiObject>();
             parser.Parse("key", schema, objects, "Generated");
 
-            Assert.AreEqual(1, objects.Count);
+            Assert.AreEqual(3, objects.Count);
         }
 
         [Test]
@@ -72,8 +63,8 @@ namespace Raml.Tools.Tests
         {
             var schema = File.ReadAllText(@"files\annotations00101m1.xsd");
             var objects = new Dictionary<string, ApiObject>();
-            parser.Parse("key", schema, objects, "Generated");
-
+            var obj = parser.Parse("key", schema, objects, "Generated");
+            Assert.AreEqual(null, obj);
             Assert.AreEqual(0, objects.Count);
         }
 
@@ -84,7 +75,7 @@ namespace Raml.Tools.Tests
             var objects = new Dictionary<string, ApiObject>();
             parser.Parse("key", schema, objects, "Generated");
 
-            Assert.AreEqual(1, objects.Count);
+            Assert.AreEqual(2, objects.Count);
         }
     }
 }

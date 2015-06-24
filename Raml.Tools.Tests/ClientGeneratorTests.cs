@@ -265,7 +265,7 @@ namespace Raml.Tools.Tests
 		public async Task ShouldBuildResponseObjects_FromTwitter()
 		{
 			var model = await GetTwitterGeneratedModel();
-			Assert.AreEqual(53, model.ResponseObjects.Count);
+			Assert.AreEqual(54, model.ResponseObjects.Count);
 		}
 
 		[Test]
@@ -286,7 +286,7 @@ namespace Raml.Tools.Tests
 		public async Task ShouldBuildResponseObjects_FromGitHub()
 		{
 			var model = await GetGitHubGeneratedModel();
-			Assert.AreEqual(44, model.ResponseObjects.Count);
+			Assert.AreEqual(45, model.ResponseObjects.Count);
 		}
 
 
@@ -485,7 +485,8 @@ namespace Raml.Tools.Tests
         public async Task ShouldGenerateModels_WhenXml()
         {
             var model = await GetXmlSampleGeneratedModel();
-            Assert.AreEqual(1, model.Objects.Count());
+            Assert.AreEqual(2, model.Objects.Count());
+            Assert.AreEqual(1, model.Objects.Values.Count(o => !string.IsNullOrWhiteSpace(o.GeneratedCode)));
         }
 
         private static string GetXml(string comment)
