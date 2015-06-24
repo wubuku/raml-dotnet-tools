@@ -22,6 +22,9 @@ namespace Raml.Tools
             if(HasDuplicatedObjects(objects, codeNamespace))
                 return null;
 
+            if(codeNamespace.Types.Count == 0)
+                return null;
+
             return new ApiObject { Name = NetNamingMapper.GetObjectName(key), GeneratedCode = code };
         }
 
