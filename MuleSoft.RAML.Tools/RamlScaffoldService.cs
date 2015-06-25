@@ -214,7 +214,7 @@ namespace MuleSoft.RAML.Tools
 	        templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ModelTemplateName,
 	            Settings.Default.ModelsTemplateTitle);
             var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
-	        var apiObjectTemplateParams = new TemplateParams<ApiObject>(
+	        var apiObjectTemplateParams = new TemplateParams<ApiObject>(  
 	            Path.Combine(templatesFolder, ModelTemplateName), ramlItem, "apiObject", model.Objects.Values,
 	            generatedFolderPath, folderItem, extensionPath, targetNamespace);
 	        apiObjectTemplateParams.Title = Settings.Default.ModelsTemplateTitle;

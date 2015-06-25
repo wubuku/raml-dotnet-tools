@@ -30,9 +30,7 @@ namespace Raml.Tools
 
 				properties.Add(new Property
 				               {
-					               Type =
-						               NetTypeMapper.Map(parameter.Value.Type) +
-						               (NetTypeMapper.Map(parameter.Value.Type) == "string" || parameter.Value.Required ? "" : "?"),
+					               Type = GetType(parameter.Value),
 					               Name = NetNamingMapper.GetPropertyName(parameter.Key),
                                    OriginalName = parameter.Key,
 					               Description = description,
@@ -42,5 +40,12 @@ namespace Raml.Tools
 			}
 			return properties;
 		}
+
+	    private static string GetType(Parameter param)
+	    {
+	        return param.Type == null ? "string" : (
+	            NetTypeMapper.Map(param.Type) +
+	            (NetTypeMapper.Map(param.Type) == "string" || param.Required ? "" : "?"));
+	    }
 	}
 }
