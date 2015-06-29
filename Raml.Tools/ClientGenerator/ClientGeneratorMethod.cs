@@ -153,8 +153,10 @@ namespace Raml.Tools.ClientGenerator
 
 		public string ResponseHeaderType { get; set; }
 		public string UriParametersType { get; set; }
+	    public IEnumerable<string> RequestContentTypes { get; set; }
+	    public IEnumerable<string> ResponseContentTypes { get; set; }
 
-		public bool HasInputParameter()
+	    public bool HasInputParameter()
 		{
 			return (Verb == "Post" || Verb == "Put") && Parameter != null;
 		}

@@ -334,7 +334,7 @@ namespace Raml.Tools
                     return GetGeneratorParameterByKey(linkedKey);
             }
 
-			return new GeneratorParameter {Name = "json", Type = "string"};
+			return new GeneratorParameter {Name = "content", Type = "string"};
 		}
 
 	    private GeneratorParameter GetGeneratorParameterByKey(string key)
