@@ -1,4 +1,6 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="$(binDir)RAML.Parser.dll" #>
+<#@ assembly name="$(binDir)EdgeJs.dll" #>
 <#@ assembly name="$(binDir)Raml.Tools.dll" #>
 <#@ assembly name="$(binDir)RAML.Api.Core.dll" #>
 <#@ assembly name="System.Core" #>
@@ -146,12 +148,12 @@ namespace $(namespace)
 #>
             var stringWriter = new StringWriter();
         	new XmlSerializer(typeof (<#= method.Parameter.Type #>)).Serialize(stringWriter, <#= method.Parameter.Name #>);
-            req.Content = new  StringContent(stringWriter.GetStringBuilder().ToString(), Encoding.UTF8, "application/xml");     
+            req.Content = new  StringContent(stringWriter.GetStringBuilder().ToString(), Encoding.UTF8, "application/xml");
 <#
                         } else {
 #>
-            req.Content = new ObjectContent(typeof(Models.<#= method.Parameter.Type #>), <#= method.Parameter.Name #>, new JsonMediaTypeFormatter());                           
-<#                        
+            req.Content = new ObjectContent(typeof(Models.<#= method.Parameter.Type #>), <#= method.Parameter.Name #>, new JsonMediaTypeFormatter());
+<#
                         }
         	        }
                 }
@@ -163,21 +165,21 @@ namespace $(namespace)
 
             if (method.ResponseType != "ApiResponse" && method.ReturnTypeObject != null)
 			{
-                var jsonSchema = !method.ReturnTypeObject.IsMultiple ? 
-					String.Format("\"{0}\"", method.ReturnTypeObject.JSONSchema) : 
+                var jsonSchema = !method.ReturnTypeObject.IsMultiple ?
+					String.Format("\"{0}\"", method.ReturnTypeObject.JSONSchema) :
 					method.ResponseType + ".GetSchema(response.StatusCode)";
-                
+
 				validationWithException = String.Format("await SchemaValidator.ValidateWithExceptionAsync({0}, response.Content)", jsonSchema);
                 validationCall = String.Format("new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid({0}, response.Content), true)", jsonSchema);
 #>
-			
+
 			if (proxy.SchemaValidation.Enabled)
 		    {
-				if(proxy.SchemaValidation.RaiseExceptions) 
+				if(proxy.SchemaValidation.RaiseExceptions)
 				{
 					<#= validationWithException #>;
 				}
-					
+
 			}
 <#
 			}
@@ -201,13 +203,13 @@ namespace $(namespace)
                 }
 
 #>
-            return new <#= method.ResponseType #>  
+            return new <#= method.ResponseType #>
                                             {
                                                 RawContent = response.Content,
 <#                  if (method.ResponseHeaders != null && method.ResponseHeaders.Any()) { #>
-                                                Headers = headers, 
+                                                Headers = headers,
 <#                  } #>
-                                                RawHeaders = response.Headers, 
+                                                RawHeaders = response.Headers,
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase,
 												SchemaValidation = <#= validationCall #>
@@ -228,7 +230,7 @@ namespace $(namespace)
 			    {
 #>
 			if(request.UriParameters == null)
-				throw new InvalidOperationException("Uri Parameters cannot be null");               
+				throw new InvalidOperationException("Uri Parameters cannot be null");
 <#
     			}
 
@@ -336,15 +338,15 @@ namespace $(namespace)
 #>
             var stringWriter = new StringWriter();
         	new XmlSerializer(typeof (<#= method.Parameter.Type #>)).Serialize(stringWriter, request.Content);
-            req.Content = new  StringContent(stringWriter.GetStringBuilder().ToString(), Encoding.UTF8, "application/xml");     
+            req.Content = new  StringContent(stringWriter.GetStringBuilder().ToString(), Encoding.UTF8, "application/xml");
 <#
                         } else {
 #>
             if(request.Formatter == null)
                 request.Formatter = new JsonMediaTypeFormatter();
 
-            req.Content = new ObjectContent(typeof(Models.<#= method.Parameter.Type #>), request.Content, new JsonMediaTypeFormatter());                           
-<#                        
+            req.Content = new ObjectContent(typeof(Models.<#= method.Parameter.Type #>), request.Content, new JsonMediaTypeFormatter());
+<#
                         }
 	                }
                 }
@@ -360,7 +362,7 @@ namespace $(namespace)
 				{
 					<#= validationWithException #>;
 				}
-				
+
             }
 <#
 			}
@@ -381,11 +383,11 @@ namespace $(namespace)
                 }
 
 #>
-            return new <#= method.ResponseType #>  
+            return new <#= method.ResponseType #>
                                             {
                                                 RawContent = response.Content,
 <#                  if (method.ResponseHeaders != null && method.ResponseHeaders.Any()) { #>
-                                                Headers = headers, 
+                                                Headers = headers,
 <#                  }  #>
                                                 RawHeaders = response.Headers,
 <#                  if (method.ReturnType != "string" && method.ReturnType != "HttpContent") { #>
@@ -396,7 +398,7 @@ namespace $(namespace)
 												SchemaValidation = <#= validationCall #>
                                             };
 <#
-                
+
 #>
         }
 
@@ -415,7 +417,7 @@ namespace $(namespace)
     public partial class <#= model.Root.Name #>
     {
 
-		public SchemaValidationSettings SchemaValidation { get; private set; } 
+		public SchemaValidationSettings SchemaValidation { get; private set; }
 
         protected readonly HttpClient client;
         public const string BaseUri = "<#= model.BaseUri #>";
@@ -481,7 +483,7 @@ namespace $(namespace)
 			};
         }
 
-        
+
 <#
 	foreach (var property in model.Root.Properties)
 	{
@@ -490,7 +492,7 @@ namespace $(namespace)
         {
             get { return new <#= property.Name #>(this); }
         }
-                
+
 <#
 	}
 #>
@@ -541,22 +543,22 @@ foreach (var apiObject in model.Objects.Values.Where(o => string.IsNullOrWhiteSp
     /// <#= XmlCommentHelper.Escape(apiObject.Description) #>
     /// </summary>
 <#
-	}	
-	
-	if(!apiObject.IsMultiple && apiObject.BaseClass != null) 
+	}
+
+	if(!apiObject.IsMultiple && apiObject.BaseClass != null)
 	{
 #>
     public partial class <#= apiObject.Name #> <#= " : " +  apiObject.BaseClass #>
     {
 <#
-	} 
-	else 
+	}
+	else
 	{
 #>
     public <#= (apiObject.Properties.Any()) ? "partial class " : "abstract class " #> <#= apiObject.Name #> <#= apiObject.IsMultiple ? ": ApiMultipleResponse" : string.Empty #>
     {
 <#
-	} 
+	}
 
 	if (apiObject.IsMultiple)
 	{
@@ -572,12 +574,12 @@ foreach (var apiObject in model.Objects.Values.Where(o => string.IsNullOrWhiteSp
         }
 #>
 		};
-        
+
 		public static string GetSchema(HttpStatusCode statusCode)
         {
             return schemas.ContainsKey(statusCode) ? schemas[statusCode] : string.Empty;
         }
-        
+
         public <#= apiObject.Name #>()
         {
 <#
@@ -607,7 +609,7 @@ foreach (var apiObject in model.Objects.Values.Where(o => string.IsNullOrWhiteSp
 		{
 #>
 		[JsonProperty("<#= property.OriginalName #>")]
-<#		} 
+<#		}
 
 		if(property.IsEnum)
 		{
@@ -689,7 +691,7 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
 <#
 	if (respHeader.IsMultiple)
 	{
-#>        
+#>
         public <#= respHeader.Name #>()
         {
 <#
@@ -852,11 +854,11 @@ foreach (var apiObject in model.ApiResponseObjects)
         /// <summary>
         /// Typed response content
         /// </summary>
-        public <#= body.Type #> Content 
+        public <#= body.Type #> Content
 	    {
 	        get
 	        {
-		        if (typedContent != null) 
+		        if (typedContent != null)
 					return typedContent;
 
 		        typedContent = new <#= body.Type #>();
@@ -876,23 +878,23 @@ foreach (var apiObject in model.ApiResponseObjects)
                 }
                 else
                 {
-		            var task = Formatters != null && Formatters.Any() 
+		            var task = Formatters != null && Formatters.Any()
                                 ? RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode), Formatters).ConfigureAwait(false)
                                 : RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode)).ConfigureAwait(false);
-		        
+
 		            var content = task.GetAwaiter().GetResult();
                     typedContent.SetPropertyByStatusCode(StatusCode, content);
                 }
 
 		        return typedContent;
 	        }
-    	}  
-		
+    	}
+
 		public static string GetSchema(HttpStatusCode statusCode)
         {
             return <#= body.Type #>.GetSchema(statusCode);
-        }      
-<#		
+        }
+<#
 		}
 		else
 		{
@@ -902,7 +904,7 @@ foreach (var apiObject in model.ApiResponseObjects)
         /// <summary>
         /// Typed Response content
         /// </summary>
-        public <#= body.Type #> Content 
+        public <#= body.Type #> Content
     	{
 	        get
 	        {
@@ -923,10 +925,10 @@ foreach (var apiObject in model.ApiResponseObjects)
                 }
                 else
                 {
-                    var task =  Formatters != null && Formatters.Any() 
+                    var task =  Formatters != null && Formatters.Any()
                                 ? RawContent.ReadAsAsync<<#= body.Type #>>(Formatters).ConfigureAwait(false)
                                 : RawContent.ReadAsAsync<<#= body.Type #>>().ConfigureAwait(false);
-		        
+
 		            typedContent = task.GetAwaiter().GetResult();
                 }
 
@@ -934,7 +936,7 @@ foreach (var apiObject in model.ApiResponseObjects)
 	        }
 	    }
 
-		
+
 
 <#
 		}
@@ -955,9 +957,9 @@ foreach (var apiEnum in model.Enums)
     /// <#= XmlCommentHelper.Escape(apiEnum.Description) #>
     /// </summary>
 <#
-	}	
+	}
 #>
-	
+
 	public enum <#= apiEnum.Name #>
 	{
 		<#= string.Join(", ", apiEnum.Values) #>
