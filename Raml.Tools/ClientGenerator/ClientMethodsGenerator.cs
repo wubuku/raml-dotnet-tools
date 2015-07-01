@@ -91,7 +91,7 @@ namespace Raml.Tools.ClientGenerator
 					raml.SecuredBy != null && raml.SecuredBy.Any() ||
 					resource.Methods.Any(m => m.Verb == method.Verb && m.SecuredBy != null && m.SecuredBy.Any()),
                 RequestContentTypes = method.Body.Keys.ToArray(),
-                ResponseContentTypes = method.Responses.SelectMany(r => r.Body.Keys).ToArray()
+                ResponseContentTypes = method.Responses != null ? method.Responses.Where(r => r.Body != null).SelectMany(r => r.Body.Keys).ToArray() : new string[0]
 			};
 			return generatedMethod;
 		}

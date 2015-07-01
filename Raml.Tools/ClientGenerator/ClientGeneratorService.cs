@@ -146,9 +146,9 @@ namespace Raml.Tools.ClientGenerator
                                    Name = GetUniqueObjectName(resource, parent),
                                    Description = resource.Description
                                };
-	            classObj.Methods = clientMethodsGenerator.GetMethods(resource, fullUrl, null, classObj.Name).ToArray();
+	            classObj.Methods = clientMethodsGenerator.GetMethods(resource, fullUrl, null, classObj.Name);
 
-                classObj.Children = GetClasses(resource.Resources, resource, classObj, fullUrl).ToArray();
+                classObj.Children = GetClasses(resource.Resources, resource, classObj, fullUrl);
                 
                 //TODO: check
                 parentClass.Children.Add(classObj);
