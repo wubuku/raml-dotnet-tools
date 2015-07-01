@@ -74,10 +74,10 @@ namespace Raml.Tools.ClientGenerator
                        ResponseObjects = schemaResponseObjects,
                        QueryObjects = queryObjects,
                        HeaderObjects = headerObjects,
-					   ApiRequestObjects = apiRequestObjects,
-					   ApiResponseObjects = apiResponseObjects,
+                       ApiRequestObjects = apiRequestObjects.ToArray(),
+                       ApiResponseObjects = apiResponseObjects.ToArray(),
                        ResponseHeaderObjects = responseHeadersObjects,
-                       BaseUriParameters = ParametersMapper.Map(raml.BaseUriParameters),
+                       BaseUriParameters = ParametersMapper.Map(raml.BaseUriParameters).ToArray(),
                        BaseUri = raml.BaseUri,
                        Security = SecurityParser.GetSecurity(raml),
                        Version = raml.Version,
@@ -85,7 +85,7 @@ namespace Raml.Tools.ClientGenerator
                        Classes = classObjects.Where(c => c.Name != rootClassName).ToArray(),
                        Root = classObjects.First(c => c.Name == rootClassName),
 					   UriParameterObjects = uriParameterObjects,
-                       Enums = Enums
+                       Enums = Enums.ToArray()
                    };
         }
 
@@ -146,9 +146,9 @@ namespace Raml.Tools.ClientGenerator
                                    Name = GetUniqueObjectName(resource, parent),
                                    Description = resource.Description
                                };
-	            classObj.Methods = clientMethodsGenerator.GetMethods(resource, fullUrl, null, classObj.Name);
+	            classObj.Methods = clientMethodsGenerator.GetMethods(resource, fullUrl, null, classObj.Name).ToArray();
 
-                classObj.Children = GetClasses(resource.Resources, resource, classObj, fullUrl);
+                classObj.Children = GetClasses(resource.Resources, resource, classObj, fullUrl).ToArray();
                 
                 //TODO: check
                 parentClass.Children.Add(classObj);
