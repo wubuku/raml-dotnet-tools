@@ -157,7 +157,7 @@ namespace <#= model.Namespace #>
                         if(method.RequestContentTypes.Any(c => c.Contains("xml")) && !method.RequestContentTypes.Any(c => c.Contains("json"))){
 #>
             var stringWriter = new StringWriter();
-        	new XmlSerializer(typeof (<#= method.Parameter.Type #>)).Serialize(stringWriter, <#= method.Parameter.Name #>);
+        	new XmlSerializer(typeof (Models.<#= method.Parameter.Type #>)).Serialize(stringWriter, <#= method.Parameter.Name #>);
             req.Content = new  StringContent(stringWriter.GetStringBuilder().ToString(), Encoding.UTF8, "application/xml");     
 <#
                         } else {
@@ -347,7 +347,7 @@ namespace <#= model.Namespace #>
                         if(method.RequestContentTypes.Any(c => c.Contains("xml")) && !method.RequestContentTypes.Any(c => c.Contains("json"))){
 #>
             var stringWriter = new StringWriter();
-        	new XmlSerializer(typeof (<#= method.Parameter.Type #>)).Serialize(stringWriter, request.Content);
+        	new XmlSerializer(typeof (Models.<#= method.Parameter.Type #>)).Serialize(stringWriter, request.Content);
             req.Content = new  StringContent(stringWriter.GetStringBuilder().ToString(), Encoding.UTF8, "application/xml");     
 <#
                         } else {
@@ -526,8 +526,10 @@ namespace <#= model.Namespace #>
 
 
 <#
+var hasXmlSchemas = false;
 foreach (var apiObject in model.Objects.Values.Where(o => !string.IsNullOrWhiteSpace(o.GeneratedCode)))
 {
+    hasXmlSchemas = true;
 #>
 
 <#= apiObject.GeneratedCode #>
@@ -544,6 +546,9 @@ namespace <#= model.Namespace #>.Models
 <#
 foreach (var apiObject in model.Objects.Values.Where(o => string.IsNullOrWhiteSpace(o.GeneratedCode)))
 {
+    if(hasXmlSchemas && !apiObject.Properties.Any())
+        continue;
+
 	if (!string.IsNullOrWhiteSpace(apiObject.Description))
 	{
 #>
@@ -929,7 +934,7 @@ foreach (var apiObject in model.ApiResponseObjects)
                     var task = RawContent.ReadAsStreamAsync();
 
                     var xmlStream = task.GetAwaiter().GetResult();
-                    typedContent = (<#= body.Type #>)new XmlSerializer(typeof(<#= body.Type #>)).Deserialize(xmlStream);
+                    typedContent = (<#= body.Type #>)new XmlSerializer(typeof(Models.<#= body.Type #>)).Deserialize(xmlStream);
                 }
                 else
                 {

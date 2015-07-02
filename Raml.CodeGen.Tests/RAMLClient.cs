@@ -102,7 +102,7 @@ namespace XMLPurchaseOrder
             var url = "orders";
             var req = new HttpRequestMessage(HttpMethod.Post, url);
             var stringWriter = new StringWriter();
-        	new XmlSerializer(typeof (PurchaseOrderType)).Serialize(stringWriter, purchaseordertype);
+        	new XmlSerializer(typeof (Models.PurchaseOrderType)).Serialize(stringWriter, purchaseordertype);
             req.Content = new  StringContent(stringWriter.GetStringBuilder().ToString(), Encoding.UTF8, "application/xml");     
 	        var response = await proxy.Client.SendAsync(req);
 
@@ -132,7 +132,7 @@ namespace XMLPurchaseOrder
                 }
             }
             var stringWriter = new StringWriter();
-        	new XmlSerializer(typeof (PurchaseOrderType)).Serialize(stringWriter, request.Content);
+        	new XmlSerializer(typeof (Models.PurchaseOrderType)).Serialize(stringWriter, request.Content);
             req.Content = new  StringContent(stringWriter.GetStringBuilder().ToString(), Encoding.UTF8, "application/xml");     
 	        var response = await proxy.Client.SendAsync(req);
             return new ApiResponse  
@@ -229,7 +229,7 @@ namespace XMLPurchaseOrder
 
 
 
-namespace XMLPurchaseOrder {
+namespace XMLPurchaseOrder.Models {
     
     
     /// <remarks/>
@@ -765,11 +765,6 @@ namespace XMLPurchaseOrder {
 
 namespace XMLPurchaseOrder.Models
 {
-    public abstract class  PurchaseOrderType 
-    {
-
-    } // end class
-
     /// <summary>
     /// Request object for method Post of class Orders
     /// </summary>
@@ -821,7 +816,7 @@ namespace XMLPurchaseOrder.Models
                     var task = RawContent.ReadAsStreamAsync();
 
                     var xmlStream = task.GetAwaiter().GetResult();
-                    typedContent = (PurchaseOrderType)new XmlSerializer(typeof(PurchaseOrderType)).Deserialize(xmlStream);
+                    typedContent = (PurchaseOrderType)new XmlSerializer(typeof(Models.PurchaseOrderType)).Deserialize(xmlStream);
                 }
                 else
                 {
