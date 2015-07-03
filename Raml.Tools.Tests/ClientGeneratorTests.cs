@@ -481,6 +481,13 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(5, model.Objects.Sum(o => o.Value.Properties.Count(p => p.IsEnum)));
         }
 
+        [Test]
+        public async Task ShouldGenerateModels_WhenExternalRefs()
+        {
+            var model = await GetExternalRefsGeneratedModel();
+            Assert.AreEqual(5, model.Objects.Count);
+        }
+
         private static string GetXml(string comment)
         {
             if (string.IsNullOrWhiteSpace(comment))
@@ -609,6 +616,14 @@ namespace Raml.Tools.Tests
         {
             var raml = await new RamlParser().LoadAsync("files/schematests.raml");
             var model = new ClientGeneratorService(raml, "SchemaTest").BuildModel();
+
+            return model;
+        }
+
+        private static async Task<ClientGeneratorModel> GetExternalRefsGeneratedModel()
+        {
+            var raml = await new RamlParser().LoadAsync("files/external-refs.raml");
+            var model = new ClientGeneratorService(raml, "ExternalRefs").BuildModel();
 
             return model;
         }
