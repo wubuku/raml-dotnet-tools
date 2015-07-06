@@ -87,22 +87,22 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="box.raml">
+    <None Include="files\box.raml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="congo-drones-5-f.raml">
+    <None Include="files\congo-drones-5-f.raml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="congo-drones-schemas.raml">
+    <None Include="files\congo-drones-schemas.raml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="congo-traits.raml">
+    <None Include="files\congo-traits.raml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="congo-types.raml">
+    <None Include="files\congo-types.raml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="contacts.raml">
+    <None Include="files\contacts.raml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="edge\x64\edge.node">
@@ -111,7 +111,7 @@
     <None Include="edge\x86\edge.node">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="fstab.raml" />
+    <None Include="files\fstab.raml" />
     <None Include="ApiModels.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ApiModels.cs</LastGenOutput>
@@ -321,18 +321,18 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>RAMLClient.cs</LastGenOutput>
     </None>
-    <None Include="github.raml">
+    <None Include="files\github.raml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="instagram.raml">
+    <None Include="files\instagram.raml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="movies.raml">
+    <None Include="files\movies.raml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
-    <None Include="test.raml" />
-    <None Include="twitter.raml">
+    <None Include="files\test.raml" />
+    <None Include="files\twitter.raml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -675,6 +675,7 @@
       <Name>Raml.Tools</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

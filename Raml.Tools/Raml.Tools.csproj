@@ -81,6 +81,8 @@
     <Compile Include="GeneratorServiceHelper.cs" />
     <Compile Include="HeadersParser.cs" />
     <Compile Include="ClientGenerator\ClientMethodsGenerator.cs" />
+    <Compile Include="JsonSchemaCustomResolver.cs" />
+    <Compile Include="JsonSchemaCustomV4Resolver.cs" />
     <Compile Include="MethodsGeneratorBase.cs" />
     <Compile Include="NetTypeMapper.cs" />
     <Compile Include="ObjectParser.cs" />
