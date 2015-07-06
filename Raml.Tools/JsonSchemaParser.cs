@@ -25,7 +25,7 @@ namespace Raml.Tools
 			Newtonsoft.JsonV4.Schema.JsonSchema v4Schema = null;
 		    if (jsonSchema.Contains("\"oneOf\":"))
 		    {
-		        v4Schema = ParseV4Schema(key, jsonSchema, warnings);
+		        v4Schema = ParseV4Schema(key, jsonSchema, warnings, objects);
 		    }
 		    else
 		    {
@@ -77,7 +77,7 @@ namespace Raml.Tools
                 try
                 {
                     schema = null;
-                    v4Schema = Newtonsoft.JsonV4.Schema.JsonSchema.Parse(jsonSchema);
+                    v4Schema = Newtonsoft.JsonV4.Schema.JsonSchema.Parse(jsonSchema, new JsonSchemaCustomV4Resolver(objects));
                 }
                 catch (Exception exv4)
                 {
@@ -92,12 +92,12 @@ namespace Raml.Tools
             return schema;
         }
 
-        private static Newtonsoft.JsonV4.Schema.JsonSchema ParseV4Schema(string key, string jsonSchema, IDictionary<string, string> warnings)
+        private static Newtonsoft.JsonV4.Schema.JsonSchema ParseV4Schema(string key, string jsonSchema, IDictionary<string, string> warnings, IDictionary<string, ApiObject> objects)
         {
             Newtonsoft.JsonV4.Schema.JsonSchema v4Schema = null;
             try
             {
-                v4Schema = Newtonsoft.JsonV4.Schema.JsonSchema.Parse(jsonSchema);
+                v4Schema = Newtonsoft.JsonV4.Schema.JsonSchema.Parse(jsonSchema, new JsonSchemaCustomV4Resolver(objects));
             }
             catch (Exception exv4)
             {

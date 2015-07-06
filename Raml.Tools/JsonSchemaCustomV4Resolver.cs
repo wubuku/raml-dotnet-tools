@@ -1,13 +1,13 @@
 using System.Collections.Generic;
-using Newtonsoft.Json.Schema;
+using Newtonsoft.JsonV4.Schema;
 
 namespace Raml.Tools
 {
-    public class JsonSchemaCustomResolver : JsonSchemaResolver
+    public class JsonSchemaCustomV4Resolver : JsonSchemaResolver
     {
         private readonly IDictionary<string, ApiObject> objects;
 
-        public JsonSchemaCustomResolver(IDictionary<string, ApiObject> objects)
+        public JsonSchemaCustomV4Resolver(IDictionary<string, ApiObject> objects)
         {
             this.objects = objects;
         }
@@ -22,7 +22,7 @@ namespace Raml.Tools
                 return null;
 
             var jsonSchema = objects[reference].JSONSchema.Replace("\\\"", "\"");
-            return JsonSchema.Parse(jsonSchema, new JsonSchemaCustomResolver(objects));
+            return JsonSchema.Parse(jsonSchema, new JsonSchemaCustomV4Resolver(objects));
         }
     }
 }
