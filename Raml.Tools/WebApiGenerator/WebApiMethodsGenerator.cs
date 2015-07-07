@@ -52,12 +52,14 @@ namespace Raml.Tools
 		{
 			var relativeUri = UrlGeneratorHelper.GetRelativeUri(url, parent.PrefixUri);
 
-			return new ControllerMethod
+		    var parentUrl = UrlGeneratorHelper.GetParentUri(url, resource.RelativeUri);
+
+		    return new ControllerMethod
 			{
 				Name = NetNamingMapper.GetMethodName(method.Verb ?? "Get" + resource.RelativeUri),
-				Parameter = GetParameter(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, url),
+				Parameter = GetParameter(GeneratorServiceHelper.GetKeyForResource(method, resource, parentUrl), method, resource, url),
 				UriParameters = uriParametersGenerator.GetUriParameters(resource, url),
-				ReturnType = GetReturnType(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, url),
+				ReturnType = GetReturnType(GeneratorServiceHelper.GetKeyForResource(method, resource, parentUrl), method, resource, url),
 				Comment = GetComment(resource, method),
 				Url = relativeUri,
 				Verb = NetNamingMapper.Capitalize(method.Verb),

@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using Raml.Common;
 using Raml.Parser.Expressions;
+using Raml.Tools.WebApiGenerator;
 
 namespace Raml.Tools.ClientGenerator
 {
@@ -78,11 +79,13 @@ namespace Raml.Tools.ClientGenerator
 
 	    private ClientGeneratorMethod BuildClassMethod(string url, Method method, Resource resource)
 		{
-			var generatedMethod = new ClientGeneratorMethod
+            var parentUrl = UrlGeneratorHelper.GetParentUri(url, resource.RelativeUri);
+
+	        var generatedMethod = new ClientGeneratorMethod
 			{
 				Name = NetNamingMapper.GetMethodName(method.Verb ?? "Get" + resource.RelativeUri),
-				ReturnType = GetReturnType(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, url),
-				Parameter = GetParameter(GeneratorServiceHelper.GetKeyForResource(method, resource), method, resource, url),
+				ReturnType = GetReturnType(GeneratorServiceHelper.GetKeyForResource(method, resource, parentUrl), method, resource, url),
+                Parameter = GetParameter(GeneratorServiceHelper.GetKeyForResource(method, resource, parentUrl), method, resource, url),
 				Comment = GetComment(resource, method),
 				Url = url,
 				Verb = NetNamingMapper.Capitalize(method.Verb),

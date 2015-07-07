@@ -92,7 +92,7 @@ namespace Raml.Tools.Tests
 		{
 			var model = await GetTwitterGeneratedModel();
 			Assert.IsTrue(model.Objects.Any(o => o.Value.Name == "ContainedWithin"));
-			Assert.AreEqual(53, model.Objects.Count());
+			Assert.AreEqual(59, model.Objects.Count());
 		}
 
 		[Test]
@@ -138,14 +138,14 @@ namespace Raml.Tools.Tests
         public async void Should_Generate_Properties_When_GitHub()
         {
             var model = await GetGitHubGeneratedModel();
-            Assert.AreEqual(354, model.Objects.Sum(c => c.Value.Properties.Count));
+            Assert.AreEqual(360, model.Objects.Sum(c => c.Value.Properties.Count));
         }
 
         [Test]
         public async void Should_Generate_Properties_When_Instagram()
         {
             var model = await GetInstagramGeneratedModel();
-            Assert.AreEqual(21, model.Objects.Sum(c => c.Value.Properties.Count));
+            Assert.AreEqual(35, model.Objects.Sum(c => c.Value.Properties.Count));
         }
 
         [Test]
@@ -173,7 +173,7 @@ namespace Raml.Tools.Tests
         public async void Should_Generate_Properties_When_Twitter()
         {
             var model = await GetTwitterGeneratedModel();
-            Assert.AreEqual(303, model.Objects.Sum(c => c.Value.Properties.Count));
+            Assert.AreEqual(328, model.Objects.Sum(c => c.Value.Properties.Count));
         }
 
         [Test]

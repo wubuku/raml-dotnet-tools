@@ -53,5 +53,16 @@ namespace Raml.Tools.WebApiGenerator
 
 			return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
 		}
+
+	    public static string GetParentUri(string url, string relativeUri)
+	    {
+	        if (string.IsNullOrWhiteSpace(url))
+	            return string.Empty;
+
+	        if (!url.StartsWith("/"))
+	            url = "/" + url;
+
+            return url.Replace(relativeUri, string.Empty);
+	    }
 	}
 }

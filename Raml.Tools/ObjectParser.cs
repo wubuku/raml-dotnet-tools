@@ -8,9 +8,9 @@ namespace Raml.Tools
 	{
 		private readonly JsonSchemaParser jsonSchemaParser = new JsonSchemaParser();
 
-		public ApiObject ParseObject(string key, string value, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings, IDictionary<string, ApiEnum> enums)
+        public ApiObject ParseObject(string key, string value, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings, IDictionary<string, ApiEnum> enums, IDictionary<string, ApiObject> otherObjects)
 		{
-			var obj = ParseSchema(key, value, objects, warnings, enums);
+			var obj = ParseSchema(key, value, objects, warnings, enums, otherObjects);
 			if (obj == null)
 				return null;
 
@@ -19,7 +19,7 @@ namespace Raml.Tools
 			return obj;
 		}
 
-		private ApiObject ParseSchema(string key, string schema, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings, IDictionary<string, ApiEnum> enums)
+        private ApiObject ParseSchema(string key, string schema, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings, IDictionary<string, ApiEnum> enums, IDictionary<string, ApiObject> otherObjects)
 		{
 			if (schema == null)
 				return null;
@@ -34,7 +34,7 @@ namespace Raml.Tools
             if (!schema.Contains("{"))
                 return null;
 
-			return jsonSchemaParser.Parse(key, schema, objects, warnings, enums);
+			return jsonSchemaParser.Parse(key, schema, objects, warnings, enums, otherObjects);
 		}
 
 
