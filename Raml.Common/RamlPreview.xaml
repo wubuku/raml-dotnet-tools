@@ -19,11 +19,7 @@
 					Value="Black" />
             <Setter Property="BorderThickness"
 					Value="1" />
-            <Setter Property="Padding"
-					Value="5" />
-            <Setter Property="Margin"
-					Value="5,0,5,0" />
-            <Setter Property="Height" Value="300"></Setter>
+            <Setter Property="Height" Value="280"></Setter>
             <Setter Property="IsReadOnly"
 					Value="True" />
             <Setter Property="IsTabStop"
@@ -47,7 +43,7 @@
         <Style x:Key="Button"
 			   TargetType="{x:Type Button}">
             <Setter Property="Margin"
-					Value="10" />
+					Value="0,0,0,10" />
             <Setter Property="Height"
 					Value="50" />
             <Setter Property="FontSize"
@@ -61,7 +57,7 @@
         <Style x:Key="DefaultButton"
 			   TargetType="{x:Type Button}">
             <Setter Property="Margin"
-					Value="0,0,0,0" />
+					Value="0,0,0,10" />
             <Setter Property="Height"
 					Value="25" />
             <Setter Property="Width"
@@ -90,26 +86,29 @@
 
 
     </Window.Resources>
-    <Grid>
+
+
+    <Grid Width="*">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <Grid HorizontalAlignment="Center">
+        <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"></ColumnDefinition>
-                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                <ColumnDefinition Width="100"></ColumnDefinition>
+                <ColumnDefinition Width="90"></ColumnDefinition>
+                <ColumnDefinition Width="133"></ColumnDefinition>
+                <ColumnDefinition Width="225"></ColumnDefinition>
+                <ColumnDefinition Width="90"></ColumnDefinition>
             </Grid.ColumnDefinitions>
+
 
 
             <Label Content="Filename"
@@ -135,15 +134,32 @@
 								 Grid.Row="1"
 								 Width="220" />
 
+        </Grid>
+
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10"></ColumnDefinition>
+                <ColumnDefinition Width="510"></ColumnDefinition>
+                <ColumnDefinition Width="10"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
 
             <Label Content="Preview RAML"
                            FontSize="13"
-                           Grid.ColumnSpan="4"
 						   Margin="0,15,0,0"
-						   Grid.Row="2" />
+						   Grid.Row="0"
+                   Grid.Column="1"/>
 
-            <TextBox Grid.Row="3"
-                     Grid.ColumnSpan="4"
+            <TextBox Grid.Row="1"
+                     Grid.Column="1"
+                     HorizontalAlignment="Center"
 							 ScrollViewer.VerticalScrollBarVisibility="Visible"
                              ScrollViewer.HorizontalScrollBarVisibility="Visible"
                              Width="500"
@@ -151,7 +167,8 @@
 							 Style="{StaticResource TextBlockStyle}"
 							 x:Name="ResourcesLabel" />
 
-            <Grid Grid.Row="4" Grid.ColumnSpan="4">
+            <Grid Grid.Row="2"
+                  Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
@@ -165,8 +182,15 @@
 								 Name="progressBar"></ProgressBar>
             </Grid>
 
-            <Button Content="Cancel"
-                    Grid.Row="5"
+            <Grid Grid.Row="3"
+                  Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="78"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="78"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Button Content="Cancel"
                     Grid.Column="0"
                     Width="68"
                                     Height="35"
@@ -174,16 +198,16 @@
 									Style="{StaticResource Button}"
 									Click="btnCancel_Click" />
 
-            <Button Content="Import"
-                    Grid.Row="5"
-                    Grid.Column="3"
+                <Button Content="Import"
+                    Grid.Column="2"
                     Width="68"
                                     Height="35"
 									Style="{StaticResource DefaultButton}"
 									x:Name="btnOk"
 									Click="btnOk_Click" />
 
+            </Grid>
         </Grid>
-
     </Grid>
+
 </Window>

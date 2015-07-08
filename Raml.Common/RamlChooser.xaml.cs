@@ -1,13 +1,12 @@
-﻿using System.Windows.Input;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using Raml.Common.Annotations;
-using Raml.Tools;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Raml.Common
 {
@@ -55,7 +54,7 @@ namespace Raml.Common
 			Title = title;
 			IsContractUseCase = isContractUseCase;
             btnOk.IsEnabled = false;
-			Height = isContractUseCase ? 570 : 475;
+			Height = isContractUseCase ? 600 : 475;
 			OnPropertyChanged("Height");
 		}
 
@@ -78,7 +77,8 @@ namespace Raml.Common
 
 			var title = Path.GetFileName(fd.FileName);
 
-            var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, RamlOriginalSource, title, isContractUseCase);
+		    var useAsyncMethods = CheckBoxUseAsync.IsChecked.HasValue && CheckBoxUseAsync.IsChecked.Value;
+		    var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, RamlOriginalSource, title, isContractUseCase, useAsyncMethods);
             
             StartProgress();
 		    preview.FromFile();
@@ -111,16 +111,16 @@ namespace Raml.Common
         {
             SelectExistingRamlOption();
             var rmlLibrary = new RAMLLibraryBrowser(exchangeUrl);
-            var selectedRAMLFile = rmlLibrary.ShowDialog();
+            var selectedRamlFile = rmlLibrary.ShowDialog();
 
-            if (selectedRAMLFile.HasValue && selectedRAMLFile.Value)
+            if (selectedRamlFile.HasValue && selectedRamlFile.Value)
             {
                 var url = rmlLibrary.RAMLFileUrl;
 
                 txtURL.Text = url;
 
-                //TODO: check title !
-                var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, txtURL.Text, "title", isContractUseCase);
+                var useAsyncMethods = CheckBoxUseAsync.IsChecked.HasValue && CheckBoxUseAsync.IsChecked.Value;
+                var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, txtURL.Text, "title", isContractUseCase, useAsyncMethods);
                 
                 StartProgress();
                 preview.FromURL();
@@ -141,7 +141,8 @@ namespace Raml.Common
 		{
             //TODO: check title !
             SelectExistingRamlOption();
-            var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, txtURL.Text, "title", isContractUseCase);
+            var useAsyncMethods = CheckBoxUseAsync.IsChecked.HasValue && CheckBoxUseAsync.IsChecked.Value;
+            var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, txtURL.Text, "title", isContractUseCase, useAsyncMethods);
             
             StartProgress();
             preview.FromURL();
@@ -225,6 +226,7 @@ namespace Raml.Common
         {
             var path = Path.GetDirectoryName(GetType().Assembly.Location) + Path.DirectorySeparatorChar;
             var ramlChooserActionParams = new RamlChooserActionParams(string.Empty, string.Empty, txtTitle.Text, path, NewRamlFilename, NewRamlNamespace, true);
+            ramlChooserActionParams.UseAsyncMethods = CheckBoxUseAsync.IsChecked.HasValue && CheckBoxUseAsync.IsChecked.Value;
             action(ramlChooserActionParams);
             Close();
         }

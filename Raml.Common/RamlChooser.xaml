@@ -8,6 +8,7 @@
 				 x:Name="RamlChooserWindow"
                  Background="Gainsboro"
 				 Width="600"
+                 d:DesignHeight="600"
 				 ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -150,6 +151,7 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
 
                 <RadioButton Content="New RAML contract"
@@ -277,9 +279,14 @@
 								Click="GoButton_Click" >
                     </Button>
 
-
                 </Grid>
 
+                <CheckBox Grid.Row="7"
+                      Margin="0, 15"
+                      Name="CheckBoxUseAsync"
+                      Visibility="{Binding ElementName=RamlPreviewWindow, Path=ContractUseCaseVisibility}"
+                      Content="Use Async Methods"
+                      VerticalAlignment="Center"></CheckBox>
 
 
 

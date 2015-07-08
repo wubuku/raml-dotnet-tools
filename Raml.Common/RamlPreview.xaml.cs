@@ -25,6 +25,7 @@ namespace Raml.Common
         private readonly RamlIncludesManager includesManager = new RamlIncludesManager();
         // action to execute when clicking Ok button (add RAML Reference, Scaffold Web Api, etc.)
         private readonly Action<RamlChooserActionParams> action;
+        private readonly bool useAsyncMethods;
 
         public string RamlTempFilePath { get; private set; }
         public string RamlOriginalSource { get; private set; }
@@ -34,7 +35,7 @@ namespace Raml.Common
 
         private bool IsContractUseCase { get; set; }
 
-        public RamlPreview(IServiceProvider serviceProvider, Action<RamlChooserActionParams> action, string ramlTempFilePath, string ramlOriginalSource, string ramlTitle, bool isContractUseCase)
+        public RamlPreview(IServiceProvider serviceProvider, Action<RamlChooserActionParams> action, string ramlTempFilePath, string ramlOriginalSource, string ramlTitle, bool isContractUseCase, bool useAsyncMethods)
         {
             ServiceProvider = serviceProvider;
             RamlTempFilePath = ramlTempFilePath;
@@ -42,6 +43,7 @@ namespace Raml.Common
             RamlTitle = ramlTitle;
             IsContractUseCase = isContractUseCase;
             this.action = action;
+            this.useAsyncMethods = useAsyncMethods;
             InitializeComponent();
         }
 
@@ -221,6 +223,7 @@ namespace Raml.Common
                 // Execute action (add RAML Reference, Scaffold Web Api, etc)
                 var parameters = new RamlChooserActionParams(RamlOriginalSource, RamlTempFilePath, RamlTitle, path,
                     txtFileName.Text, txtNamespace.Text, false);
+                parameters.UseAsyncMethods = useAsyncMethods;
                 action(parameters);
 
                 ResourcesLabel.Text += "Succeeded";

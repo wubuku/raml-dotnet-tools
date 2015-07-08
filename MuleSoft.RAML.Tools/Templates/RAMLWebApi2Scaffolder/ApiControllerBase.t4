@@ -6,6 +6,7 @@
 <#@ import namespace="System.Linq" #>
 <#@ parameter name="controllerObject" type="Raml.Tools.WebApiGenerator.ControllerObject" #>
 <#@ parameter name="hasModels" type="System.Boolean" #>
+<#@ parameter name="useAsyncMethods" type="System.Boolean" #>
 <#@ output extension=".cs" #>
 
 using System;
@@ -40,10 +41,14 @@ namespace $(namespace)
 #>
         [Http<#= method.Verb #>]
         [Route("<#= method.Url #>")]
+<# if(useAsyncMethods) { #>
+        public virtual async Task<IHttpActionResult> <#= method.Name #>(<#= method.ParametersString #>)
+<# } else { #>
         public virtual IHttpActionResult <#= method.Name #>Base(<#= method.ParametersString #>)
+<# } #>
         {
             // Do not modify this code
-            return ((I<#= controllerObject.Name #>Controller)this).<#= method.Name #>(<#= method.ParametersCallString #>);
+            return <#= useAsyncMethods ? "await" : "" #> ((I<#= controllerObject.Name #>Controller)this).<#= method.Name #>(<#= method.ParametersCallString #>);
         }
 <#
 

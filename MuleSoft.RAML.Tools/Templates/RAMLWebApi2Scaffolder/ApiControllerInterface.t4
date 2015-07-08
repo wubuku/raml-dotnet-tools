@@ -6,6 +6,7 @@
 <#@ import namespace="System.Linq" #>
 <#@ parameter name="controllerObject" type="Raml.Tools.WebApiGenerator.ControllerObject" #>
 <#@ parameter name="hasModels" type="System.Boolean" #>
+<#@ parameter name="useAsyncMethods" type="System.Boolean" #>
 <#@ output extension=".cs" #>
 
 using System;
@@ -25,10 +26,18 @@ namespace $(namespace)
 <#
 		foreach (var method in controllerObject.Methods)
 		{
+            if(useAsyncMethods)
+            {
+#>
+        Task<IHttpActionResult> <#= method.Name #>(<#= method.ParametersString #>);
+<#          
+            } 
+            else 
+            { 
 #>
         IHttpActionResult <#= method.Name #>(<#= method.ParametersString #>);
-
 <#
+            }
 		}
 #>
     }
