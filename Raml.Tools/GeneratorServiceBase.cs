@@ -80,7 +80,7 @@ namespace Raml.Tools
 				return;
 
 			var key = type.Key + "-" + name.ToLower() + RequestContentSuffix;
-            var obj = objectParser.ParseObject(key, verb.Body.Schema, schemaRequestObjects, warnings, enums);
+            var obj = objectParser.ParseObject(key, verb.Body.Schema, schemaRequestObjects, warnings, enums, schemaResponseObjects);
 
             AddObjectToObjectCollectionOrLink(obj, key, schemaRequestObjects);
 		}
@@ -96,7 +96,7 @@ namespace Raml.Tools
 						foreach (var mimeType in response.Body)
 						{
 							var key = mimeType.Key + " " + mimeType.Value.Type + ResponseContentSuffix;
-                            var obj = objectParser.ParseObject(key, mimeType.Value.Schema, schemaResponseObjects, warnings, enums);
+                            var obj = objectParser.ParseObject(key, mimeType.Value.Schema, schemaResponseObjects, warnings, enums, schemaRequestObjects);
 
                             AddObjectToObjectCollectionOrLink(obj, key, schemaResponseObjects);
 						}
@@ -140,7 +140,7 @@ namespace Raml.Tools
 
 				var mimeType = GeneratorServiceHelper.GetMimeType(response);
 
-                var obj = objectParser.ParseObject(key, mimeType.Schema, schemaResponseObjects, warnings, enums);
+                var obj = objectParser.ParseObject(key, mimeType.Schema, schemaResponseObjects, warnings, enums, schemaRequestObjects);
 
                 AddObjectToObjectCollectionOrLink(obj, key, schemaResponseObjects);
 			}
@@ -148,7 +148,7 @@ namespace Raml.Tools
 
 
 
-		private void ParseResourceRequestsRecursively(IEnumerable<Resource> resources)
+		private void ParseResourceRequestsRecursively(IEnumerable<Resource> resources, string fullUrl)
 		{
 			foreach (var resource in resources)
 			{
@@ -158,18 +158,18 @@ namespace Raml.Tools
 					{
 						foreach (var kv in method.Body.Where(b => b.Value.Schema != null))
 						{
-							var key = GeneratorServiceHelper.GetKeyForResource(method, resource) + RequestContentSuffix;
+							var key = GeneratorServiceHelper.GetKeyForResource(method, resource, fullUrl) + RequestContentSuffix;
 							if (schemaRequestObjects.ContainsKey(key)) 
 								continue;
 
-                            var obj = objectParser.ParseObject(key, kv.Value.Schema, schemaRequestObjects, warnings, enums);
+                            var obj = objectParser.ParseObject(key, kv.Value.Schema, schemaRequestObjects, warnings, enums, schemaResponseObjects);
 
                             AddObjectToObjectCollectionOrLink(obj, key, schemaRequestObjects);                                
 						}
 					}
 				}
 				if (resource.Resources != null)
-					ParseResourceRequestsRecursively(resource.Resources);
+					ParseResourceRequestsRecursively(resource.Resources, fullUrl + resource.RelativeUri);
 			}
 		}
 
@@ -177,7 +177,7 @@ namespace Raml.Tools
 
 		protected IDictionary<string, ApiObject> GetRequestObjects()
 		{
-			ParseSchemas(schemaRequestObjects);
+			ParseSchemas(schemaRequestObjects, schemaResponseObjects);
 			ParseResourcesRequests();
 			ParseResourceTypesRequests();
 
@@ -187,13 +187,13 @@ namespace Raml.Tools
 		private void ParseResourcesRequests()
 		{
 			var resources = raml.Resources;
-			ParseResourceRequestsRecursively(resources);
+			ParseResourceRequestsRecursively(resources, "");
 		}
 
 
 		protected IDictionary<string, ApiObject> GetResponseObjects()
 		{
-			ParseSchemas(schemaResponseObjects);
+			ParseSchemas(schemaResponseObjects, schemaRequestObjects);
 			ParseResourceTypesResponses();
 			ParseTraitsResponses();
 			ParseResourcesResponses();
@@ -204,10 +204,10 @@ namespace Raml.Tools
 		private void ParseResourcesResponses()
 		{
 			var resources = raml.Resources;
-			ParseResourceResponsesRecursively(resources);
+			ParseResourceResponsesRecursively(resources, "");
 		}
 
-		private void ParseResourceResponsesRecursively(IEnumerable<Resource> resources)
+		private void ParseResourceResponsesRecursively(IEnumerable<Resource> resources, string fullUrl)
 		{
 			foreach (var resource in resources)
 			{
@@ -219,10 +219,10 @@ namespace Raml.Tools
 						{
 							foreach (var kv in response.Body.Where(b => b.Value.Schema != null))
 							{
-								var key = GeneratorServiceHelper.GetKeyForResource(method, resource) + ParserHelpers.GetStatusCode(response.Code) + ResponseContentSuffix;
+								var key = GeneratorServiceHelper.GetKeyForResource(method, resource, fullUrl) + ParserHelpers.GetStatusCode(response.Code) + ResponseContentSuffix;
                                 if (schemaResponseObjects.ContainsKey(key)) continue;
 
-                                var obj = objectParser.ParseObject(key, kv.Value.Schema, schemaResponseObjects, warnings, enums);
+                                var obj = objectParser.ParseObject(key, kv.Value.Schema, schemaResponseObjects, warnings, enums, schemaRequestObjects);
 
 							    AddObjectToObjectCollectionOrLink(obj, key, schemaResponseObjects);
 							}
@@ -230,7 +230,7 @@ namespace Raml.Tools
 					}
 				}
 				if (resource.Resources != null)
-					ParseResourceResponsesRecursively(resource.Resources);
+					ParseResourceResponsesRecursively(resource.Resources, fullUrl + resource.RelativeUri);
 			}
 		}
 
@@ -280,7 +280,7 @@ namespace Raml.Tools
 	        return type.EndsWith(">") && type.StartsWith(CollectionTypeHelper.CollectionType);
 	    }
 
-	    private void ParseSchemas(IDictionary<string, ApiObject> objects)
+        private void ParseSchemas(IDictionary<string, ApiObject> objects, IDictionary<string, ApiObject> otherObjects)
 		{
 			foreach (var schema in raml.Schemas)
 			{
@@ -289,7 +289,7 @@ namespace Raml.Tools
 					if (objects.ContainsKey(kv.Key)) 
 						continue;
 
-					var obj = objectParser.ParseObject(kv.Key, kv.Value, objects, warnings, enums);
+					var obj = objectParser.ParseObject(kv.Key, kv.Value, objects, warnings, enums, otherObjects);
 						
                     AddObjectToObjectCollectionOrLink(obj, kv.Key, objects);
 				}

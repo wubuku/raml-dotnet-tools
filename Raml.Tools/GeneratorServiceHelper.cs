@@ -24,9 +24,9 @@ namespace Raml.Tools
 			return mimeType;
 		}
 
-		public static string GetKeyForResource(Method method, Resource resource)
+		public static string GetKeyForResource(Method method, Resource resource, string parentUrl)
 		{
-			return resource.RelativeUri + "-" + (string.IsNullOrWhiteSpace(method.Verb) ? "Get" : method.Verb);
+			return parentUrl + resource.RelativeUri + "-" + (string.IsNullOrWhiteSpace(method.Verb) ? "Get" : method.Verb);
 		}
 
 	}
