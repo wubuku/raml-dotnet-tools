@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 <# if(hasModels){ #>
@@ -42,7 +43,7 @@ namespace $(namespace)
         [Http<#= method.Verb #>]
         [Route("<#= method.Url #>")]
 <# if(useAsyncMethods) { #>
-        public virtual async Task<IHttpActionResult> <#= method.Name #>(<#= method.ParametersString #>)
+        public virtual async Task<IHttpActionResult> <#= method.Name #>Base(<#= method.ParametersString #>)
 <# } else { #>
         public virtual IHttpActionResult <#= method.Name #>Base(<#= method.ParametersString #>)
 <# } #>

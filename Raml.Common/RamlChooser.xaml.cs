@@ -31,9 +31,9 @@ namespace Raml.Common
 			get { return isContractUseCase; }
 			set
 			{
+                OnPropertyChanged("ContractUseCaseVisibility");
 				if (value.Equals(isContractUseCase)) return;
 				isContractUseCase = value;
-				OnPropertyChanged("ContractUseCaseVisibility");
 			}
 		}
 
@@ -54,7 +54,7 @@ namespace Raml.Common
 			Title = title;
 			IsContractUseCase = isContractUseCase;
             btnOk.IsEnabled = false;
-			Height = isContractUseCase ? 600 : 475;
+			Height = isContractUseCase ? 610 : 475;
 			OnPropertyChanged("Height");
 		}
 

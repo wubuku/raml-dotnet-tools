@@ -284,7 +284,7 @@
                 <CheckBox Grid.Row="7"
                       Margin="0, 15"
                       Name="CheckBoxUseAsync"
-                      Visibility="{Binding ElementName=RamlPreviewWindow, Path=ContractUseCaseVisibility}"
+                      Visibility="{Binding ElementName=RamlChooseWindow, Path=ContractUseCaseVisibility}"
                       Content="Use Async Methods"
                       VerticalAlignment="Center"></CheckBox>
 

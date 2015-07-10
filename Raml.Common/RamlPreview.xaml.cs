@@ -1,17 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Windows.Input;
-using Microsoft.VisualStudio.Shell;
-using System;
-using System.IO;
-using System.Security.Permissions;
-using System.Windows;
-using System.Windows.Threading;
+﻿using Microsoft.VisualStudio.Shell;
 using Raml.Parser;
 using Raml.Parser.Expressions;
-using Raml.Tools;
-using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Security.Permissions;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Threading;
 using Task = System.Threading.Tasks.Task;
 
 namespace Raml.Common
