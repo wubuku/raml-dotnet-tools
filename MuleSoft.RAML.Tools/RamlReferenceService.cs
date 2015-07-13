@@ -40,7 +40,7 @@ namespace MuleSoft.RAML.Tools
 				InstallNugetDependencies(proj);
 				ActivityLog.LogInformation(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, "Nuget Dependencies installed");
 
-				AddFilesToProject(parameters.RamlFilePath, proj, parameters.TargetNamespace, parameters.RamlSource, parameters.TargetFileName);
+				AddFilesToProject(parameters.RamlFilePath, proj, parameters.TargetNamespace, parameters.RamlSource, parameters.TargetFileName, parameters.ClientRootClassName);
 				ActivityLog.LogInformation(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, "Files added to project");
 			}
 			catch (Exception ex)
@@ -76,7 +76,7 @@ namespace MuleSoft.RAML.Tools
 			}
 		}
 
-		private void AddFilesToProject(string ramlSourceFile, Project proj, string targetNamespace, string ramlOriginalSource, string targetFileName)
+		private void AddFilesToProject(string ramlSourceFile, Project proj, string targetNamespace, string ramlOriginalSource, string targetFileName, string clientRootClassName)
 		{
 			if(!File.Exists(ramlSourceFile))
 				throw new FileNotFoundException("RAML file not found " + ramlSourceFile);
@@ -91,7 +91,7 @@ namespace MuleSoft.RAML.Tools
 
 			var destFolderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(apiRefsFolderItem, destFolderName, destFolderPath);
 
-			InstallerServices.AddRefFile(ramlSourceFile, targetNamespace, ramlOriginalSource, destFolderPath, targetFileName);
+			InstallerServices.AddRefFile(ramlSourceFile, targetNamespace, ramlOriginalSource, destFolderPath, targetFileName, null, clientRootClassName);
 
 			var ramlProjItem = InstallerServices.AddOrUpdateRamlFile(ramlSourceFile, destFolderPath, destFolderItem, targetFileName);
 

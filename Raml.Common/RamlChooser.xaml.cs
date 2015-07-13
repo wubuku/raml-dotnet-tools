@@ -31,9 +31,9 @@ namespace Raml.Common
 			get { return isContractUseCase; }
 			set
 			{
-                OnPropertyChanged("ContractUseCaseVisibility");
 				if (value.Equals(isContractUseCase)) return;
 				isContractUseCase = value;
+                OnPropertyChanged("ContractUseCaseVisibility");
 			}
 		}
 
@@ -54,7 +54,7 @@ namespace Raml.Common
 			Title = title;
 			IsContractUseCase = isContractUseCase;
             btnOk.IsEnabled = false;
-			Height = isContractUseCase ? 610 : 475;
+			Height = isContractUseCase ? 570 : 475;
 			OnPropertyChanged("Height");
 		}
 
@@ -77,8 +77,8 @@ namespace Raml.Common
 
 			var title = Path.GetFileName(fd.FileName);
 
-		    var useAsyncMethods = CheckBoxUseAsync.IsChecked.HasValue && CheckBoxUseAsync.IsChecked.Value;
-		    var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, RamlOriginalSource, title, isContractUseCase, useAsyncMethods);
+		    
+		    var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, RamlOriginalSource, title, isContractUseCase);
             
             StartProgress();
 		    preview.FromFile();
@@ -119,8 +119,7 @@ namespace Raml.Common
 
                 txtURL.Text = url;
 
-                var useAsyncMethods = CheckBoxUseAsync.IsChecked.HasValue && CheckBoxUseAsync.IsChecked.Value;
-                var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, txtURL.Text, "title", isContractUseCase, useAsyncMethods);
+                var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, txtURL.Text, "title", isContractUseCase);
                 
                 StartProgress();
                 preview.FromURL();
@@ -141,8 +140,7 @@ namespace Raml.Common
 		{
             //TODO: check title !
             SelectExistingRamlOption();
-            var useAsyncMethods = CheckBoxUseAsync.IsChecked.HasValue && CheckBoxUseAsync.IsChecked.Value;
-            var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, txtURL.Text, "title", isContractUseCase, useAsyncMethods);
+            var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, txtURL.Text, "title", isContractUseCase);
             
             StartProgress();
             preview.FromURL();
@@ -224,10 +222,9 @@ namespace Raml.Common
 
         private void btnOk_Click(object sender, RoutedEventArgs e)
         {
-            var path = Path.GetDirectoryName(GetType().Assembly.Location) + Path.DirectorySeparatorChar;
-            var ramlChooserActionParams = new RamlChooserActionParams(string.Empty, string.Empty, txtTitle.Text, path, NewRamlFilename, NewRamlNamespace, true);
-            ramlChooserActionParams.UseAsyncMethods = CheckBoxUseAsync.IsChecked.HasValue && CheckBoxUseAsync.IsChecked.Value;
-            action(ramlChooserActionParams);
+            var preview = new RamlPreview(ServiceProvider, action, txtTitle.Text);
+            preview.NewContract();
+            preview.ShowDialog();
             Close();
         }
 	}
