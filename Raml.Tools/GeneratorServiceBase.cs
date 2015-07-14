@@ -91,7 +91,7 @@ namespace Raml.Tools
 			{
 				foreach (var method in trait)
 				{
-					foreach (var response in method.Value.Responses)
+                    foreach (var response in method.Value.Responses.Where(r => r.Body != null))
 					{
 						foreach (var mimeType in response.Body)
 						{
