@@ -71,11 +71,17 @@ namespace MuleSoft.RAML.Tools
 	        updateReferenceCommand.BeforeQueryStatus += UpdateRamlRefCommand_BeforeQueryStatus;
 			mcs.AddCommand(updateReferenceCommand);
 
-			// Add RAML Contract command
+			// Add RAML Contract command in Project Node
 			var addRamlContractCmdId = new CommandID(GuidList.guidMuleSoft_RAML_ProjectNode, (int)PkgCmdIDList.cmdAddContract);
 			var addRamlContractCommand = new OleMenuCommand(AddRamlContractCallback, addRamlContractCmdId);
 			addRamlContractCommand.BeforeQueryStatus += AddRamlContractCommandOnBeforeQueryStatus;
 			mcs.AddCommand(addRamlContractCommand);
+
+            // Add RAML Contract command in Folder Node
+            var addRamlContractFolderCmdId = new CommandID(GuidList.guidMuleSoft_RAML_ContractFolderNode, (int)PkgCmdIDList.cmdAddContract2);
+            var addRamlContractFolderCommand = new OleMenuCommand(AddRamlContractCallback, addRamlContractFolderCmdId);
+            addRamlContractFolderCommand.BeforeQueryStatus += AddRamlContractFolderCommandOnBeforeQueryStatus;
+            mcs.AddCommand(addRamlContractFolderCommand);
 
 			// Update RAML from source (Contract/Server) command
 			updateRamlContractCommandId = new CommandID(GuidList.guidMuleSoft_RAML_CmdUpdateRAMLContract, (int)PkgCmdIDList.cmdUpdateRAMLContract);
@@ -105,6 +111,11 @@ namespace MuleSoft.RAML.Tools
             events = dte.Events;
             documentEvents = events.DocumentEvents;
             documentEvents.DocumentSaved += RamlScaffoldService.TriggerScaffoldOnRamlChanged;
+        }
+
+        private void AddRamlContractFolderCommandOnBeforeQueryStatus(object sender, EventArgs eventArgs)
+        {
+            ShowOrHideCommandAddContractFolder(sender);
         }
 
         private void DisableRamlMetadataOutputCallback(object sender, EventArgs e)
@@ -326,6 +337,16 @@ namespace MuleSoft.RAML.Tools
 
         private static void ShowOrHideCommandAddRefApiFolder(object sender)
         {
+            ShowOrHideCommandForFolder(sender, Settings.Default.ApiReferencesFolderName);
+        }
+
+        private static void ShowOrHideCommandAddContractFolder(object sender)
+        {
+            ShowOrHideCommandForFolder(sender, Settings.Default.ContractsFolderName);
+        }
+
+        private static void ShowOrHideCommandForFolder(object sender, string folderName)
+        {
             // get the menu that fired the event
             var menuCommand = sender as OleMenuCommand;
             if (menuCommand == null) return;
@@ -338,17 +359,17 @@ namespace MuleSoft.RAML.Tools
             if (!IsSingleProjectItemSelection(out hierarchy, out itemid)) return;
             // Get the file path
             string itemFullPath;
-            ((IVsProject)hierarchy).GetMkDocument(itemid, out itemFullPath);
+            ((IVsProject) hierarchy).GetMkDocument(itemid, out itemFullPath);
 
             var folder = Path.GetDirectoryName(itemFullPath);
-            if (!folder.EndsWith(Settings.Default.ApiReferencesFolderName))
+            if (!folder.EndsWith(folderName))
                 return;
 
             ShowAndEnableCommand(menuCommand, true);
         }
 
 
-		private static void ShowOrHideCommand(object sender, string containingFolderName)
+        private static void ShowOrHideCommand(object sender, string containingFolderName)
 		{
 			// get the menu that fired the event
 			var menuCommand = sender as OleMenuCommand;
@@ -523,12 +544,12 @@ namespace MuleSoft.RAML.Tools
 
         private void StopProgressBar()
         {
-            if (attachingDialog != null)
-            {
-                var canceled = 0;
-                attachingDialog.EndWaitDialog(out canceled);
-                attachingDialog = null;
-            }
+            if (attachingDialog == null) 
+                return;
+
+            int canceled;
+            attachingDialog.EndWaitDialog(out canceled);
+            attachingDialog = null;
         }
 
         private void StartProgressBar(string title, string message, string progressMessage)
