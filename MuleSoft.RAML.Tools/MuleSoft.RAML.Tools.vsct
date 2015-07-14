@@ -108,6 +108,7 @@
             </Strings>
         </Button>
 
+
         <!--<Button guid="guidMuleSoft_RAML_CmdExtractRAML" id="cmdExtractRAML" priority="0x0100" type="Button">
         <Parent guid="guidMuleSoft_RAML_ProjectNode" id="ProjectNodeGroup" />
         <Icon guid="guidImages" id="bmpPic1" />
@@ -176,8 +177,8 @@
           <IDSymbol name="ProjectNodeGroup" value="0x1020"/>
           <IDSymbol name="cmdDisableMetadataOutput" value="0x0800" />
       </GuidSymbol>
-      
-    <!--<GuidSymbol name="guidMuleSoft_RAML_CmdExtractRAML" value="{a1f4149f-0985-4a2c-88ad-0e747290b3a2}">
+
+      <!--<GuidSymbol name="guidMuleSoft_RAML_CmdExtractRAML" value="{a1f4149f-0985-4a2c-88ad-0e747290b3a2}">
       <IDSymbol name="ProjectNodeGroup" value="0x1020"/>
       <IDSymbol name="cmdExtractRAML" value="0x0700" />
     </GuidSymbol>-->

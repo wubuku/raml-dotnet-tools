@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using MuleSoft.RAML.Tools.Properties;
+using MuleSoft.RAML.Tools.RamlPropertiesExtender;
 using NuGet.VisualStudio;
 using Raml.Common;
 using System;
@@ -29,6 +30,7 @@ namespace MuleSoft.RAML.Tools
 	    private CommandID updateRamlContractCommandId;
         private CommandID enableRamlMetadataOutputCommandId;
         private CommandID disableRamlMetadataOutputCommandId;
+        private CommandID editRamlPropertiesCmdId;
         //private CommandID extractRAMLCommandId;
         private static Events events;
         private static DocumentEvents documentEvents;
@@ -107,10 +109,16 @@ namespace MuleSoft.RAML.Tools
             //extractRAMLCommand.BeforeQueryStatus += ExtractRAMLCommandOnBeforeQueryStatus;
             //mcs.AddCommand(extractRAMLCommand);
 
+            // trigger scaffold when RAML document gets saved
             var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
             events = dte.Events;
             documentEvents = events.DocumentEvents;
             documentEvents.DocumentSaved += RamlScaffoldService.TriggerScaffoldOnRamlChanged;
+
+            // show RAML metadata (namespace, source) in Properties Windows and allow to edit
+            dte.ObjectExtenders.RegisterExtenderProvider(
+                VSLangProj.PrjBrowseObjectCATID.prjCATIDCSharpFileBrowseObject, "RamlPropertiesExtender",
+                new RamlPropertiesExtenderProvider());
         }
 
         private void AddRamlContractFolderCommandOnBeforeQueryStatus(object sender, EventArgs eventArgs)
@@ -220,6 +228,7 @@ namespace MuleSoft.RAML.Tools
 
 		    ChangeCommandStatus(updateReferenceCmdId, true);
 		}
+
 
         //private bool Unauthorized(string ramlFilePath)
         //{
