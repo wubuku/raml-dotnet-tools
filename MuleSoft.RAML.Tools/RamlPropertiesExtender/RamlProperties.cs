@@ -80,7 +80,8 @@ namespace MuleSoft.RAML.Tools.RamlPropertiesExtender
             {
                 if (clientName == null)
                     clientName = RamlReferenceReader.GetClientRootClassName(refFilePath);
-                return clientName;
+
+                return clientName.StartsWith("async:") ? "" : clientName;
 
             }
             set
