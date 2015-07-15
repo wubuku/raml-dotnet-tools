@@ -11,6 +11,8 @@ namespace MuleSoft.RAML.Tools.RamlPropertiesExtender
         private readonly string refFilePath;
         private string ns;
         private string source;
+        private bool? useAsyncMethods;
+        private string clientName;
 
         public RamlProperties(string refFilePath)
         {
@@ -52,9 +54,45 @@ namespace MuleSoft.RAML.Tools.RamlPropertiesExtender
             }
         }
 
+        [Category("RAML Metadata")]
+        [Description("Use async methods in WebApi controllers")]
+        public bool? UseAsyncMethods
+        {
+            get
+            {
+                if (useAsyncMethods == null)
+                    useAsyncMethods = RamlReferenceReader.GetRamlUseAsyncMethods(refFilePath);
+                return useAsyncMethods;
+
+            }
+            set
+            {
+                useAsyncMethods = value;
+                Save();
+            }
+        }
+
+        [Category("RAML Metadata")]
+        [Description("Client proxy name")]
+        public string ClientName
+        {
+            get
+            {
+                if (clientName == null)
+                    clientName = RamlReferenceReader.GetClientRootClassName(refFilePath);
+                return clientName;
+
+            }
+            set
+            {
+                clientName = value;
+                Save();
+            }
+        }
+
         private void Save()
         {
-            var contents = RamlPropertiesManager.BuildContent(Namespace, Source);
+            var contents = RamlPropertiesManager.BuildContent(Namespace, Source, UseAsyncMethods, ClientName);
             var fileInfo = new FileInfo(refFilePath) { IsReadOnly = false };
             File.WriteAllText(refFilePath, contents);
             fileInfo.IsReadOnly = true;

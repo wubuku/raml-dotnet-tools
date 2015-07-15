@@ -15,13 +15,7 @@ namespace Raml.Common
 		{
 			var refFileName = Path.GetFileNameWithoutExtension(targetFileName) + ".ref";
 			var refFilePath = Path.Combine(destFolderPath, refFileName);
-			var content = RamlPropertiesManager.BuildContent(targetNamespace, ramlOriginalSource);
-
-		    if (useAsyncMethods != null)
-		        content += string.Format("async: {0}{1}", useAsyncMethods.Value, Environment.NewLine);
-
-            if(!string.IsNullOrWhiteSpace(clientRootClassName))
-                content += string.Format("client: {0}{1}", clientRootClassName, Environment.NewLine);
+			var content = RamlPropertiesManager.BuildContent(targetNamespace, ramlOriginalSource, useAsyncMethods, clientRootClassName);
 
 			if (File.Exists(refFilePath))
 				new FileInfo(refFilePath).IsReadOnly = false;
