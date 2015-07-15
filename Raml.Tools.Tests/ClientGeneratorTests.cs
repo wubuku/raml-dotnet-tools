@@ -29,21 +29,21 @@ namespace Raml.Tools.Tests
 		public async Task Warnings_WhenBox()
 		{
 			var model = await GetBoxGeneratedModel();
-			Assert.AreEqual(46, model.Warnings.Count());
+			Assert.AreEqual(48, model.Warnings.Count());
 		}
 
 		[Test]
 		public async Task Warnings_WhenTwitter()
 		{
 			var model = await GetTwitterGeneratedModel();
-			Assert.AreEqual(45, model.Warnings.Count());
+			Assert.AreEqual(60, model.Warnings.Count());
 		}
 
 		[Test]
 		public async Task Warnings_WhenGithub()
 		{
 			var model = await GetGitHubGeneratedModel();
-			Assert.AreEqual(43, model.Warnings.Count());
+			Assert.AreEqual(60, model.Warnings.Count());
 		}
 
 		[Test]
@@ -158,14 +158,14 @@ namespace Raml.Tools.Tests
 		public async Task ShouldBuildRequestObjects_FromBox()
 		{
 			var model = await GetBoxGeneratedModel();
-			Assert.AreEqual(8, model.RequestObjects.Count);
+			Assert.AreEqual(9, model.RequestObjects.Count);
 		}
 
 		[Test]
 		public async Task ShouldBuildResponseObjects_FromInstagram()
 		{
 			var model = await GetInstagramGeneratedModel();
-			Assert.AreEqual(7, model.ResponseObjects.Count);
+			Assert.AreEqual(11, model.ResponseObjects.Count);
 		}
 
 		[Test]
@@ -265,14 +265,14 @@ namespace Raml.Tools.Tests
 		public async Task ShouldBuildResponseObjects_FromTwitter()
 		{
 			var model = await GetTwitterGeneratedModel();
-			Assert.AreEqual(53, model.ResponseObjects.Count);
+			Assert.AreEqual(61, model.ResponseObjects.Count);
 		}
 
 		[Test]
 		public async Task ShouldBuildRequestObjects_FromGitHub()
 		{
 			var model = await GetGitHubGeneratedModel();
-			Assert.AreEqual(24, model.RequestObjects.Count);
+			Assert.AreEqual(32, model.RequestObjects.Count);
 		}
 
 		[Test]
@@ -286,7 +286,7 @@ namespace Raml.Tools.Tests
 		public async Task ShouldBuildResponseObjects_FromGitHub()
 		{
 			var model = await GetGitHubGeneratedModel();
-			Assert.AreEqual(44, model.ResponseObjects.Count);
+			Assert.AreEqual(68, model.ResponseObjects.Count);
 		}
 
 
@@ -372,7 +372,7 @@ namespace Raml.Tools.Tests
         public async void Should_Generate_Properties_When_Box()
         {
             var model = await GetBoxGeneratedModel();
-            Assert.AreEqual(72, model.Objects.Sum(c => c.Value.Properties.Count));
+            Assert.AreEqual(75, model.Objects.Sum(c => c.Value.Properties.Count));
         }
 
         [Test]
@@ -393,28 +393,28 @@ namespace Raml.Tools.Tests
         public async void Should_Generate_Properties_When_GitHub()
         {
             var model = await GetGitHubGeneratedModel();
-            Assert.AreEqual(668, model.Objects.Sum(c => c.Value.Properties.Count));
+            Assert.AreEqual(856, model.Objects.Sum(c => c.Value.Properties.Count));
         }
 
         [Test]
         public async void Should_Generate_Properties_When_Instagram()
         {
             var model = await GetInstagramGeneratedModel();
-            Assert.AreEqual(114, model.Objects.Sum(c => c.Value.Properties.Count));
+            Assert.AreEqual(128, model.Objects.Sum(c => c.Value.Properties.Count));
         }
 
         [Test]
         public async void Should_Generate_Properties_When_Large()
         {
             var model = await GetLargeGeneratedModel();
-            Assert.AreEqual(72, model.Objects.Sum(c => c.Value.Properties.Count));
+            Assert.AreEqual(75, model.Objects.Sum(c => c.Value.Properties.Count));
         }
 
         [Test]
         public async void Should_Generate_Properties_When_Regression()
         {
             var model = await GetRegressionGeneratedModel();
-            Assert.AreEqual(74, model.Objects.Sum(c => c.Value.Properties.Count));
+            Assert.AreEqual(104, model.Objects.Sum(c => c.Value.Properties.Count));
         }
 
         [Test]
@@ -428,7 +428,7 @@ namespace Raml.Tools.Tests
         public async void Should_Generate_Properties_When_Twitter()
         {
             var model = await GetTwitterGeneratedModel();
-            Assert.AreEqual(628, model.Objects.Sum(c => c.Value.Properties.Count));
+            Assert.AreEqual(672, model.Objects.Sum(c => c.Value.Properties.Count));
         }
 
         [Test]
@@ -487,6 +487,15 @@ namespace Raml.Tools.Tests
             var model = await GetExternalRefsGeneratedModel();
             Assert.AreEqual(5, model.Objects.Count);
         }
+
+        [Test]
+        public async Task ShouldGenerateDifferentModels_WhenDifferentPropertiesWithSameName()
+        {
+            var model = await GetSameNameGeneratedModel();
+            Assert.AreEqual(4, model.Objects.Count(o => o.Value.Name.ToLowerInvariant().Contains("director")));
+        }
+
+
 
         private static string GetXml(string comment)
         {
@@ -628,5 +637,12 @@ namespace Raml.Tools.Tests
             return model;
         }
 
+        private static async Task<ClientGeneratorModel> GetSameNameGeneratedModel()
+        {
+            var raml = await new RamlParser().LoadAsync("files/same-name-dif-obj.raml");
+            var model = new ClientGeneratorService(raml, "SameName").BuildModel();
+
+            return model;
+        }
 	}
 }

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace MuleSoft.RAML.Tools
+namespace Raml.Common
 {
 	public static class RamlReferenceReader
 	{

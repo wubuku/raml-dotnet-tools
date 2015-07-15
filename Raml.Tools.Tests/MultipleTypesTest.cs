@@ -200,7 +200,7 @@ namespace Raml.Tools.Tests
 			                {
 				                new Resource
 				                {
-					                RelativeUri = "movies",
+					                RelativeUri = "/movies",
 					                Methods = methods
 				                }
 			                };

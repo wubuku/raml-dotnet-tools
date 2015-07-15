@@ -12,9 +12,10 @@ namespace Raml.Tools
 	    
 	    private readonly string[] suffixes = { "A", "B", "C", "D", "E", "F", "G" };
         private readonly ICollection<string> ids  = new Collection<string>();
-
-		public ApiObject Parse(string key, string jsonSchema, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings, IDictionary<string, ApiEnum> enums)
-		{
+        private IDictionary<string, ApiObject> otherObjects = new Dictionary<string, ApiObject>();
+        public ApiObject Parse(string key, string jsonSchema, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings, IDictionary<string, ApiEnum> enums, IDictionary<string, ApiObject> otherObjects)
+        {
+            this.otherObjects = otherObjects;
 			var obj = new ApiObject
 			          {
 				          Name = NetNamingMapper.GetObjectName(key),
@@ -109,10 +110,10 @@ namespace Raml.Tools
             return v4Schema;
         }
 
-        private void ParseObject(string key, IDictionary<string, JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums)
+        private string ParseObject(string key, IDictionary<string, JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums)
 		{
 			if (schema == null)
-				return;
+				return null;
 
 			var obj = new ApiObject
 			{
@@ -120,15 +121,34 @@ namespace Raml.Tools
 				Properties = ParseSchema(schema, objects, enums)
 			};
 
-			// Avoid duplicated keys and names
-			if (objects.ContainsKey(key) || objects.Any(o => o.Value.Name == obj.Name) || !obj.Properties.Any())
-				return;
+			// Avoid duplicated keys and names or no properties
+            if (objects.ContainsKey(key) || objects.Any(o => o.Value.Name == obj.Name) || !obj.Properties.Any() || otherObjects.ContainsKey(key) || otherObjects.Any(o => o.Value.Name == obj.Name))
+            {
+                if (HasSameProperties(obj, objects, key)) 
+                    return key;
+
+                obj.Name = GetUniqueName(objects, obj.Name);
+                key = GetUniqueKey(objects, key);
+            }
 
 			objects.Add(key, obj);
+            return key;
 		}
 
+        private bool HasSameProperties(ApiObject apiObject, IDictionary<string, ApiObject> objects, string key)
+        {
+            var obj = objects.ContainsKey(key) ? objects[key] : objects.FirstOrDefault(o => o.Value.Name == apiObject.Name).Value;
+            if(obj == null)
+                obj = otherObjects.ContainsKey(key) ? otherObjects[key] : otherObjects.First(o => o.Value.Name == apiObject.Name).Value;
+            
+            if(obj.Properties.Count != apiObject.Properties.Count)
+                return false;
 
-		private IList<Property> ParseSchema(IDictionary<string, JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums)
+            return apiObject.Properties.All(property => obj.Properties.Any(p => p.Name == property.Name && p.Type == property.Type));
+        }
+
+
+        private IList<Property> ParseSchema(IDictionary<string, JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums)
 		{
 			var props = new List<Property>();
 			foreach (var kv in schema)
@@ -495,7 +515,41 @@ namespace Raml.Tools
                 if (enums.All(p => p.Key != unique))
                     return unique;
             }
-            throw new InvalidOperationException("Could not find a unique name for enum");
+            throw new InvalidOperationException("Could not find a unique name for enum: " + name);
+        }
+
+        private string GetUniqueKey(IDictionary<string, ApiObject> objects, string key)
+        {
+            for (var i = 0; i < 9; i++)
+            {
+                var unique = key + suffixes[i];
+                if (objects.All(p => p.Key != unique) && otherObjects.All(p => p.Key != unique))
+                    return unique;
+            }
+            for (var i = 0; i < 100; i++)
+            {
+                var unique = key + "A" + i;
+                if (objects.All(p => p.Key != unique) && otherObjects.All(p => p.Key != unique))
+                    return unique;
+            }
+            throw new InvalidOperationException("Could not find a key name for object: " + key);
+        }
+
+        private string GetUniqueName(IDictionary<string, ApiObject> objects, string name)
+        {
+            for (var i = 0; i < 9; i++)
+            {
+                var unique = name + suffixes[i];
+                if (objects.All(p => p.Value.Name != unique) && otherObjects.All(p => p.Value.Name != unique))
+                    return unique;
+            }
+            for (var i = 0; i < 100; i++)
+            {
+                var unique = name + "A" + i;
+                if (objects.All(p => p.Value.Name != unique) && otherObjects.All(p => p.Value.Name != unique))
+                    return unique;
+            }
+            throw new InvalidOperationException("Could not find a unique name for object: " + name);
         }
 
         private string GetUniqueName(ICollection<Property> props)
@@ -526,7 +580,7 @@ namespace Raml.Tools
                     ids.Add(schema.Id);
 
 			    var type = string.IsNullOrWhiteSpace(property.Value.Id) ? key : property.Value.Id;
-			    ParseObject(type, schema.Properties, objects, enums);
+			    type = ParseObject(type, schema.Properties, objects, enums);
 				prop.Type = NetNamingMapper.GetObjectName(type);
                 return;
 			}

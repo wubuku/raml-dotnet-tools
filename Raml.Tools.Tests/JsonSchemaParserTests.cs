@@ -100,7 +100,7 @@ namespace Raml.Tools.Tests
             var warnings = new Dictionary<string, string>();
             var objects = new Dictionary<string, ApiObject>();
             var enums = new Dictionary<string, ApiEnum>();
-            var obj = parser.Parse("name", schema, objects, warnings, enums);
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>());
 
             Assert.AreEqual(0, warnings.Count);
             Assert.AreEqual("Name", obj.Name);
@@ -126,7 +126,7 @@ namespace Raml.Tools.Tests
             var warnings = new Dictionary<string, string>();
             var objects = new Dictionary<string, ApiObject>();
             var enums = new Dictionary<string, ApiEnum>();
-            var obj = parser.Parse("name", schema, objects, warnings, enums);
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>());
 
             Assert.AreEqual(0, warnings.Count);
             Assert.AreEqual(2, obj.Properties.Count);
@@ -153,7 +153,7 @@ namespace Raml.Tools.Tests
 			 var warnings = new Dictionary<string, string>();
 			 var objects = new Dictionary<string, ApiObject>();
              var enums = new Dictionary<string, ApiEnum>();
-			 var obj = parser.Parse("name", schema, objects, warnings, enums);
+             var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>());
 			 Assert.AreEqual(0, warnings.Count);
 			 Assert.AreEqual("Name", obj.Name);
 			 Assert.IsFalse(obj.IsArray);
@@ -185,7 +185,7 @@ namespace Raml.Tools.Tests
 			var warnings = new Dictionary<string, string>();
 			var objects = new Dictionary<string, ApiObject>();
             var enums = new Dictionary<string, ApiEnum>();
-			var obj = parser.Parse("name", schema, objects, warnings, enums);
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>());
 			Assert.AreEqual(0, warnings.Count);
 			Assert.AreEqual("Name", obj.Name);
 			Assert.IsTrue(obj.IsArray);
@@ -217,7 +217,7 @@ namespace Raml.Tools.Tests
             var warnings = new Dictionary<string, string>();
             var objects = new Dictionary<string, ApiObject>();
             var enums = new Dictionary<string, ApiEnum>();
-            var obj = parser.Parse("name", schema, objects, warnings, enums);
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>());
             Assert.AreEqual("to-address-id", obj.Properties.First(p => p.Name == "Toaddressid").OriginalName);
             Assert.AreEqual("order_item_id", obj.Properties.First(p => p.Name == "Order_item_id").OriginalName);
         }
@@ -273,7 +273,7 @@ namespace Raml.Tools.Tests
             var objects = new Dictionary<string, ApiObject>();
             var enums = new Dictionary<string, ApiEnum>();
 
-            var obj = parser.Parse("name", schema, objects, warnings, enums);
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>());
             Assert.AreEqual(1, objects.Count);
             Assert.AreEqual("Employee", objects.First().Value.Name);
             Assert.AreEqual("Employee", objects.First().Value.Properties[4].Type);
@@ -302,7 +302,7 @@ namespace Raml.Tools.Tests
             var warnings = new Dictionary<string, string>();
             var objects = new Dictionary<string, ApiObject>();
             var enums = new Dictionary<string, ApiEnum>();
-            var obj = parser.Parse("name", schema, objects, warnings, enums);
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>());
 
             Assert.AreEqual(1, obj.Properties.Count);
             Assert.AreEqual("Prop1", obj.Properties.First().Type);
@@ -328,7 +328,7 @@ namespace Raml.Tools.Tests
             var warnings = new Dictionary<string, string>();
             var objects = new Dictionary<string, ApiObject>();
             var enums = new Dictionary<string, ApiEnum>();
-            var obj = parser.Parse("name", schema, objects, warnings, enums);
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>());
 
             Assert.AreEqual(1, obj.Properties.Count);
             Assert.AreEqual("int?", obj.Properties.First().Type);
@@ -352,7 +352,7 @@ namespace Raml.Tools.Tests
             var warnings = new Dictionary<string, string>();
             var objects = new Dictionary<string, ApiObject>();
             var enums = new Dictionary<string, ApiEnum>();
-            var obj = parser.Parse("name", schema, objects, warnings, enums);
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>());
 
             Assert.AreEqual(1, obj.Properties.Count);
             Assert.AreEqual("decimal?", obj.Properties.First().Type);
@@ -376,7 +376,7 @@ namespace Raml.Tools.Tests
             var warnings = new Dictionary<string, string>();
             var objects = new Dictionary<string, ApiObject>();
             var enums = new Dictionary<string, ApiEnum>();
-            var obj = parser.Parse("name", schema, objects, warnings, enums);
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>());
 
             Assert.AreEqual(1, obj.Properties.Count);
             Assert.AreEqual("bool?", obj.Properties.First().Type); 
@@ -400,7 +400,7 @@ namespace Raml.Tools.Tests
             var warnings = new Dictionary<string, string>();
             var objects = new Dictionary<string, ApiObject>();
             var enums = new Dictionary<string, ApiEnum>();
-            var obj = parser.Parse("name", schema, objects, warnings, enums);
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>());
 
             Assert.AreEqual(1, obj.Properties.Count);
             Assert.AreEqual("string", obj.Properties.First().Type); 
