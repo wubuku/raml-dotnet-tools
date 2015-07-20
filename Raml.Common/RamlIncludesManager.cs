@@ -144,7 +144,7 @@ namespace Raml.Common
 	        }
 
 	        // replace old include for new include
-	        lines[i] = lines[i].Replace(includeSource, GetPathWithoutDriveLetter(destinationFilePath));
+	        lines[i] = lines[i].Replace(includeSource, destinationFilePath.Replace("\\", "\\\\"));
 	    }
 
 	    private void ManageLocalFile(string path, string relativePath, bool confirmOvewrite, string includeSource,
@@ -263,11 +263,6 @@ namespace Raml.Common
 	        pathToUse = pathToUse.Substring(0, pathToUse.LastIndexOf(Path.DirectorySeparatorChar));
 	        return pathToUse;
 	    }
-
-	    private static string GetPathWithoutDriveLetter(string destinationFilePath)
-		{
-			return destinationFilePath.Substring(1,1) == ":" ? destinationFilePath.Substring(2) : destinationFilePath;
-		}
 
 		private string GetDestinationFilePath(string destinationFolder, string includeSource)
 		{
