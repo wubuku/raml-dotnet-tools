@@ -407,8 +407,54 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(0, warnings.Count);
         }
 
+        [Test]
+        public void should_parse_booleans()
+        {
+            const string schema = 
+                "    {  \"$schema\": \"http://json-schema.org/draft-03/schema\",\r\n" +
+                "         \"type\": \"object\",\r\n" +
+                "         \"description\": \"A single support status\",\r\n" +
+                "         \"properties\": {\r\n" +
+                "           \"id\":  { \"type\": \"string\", \"required\": true },\r\n" +
+                "           \"name\": { \"type\": \"string\", \"required\": true },\r\n" +
+                "           \"exampleBoolProp\": { \"type\": \"boolean\", \"required\": true }\r\n" +
+                "         }\r\n" +
+                "    }\r\n";
 
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>());
 
+            Assert.AreEqual(3, obj.Properties.Count);
+            Assert.AreEqual(1, obj.Properties.Count(p => p.Type == "bool"));
+            Assert.AreEqual(0, warnings.Count);
+        }
 
+        [Test]
+        public void should_parse_integers()
+        {
+            const string schema =
+                "    {  \"$schema\": \"http://json-schema.org/draft-03/schema\",\r\n" +
+                "         \"type\": \"object\",\r\n" +
+                "         \"description\": \"A single support status\",\r\n" +
+                "         \"properties\": {\r\n" +
+                "           \"id\":  { \"type\": \"string\", \"required\": true },\r\n" +
+                "           \"name\": { \"type\": \"string\", \"required\": true },\r\n" +
+                "           \"exampleIntProp\": { \"type\": \"integer\", \"required\": true }\r\n" +
+                "         }\r\n" +
+                "    }\r\n";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>());
+
+            Assert.AreEqual(3, obj.Properties.Count);
+            Assert.AreEqual(1, obj.Properties.Count(p => p.Type == "int"));
+            Assert.AreEqual(0, warnings.Count);
+        }
 	}
 }

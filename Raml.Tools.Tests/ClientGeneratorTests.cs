@@ -495,6 +495,12 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(4, model.Objects.Count(o => o.Value.Name.ToLowerInvariant().Contains("director")));
         }
 
+        [Test]
+        public async Task ShouldGenerateProperties_Issue17()
+        {
+            var model = await GetIssue17GeneratedModel();
+            Assert.AreEqual(4, model.Objects.All(o => o.Value.Properties.Count == 4));
+        }
 
 
         private static string GetXml(string comment)
@@ -641,6 +647,14 @@ namespace Raml.Tools.Tests
         {
             var raml = await new RamlParser().LoadAsync("files/same-name-dif-obj.raml");
             var model = new ClientGeneratorService(raml, "SameName").BuildModel();
+
+            return model;
+        }
+
+        private static async Task<ClientGeneratorModel> GetIssue17GeneratedModel()
+        {
+            var raml = await new RamlParser().LoadAsync("files/issue17.raml");
+            var model = new ClientGeneratorService(raml, "Issue17").BuildModel();
 
             return model;
         }

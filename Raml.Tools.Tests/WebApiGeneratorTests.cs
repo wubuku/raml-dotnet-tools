@@ -212,6 +212,14 @@ namespace Raml.Tools.Tests
             }
         }
 
+        [Test]
+        public async Task ShouldGenerateProperties_Issue17()
+        {
+            var model = await GetIssue17GeneratedModel();
+            Assert.IsTrue(model.Objects.All(o => o.Value.Properties.Count == 4));
+        }
+
+
         private static string GetXml(string comment)
         {
             if (string.IsNullOrWhiteSpace(comment))
@@ -312,5 +320,12 @@ namespace Raml.Tools.Tests
 			return model;
 		}
 
+        private static async Task<WebApiGeneratorModel> GetIssue17GeneratedModel()
+        {
+            var raml = await new RamlParser().LoadAsync("files/issue17.raml");
+            var model = new WebApiGeneratorService(raml).BuildModel();
+
+            return model;
+        }
 	}
 }
