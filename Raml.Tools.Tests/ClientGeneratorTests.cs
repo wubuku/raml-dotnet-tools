@@ -499,7 +499,7 @@ namespace Raml.Tools.Tests
         public async Task ShouldGenerateProperties_Issue17()
         {
             var model = await GetIssue17GeneratedModel();
-            Assert.AreEqual(4, model.Objects.All(o => o.Value.Properties.Count == 4));
+            Assert.IsTrue(model.Objects.Where(o => o.Key.EndsWith("Content")).All(o => o.Value.Properties.Count == 4));
         }
 
 
