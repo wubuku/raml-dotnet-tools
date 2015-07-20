@@ -168,9 +168,35 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </COMReference>
+    <COMReference Include="tom">
+      <Guid>{8CC497C9-A1DF-11CE-8098-00AA0047BE5D}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeGeneratorRegistrationAttribute.cs" />
+    <Compile Include="CustomEditor\EditorFactory.cs" />
+    <Compile Include="CustomEditor\EditorPane.cs" />
+    <Compile Include="CustomEditor\EditorTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomEditor\EditorTextBox.designer.cs">
+      <DependentUpon>EditorTextBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomEditor\IEditor.cs" />
+    <Compile Include="CustomEditor\MyEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomEditor\MyEditor.designer.cs">
+      <DependentUpon>MyEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomEditor\NativeMethods.cs" />
+    <Compile Include="CustomEditor\VSMacroRecorder.cs" />
     <Compile Include="RamlPropertiesExtender\RamlPropertiesExtenderProvider.cs" />
     <Compile Include="RamlPropertiesExtender\RamlProperties.cs" />
     <Compile Include="RamlReferenceService.cs" />
@@ -195,6 +221,15 @@
     <Compile Include="TemplatesManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CustomEditor\EditorPane.resx">
+      <DependentUpon>EditorPane.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomEditor\EditorTextBox.resx">
+      <DependentUpon>EditorTextBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomEditor\MyEditor.resx">
+      <DependentUpon>MyEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -227,6 +262,8 @@
     <Content Include="node_modules\raml-parser\node_modules\inflection\component.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <None Include="CustomEditor\Templates\api1.raml" />
+    <None Include="CustomEditor\Templates\MuleSoft.RAML.Tools.vsdir" />
     <None Include="node_modules\raml-parser\node_modules\inflection\History.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

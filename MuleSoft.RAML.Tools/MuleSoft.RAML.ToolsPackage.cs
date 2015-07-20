@@ -4,6 +4,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using MuleSoft.RAML.Tools.CustomEditor;
 using MuleSoft.RAML.Tools.Properties;
 using MuleSoft.RAML.Tools.RamlPropertiesExtender;
 using NuGet.VisualStudio;
@@ -21,6 +22,13 @@ namespace MuleSoft.RAML.Tools
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
+    [ProvideEditorExtension(typeof(EditorFactory), ".raml", 50,
+              ProjectGuid = "{A2FE74E1-B743-11d0-AE1A-00A0C90FFFC3}",
+              TemplateDir = "Templates",
+              NameResourceID = 105,
+              DefaultName = "api1")]
+    [ProvideKeyBindingTable(GuidList.guidVSPackage1EditorFactoryString, 102)]
+    [ProvideEditorLogicalView(typeof(EditorFactory), VSConstants.LOGVIEWID.TextView_string)]
     [Guid(GuidList.guidMuleSoft_RAML_ToolsPackagePkgString)]
 	[ProvideAutoLoad("f1536ef8-92ec-443c-9ed7-fdadf150da82")]
     public sealed class MuleSoft_RAML_ToolsPackage : Package, IVsThreadedWaitDialogCallback
@@ -119,6 +127,9 @@ namespace MuleSoft.RAML.Tools
             dte.ObjectExtenders.RegisterExtenderProvider(
                 VSLangProj.PrjBrowseObjectCATID.prjCATIDCSharpFileBrowseObject, "RamlPropertiesExtender",
                 new RamlPropertiesExtenderProvider());
+
+            //Create Editor Factory. Note that the base Package class will call Dispose on it.
+            RegisterEditorFactory(new EditorFactory(this));
         }
 
         private void AddRamlContractFolderCommandOnBeforeQueryStatus(object sender, EventArgs eventArgs)

@@ -18,6 +18,13 @@ namespace MuleSoft.RAML.Tools
         public const string guidMuleSoft_RAML_DisableMetadataOutputString = "9345ba25-7345-4be0-81eb-d365fe004dea";
         private const string guidMuleSoft_RAML_ContractFolderNodeString = "a83de21a-fdf5-4bf4-9ec2-88bab3e327ba";
 
+        public const string guidVSPackage1CmdSetString = "3ec33a54-739f-4b76-ae0c-b9702aa762b3";
+        public const string guidVSPackage1EditorFactoryString = "a71468e4-4bd8-4b36-b78a-127731f659dd";
+
+        public static readonly Guid guidMuleSoft_RAML_CmdSet = new Guid(guidVSPackage1CmdSetString);
+        public static readonly Guid guidMuleSoft_RAML_EditorFactory = new Guid(guidVSPackage1EditorFactoryString);
+
+
         public static readonly Guid guidMuleSoft_RAML_ReferencesNode = new Guid(guidMuleSoft_RAML_ReferencesNodeString);
         public static readonly Guid guidMuleSoft_RAML_FolderNode = new Guid(guidMuleSoft_RAML_FolderNodeString);
 		public static readonly Guid guidMuleSoft_RAML_FileNode = new Guid(guidMuleSoft_RAML_FileNodeString);
