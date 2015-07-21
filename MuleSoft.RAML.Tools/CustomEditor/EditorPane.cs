@@ -208,14 +208,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             this.editorControl = new MyEditor();
 
             resources.ApplyResources(this.editorControl, "editorControl", CultureInfo.CurrentUICulture);
-            // Event handlers for macro recording.
-            this.editorControl.RichTextBoxControl.TextChanged += new System.EventHandler(this.OnTextChange);
-            this.editorControl.RichTextBoxControl.MouseDown += new MouseEventHandler(this.OnMouseClick);
-            this.editorControl.RichTextBoxControl.SelectionChanged += new EventHandler(this.OnSelectionChanged);
-            this.editorControl.RichTextBoxControl.KeyDown += new KeyEventHandler(this.OnKeyDown);
-            
-            // Handle Focus event
-            this.editorControl.RichTextBoxControl.GotFocus += new EventHandler(this.OnGotFocus);
 
             // Call the helper function that will do all of the command setup work
             setupCommands();
@@ -262,15 +254,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             {
                 if (disposing)
                 {
-                    if (this.editorControl != null && this.editorControl.RichTextBoxControl != null)
-                    {
-                        this.editorControl.RichTextBoxControl.TextChanged -= new System.EventHandler(this.OnTextChange);
-                        this.editorControl.RichTextBoxControl.MouseDown -= new MouseEventHandler(this.OnMouseClick);
-                        this.editorControl.RichTextBoxControl.SelectionChanged -= new EventHandler(this.OnSelectionChanged);
-                        this.editorControl.RichTextBoxControl.KeyDown -= new KeyEventHandler(this.OnKeyDown);
-                        this.editorControl.RichTextBoxControl.GotFocus -= new EventHandler(this.OnGotFocus);
-                    }
-
                     // Dispose the timers
                     if (null != FileChangeTrigger)
                     {
@@ -287,7 +270,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
 
                     if (editorControl != null)
                     {
-                        editorControl.RichTextBoxControl.Dispose();
                         editorControl.Dispose();
                         editorControl = null;
                     }
@@ -490,7 +472,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onSelectAll(object sender, EventArgs e)
         {
-            editorControl.RichTextBoxControl.SelectAll();
         }
 
         /// <summary>
@@ -501,8 +482,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onQueryCopy(object sender, EventArgs e)
         {
-            OleMenuCommand command = (OleMenuCommand)sender;
-            command.Enabled = editorControl.RichTextBoxControl.SelectionLength > 0 ? true : false;
         }
 
         /// <summary>
@@ -525,8 +504,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onQueryCutOrDelete(object sender, EventArgs e)
         {
-            OleMenuCommand command = (OleMenuCommand)sender;
-            command.Enabled = editorControl.RichTextBoxControl.SelectionLength > 0 ? true : false;
         }
 
         /// <summary>
@@ -545,8 +522,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// </summary>
         private void onDelete(object sender, EventArgs e)
         {
-            editorControl.RichTextBoxControl.SelectedText = "";
-            editorControl.RecordCommand("Delete");
         }
 
         /// <summary>
@@ -556,8 +531,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onQueryPaste(object sender, EventArgs e)
         {
-            OleMenuCommand command = (OleMenuCommand)sender;
-            command.Enabled = editorControl.RichTextBoxControl.CanPaste(DataFormats.GetFormat(DataFormats.Text));
         }
 
         /// <summary>
@@ -602,26 +575,18 @@ namespace MuleSoft.RAML.Tools.CustomEditor
 
             ErrorHandler.ThrowOnFailure(clipboardCycler.GetAndSelectNextDataObject((IVsToolboxUser)this, out pDO));
 
-            ITextSelection textSelection = editorControl.TextDocument.Selection;
 
             // Get the current position of the start of the current selection. 
             // After the paste the position of the start of current selection
             // will be moved to the end of inserted text, so it needs to
             // move back to original position so that inserted text can be highlighted to 
             // allow cycling through our clipboard items.
-            int originalStart;
-            originalStart = textSelection.Start;
 
             // This will do the actual pasting of the object
             ItemPicked(pDO);
 
             // Now move the start position backwards to the original position.
-            int currentStart;
-            currentStart = textSelection.Start;
-            textSelection.MoveStart((int)tom.tomConstants.tomCharacter, originalStart - currentStart);
 
-            // Select the pasted text
-            textSelection.Select();
         }
 
         /// <summary>
@@ -631,8 +596,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onQueryUndo(object sender, EventArgs e)
         {
-            OleMenuCommand command = (OleMenuCommand)sender;
-            command.Enabled = editorControl.RichTextBoxControl.CanUndo;
         }
 
         /// <summary>
@@ -642,7 +605,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onUndo(object sender, EventArgs e)
         {
-            editorControl.RichTextBoxControl.Undo();
         }
 
         /// <summary>
@@ -652,8 +614,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onQueryRedo(object sender, EventArgs e)
         {
-            OleMenuCommand command = (OleMenuCommand)sender;
-            command.Enabled = editorControl.RichTextBoxControl.CanRedo;
         }
 
         /// <summary>
@@ -663,7 +623,7 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onRedo(object sender, EventArgs e)
         {
-            editorControl.RichTextBoxControl.Redo();
+
         }
 
         /// <summary>
@@ -676,8 +636,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onQueryBold(object sender, EventArgs e)
         {
-            OleMenuCommand command = (OleMenuCommand)sender;
-            command.Checked = editorControl.RichTextBoxControl.SelectionFont.Bold;
         }
 
         /// <summary>
@@ -689,7 +647,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onBold(object sender, EventArgs e)
         {
-            setFontStyle(FontStyle.Bold, editorControl.RichTextBoxControl.SelectionFont.Bold);
         }
 
         /// <summary>
@@ -702,8 +659,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onQueryItalic(object sender, EventArgs e)
         {
-            OleMenuCommand command = (OleMenuCommand)sender;
-            command.Checked = editorControl.RichTextBoxControl.SelectionFont.Italic;
         }
 
         /// <summary>
@@ -715,7 +670,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onItalic(object sender, EventArgs e)
         {
-            setFontStyle(FontStyle.Italic, editorControl.RichTextBoxControl.SelectionFont.Italic);
         }
 
         /// <summary>
@@ -728,8 +682,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onQueryUnderline(object sender, EventArgs e)
         {
-            OleMenuCommand command = (OleMenuCommand)sender;
-            command.Checked = editorControl.RichTextBoxControl.SelectionFont.Underline;
         }
 
         /// <summary>
@@ -741,7 +693,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onUnderline(object sender, EventArgs e)
         {
-            setFontStyle(FontStyle.Underline, editorControl.RichTextBoxControl.SelectionFont.Underline);
         }
 
         /// <summary>
@@ -754,8 +705,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onQueryStrikethrough(object sender, EventArgs e)
         {
-            OleMenuCommand command = (OleMenuCommand)sender;
-            command.Checked = editorControl.RichTextBoxControl.SelectionFont.Strikeout;
         }
 
         /// <summary>
@@ -767,7 +716,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onStrikethrough(object sender, EventArgs e)
         {
-            setFontStyle(FontStyle.Strikeout, editorControl.RichTextBoxControl.SelectionFont.Strikeout);
         }
 
         /// <summary>
@@ -779,16 +727,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// will turn the font style off and if it is false we will turn it on.</param>
         private void setFontStyle(FontStyle fontStyleToSet, bool currentStateOn)
         {
-            // Figure out what the new FontStyle should be based on the current one
-            FontStyle fs = currentStateOn ? editorControl.RichTextBoxControl.SelectionFont.Style & (~fontStyleToSet) :
-                                            editorControl.RichTextBoxControl.SelectionFont.Style | fontStyleToSet;
-
-            // Create the new Font based on the current one and fs then set it
-            Font f = new Font(editorControl.RichTextBoxControl.SelectionFont, fs);
-            editorControl.RichTextBoxControl.SelectionFont = f;
-
-            if (f != null)
-                f.Dispose();
         }
 
         /// <summary>
@@ -800,8 +738,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onQueryJustifyCenter(object sender, EventArgs e)
         {
-            OleMenuCommand command = (OleMenuCommand)sender;
-            command.Checked = (editorControl.RichTextBoxControl.SelectionAlignment == HorizontalAlignment.Center);
         }
 
         /// <summary>
@@ -811,7 +747,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onJustifyCenter(object sender, EventArgs e)
         {
-            editorControl.RichTextBoxControl.SelectionAlignment = HorizontalAlignment.Center;
         }
 
         /// <summary>
@@ -823,8 +758,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onQueryJustifyLeft(object sender, EventArgs e)
         {
-            OleMenuCommand command = (OleMenuCommand)sender;
-            command.Checked = (editorControl.RichTextBoxControl.SelectionAlignment == HorizontalAlignment.Left);
         }
 
         /// <summary>
@@ -834,7 +767,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onJustifyLeft(object sender, EventArgs e)
         {
-            editorControl.RichTextBoxControl.SelectionAlignment = HorizontalAlignment.Left;
         }
 
         /// <summary>
@@ -846,8 +778,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onQueryJustifyRight(object sender, EventArgs e)
         {
-            OleMenuCommand command = (OleMenuCommand)sender;
-            command.Checked = (editorControl.RichTextBoxControl.SelectionAlignment == HorizontalAlignment.Right);
         }
 
         /// <summary>
@@ -857,7 +787,7 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onJustifyRight(object sender, EventArgs e)
         {
-            editorControl.RichTextBoxControl.SelectionAlignment = HorizontalAlignment.Right;
+
         }
 
         /// <summary>
@@ -928,20 +858,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             // If args.InValue is null then we just need to set the OutValue
             // to the current font.  If it is not null then that means that we
             // need to cast it to a string and set it as the font.
-            if (null == args.InValue)
-            {
-                string currentFont = editorControl.RichTextBoxControl.SelectionFont.FontFamily.Name;
-                Marshal.GetNativeVariantForObject(currentFont, args.OutValue);
-            }
-            else
-            {
-                string fontName = (string)args.InValue;
-                Font f = new Font(fontName, editorControl.RichTextBoxControl.SelectionFont.Size, editorControl.RichTextBoxControl.SelectionFont.Style);
-                editorControl.RichTextBoxControl.SelectionFont = f;
-
-                if (f != null)
-                    f.Dispose();
-            }
         }
 
         /// <summary>
@@ -984,20 +900,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             // If args.InValue is null then we just need to set the OutValue
             // to the current font size.  If it is not null then that means that we
             // need to cast it to a string and set it as the new font size.
-            if (null == args.InValue)
-            {
-                string currentSize = Convert.ToString(Convert.ToInt32(editorControl.RichTextBoxControl.SelectionFont.Size), CultureInfo.InvariantCulture);
-                Marshal.GetNativeVariantForObject(currentSize, args.OutValue);
-            }
-            else
-            {
-                string fontSize = (string)args.InValue;
-                Font f = new Font(editorControl.RichTextBoxControl.SelectionFont.FontFamily, Convert.ToSingle(fontSize, CultureInfo.InvariantCulture), editorControl.RichTextBoxControl.SelectionFont.Style);
-                editorControl.RichTextBoxControl.SelectionFont = f;
-
-                if (f != null)
-                    f.Dispose();
-            }
         }
 
         /// <summary>
@@ -1009,8 +911,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onQueryBulletedList(object sender, EventArgs e)
         {
-            OleMenuCommand command = (OleMenuCommand)sender;
-            command.Checked = editorControl.RichTextBoxControl.SelectionBullet;
         }
 
         /// <summary>
@@ -1021,7 +921,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="e">  Not used.</param>
         private void onBulletedList(object sender, EventArgs e)
         {
-            editorControl.RichTextBoxControl.SelectionBullet = !editorControl.RichTextBoxControl.SelectionBullet;
         }
 
         /// <summary>
@@ -1037,8 +936,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
 
                 // Convert the point to screen coordinates and pass it into
                 // our DisplayContextMenuAt function
-                Point screenCoordinates = this.editorControl.RichTextBoxControl.PointToScreen(mouseDownLocation);
-                DisplayContextMenuAt(screenCoordinates);
             }
         }
 
@@ -1070,42 +967,29 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         // Note that all functions implemented here call functions from the rich
         // edit control's text object model.
 
+        public float DefaultTabStop { get; set; }
+        public ITextRange Range { get; private set; }
+        public ITextSelection Selection { get; private set; }
+        public int SelectionProperties { get; set; }
+
         /// <summary>
         /// This property gets/sets the default tab width.
         /// </summary>
-        public float DefaultTabStop
-        {
-            get { return editorControl.TextDocument.DefaultTabStop; }
-            set { editorControl.TextDocument.DefaultTabStop = value; }
-        }
 
         /// <summary>
         /// This property gets our editor's current ITextRange interface.  ITextRange is part
         /// of the rich edit control's text object model.
         /// </summary>
-        public ITextRange Range
-        {
-            get { return editorControl.TextRange; }
-        }
 
         /// <summary>
         /// This property gets our editor's current ITextSelection interface.  ITextSelection
         /// is part of the rich edit control's text object model.
         /// </summary>
-        public ITextSelection Selection
-        {
-            get { return editorControl.TextSelection; }
-        }
 
         /// <summary>
         /// This property gets/sets the selection properties that contain certain information
         /// about our editor's current selection.
         /// </summary>
-        public int SelectionProperties
-        {
-            get { return editorControl.TextSelection.Flags; }
-            set { editorControl.TextSelection.Flags = value; }
-        }
 
         /// <summary>
         /// This function finds a string and returns the length of the matched string.
@@ -1115,7 +999,7 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <returns> The length of the matched string.</returns>
         public int FindText(string textToFind)
         {
-            return editorControl.TextRange.FindText(textToFind, (int)tom.tomConstants.tomForward, 0);
+            return 1;
         }
 
         /// <summary>
@@ -1138,7 +1022,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <returns> HResult that indicates success/failure.</returns>
         public int TypeText(string textToType)
         {
-            editorControl.TextSelection.TypeText(textToType);
             return VSConstants.S_OK;
         }
 
@@ -1148,8 +1031,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <returns> HResult that indicates success/failure.</returns>
         public int Cut()
         {
-            object o = null;
-            editorControl.TextSelection.Cut(out o);
             return VSConstants.S_OK;
         }
 
@@ -1159,8 +1040,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <returns> HResult that indicates success/failure.</returns>
         public int Copy()
         {
-            object o = null;
-            editorControl.TextSelection.Copy(out o);
             return VSConstants.S_OK;
         }
 
@@ -1170,8 +1049,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <returns> HResult that indicates success/failure.</returns>
         public int Paste()
         {
-            object o = null;
-            editorControl.TextSelection.Paste(ref o, 0);
             return VSConstants.S_OK;
         }
 
@@ -1186,7 +1063,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <returns> HResult that indicates success/failure.</returns>
         public int Delete(long unit, long count)
         {
-            editorControl.TextSelection.Delete((int)unit, (int)count);
             return VSConstants.S_OK;
         }
 
@@ -1201,7 +1077,7 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <returns> The number of units that the cursor moved up.</returns>
         public int MoveUp(int unit, int count, int extend)
         {
-            return editorControl.TextSelection.MoveUp(unit, count, extend);
+            return 1;
         }
 
         /// <summary>
@@ -1215,7 +1091,7 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <returns> The number of units that the cursor moved down.</returns>
         public int MoveDown(int unit, int count, int extend)
         {
-            return editorControl.TextSelection.MoveDown(unit, count, extend);
+            return 1;
         }
 
         /// <summary>
@@ -1229,7 +1105,7 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <returns> The number of units that the cursor moved to the left.</returns>
         public int MoveLeft(int unit, int count, int extend)
         {
-            return editorControl.TextSelection.MoveLeft(unit, count, extend);
+            return 1;
         }
 
         /// <summary>
@@ -1243,7 +1119,7 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <returns> The number of units that the cursor moved to the right.</returns>
         public int MoveRight(int unit, int count, int extend)
         {
-            return editorControl.TextSelection.MoveRight(unit, count, extend);
+            return 1;
         }
 
         /// <summary>
@@ -1258,7 +1134,7 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// should always be positive since we are moving "forward" in the text buffer.</returns>
         public int EndKey(int unit, int extend)
         {
-            return editorControl.TextSelection.EndKey(unit, extend);
+            return 1;
         }
 
         /// <summary>
@@ -1274,7 +1150,7 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// should always be negative since we are moving "backward" in the text buffer.</returns>
         public int HomeKey(int unit, int extend)
         {
-            return editorControl.TextSelection.HomeKey(unit, extend);
+            return 1;
         }
 
         #endregion
@@ -1440,11 +1316,9 @@ namespace MuleSoft.RAML.Tools.CustomEditor
                 if (lineRead != null && lineRead.Contains(rtfSignature))
                 {
                     //try loading with Rich Text initially
-                    editorControl.RichTextBoxControl.LoadFile(pszFilename, RichTextBoxStreamType.RichText);
                 }
                 else
                 {
-                    editorControl.RichTextBoxControl.LoadFile(pszFilename, RichTextBoxStreamType.PlainText);
                 }
 
                 isDirty = false;
@@ -1479,6 +1353,8 @@ namespace MuleSoft.RAML.Tools.CustomEditor
                     // Notify the load or reload
                     NotifyDocChanged();
                 }
+
+                this.editorControl.LoadFile(pszFilename);
             }
             finally
             {
@@ -1540,7 +1416,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
 
             try
             {
-                editorControl.RichTextBoxControl.SaveFile(pszFilename, RichTextBoxStreamType.RichText);
             }
             catch (ArgumentException)
             {
@@ -1997,7 +1872,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         {
             try
             {
-                editorControl.RichTextBoxControl.SaveFile(pszBackupFileName);
                 backupObsolete = false;
             }
             catch (ArgumentException)
@@ -2053,7 +1927,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             if (oleData.GetDataPresent(DataFormats.UnicodeText))
             {
                 object o = null;
-                editorControl.TextSelection.Paste(ref o, 0);
             }
 
             return VSConstants.S_OK;
@@ -2066,7 +1939,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         /// <param name="_isFileReadOnly">Indicates whether the file loaded is Read Only or not</param>
         private void SetReadOnly(bool _isFileReadOnly)
         {
-            this.editorControl.RichTextBoxControl.ReadOnly = _isFileReadOnly;
 
             //update editor caption with "[Read Only]" or "" as necessary
             IVsWindowFrame frame = (IVsWindowFrame)GetService(typeof(SVsWindowFrame));
@@ -2199,7 +2071,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
                     {
                         // We can not change the file (e.g. a checkout operation failed),
                         // so undo the change and exit.
-                        editorControl.RichTextBoxControl.Undo();
                         return;
                     }
 
@@ -2335,28 +2206,21 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             // the position of the cursor.  If there is a selection then this value will tell
             // us the position of the "left" side of the selection (the side of the selection that
             // has the smaller index value).
-            int startIndex = editorControl.RichTextBoxControl.SelectionStart;
 
             // If the cursor is at the end of the selection then we need to add the selection
             // length to the index value.
-            if ((editorControl.TextSelection.Flags & (int)tom.tomConstants.tomSelStartActive) == 0)
-                startIndex += editorControl.RichTextBoxControl.SelectionLength;
 
             // Call the function that gets the (zero-based) line index based on the buffer index.
-            int lineNumber = editorControl.RichTextBoxControl.GetLineFromCharIndex(startIndex);
 
             // To get the (zero-based) character number subtract the index of the first character
             // on this line from the buffer index.
-            int charNumber = startIndex - editorControl.RichTextBoxControl.GetFirstCharIndexFromLine(lineNumber);
 
             // Call the SetLineChar function, making sure to add one to our line and
             // character values since the values we get from the RichTextBox calls
             // are zero based.
-            object line = (object)(lineNumber + 1);
-            object chr = (object)(charNumber + 1);
 
             // Call the IVsStatusBar's SetLineChar function and return it's HResult
-            return statusBar.SetLineChar(ref line, ref chr);
+            return 0;
         }
 
         #endregion
@@ -2481,22 +2345,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             if (ErrorHandler.Succeeded(hr) && (null != pts) && (pts.Length > 0))
             {
                 // first set start location
-                int NewPosition = editorControl.RichTextBoxControl.GetFirstCharIndexFromLine(pts[0].iStartLine);
-                NewPosition += pts[0].iStartIndex;
-                if (NewPosition > editorControl.RichTextBoxControl.Text.Length)
-                    NewPosition = editorControl.RichTextBoxControl.Text.Length;
-                editorControl.RichTextBoxControl.SelectionStart = NewPosition;
-
-                // now set the length of the selection
-                NewPosition = editorControl.RichTextBoxControl.GetFirstCharIndexFromLine(pts[0].iEndLine);
-                NewPosition += pts[0].iEndIndex;
-                if (NewPosition > editorControl.RichTextBoxControl.Text.Length)
-                    NewPosition = editorControl.RichTextBoxControl.Text.Length;
-                int length = NewPosition - editorControl.RichTextBoxControl.SelectionStart;
-                if (length >= 0)
-                    editorControl.RichTextBoxControl.SelectionLength = length;
-                else
-                    editorControl.RichTextBoxControl.SelectionLength = 0;
             }
             return hr;
         }
@@ -2511,10 +2359,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             if (null == pts || 0 == pts.Length)
                 return VSConstants.E_INVALIDARG;
 
-            pts[0].iStartIndex = editorControl.GetColumnFromIndex(editorControl.RichTextBoxControl.SelectionStart);
-            pts[0].iEndIndex = editorControl.GetColumnFromIndex(editorControl.RichTextBoxControl.SelectionStart + editorControl.RichTextBoxControl.SelectionLength);
-            pts[0].iStartLine = editorControl.RichTextBoxControl.GetLineFromCharIndex(editorControl.RichTextBoxControl.SelectionStart);
-            pts[0].iEndLine = editorControl.RichTextBoxControl.GetLineFromCharIndex(editorControl.RichTextBoxControl.SelectionStart + editorControl.RichTextBoxControl.SelectionLength);
 
             return VSConstants.S_OK;
         }
@@ -2586,12 +2430,8 @@ namespace MuleSoft.RAML.Tools.CustomEditor
                 pgrfOptions[0] |= (uint)__VSFINDOPTIONS.FR_ActionMask;      //Find/Replace capabilities
 
                 // Only support selection if something is selected
-                if (editorControl == null || editorControl.RichTextBoxControl.SelectionLength == 0)
-                    pgrfOptions[0] &= ~((uint)__VSFINDOPTIONS.FR_Selection);
 
                 //if the file is read only, don't support replace
-                if (editorControl == null || editorControl.RichTextBoxControl.ReadOnly)
-                    pgrfOptions[0] &= ~((uint)__VSFINDOPTIONS.FR_Replace | (uint)__VSFINDOPTIONS.FR_ReplaceAll);
             }
             return VSConstants.S_OK;
         }
@@ -2616,23 +2456,7 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         private void GetInitialSearchString(out object pvar)
         {
             //If no text is selected, return null
-            if (0 == editorControl.RichTextBoxControl.SelectionLength)
-            {
-                pvar = null;
-                return;
-            }
-
-            //Now check if multiple lines have been selected
-            int endIndex = editorControl.RichTextBoxControl.SelectionStart + editorControl.RichTextBoxControl.SelectionLength;
-            int endline = editorControl.RichTextBoxControl.GetLineFromCharIndex(endIndex);
-            int startline = editorControl.RichTextBoxControl.GetLineFromCharIndex(editorControl.RichTextBoxControl.SelectionStart);
-            if (startline != endline)
-            {
-                pvar = null;
-                return;
-            }
-
-            pvar = editorControl.RichTextBoxControl.SelectedText;
+            pvar = 0;
         }
 
         #region IVsTextImage members
@@ -2656,8 +2480,7 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         int IVsTextImage.GetLineSize(out int pcLines)
         {
             //get the number of the lines in the control
-            int len = editorControl.RichTextBoxControl.Lines.Length;
-            pcLines = len;
+            pcLines = 0;
 
             return VSConstants.S_OK;
         }
@@ -2708,47 +2531,20 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             if (null == pchText)
                 return VSConstants.E_INVALIDARG;
 
-            // first set start location
-            int NewPosition = editorControl.RichTextBoxControl.GetFirstCharIndexFromLine(pts[0].iStartLine);
-            NewPosition += pts[0].iStartIndex;
-            if (NewPosition > editorControl.RichTextBoxControl.Text.Length)
-                NewPosition = editorControl.RichTextBoxControl.Text.Length;
-            editorControl.RichTextBoxControl.SelectionStart = NewPosition;
-
-            // now set the length of the selection
-            NewPosition = editorControl.RichTextBoxControl.GetFirstCharIndexFromLine(pts[0].iEndLine);
-            NewPosition += pts[0].iEndIndex;
-            if (NewPosition > editorControl.RichTextBoxControl.Text.Length)
-                NewPosition = editorControl.RichTextBoxControl.Text.Length;
-            int length = NewPosition - editorControl.RichTextBoxControl.SelectionStart;
-            if (length >= 0)
-                editorControl.RichTextBoxControl.SelectionLength = length;
-            else
-                editorControl.RichTextBoxControl.SelectionLength = 0;
-
-            //replace the text
-            editorControl.RichTextBoxControl.SelectedText = pchText;
-
             if ((dwFlags & (uint)__VSFINDOPTIONS.FR_Backwards) == 0)
             {
                 // In case of forward search we have to place the insertion point at the
                 // end of the new text, so it will be skipped during the next call to Find.
-                editorControl.RichTextBoxControl.SelectionStart += editorControl.RichTextBoxControl.SelectionLength;
             }
             else
             {
                 // If the search is backward, then set the end postion at the
                 // beginning of the new text.
-                editorControl.RichTextBoxControl.SelectionLength = 0;
             }
 
             //set the ptsChanged to the TextSpan of the replaced text
             if (null != ptsChanged && ptsChanged.Length > 0)
             {
-                ptsChanged[0].iStartIndex = editorControl.GetColumnFromIndex(editorControl.RichTextBoxControl.SelectionStart);
-                ptsChanged[0].iEndIndex = editorControl.GetColumnFromIndex(editorControl.RichTextBoxControl.SelectionStart + editorControl.RichTextBoxControl.SelectionLength);
-                ptsChanged[0].iStartLine = editorControl.RichTextBoxControl.GetLineFromCharIndex(editorControl.RichTextBoxControl.SelectionStart);
-                ptsChanged[0].iEndLine = editorControl.RichTextBoxControl.GetLineFromCharIndex(editorControl.RichTextBoxControl.SelectionStart + editorControl.RichTextBoxControl.SelectionLength);
             }
 
             return VSConstants.S_OK;
@@ -2766,15 +2562,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             if (null == pts || 0 == pts.Length)
                 return VSConstants.E_INVALIDARG;
 
-            int startIndex = editorControl.GetIndexFromLineAndColumn(pts[0].iStartLine, pts[0].iStartIndex);
-            if (startIndex < 0)
-                return VSConstants.E_INVALIDARG;
-
-            int endIndex = editorControl.GetIndexFromLineAndColumn(pts[0].iEndLine, pts[0].iEndIndex);
-            if (endIndex < 0)
-                return VSConstants.E_INVALIDARG;
-
-            pcch = Math.Abs(endIndex - startIndex);
 
             return VSConstants.S_OK;
         }
@@ -2819,7 +2606,7 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             {
                 return VSConstants.E_INVALIDARG;
             }
-            piLength = editorControl.RichTextBoxControl.Lines[iLine].Length;
+            piLength = 0;
 
             return VSConstants.S_OK;
         }
@@ -2853,43 +2640,21 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             pLineData[0].dwReserved = 0;
             pLineData[0].pAtomicTextChain = IntPtr.Zero;
 
-            int lineCount = editorControl.RichTextBoxControl.Lines.Length;
-            if ((iLine < 0) || (iLine >= lineCount) || (iStartIndex < 0) || (iEndIndex < 0) ||
-                (iStartIndex > iEndIndex))
-            {
-                return VSConstants.E_INVALIDARG;
-            }
-
-            string lineText = editorControl.RichTextBoxControl.Lines[iLine];
-            // If the line is empty then do not attempt to calculate the span in the normal way; just return.
-            if (string.IsNullOrEmpty(lineText) && iStartIndex == 0 && iEndIndex == 0)
-                return VSConstants.S_OK;
-            int lineLength = lineText.Length;
-
-            //Error if startIndex is greater than the line length
-            if (iStartIndex >= lineLength || iEndIndex >= lineLength)
-                return VSConstants.E_INVALIDARG;
 
             int spanLength = iEndIndex - iStartIndex + 1;
 
             //Error in arguments if the span length is greater than the line length
-            if (spanLength > lineLength)
-                return VSConstants.E_INVALIDARG;
 
             //If we are looking for a subset of the line i.e. a line span
             if (0 != (grfGet & (uint)GLDE_FLAGS.gldeSubset))
             {
                 pLineData[0].iLength = spanLength;
-                string spanText = lineText.Substring(iStartIndex, spanLength);
                 pLineData[0].pszText = new IntPtr();
-                pLineData[0].pszText = Marshal.StringToCoTaskMemAuto(spanText);
             }
             //else we need to return the complete line
             else
             {
-                pLineData[0].iLength = lineLength;
                 pLineData[0].pszText = new IntPtr();
-                pLineData[0].pszText = Marshal.StringToCoTaskMemAuto(lineText);
             }
 
             return VSConstants.S_OK;
@@ -3148,11 +2913,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             piLine = 0;
             piIndex = 0;
 
-            int totalLines = editorControl.RichTextBoxControl.Lines.Length;
-            if (totalLines > 0)
-                piLine = totalLines - 1;
-            int lineLen = editorControl.RichTextBoxControl.Lines[piLine].Length;
-            piIndex = lineLen >= 1 ? lineLen - 1 : lineLen;
 
             return VSConstants.S_OK;
         }
@@ -3160,19 +2920,13 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         public int GetLengthOfLine(int iLine, out int piLength)
         {
             piLength = 0;
-            int totalLines = editorControl.RichTextBoxControl.Lines.Length;
-
-            if (iLine < 0 || iLine >= totalLines)
-                return VSConstants.E_INVALIDARG;
-
-            piLength = editorControl.RichTextBoxControl.Lines[iLine].Length;
 
             return VSConstants.S_OK;
         }
 
         public int GetLineCount(out int piLineCount)
         {
-            piLineCount = editorControl.RichTextBoxControl.Lines.Length;
+            piLineCount = 0;
             return VSConstants.E_NOTIMPL;
         }
 
@@ -3515,20 +3269,6 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         int IVsTextView.SetSelection(int iAnchorLine, int iAnchorCol, int iEndLine, int iEndCol)
         {
             // first set start location
-            int startPosition = editorControl.GetIndexFromLineAndColumn(iAnchorLine, iAnchorCol);
-            if (startPosition < 0)
-                return VSConstants.E_INVALIDARG;
-            editorControl.RichTextBoxControl.SelectionStart = startPosition;
-
-            // now set the length of the selection
-            int endPosition = editorControl.GetIndexFromLineAndColumn(iEndLine, iEndCol);
-            if (endPosition < 0)
-                return VSConstants.E_INVALIDARG;
-            int length = endPosition - editorControl.RichTextBoxControl.SelectionStart;
-            if (length >= 0)
-                editorControl.RichTextBoxControl.SelectionLength = length;
-            else
-                editorControl.RichTextBoxControl.SelectionLength = 0;
             return VSConstants.S_OK;
         }
 

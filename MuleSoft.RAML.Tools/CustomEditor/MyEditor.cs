@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Windows.Forms;
@@ -16,16 +17,15 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         public MyEditor()
         {
             InitializeComponent();
-            this.richTextBoxCtrl.WordWrap = false;
-            this.richTextBoxCtrl.HideSelection = false;
+
             
             m_Recorder = new VSMacroRecorder(GuidList.guidMuleSoft_RAML_EditorFactory);
 
-            webBrowser1.Navigate(@"file:///C:\desarrollo\mulesoft\api-designer\dist\index.html");
+            webBrowser1.Navigate(@"file:///C:\desarrollo\mulesoft\raml-dotnet-tools\MuleSoft.RAML.Tools\CustomEditor\html\index.html");
             webBrowser1.DocumentCompleted += WebBrowser1OnDocumentCompleted;
             webBrowser1.Navigated += WebBrowser1OnNavigated;
             //webBrowser1.Url;
-            
+            //webBrowser1.Document.InvokeScript("load", "");
         }
 
         private void WebBrowser1OnNavigated(object sender, WebBrowserNavigatedEventArgs webBrowserNavigatedEventArgs)
@@ -38,10 +38,7 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             
         }
 
-        public EditorTextBox RichTextBoxControl
-        {
-            get { return this.richTextBoxCtrl; }
-        }
+
 
         #region Fields
 
@@ -63,103 +60,15 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             }
         }
 
-        private ITextDocument textDocument;
-
-        /// <summary>
-        /// This property exposes the ITextDocument interface associated with
-        /// our Rich Text editor.
-        /// </summary>
-        public ITextDocument TextDocument
-        {
-            [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-            get
-            {
-                if (null != textDocument)
-                    return textDocument;
-
-                // To get the IRichEditOle interface we need to call SendMessage, which
-                // we imported from user32.dll
-                object editOle = null;
-                NativeMethods.SendMessage(richTextBoxCtrl.Handle,                // The rich text box handle
-                                          GetOleInterfaceCommandId,   // The command ID for EM_GETOLEINTERFACE
-                                          IntPtr.Zero,                // null
-                                          out editOle                 // This will be set to the IRichEditOle interface
-                                          );
-
-                // Call GetIUnknownForObject with the IRichEditOle interface that we
-                // just got so that we have an IntPtr to pass into QueryInterface
-                IntPtr editOlePtr = IntPtr.Zero;
-                editOlePtr = Marshal.GetIUnknownForObject(editOle);
-
-                // Call QueryInterface to get the pointer to the ITextDocument
-                IntPtr iTextDocument = IntPtr.Zero;
-                Guid iTextDocumentGuid = typeof(ITextDocument).GUID;
-                Marshal.QueryInterface(editOlePtr, ref iTextDocumentGuid, out iTextDocument);
-
-                // We need to call Marshal.Release with the pointer that we got
-                // from the GetIUnknownForObject call
-                Marshal.Release(editOlePtr);
-
-                // Call GetObjectForIUnknown passing in the pointer that was set
-                // by QueryInterface and return it as an ITextDocument
-                textDocument = Marshal.GetObjectForIUnknown(iTextDocument) as ITextDocument;
-                return textDocument;
-            }
-        }
+       
 
         /// <summary>
         /// This property will return the current ITextRange interface.
         /// </summary>
-        public ITextRange TextRange
-        {
-            get
-            {
-                return this.TextDocument.Range(0, (int)tom.tomConstants.tomForward);
-            }
-        }
-
-        /// <summary>
-        /// This property will return the current ITextSelection interface.
-        /// </summary>
-        public ITextSelection TextSelection
-        {
-            get
-            {
-                return this.TextDocument.Selection;
-            }
-        }
-
+    
         #endregion
 
-        /// <summary>
-        /// Returns the column number from the specified index
-        /// </summary>
-        /// <param name="index">index of the character</param>
-        /// <returns>column number</returns>
-        public int GetColumnFromIndex(int index)
-        {
-            //first get the index of the first char of the current line
-            int currentLineIndex = richTextBoxCtrl.GetFirstCharIndexOfCurrentLine();
-            return index - currentLineIndex;
-        }
 
-        /// <summary>
-        /// Returns the index from the specified line and column number
-        /// </summary>
-        /// <param name="line">line number</param>
-        /// <param name="column">column number</param>
-        /// <returns>index</returns>
-        public int GetIndexFromLineAndColumn(int line, int column)
-        {
-            if (line < 0)
-                return -1;
-            //first get the index of the first char of the specified line
-            int firstCharLineIndex = richTextBoxCtrl.GetFirstCharIndexFromLine(line);
-            if (firstCharLineIndex < 0)
-                return -1;
-
-            return firstCharLineIndex + column;
-        }
 
         #region Macro Recording methods
         public void RecordDelete(bool backspace, bool word)
@@ -397,12 +306,9 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         }
         #endregion
 
-        private void richTextBoxCtrl_MouseEnter(object sender, EventArgs e)
+        public void LoadFile(string filePath)
         {
-            if(m_Recorder.IsRecording())
-                richTextBoxCtrl.FilterMouseClickMessages = true;
-            else
-                richTextBoxCtrl.FilterMouseClickMessages = false;
+            webBrowser1.Document.InvokeScript("load", new object[] { Path.GetDirectoryName(filePath), Path.GetFileName(filePath) });
         }
     }
 }
