@@ -117,7 +117,7 @@
 							   Style="{StaticResource DefaultLabel}"
 							   Grid.Column="1"
 							   Grid.Row="0"
-                               Margin="5" />
+                               Margin="5" ToolTip="The filename to save the RAML definition as" />
             <TextBox x:Name="txtFileName"
 								 Style="{StaticResource DefaultTextBox}"
 								 Grid.Column="2"
@@ -129,7 +129,7 @@
 							   Style="{StaticResource DefaultLabel}"
 							   Grid.Column="1"
 							   Grid.Row="1"
-                               Margin="5" />
+                               Margin="5" ToolTip="The namespace to be used to contain scaffolded code" />
             <TextBox x:Name="txtNamespace"
 								 Style="{StaticResource DefaultTextBox}"
 								 Grid.Column="2"
@@ -142,7 +142,7 @@
                                Visibility="{Binding ElementName=RamlPreviewWindow, Path=ClientUseCaseVisibility}"
 							   Grid.Column="1"
 							   Grid.Row="2"
-                               Margin="5" />
+                               Margin="5" ToolTip="The class name of the API client to be generatoedd" />
             <TextBox x:Name="txtClientName"
 								 Style="{StaticResource DefaultTextBox}"
                                  Visibility="{Binding ElementName=RamlPreviewWindow, Path=ClientUseCaseVisibility}"
@@ -151,18 +151,18 @@
 								 Width="220" />
 
             <Label x:Name="lblAsync"
-							   Content="Use Async Methods"
+							   Content="Use Async method signatures"
 							   Style="{StaticResource DefaultLabel}"
                                Visibility="{Binding ElementName=RamlPreviewWindow, Path=ContractUseCaseVisibility}"
-							   Grid.Column="1"
+							   Grid.Column="2"
 							   Grid.Row="3"
-                               Margin="5" />
+                               Margin="13,10,28,0" />
             <CheckBox Grid.Row="3"
                       Grid.Column="2"
-                      Margin="0, 15"
+                      Margin="0,15"
                       Name="CheckBoxUseAsync"
                       Visibility="{Binding ElementName=RamlPreviewWindow, Path=ContractUseCaseVisibility}"
-                      VerticalAlignment="Center"></CheckBox>
+                      VerticalAlignment="Center" ToolTip="Select to generate async method signatures for calling the client"/>
 
 
         </Grid>
