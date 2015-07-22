@@ -219,6 +219,12 @@ namespace Raml.Tools.Tests
             Assert.IsTrue(model.Objects.All(o => o.Value.Properties.Count == 4));
         }
 
+        [Test]
+        public async Task ShouldParseSchemas_Issue13()
+        {
+            var model = await GetIssue13GeneratedModel();
+            Assert.AreEqual(14, model.Objects.Count);
+        }
 
         private static string GetXml(string comment)
         {
@@ -327,5 +333,14 @@ namespace Raml.Tools.Tests
 
             return model;
         }
+
+        private static async Task<WebApiGeneratorModel> GetIssue13GeneratedModel()
+        {
+            var raml = await new RamlParser().LoadAsync("files/issue13.raml");
+            var model = new WebApiGeneratorService(raml).BuildModel();
+
+            return model;
+        }
+
 	}
 }
