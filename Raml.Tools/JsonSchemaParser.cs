@@ -503,11 +503,11 @@ namespace Raml.Tools
 
         private string GetUniqueName(IDictionary<string, ApiEnum> enums, string name)
         {
-            for (var i = 0; i < 9; i++)
+            foreach (var suffix in suffixes)
             {
-                var unique = name + suffixes[i];
+                var unique = name + suffix;
                 if (enums.All(p => p.Key != unique))
-                    return unique;
+                    return unique;               
             }
             for (var i = 0; i < 100; i++)
             {
@@ -520,9 +520,9 @@ namespace Raml.Tools
 
         private string GetUniqueKey(IDictionary<string, ApiObject> objects, string key)
         {
-            for (var i = 0; i < 9; i++)
+            foreach (var suffix in suffixes)
             {
-                var unique = key + suffixes[i];
+                var unique = key + suffix;
                 if (objects.All(p => p.Key != unique) && otherObjects.All(p => p.Key != unique))
                     return unique;
             }
@@ -537,9 +537,9 @@ namespace Raml.Tools
 
         private string GetUniqueName(IDictionary<string, ApiObject> objects, string name)
         {
-            for (var i = 0; i < 9; i++)
+            foreach (var suffix in suffixes)
             {
-                var unique = name + suffixes[i];
+                var unique = name + suffix;
                 if (objects.All(p => p.Value.Name != unique) && otherObjects.All(p => p.Value.Name != unique))
                     return unique;
             }
@@ -554,9 +554,9 @@ namespace Raml.Tools
 
         private string GetUniqueName(ICollection<Property> props)
 		{
-			for (var i = 0; i < 7; i++)
+            foreach (var suffix in suffixes)
 			{
-				var unique = suffixes[i];
+				var unique = suffix;
 				if (props.All(p => p.Name != unique))
 					return unique;
 			}
