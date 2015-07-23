@@ -121,8 +121,14 @@ namespace Raml.Tools
 				Properties = ParseSchema(schema, objects, enums)
 			};
 
+            if (obj == null)
+                return null;
+
+            if(!obj.Properties.Any())
+                return null;
+
 			// Avoid duplicated keys and names or no properties
-            if (objects.ContainsKey(key) || objects.Any(o => o.Value.Name == obj.Name) || !obj.Properties.Any() || otherObjects.ContainsKey(key) || otherObjects.Any(o => o.Value.Name == obj.Name))
+            if (objects.ContainsKey(key) || objects.Any(o => o.Value.Name == obj.Name) || otherObjects.ContainsKey(key) || otherObjects.Any(o => o.Value.Name == obj.Name))
             {
                 if (HasSameProperties(obj, objects, key)) 
                     return key;
