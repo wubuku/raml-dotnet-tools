@@ -558,7 +558,7 @@ You can also modify the Body or the Responses using the same strategy.
 When using XML shcemas please note that there is no root type. So you need to specify the schema to be used exactly as it appears on the XML.
 
 
-[source, RAML]
+[source]
 ---
 
 #%RAML 0.8
@@ -704,7 +704,7 @@ schemas:
 
 ---
 
-Note that the schema does not use "xmlschema" but "purchaseOrder" that is the name of the type as it appears on the XML.
+Note that the schema does not use the key on the schemas section ("xmlschema") but "purchaseOrder" which is the name of the type as it appears on the XML.
 
 
 
