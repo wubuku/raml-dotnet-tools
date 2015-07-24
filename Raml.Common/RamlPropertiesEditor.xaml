@@ -21,10 +21,6 @@
 
         <Style x:Key="Button"
 			   TargetType="{x:Type Button}">
-            <Setter Property="Margin"
-					Value="10" />
-            <Setter Property="Height"
-					Value="50" />
             <Setter Property="FontSize"
 					Value="13"></Setter>
             <Setter Property="BorderThickness" Value="0"></Setter>
@@ -37,10 +33,6 @@
 			   TargetType="{x:Type Button}">
             <Setter Property="Margin"
 					Value="0,0,0,0" />
-            <Setter Property="Height"
-					Value="25" />
-            <Setter Property="Width"
-					Value="40" />
             <Setter Property="Background"
 					Value="#00A2DF" />
             <Setter Property="BorderThickness" 
@@ -56,8 +48,10 @@
             <Setter Property="Margin" Value="0,0,5,0"></Setter>
             <Setter Property="HorizontalAlignment"
 					Value="Stretch" />
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center"></Setter>
             <Setter Property="Height"
-					Value="25" />
+					Value="22" />
             <Setter Property="TextWrapping"
 					Value="NoWrap" />
 
@@ -78,7 +72,7 @@
             <ColumnDefinition Width="40"></ColumnDefinition>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition  Width="43"></ColumnDefinition>
+            <ColumnDefinition  Width="40"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
         <Label Content="Source"
@@ -107,26 +101,32 @@
 
         <Grid Grid.Row="4" Grid.ColumnSpan="4">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="40"></ColumnDefinition>
             </Grid.ColumnDefinitions>
         
         <Button Name="CancelButton" 
                 Content="Cancel" 
-                Grid.Column="0"  
+                Grid.Column="1"  
                 Click="CancelButton_Click" 
-                Width="68"
-                Height="35"
+                Width="55"
+                Height="30"
+                Margin="10,0,0,0"
+                HorizontalAlignment="Left"
                 Style="{StaticResource Button}">
         </Button>
         
         <Button Name="SaveButton" 
                 Content="Save" 
-                Grid.Column="2" 
-                Width="68"
-                Height="35"
+                Grid.Column="3" 
+                Width="55"
+                Height="30"
+                Margin="0,0,6,0"
                 Click="SaveButton_Click"
+                HorizontalAlignment="Right"
                 Style="{StaticResource DefaultButton}">
         </Button>
 

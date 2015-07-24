@@ -107,6 +107,8 @@
 					Value="Stretch" />
             <Setter Property="Height"
 					Value="25" />
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center"></Setter>
             <Setter Property="TextWrapping"
 					Value="NoWrap" />
 
