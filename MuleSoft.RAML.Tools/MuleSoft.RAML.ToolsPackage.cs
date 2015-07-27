@@ -243,7 +243,7 @@ namespace MuleSoft.RAML.Tools
             var refFilePath = InstallerServices.GetRefFilePath(ramlFilePath);
 
             var frm = new RamlPropertiesEditor();
-            frm.Load(refFilePath);
+            frm.Load(refFilePath, Settings.Default.ContractsFolderName, Settings.Default.ApiReferencesFolderName);
             frm.ShowDialog();
 
             ChangeCommandStatus(editRamlPropertiesCmdId, true);

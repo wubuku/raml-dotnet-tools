@@ -78,6 +78,7 @@ namespace MuleSoft.RAML.Tools
 				var containingFolder = Path.GetDirectoryName(wszInputFilePath);
 				var refFilePath = InstallerServices.GetRefFilePath(wszInputFilePath);
 				var ramlSource = RamlReferenceReader.GetRamlSource(refFilePath);
+			    var clientRootClassName = RamlReferenceReader.GetClientRootClassName(refFilePath);
 
 				var globalProvider = ServiceProvider.GlobalProvider;
 				var destFolderItem = GetDestinationFolderItem(wszInputFilePath, globalProvider);
@@ -104,7 +105,7 @@ namespace MuleSoft.RAML.Tools
 					return VSConstants.E_ABORT;
 				}
 
-				var res = GenerateCodeUsingTemplate(wszInputFilePath, ramlInfo, globalProvider, refFilePath);
+				var res = GenerateCodeUsingTemplate(wszInputFilePath, ramlInfo, globalProvider, refFilePath, clientRootClassName);
 
 				if (res.HasErrors)
 				{
@@ -139,9 +140,9 @@ namespace MuleSoft.RAML.Tools
 		}
 
 		private Result GenerateCodeUsingTemplate(string wszInputFilePath, RamlInfo ramlInfo, System.IServiceProvider globalProvider,
-			string refFilePath)
+			string refFilePath, string clientRootClassName)
 		{
-			var model = GetGeneratorModel(wszInputFilePath, ramlInfo);
+			var model = GetGeneratorModel(clientRootClassName, ramlInfo);
 			var templateFolder = GetTemplateFolder(wszInputFilePath);
 			var templateFilePath = Path.Combine(templateFolder, ClientT4TemplateName);
 			var extensionPath = Path.GetDirectoryName(GetType().Assembly.Location) + Path.DirectorySeparatorChar;
@@ -175,12 +176,9 @@ namespace MuleSoft.RAML.Tools
 		    return result;
 		}
 
-		private static ClientGeneratorModel GetGeneratorModel(string wszInputFilePath, RamlInfo ramlInfo)
+		private static ClientGeneratorModel GetGeneratorModel(string clientRootClassName, RamlInfo ramlInfo)
 		{
-			var rootName = NetNamingMapper.GetObjectName(Path.GetFileNameWithoutExtension(wszInputFilePath));
-			if (!rootName.ToLower().Contains("client"))
-				rootName += "Client";
-			var model = new ClientGeneratorService(ramlInfo.RamlDocument, rootName).BuildModel();
+			var model = new ClientGeneratorService(ramlInfo.RamlDocument, clientRootClassName).BuildModel();
 			return model;
 		}
 

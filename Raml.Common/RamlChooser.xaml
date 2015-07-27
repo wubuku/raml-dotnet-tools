@@ -8,10 +8,11 @@
 				 x:Name="RamlChooserWindow"
                  Background="Gainsboro"
 				 Width="600"
+                 d:DesignHeight="570"
 				 ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
-        
+
         <Style x:Key="DefaultLabel"
 			   TargetType="{x:Type Label}">
             <Setter Property="FontSize" Value="13"></Setter>
@@ -121,7 +122,7 @@
             <Setter Property="FontWeight"
 					Value="Bold" />
         </Style>
-        
+
     </Window.Resources>
 
     <Grid>
@@ -135,9 +136,8 @@
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
 
             <Image Source="images/raml.png" Grid.Row="0" Grid.Column="1" Margin="10" Stretch="None"></Image>
@@ -145,6 +145,7 @@
             <Grid Grid.Row="1" Grid.Column="1"
 				  Margin="0, 5, 0, 5">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
@@ -163,26 +164,26 @@
                              Margin="0,0,0,5"
 							 Grid.Row="1" />
 
-               <Grid Grid.Row="2"
+                <Grid Grid.Row="2"
                      Visibility="{Binding ElementName=RamlChooserWindow, Path=ContractUseCaseVisibility}">
-                   <Grid.ColumnDefinitions>
-                       <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
                         <ColumnDefinition Width="*"></ColumnDefinition>
                         <ColumnDefinition Width="Auto"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
-                <Label Content="Title:"
+                    <Label Content="Title:"
 					   Style="{StaticResource DefaultLabel}"
                        Margin="0,5"
 					   Grid.Column="0" />
 
-                <TextBox x:Name="txtTitle"
+                    <TextBox x:Name="txtTitle"
 						 Grid.Column="1"
 						 Style="{StaticResource DefaultTextBox}"
 						 TextChanged="Title_OnTextChanged"
 						  />
 
-                <Button Content="OK"
+                    <Button Content="OK"
 									x:Name="btnOk"
 									Style="{StaticResource CommonButton}"
 									Grid.Column="2"
@@ -279,11 +280,7 @@
 								Click="GoButton_Click" >
                     </Button>
 
-
                 </Grid>
-
-
-
 
             </Grid>
 

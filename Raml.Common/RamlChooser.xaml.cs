@@ -1,13 +1,12 @@
-﻿using System.Windows.Input;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using Raml.Common.Annotations;
-using Raml.Tools;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Raml.Common
 {
@@ -34,7 +33,7 @@ namespace Raml.Common
 			{
 				if (value.Equals(isContractUseCase)) return;
 				isContractUseCase = value;
-				OnPropertyChanged("ContractUseCaseVisibility");
+                OnPropertyChanged("ContractUseCaseVisibility");
 			}
 		}
 
@@ -78,7 +77,8 @@ namespace Raml.Common
 
 			var title = Path.GetFileName(fd.FileName);
 
-            var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, RamlOriginalSource, title, isContractUseCase);
+		    
+		    var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, RamlOriginalSource, title, isContractUseCase);
             
             StartProgress();
 		    preview.FromFile();
@@ -111,15 +111,14 @@ namespace Raml.Common
         {
             SelectExistingRamlOption();
             var rmlLibrary = new RAMLLibraryBrowser(exchangeUrl);
-            var selectedRAMLFile = rmlLibrary.ShowDialog();
+            var selectedRamlFile = rmlLibrary.ShowDialog();
 
-            if (selectedRAMLFile.HasValue && selectedRAMLFile.Value)
+            if (selectedRamlFile.HasValue && selectedRamlFile.Value)
             {
                 var url = rmlLibrary.RAMLFileUrl;
 
                 txtURL.Text = url;
 
-                //TODO: check title !
                 var preview = new RamlPreview(ServiceProvider, action, RamlTempFilePath, txtURL.Text, "title", isContractUseCase);
                 
                 StartProgress();
@@ -223,9 +222,9 @@ namespace Raml.Common
 
         private void btnOk_Click(object sender, RoutedEventArgs e)
         {
-            var path = Path.GetDirectoryName(GetType().Assembly.Location) + Path.DirectorySeparatorChar;
-            var ramlChooserActionParams = new RamlChooserActionParams(string.Empty, string.Empty, txtTitle.Text, path, NewRamlFilename, NewRamlNamespace, true);
-            action(ramlChooserActionParams);
+            var preview = new RamlPreview(ServiceProvider, action, txtTitle.Text);
+            preview.NewContract();
+            preview.ShowDialog();
             Close();
         }
 	}

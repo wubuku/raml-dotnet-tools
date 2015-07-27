@@ -20,5 +20,7 @@
 		public string TargetFileName { get; private set; }
 		public string TargetNamespace { get; private set; }
 		public bool? DoNotScaffold { get; private set; }
+        public bool UseAsyncMethods { get; set; }
+	    public string ClientRootClassName { get; set; }
 	}
 }

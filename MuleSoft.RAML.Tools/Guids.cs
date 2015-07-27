@@ -26,7 +26,7 @@ namespace MuleSoft.RAML.Tools
 		public static readonly Guid guidMuleSoft_RAML_CmdUpdateRAMLContract = new Guid(guidMuleSoft_RAML_UpdateRAMLContractString);
         public static readonly Guid guidMuleSoft_RAML_EnableMetadataOutput = new Guid(guidMuleSoft_RAML_EnableMetadataOutputString);
         public static readonly Guid guidMuleSoft_RAML_DisableMetadataOutput = new Guid(guidMuleSoft_RAML_DisableMetadataOutputString);
-        public static readonly Guid guidMuleSoft_RAML_ExtractRAML = new Guid(guidMuleSoft_RAML_ExtractRAMLString);
+        public static readonly Guid guidMuleSoft_RAML_ExtractRAML = new Guid(guidMuleSoft_RAML_ExtractRAMLString);        
         public static readonly Guid guidMuleSoft_RAML_ContractFolderNode = new Guid(guidMuleSoft_RAML_ContractFolderNodeString);
         public static readonly Guid guidMuleSoft_RAML_EditProperties = new Guid(guidMuleSoft_RAML_EditPropertiesString);
     };

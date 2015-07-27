@@ -43,14 +43,20 @@ namespace MuleSoft.RAML.Tools
 			var folderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, ContractsFolderName);
 			var generatedFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + ContractsFolderName + Path.DirectorySeparatorChar;
 
-			if (string.IsNullOrWhiteSpace(parameters.RamlSource) && !string.IsNullOrWhiteSpace(parameters.RamlTitle))
-				AddEmptyContract(parameters.TargetFileName, parameters.RamlTitle, folderItem, generatedFolderPath, parameters.TargetNamespace, parameters.TargetFileName);
-			else
-				AddContractFromFile(parameters.RamlFilePath, parameters.TargetNamespace, parameters.RamlSource, folderItem, generatedFolderPath, parameters.TargetFileName);
+		    if (string.IsNullOrWhiteSpace(parameters.RamlSource) && !string.IsNullOrWhiteSpace(parameters.RamlTitle))
+            {
+                AddEmptyContract(parameters.TargetFileName, parameters.RamlTitle, folderItem, generatedFolderPath,
+		            parameters.TargetNamespace, parameters.TargetFileName, parameters.UseAsyncMethods);
+            }
+		    else
+            {
+                AddContractFromFile(parameters.RamlFilePath, parameters.TargetNamespace, parameters.RamlSource, folderItem,
+		            generatedFolderPath, parameters.TargetFileName, parameters.UseAsyncMethods);
+            }
 		}
 
 
-		public void Scaffold(string ramlSource, string targetNamespace, string ramlFileName)
+		public void Scaffold(string ramlSource, string targetNamespace, string ramlFileName, bool useAsyncMethods)
 		{
 			var data = RamlScaffolderHelper.GetRamlData(ramlSource, targetNamespace);
 			if (data == null || data.Model == null)
@@ -75,11 +81,11 @@ namespace MuleSoft.RAML.Tools
 
             AddOrUpdateEnums(targetNamespace, generatedFolderPath, ramlItem, model, folderItem, extensionPath);
 
-		    AddOrUpdateControllerBase(targetNamespace, generatedFolderPath, ramlItem, model, folderItem, extensionPath);
+		    AddOrUpdateControllerBase(targetNamespace, generatedFolderPath, ramlItem, model, folderItem, extensionPath, useAsyncMethods);
 
-		    AddOrUpdateControllerInterfaces(targetNamespace, generatedFolderPath, ramlItem, model, folderItem, extensionPath);
+            AddOrUpdateControllerInterfaces(targetNamespace, generatedFolderPath, ramlItem, model, folderItem, extensionPath, useAsyncMethods);
 
-		    AddOrUpdateControllerImplementations(targetNamespace, generatedFolderPath, proj, model, folderItem, extensionPath);
+            AddOrUpdateControllerImplementations(targetNamespace, generatedFolderPath, proj, model, folderItem, extensionPath, useAsyncMethods);
 		}
 
 	    public static void TriggerScaffoldOnRamlChanged(Document document)
@@ -97,7 +103,9 @@ namespace MuleSoft.RAML.Tools
 	        foreach (var ramlFile in ramlFiles)
 	        {
 	            var refFilePath = InstallerServices.GetRefFilePath(ramlFile);
-	            service.Scaffold(ramlFile, RamlReferenceReader.GetRamlNamespace(refFilePath), Path.GetFileName(ramlFile));
+	            var useAsyncMethods = RamlReferenceReader.GetRamlUseAsyncMethods(refFilePath);
+	            var targetNamespace = RamlReferenceReader.GetRamlNamespace(refFilePath);
+	            service.Scaffold(ramlFile, targetNamespace, Path.GetFileName(ramlFile), useAsyncMethods);
 	        }
 	    }
 
@@ -158,7 +166,7 @@ namespace MuleSoft.RAML.Tools
 	    }
 
 	    private void AddOrUpdateControllerImplementations(string targetNamespace, string generatedFolderPath, Project proj,
-	        WebApiGeneratorModel model, ProjectItem folderItem, string extensionPath)
+            WebApiGeneratorModel model, ProjectItem folderItem, string extensionPath, bool useAsyncMethods)
 	    {
 	        templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ControllerImplementationTemplateName,
 	            Settings.Default.ControllerImplementationTemplateTitle);
@@ -173,11 +181,12 @@ namespace MuleSoft.RAML.Tools
 	        controllerImplementationTemplateParams.Title = Settings.Default.ControllerImplementationTemplateTitle;
 	        controllerImplementationTemplateParams.IncludeHasModels = true;
 	        controllerImplementationTemplateParams.HasModels = model.Objects.Any() || model.Enums.Any();
+	        controllerImplementationTemplateParams.UseAsyncMethods = useAsyncMethods;
 	        GenerateCodeFromTemplate(controllerImplementationTemplateParams);
 	    }
 
 	    private void AddOrUpdateControllerInterfaces(string targetNamespace, string generatedFolderPath, ProjectItem ramlItem,
-	        WebApiGeneratorModel model, ProjectItem folderItem, string extensionPath)
+            WebApiGeneratorModel model, ProjectItem folderItem, string extensionPath, bool useAsyncMethods)
 	    {
 	        templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ControllerInterfaceTemplateName,
 	            Settings.Default.ControllerInterfaceTemplateTitle);
@@ -189,11 +198,12 @@ namespace MuleSoft.RAML.Tools
 	        controllerInterfaceParams.Title = Settings.Default.ControllerInterfaceTemplateTitle;
             controllerInterfaceParams.IncludeHasModels = true;
             controllerInterfaceParams.HasModels = model.Objects.Any() || model.Enums.Any();
+            controllerInterfaceParams.UseAsyncMethods = useAsyncMethods;
 	        GenerateCodeFromTemplate(controllerInterfaceParams);
 	    }
 
 	    private void AddOrUpdateControllerBase(string targetNamespace, string generatedFolderPath, ProjectItem ramlItem,
-	        WebApiGeneratorModel model, ProjectItem folderItem, string extensionPath)
+	        WebApiGeneratorModel model, ProjectItem folderItem, string extensionPath, bool useAsyncMethods)
 	    {
 	        templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ControllerBaseTemplateName,
 	            Settings.Default.BaseControllerTemplateTitle);
@@ -205,6 +215,7 @@ namespace MuleSoft.RAML.Tools
 	        controllerBaseTemplateParams.Title = Settings.Default.BaseControllerTemplateTitle;
             controllerBaseTemplateParams.IncludeHasModels = true;
             controllerBaseTemplateParams.HasModels = model.Objects.Any() || model.Enums.Any();
+            controllerBaseTemplateParams.UseAsyncMethods = useAsyncMethods;
 	        GenerateCodeFromTemplate(controllerBaseTemplateParams);
 	    }
 
@@ -249,13 +260,15 @@ namespace MuleSoft.RAML.Tools
 	        if (result.IsSuccess)
 	        {
 	            File.WriteAllText(ramlFilePath, result.ModifiedContents);
-	            Scaffold(ramlFilePath, RamlReferenceReader.GetRamlNamespace(refFilePath), Path.GetFileName(ramlFilePath));
+	            var targetNamespace = RamlReferenceReader.GetRamlNamespace(refFilePath);
+	            var useAsyncMethods = RamlReferenceReader.GetRamlUseAsyncMethods(refFilePath);
+	            Scaffold(ramlFilePath, targetNamespace, Path.GetFileName(ramlFilePath).ToLowerInvariant(), useAsyncMethods);
 	        }
 		}
 
-		private void AddContractFromFile(string ramlFilePath, string targetNamespace, string ramlSource, ProjectItem folderItem, string folderPath, string targetFilename)
+		private void AddContractFromFile(string ramlFilePath, string targetNamespace, string ramlSource, ProjectItem folderItem, string folderPath, string targetFilename, bool useAsyncMethod)
 		{
-			InstallerServices.AddRefFile(ramlFilePath, targetNamespace, ramlSource, folderPath, targetFilename);
+			InstallerServices.AddRefFile(ramlFilePath, targetNamespace, ramlSource, folderPath, targetFilename, useAsyncMethod);
 
 			var includesFolderPath = folderPath + Path.DirectorySeparatorChar + InstallerServices.IncludesFolderName;
 
@@ -278,7 +291,7 @@ namespace MuleSoft.RAML.Tools
 			var ramlProjItem = AddOrUpdateRamlFile(result.ModifiedContents, folderItem, folderPath, targetFilename);
 			InstallerServices.RemoveSubItemsAndAssociatedFiles(ramlProjItem);
 
-			Scaffold(ramlProjItem.FileNames[0], targetNamespace, targetFilename);
+			Scaffold(ramlProjItem.FileNames[0], targetNamespace, targetFilename, useAsyncMethod);
 		}
 
 		private static ProjectItem AddOrUpdateRamlFile(string modifiedContents, ProjectItem folderItem, string folderPath, string ramlFileName)
@@ -310,13 +323,13 @@ namespace MuleSoft.RAML.Tools
 			return ramlProjItem;
 		}
 
-		private void AddEmptyContract(string filename, string title, ProjectItem folderItem, string folderPath, string targetNamespace, string targetFilename)
+		private void AddEmptyContract(string filename, string title, ProjectItem folderItem, string folderPath, string targetNamespace, string targetFilename, bool useAsyncMethods)
 		{
 			
 			var newContractFile = Path.Combine(folderPath, filename);
 			var contents = CreateNewRamlContents(title);
 
-			InstallerServices.AddRefFile(newContractFile, targetNamespace, newContractFile, folderPath, targetFilename);
+			InstallerServices.AddRefFile(newContractFile, targetNamespace, newContractFile, folderPath, targetFilename, useAsyncMethods);
 
 			if (File.Exists(newContractFile))
 			{
@@ -436,6 +449,7 @@ namespace MuleSoft.RAML.Tools
 	        public bool IncludeHasModels { get; set; }
 
 	        public bool HasModels { get; set; }
+	        public bool UseAsyncMethods { get; set; }
 	    }
 
 	    private void GenerateCodeFromTemplate<T>(TemplateParams<T> templateParams) where T : IHasName
@@ -445,7 +459,7 @@ namespace MuleSoft.RAML.Tools
 			{
 				var generatedFileName = GetGeneratedFileName(templateParams.Suffix, templateParams.Prefix, parameter);
 
-                var result = t4Service.TransformText(templateParams.TemplatePath, templateParams.ParameterName, parameter, templateParams.BinPath, templateParams.TargetNamespace, templateParams.IncludeHasModels, templateParams.HasModels);
+                var result = t4Service.TransformText(templateParams.TemplatePath, templateParams.ParameterName, parameter, templateParams.BinPath, templateParams.TargetNamespace, templateParams.UseAsyncMethods, templateParams.IncludeHasModels, templateParams.HasModels);
 				var destinationFile = Path.Combine(templateParams.FolderPath, generatedFileName);
 				var contents = templatesManager.AddServerMetadataHeader(result.Content, Path.GetFileNameWithoutExtension(templateParams.TemplatePath), templateParams.Title);
 				
