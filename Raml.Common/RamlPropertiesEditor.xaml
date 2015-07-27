@@ -57,7 +57,21 @@
 
         </Style>
 
+        <Style x:Key="DefaultCheckBox"
+			   TargetType="{x:Type CheckBox}">
+            <Setter Property="Margin" Value="0,5,5,0"></Setter>
+            <Setter Property="VerticalAlignment"
+					Value="Center" />
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center"></Setter>
+            <Setter Property="Height"
+					Value="22" />
+            <Setter Property="FontSize" Value="13"></Setter>
+            <Setter Property="Foreground" Value="DimGray"></Setter>
 
+        </Style>        
+        
+        
     </Window.Resources>
     
     <Grid>
@@ -111,16 +125,10 @@
 								 Grid.Row="3" />
 
 
-        <Label Content="Use async methods"
-							   Style="{StaticResource DefaultLabel}"
-							   Grid.Column="1"
-							   Grid.Row="3"
-                               ToolTip="Use async methods in WebAPI controllers"
-                               Visibility="{Binding ElementName=RamlPropertiesEditorWindow, Path=ServerVisibility}"
-                               Margin="5" />
         <CheckBox IsChecked="{Binding ElementName=RamlPropertiesEditorWindow, Path=UseAsyncMethods}"
+                                 Content="Use async method signatures"
+                                 Style="{StaticResource DefaultCheckBox}"
 								 Grid.Column="2"
-                                 VerticalAlignment="Center"
                                  Visibility="{Binding ElementName=RamlPropertiesEditorWindow, Path=ServerVisibility}"
 								 Grid.Row="3" />
 
