@@ -8,7 +8,7 @@
                  Background="Gainsboro"
                  Title="Edit RAML Properties"
                  Width="500"
-                 Height="190"
+                 Height="220"
                  x:Name="RamlPropertiesEditorWindow"
 				 WindowStartupLocation="CenterScreen">
     <Window.Resources>
@@ -66,6 +66,7 @@
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -83,9 +84,7 @@
         <TextBox Style="{StaticResource DefaultTextBox}"
                                  Text="{Binding ElementName=RamlPropertiesEditorWindow, Path=Source}"
 								 Grid.Column="2"
-								 Grid.Row="1"
-                                 HorizontalAlignment="Right"
-								 Width="310" />
+								 Grid.Row="1" />
 
         <Label Content="Namespace"
 							   Style="{StaticResource DefaultLabel}"
@@ -95,11 +94,37 @@
         <TextBox Text="{Binding ElementName=RamlPropertiesEditorWindow, Path=Namespace}"
 								 Style="{StaticResource DefaultTextBox}"
 								 Grid.Column="2"
-								 Grid.Row="2"
-                 HorizontalAlignment="Right"
-								 Width="310" />
+								 Grid.Row="2" />
 
-        <Grid Grid.Row="4" Grid.ColumnSpan="4">
+        <Label Content="Client name"
+							   Style="{StaticResource DefaultLabel}"
+							   Grid.Column="1"
+                               ToolTip="Name of the main class in the client proxy"
+                               Visibility="{Binding ElementName=RamlPropertiesEditorWindow, Path=ClientVisibility}"
+							   Grid.Row="3"
+                               Margin="5" />
+        <TextBox Text="{Binding ElementName=RamlPropertiesEditorWindow, Path=ClientName}"
+								 Style="{StaticResource DefaultTextBox}"
+                                 ToolTip="Name of the main class in the client proxy"
+                                 Visibility="{Binding ElementName=RamlPropertiesEditorWindow, Path=ClientVisibility}"
+								 Grid.Column="2"
+								 Grid.Row="3" />
+
+
+        <Label Content="Use async methods"
+							   Style="{StaticResource DefaultLabel}"
+							   Grid.Column="1"
+							   Grid.Row="3"
+                               ToolTip="Use async methods in WebAPI controllers"
+                               Visibility="{Binding ElementName=RamlPropertiesEditorWindow, Path=ServerVisibility}"
+                               Margin="5" />
+        <CheckBox IsChecked="{Binding ElementName=RamlPropertiesEditorWindow, Path=UseAsyncMethods}"
+								 Grid.Column="2"
+                                 VerticalAlignment="Center"
+                                 Visibility="{Binding ElementName=RamlPropertiesEditorWindow, Path=ServerVisibility}"
+								 Grid.Row="3" />
+
+        <Grid Grid.Row="5" Grid.ColumnSpan="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="40"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
