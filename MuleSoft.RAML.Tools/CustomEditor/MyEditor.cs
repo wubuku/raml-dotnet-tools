@@ -308,7 +308,9 @@ namespace MuleSoft.RAML.Tools.CustomEditor
 
         public void LoadFile(string filePath)
         {
-            webBrowser1.Document.InvokeScript("load", new object[] { Path.GetDirectoryName(filePath), Path.GetFileName(filePath) });
+            //var fileName = "file://127.0.0.1/c$" + Path.GetFileName(filePath);
+            var fileName = Path.GetFileName(filePath);
+            webBrowser1.Document.InvokeScript("load", new object[] { Path.GetDirectoryName(filePath), fileName });
         }
     }
 }

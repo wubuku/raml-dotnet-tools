@@ -1944,7 +1944,7 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             IVsWindowFrame frame = (IVsWindowFrame)GetService(typeof(SVsWindowFrame));
             string editorCaption = "";
             if (_isFileReadOnly)
-                editorCaption = this.GetResourceString("@100");
+                editorCaption = "read only"; // this.GetResourceString("@100");
             ErrorHandler.ThrowOnFailure(frame.SetProperty((int)__VSFPROPID.VSFPROPID_EditorCaption, editorCaption));
             backupObsolete = true;
         }
