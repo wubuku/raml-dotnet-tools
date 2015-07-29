@@ -1,0 +1,18 @@
+﻿#%RAML 0.8
+title: Api
+baseUri: /
+mediaType: application/xml
+schemas:
+    - xml: !include files/ipo.xsd
+/orders:
+  displayName: Orders
+  post:
+    description: Create a new purchase order
+    body:
+      schema: purchaseOrder
+  /{id}:
+    get:
+      responses:
+        200:
+          body:
+            schema: purchaseOrder

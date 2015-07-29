@@ -142,6 +142,9 @@
     <None Include="files\large.raml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="files\ordersXml.raml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="files\test.raml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -212,6 +212,16 @@ namespace Raml.Tools.Tests
             }
         }
 
+        [Test]
+        public async Task Should_Link_Response_And_Request_With_Types_When_Orders_XML()
+        {
+            var model = await GetOrdersXmlGeneratedModel();
+            Assert.AreEqual("PurchaseOrderType", model.Controllers.First().Methods.First(m => m.Verb == "Get").ReturnType);
+            Assert.AreEqual("PurchaseOrderType", model.Controllers.First().Methods.First(m => m.Verb == "Post").Parameter.Type);
+        }
+
+
+
         private static string GetXml(string comment)
         {
             if (string.IsNullOrWhiteSpace(comment))
@@ -312,5 +322,12 @@ namespace Raml.Tools.Tests
 			return model;
 		}
 
+        private static async Task<WebApiGeneratorModel> GetOrdersXmlGeneratedModel()
+        {
+            var raml = await new RamlParser().LoadAsync("files/ordersXml.raml");
+            var model = new WebApiGeneratorService(raml, "OrdersXml").BuildModel();
+
+            return model;
+        }
 	}
 }
