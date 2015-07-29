@@ -24,9 +24,9 @@ namespace MuleSoft.RAML.Tools
 
         private readonly IServiceProvider serviceProvider;
         public ReverseEngineeringService(IServiceProvider serviceProvider)
-		{
-			this.serviceProvider = serviceProvider;
-		}
+        {
+            this.serviceProvider = serviceProvider;
+        }
 
 
         public void AddReverseEngineering()

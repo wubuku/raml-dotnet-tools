@@ -3,14 +3,14 @@ using System.Net;
 
 namespace Raml.Common
 {
-	public class RamlIncludesManagerResult
-	{
-		public RamlIncludesManagerResult(string modifiedContents, IEnumerable<string> includedFiles)
-		{
-			ModifiedContents = modifiedContents;
-			IncludedFiles = includedFiles;
-		    IsSuccess = true;
-		}
+    public class RamlIncludesManagerResult
+    {
+        public RamlIncludesManagerResult(string modifiedContents, IEnumerable<string> includedFiles)
+        {
+            ModifiedContents = modifiedContents;
+            IncludedFiles = includedFiles;
+            IsSuccess = true;
+        }
 
         public RamlIncludesManagerResult(HttpStatusCode statusCode)
         {
@@ -18,9 +18,9 @@ namespace Raml.Common
             IncludedFiles = new List<string>();
         }
 
-	    public string ModifiedContents { get; private set; }
-		public IEnumerable<string> IncludedFiles { get; private set; }
-	    public bool IsSuccess { get; private set; }
-	    public HttpStatusCode StatusCode { get; private set; }
-	}
+        public string ModifiedContents { get; private set; }
+        public IEnumerable<string> IncludedFiles { get; private set; }
+        public bool IsSuccess { get; private set; }
+        public HttpStatusCode StatusCode { get; private set; }
+    }
 }

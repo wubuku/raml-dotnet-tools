@@ -311,9 +311,9 @@ namespace EPiServerServiceAPI.Models
 
         static readonly Dictionary<HttpStatusCode, string> schemas = new Dictionary<HttpStatusCode, string>
         {
-			{ HttpStatusCode.OK, "{  \"$schema\": \"http://json-schema.org/draft-04/schema#\",  \"title\": \"Access Token\",  \"description\": \"An Access Token returned by a successful authorization request\",  \"type\": \"object\",  \"properties\": {    \"access_token\": {      \"type\": \"string\"    },    \"token_type\": {      \"type\": \"string\",      \"pattern\" : \"bearer\"    },    \"expires_in\": {      \"type\": \"integer\",      \"minimum\": 1    }  },  \"required\": [\"access_token\", \"token_type\", \"expires_in\"]}"},
-			{ HttpStatusCode.BadRequest, "{  \"$schema\": \"http://json-schema.org/draft-04/schema#\",  \"title\": \"Access Request Error\",  \"description\": \"When a token is not generated\",  \"type\": \"object\",  \"properties\": {    \"error\": {      \"type\": \"string\"    }  },  \"required\" : [\"error\"]}"},
-		};
+            { HttpStatusCode.OK, "{  \"$schema\": \"http://json-schema.org/draft-04/schema#\",  \"title\": \"Access Token\",  \"description\": \"An Access Token returned by a successful authorization request\",  \"type\": \"object\",  \"properties\": {    \"access_token\": {      \"type\": \"string\"    },    \"token_type\": {      \"type\": \"string\",      \"pattern\" : \"bearer\"    },    \"expires_in\": {      \"type\": \"integer\",      \"minimum\": 1    }  },  \"required\": [\"access_token\", \"token_type\", \"expires_in\"]}"},
+            { HttpStatusCode.BadRequest, "{  \"$schema\": \"http://json-schema.org/draft-04/schema#\",  \"title\": \"Access Request Error\",  \"description\": \"When a token is not generated\",  \"type\": \"object\",  \"properties\": {    \"error\": {      \"type\": \"string\"    }  },  \"required\" : [\"error\"]}"},
+        };
 
         public static string GetSchema(HttpStatusCode statusCode)
         {

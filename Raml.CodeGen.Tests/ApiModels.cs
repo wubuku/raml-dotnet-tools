@@ -30,12 +30,12 @@ namespace Fstab.Models
     {
         
 
-		[JsonProperty("type")]
-		[JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty("type")]
+        [JsonConverter(typeof(StringEnumConverter))]
 
         public Type Type { get; set; }
 
-		[JsonProperty("device")]
+        [JsonProperty("device")]
 
         public string Device { get; set; }
 
@@ -46,12 +46,12 @@ namespace Fstab.Models
     {
         
 
-		[JsonProperty("type")]
-		[JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty("type")]
+        [JsonConverter(typeof(StringEnumConverter))]
 
         public Type Type { get; set; }
 
-		[JsonProperty("label")]
+        [JsonProperty("label")]
 
         public string Label { get; set; }
 
@@ -62,16 +62,16 @@ namespace Fstab.Models
     {
         
 
-		[JsonProperty("type")]
-		[JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty("type")]
+        [JsonConverter(typeof(StringEnumConverter))]
 
         public TypeA Type { get; set; }
 
-		[JsonProperty("remotePath")]
+        [JsonProperty("remotePath")]
 
         public string RemotePath { get; set; }
 
-		[JsonProperty("server")]
+        [JsonProperty("server")]
 
         public string Server { get; set; }
 
@@ -82,12 +82,12 @@ namespace Fstab.Models
     {
         
 
-		[JsonProperty("type")]
-		[JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty("type")]
+        [JsonConverter(typeof(StringEnumConverter))]
 
         public TypeB Type { get; set; }
 
-		[JsonProperty("sizeInMB")]
+        [JsonProperty("sizeInMB")]
 
         public int SizeInMB { get; set; }
 
@@ -99,47 +99,47 @@ namespace Fstab.Models
     {
         
 
-		[JsonProperty("storage")]
+        [JsonProperty("storage")]
 
         public Storage Storage { get; set; }
 
-		[JsonProperty("fstype")]
-		[JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty("fstype")]
+        [JsonConverter(typeof(StringEnumConverter))]
 
         public Fstype Fstype { get; set; }
 
-		[JsonProperty("options")]
+        [JsonProperty("options")]
 
         public IList<string> Options { get; set; }
 
-		[JsonProperty("readonly")]
+        [JsonProperty("readonly")]
 
         public bool Readonly { get; set; }
 
     } // end class
 
-	
-	public enum Type
-	{
-		disk
+    
+    public enum Type
+    {
+        disk
     }
 
-	
-	public enum TypeA
-	{
-		nfs
+    
+    public enum TypeA
+    {
+        nfs
     }
 
-	
-	public enum TypeB
-	{
-		tmpfs
+    
+    public enum TypeB
+    {
+        tmpfs
     }
 
-	
-	public enum Fstype
-	{
-		ext3, ext4, btrfs
+    
+    public enum Fstype
+    {
+        ext3, ext4, btrfs
     }
 
 
