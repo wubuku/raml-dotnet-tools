@@ -6,7 +6,7 @@ namespace Raml.Common
 {
     public static class TaskExtensions
     {
-         public static void WaitWithPumping(this Task task)
+        public static void WaitWithPumping(this Task task)
         {
             if (task == null) throw new ArgumentNullException("task");
             var nestedFrame = new DispatcherFrame();
