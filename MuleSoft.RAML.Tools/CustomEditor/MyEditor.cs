@@ -2,8 +2,11 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
+using System.Windows;
 using System.Windows.Forms;
+using EnvDTE;
 using tom;
+using Application = System.Windows.Forms.Application;
 
 namespace MuleSoft.RAML.Tools.CustomEditor
 {
@@ -14,6 +17,8 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         private string m_TextToRecord;
         private VSMacroRecorder m_Recorder;
 
+        private bool loadCompleted;
+
         public MyEditor()
         {
             InitializeComponent();
@@ -22,22 +27,31 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             m_Recorder = new VSMacroRecorder(GuidList.guidMuleSoft_RAML_EditorFactory);
 
             webBrowser1.Navigate(@"file:///C:\desarrollo\mulesoft\raml-dotnet-tools\MuleSoft.RAML.Tools\CustomEditor\html\index.html");
-            webBrowser1.DocumentCompleted += WebBrowser1OnDocumentCompleted;
-            webBrowser1.Navigated += WebBrowser1OnNavigated;
-            //webBrowser1.Url;
-            //webBrowser1.Document.InvokeScript("load", "");
-        }
-
-        private void WebBrowser1OnNavigated(object sender, WebBrowserNavigatedEventArgs webBrowserNavigatedEventArgs)
-        {
-            
         }
 
         private void WebBrowser1OnDocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs webBrowserDocumentCompletedEventArgs)
         {
-            
+            loadCompleted = true;
         }
 
+        public void LoadFile(string filePath)
+        {
+            //while (!loadCompleted)
+            //{
+            //    // wait
+            //    System.Threading.Thread.Sleep(100);
+            //}
+
+            // TODO: detect drive ! also, any rights will work ?
+            var fileName = "file://127.0.0.1/c$" + Path.GetFileName(filePath);
+            //var fileName = Path.GetFileName(filePath);
+            webBrowser1.Document.InvokeScript("load", new object[] { Path.GetDirectoryName(filePath), fileName });
+        }
+
+        private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
+        {
+            loadCompleted = false;
+        }
 
 
         #region Fields
@@ -306,11 +320,12 @@ namespace MuleSoft.RAML.Tools.CustomEditor
         }
         #endregion
 
-        public void LoadFile(string filePath)
+        private void webBrowser1_Navigated(object sender, WebBrowserNavigatedEventArgs e)
         {
-            //var fileName = "file://127.0.0.1/c$" + Path.GetFileName(filePath);
-            var fileName = Path.GetFileName(filePath);
-            webBrowser1.Document.InvokeScript("load", new object[] { Path.GetDirectoryName(filePath), fileName });
+            var a = 1;
+            loadCompleted = true;
         }
+
+
     }
 }
