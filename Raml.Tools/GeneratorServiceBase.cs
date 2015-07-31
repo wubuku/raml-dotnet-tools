@@ -292,13 +292,22 @@ namespace Raml.Tools
             {
                 foreach (var kv in schema)
                 {
-                    if (schemaObjects.ContainsKey(kv.Key))
+                    var key = kv.Key;
+
+                    var obj = objectParser.ParseObject(key, kv.Value, schemaObjects, warnings, enums, new Dictionary<string, ApiObject>(), new Dictionary<string, ApiObject>());
+
+                    if (schemaObjects.ContainsKey(key))
                     {
-                        var apiObject = schemaObjects[kv.Key];
+                        if (UniquenessHelper.HasSameProperties(schemaObjects[key], schemaObjects, key,
+                            new Dictionary<string, ApiObject>(), new Dictionary<string, ApiObject>()))
+                            continue;
+
+                        var apiObject = schemaObjects[key];
                         var oldName = apiObject.Name;
                         apiObject.Name = UniquenessHelper.GetUniqueName(schemaObjects, apiObject.Name, new Dictionary<string, ApiObject>(), new Dictionary<string, ApiObject>());
-                        schemaObjects.Add(apiObject.Name, apiObject);
-                        schemaObjects.Remove(schemaObjects.First(o => o.Key == kv.Key));
+                        key = UniquenessHelper.GetUniqueKey(schemaObjects, key, new Dictionary<string, ApiObject>());
+                        schemaObjects.Add(key, apiObject);
+                        schemaObjects.Remove(schemaObjects.First(o => o.Key == key));
                         foreach (var apiObj in schemaObjects)
                         {
                             foreach (var prop in apiObj.Value.Properties)
@@ -307,12 +316,10 @@ namespace Raml.Tools
                                     prop.Type = apiObject.Name;
                             }
                         }
-                    }
-
-                    var obj = objectParser.ParseObject(kv.Key, kv.Value, schemaObjects, warnings, enums, new Dictionary<string, ApiObject>(), new Dictionary<string, ApiObject>());
-
                         
-                    schemaObjects.Add(kv.Key, obj);
+                        
+                    }
+                    schemaObjects.Add(key, obj);
                 }
             }
         }

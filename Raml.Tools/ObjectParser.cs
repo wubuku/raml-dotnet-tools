@@ -20,6 +20,9 @@ namespace Raml.Tools
             if (schemaObjects.Values.Any(o => o.Name == obj.Name) || objects.Values.Any(o => o.Name == obj.Name) ||
                 otherObjects.Values.Any(o => o.Name == obj.Name))
             {
+                if(UniquenessHelper.HasSameProperties(obj, objects, key, otherObjects, schemaObjects))
+                    return null;
+
                 obj.Name = UniquenessHelper.GetUniqueName(objects, obj.Name, otherObjects, schemaObjects);
             }
 

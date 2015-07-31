@@ -324,7 +324,7 @@ namespace Raml.Tools
             {
                 string baseTypeName = NetNamingMapper.GetObjectName(property.Key);
 
-                if (objects.ContainsKey(baseTypeName))
+                if (schemaObjects.ContainsKey(baseTypeName) || objects.ContainsKey(baseTypeName) || otherObjects.ContainsKey(baseTypeName))
                     return;
 
                 objects.Add(baseTypeName,

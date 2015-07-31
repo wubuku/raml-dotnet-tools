@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Raml.Common;
 using Raml.Parser.Expressions;
 using Raml.Tools.ClientGenerator;
@@ -24,7 +25,7 @@ namespace Raml.Tools
         public static IList<Property> ConvertParametersToProperties(IEnumerable<KeyValuePair<string, Parameter>> parameters)
         {
             var properties = new List<Property>();
-            foreach (var parameter in parameters)
+            foreach (var parameter in parameters.Where(parameter => parameter.Value != null && parameter.Value.Type != null))
             {
                 var description = ParserHelpers.RemoveNewLines(parameter.Value.Description);
 
