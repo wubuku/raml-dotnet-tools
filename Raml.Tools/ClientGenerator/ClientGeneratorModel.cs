@@ -28,28 +28,15 @@ namespace Raml.Tools.ClientGenerator
         public ClassObject Root { get; set; }
 
         public IDictionary<string, string> Warnings { get; set; }
-        public IDictionary<string, ApiObject> Objects
+        public IEnumerable<ApiObject> Objects
         {
             get
             {
-                var objects = SchemaObjects.ToDictionary(requestObject => requestObject.Key, requestObject => requestObject.Value);
-                foreach (var requestObject in RequestObjects.Where(responseObject => !objects.ContainsKey(responseObject.Key)))
-                {
-                    objects.Add(requestObject.Key, requestObject.Value);
-                }
-
-                foreach (var responseObject in ResponseObjects.Where(responseObject => !objects.ContainsKey(responseObject.Key)))
-                {
-                    objects.Add(responseObject.Key, responseObject.Value);
-                }
-                foreach (var queryObject in QueryObjects.Where(keyValuePair => !objects.ContainsKey(keyValuePair.Key)))
-                {
-                    objects.Add(queryObject.Key, queryObject.Value);
-                }
-                foreach (var uriParamObject in UriParameterObjects)
-                {
-                    objects.Add(uriParamObject.Key, uriParamObject.Value);
-                }
+                var objects = SchemaObjects.Values.ToList();
+                objects.AddRange(RequestObjects.Values);
+                objects.AddRange(ResponseObjects.Values);
+                objects.AddRange(QueryObjects.Values);
+                objects.AddRange(UriParameterObjects.Values);
                 return objects;
             }
         }

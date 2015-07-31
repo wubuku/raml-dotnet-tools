@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using NUnit.Framework;
 
@@ -455,6 +456,72 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(3, obj.Properties.Count);
             Assert.AreEqual(1, obj.Properties.Count(p => p.Type == "int"));
             Assert.AreEqual(0, warnings.Count);
+        }
+
+        [Test]
+        public void should_parse_bodyless_arrays()
+        {
+            const string schema =
+                "    {  \"$schema\": \"http://json-schema.org/draft-03/schema\",\r\n" +
+                "         \"type\": \"object\",\r\n" +
+                "         \"description\": \"A single support status\",\r\n" +
+                "         \"properties\": {\r\n" +
+                "           \"id\":  { \"type\": \"string\", \"required\": true },\r\n" +
+                "           \"names\": { \"type\": \"array\", \"required\": true },\r\n" +
+                "           \"titles\": { \"type\": \"array\", \r\n" +
+                "                 \"items\": \r\n" +
+                "                   {\r\n" +
+                "                      \"type\": \"object\",\r\n" +
+                "                       \"properties\": \r\n" +
+                "                       {\r\n" +
+                "                          \"id\": { \"type\": \"string\", \"required\": true },\r\n" +
+                "                          \"at\": { \"type\": \"string\", \"required\": true }\r\n" +
+                "                       }\r\n" +
+                "                   }\r\n" +
+                "               }\r\n" +
+                "         }\r\n" +
+                "    }\r\n";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>(), new Dictionary<string, ApiObject>());
+
+            Assert.AreEqual(3, obj.Properties.Count);
+            Assert.AreEqual(CollectionTypeHelper.GetCollectionType("string"), obj.Properties.First(p => p.Name == "Names").Type);
+            Assert.AreEqual(CollectionTypeHelper.GetCollectionType("Titles"), obj.Properties.First(p => p.Name == "Titles").Type);
+        }
+
+        [Test]
+        public void should_parse_bodyless_objects()
+        {
+            const string schema =
+                "    {  \"$schema\": \"http://json-schema.org/draft-03/schema\",\r\n" +
+                "         \"type\": \"object\",\r\n" +
+                "         \"description\": \"A single support status\",\r\n" +
+                "         \"properties\": {\r\n" +
+                "           \"id\":  { \"type\": \"string\", \"required\": true },\r\n" +
+                "           \"name\": { \"type\": \"object\", \"required\": true },\r\n" +
+                "           \"title\": { \"type\": \"object\", \r\n" +
+                "                 \"properties\": \r\n" +
+                "                   {\r\n" +
+                "                      \"id\": { \"type\": \"string\", \"required\": true },\r\n" +
+                "                      \"at\": { \"type\": \"string\", \"required\": true }\r\n" +
+                "                   }\r\n" +
+                "            }\r\n" +
+                "         }\r\n" +
+                "    }\r\n";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>(), new Dictionary<string, ApiObject>());
+
+            Assert.AreEqual(3, obj.Properties.Count);
+            Assert.AreEqual("Title", obj.Properties.First(p => p.Name == "Title").Type);
+            Assert.AreEqual("object", obj.Properties.First(p => p.Name == "Name").Type);
         }
     }
 }

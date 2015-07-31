@@ -39,7 +39,7 @@ namespace Raml.Tools
         protected GeneratorServiceBase(RamlDocument raml)
         {
             this.raml = raml;
-            apiObjectsCleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects);
+            apiObjectsCleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects, schemaObjects);
         }
 
 

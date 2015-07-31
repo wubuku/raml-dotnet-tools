@@ -10,11 +10,13 @@ namespace Raml.Tools
     {
         private readonly IDictionary<string, ApiObject> schemaRequestObjects;
         private readonly IDictionary<string, ApiObject> schemaResponseObjects;
+        private readonly IDictionary<string, ApiObject> schemaObjects;
 
-        public ApiObjectsCleaner(IDictionary<string, ApiObject> schemaRequestObjects, IDictionary<string, ApiObject> schemaResponseObjects)
+        public ApiObjectsCleaner(IDictionary<string, ApiObject> schemaRequestObjects, IDictionary<string, ApiObject> schemaResponseObjects, IDictionary<string, ApiObject> schemaObjects)
         {
             this.schemaRequestObjects = schemaRequestObjects;
             this.schemaResponseObjects = schemaResponseObjects;
+            this.schemaObjects = schemaObjects;
         }
 
         public void CleanObjects(IEnumerable<ControllerObject> controllers, IDictionary<string, ApiObject> objects, Func<IEnumerable<ControllerObject>, ApiObject, bool> checkAction)
@@ -75,10 +77,16 @@ namespace Raml.Tools
         
         private bool IsUsedAsReferenceInAnyObject(ApiObject requestObj)
         {
-               return schemaRequestObjects.SelectMany(o => o.Value.Properties).Any(x => x.Type == requestObj.Name || 
+            return schemaObjects.SelectMany(o => o.Value.Properties).Any(x => x.Type == requestObj.Name ||
+                     x.Type == CollectionTypeHelper.GetCollectionType(requestObj.Name) ||
+                     x.Type == requestObj.BaseClass ||
+                     x.Type == CollectionTypeHelper.GetCollectionType(requestObj.BaseClass))
+
+                   || schemaRequestObjects.SelectMany(o => o.Value.Properties).Any(x => x.Type == requestObj.Name || 
                         x.Type == CollectionTypeHelper.GetCollectionType(requestObj.Name) || 
                         x.Type == requestObj.BaseClass || 
                         x.Type == CollectionTypeHelper.GetCollectionType(requestObj.BaseClass))
+
                    || schemaResponseObjects.SelectMany(o => o.Value.Properties).Any(x => x.Type == requestObj.Name || 
                         x.Type == CollectionTypeHelper.GetCollectionType(requestObj.Name) ||
                         x.Type == requestObj.BaseClass ||

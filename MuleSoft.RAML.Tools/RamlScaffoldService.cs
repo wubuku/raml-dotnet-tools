@@ -226,7 +226,7 @@ namespace MuleSoft.RAML.Tools
                 Settings.Default.ModelsTemplateTitle);
             var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
             var apiObjectTemplateParams = new TemplateParams<ApiObject>(
-                Path.Combine(templatesFolder, ModelTemplateName), ramlItem, "apiObject", model.Objects.Values,
+                Path.Combine(templatesFolder, ModelTemplateName), ramlItem, "apiObject", model.Objects,
                 generatedFolderPath, folderItem, extensionPath, targetNamespace);
             apiObjectTemplateParams.Title = Settings.Default.ModelsTemplateTitle;
             GenerateCodeFromTemplate(apiObjectTemplateParams);

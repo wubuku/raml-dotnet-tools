@@ -21,19 +21,13 @@ namespace Raml.Tools.WebApiGenerator
         public IEnumerable<ControllerObject> Controllers { get; set; }
 
         public IDictionary<string, string> Warnings { get; set; }
-        public IDictionary<string, ApiObject> Objects
+        public IEnumerable<ApiObject> Objects
         {
             get
             {
-                var objects = SchemaObjects.ToDictionary(requestObject => requestObject.Key, requestObject => requestObject.Value);
-                foreach (var requestObject in RequestObjects.Where(responseObject => !objects.ContainsKey(responseObject.Key)))
-                {
-                    objects.Add(requestObject.Key, requestObject.Value);
-                }
-                foreach (var responseObject in ResponseObjects.Where(responseObject => !objects.ContainsKey(responseObject.Key)))
-                {
-                    objects.Add(responseObject.Key, responseObject.Value);
-                }
+                var objects = SchemaObjects.Values.ToList();
+                objects.AddRange(RequestObjects.Values);
+                objects.AddRange(ResponseObjects.Values);
                 return objects;
             }
         }

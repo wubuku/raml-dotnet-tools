@@ -45,6 +45,7 @@ namespace Raml.Tools.ClientGenerator
             schemaRequestObjects = GetRequestObjects();
             schemaResponseObjects = GetResponseObjects();
 
+            CleanProperties(schemaObjects);
             CleanProperties(schemaRequestObjects);
             CleanProperties(schemaResponseObjects);
 

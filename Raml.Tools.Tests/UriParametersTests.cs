@@ -65,7 +65,7 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(1, model.UriParameterObjects.Count);
             Assert.AreEqual(2, model.UriParameterObjects.First().Value.Properties.Count);
             Assert.IsTrue(model.Classes.First().Methods.All(m => m.UriParametersType == "MoviesUriParameters"));
-            Assert.AreEqual(1, model.Objects.Count);
+            Assert.AreEqual(1, model.Objects.Count());
         }
 
         [Test]

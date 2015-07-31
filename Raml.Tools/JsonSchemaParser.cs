@@ -158,11 +158,15 @@ namespace Raml.Tools
                     enumName = ParseEnum(kv.Key, kv.Value, enums, kv.Value.Description);
                 }
 
+                var type = GetType(kv, isEnum, enumName);
+                if(type == null)
+                    continue;
+
                 var prop = new Property
                            {
                                Name = NetNamingMapper.GetPropertyName(kv.Key),
                                OriginalName = kv.Key,
-                               Type = GetType(kv, isEnum, enumName),
+                               Type = type,
                                Description = kv.Value.Description,
                                IsEnum = isEnum
                            };
@@ -265,6 +269,17 @@ namespace Raml.Tools
 
             if (!string.IsNullOrWhiteSpace(property.Value.Id))
                 return NetNamingMapper.GetObjectName(property.Value.Id);
+
+            // if it is a "body less" array then I assume it's an array of strings
+            if (property.Value.Type == JsonSchemaType.Array && (property.Value.Items == null || !property.Value.Items.Any()))
+                return CollectionTypeHelper.GetCollectionType("string");
+
+            // if it is a "body less" object then use object as the type
+            if (property.Value.Type == JsonSchemaType.Object && (property.Value.Properties == null || !property.Value.Properties.Any()))
+                return "object";
+
+            if(property.Value == null)
+                return null;
 
             return NetNamingMapper.GetObjectName(property.Key);
         }
@@ -429,11 +444,15 @@ namespace Raml.Tools
                     enumName = ParseEnum(key, property.Value, enums, property.Value.Description);
                 }
 
+                var type = GetType(property, isEnum, enumName);
+                if (type == null)
+                    continue;
+
                 var prop = new Property
                            {
                                Name = NetNamingMapper.GetPropertyName(key),
                                OriginalName = key,
-                               Type = GetType(property, isEnum, enumName),
+                               Type = type,
                                Description = property.Value.Description,
                                IsEnum = isEnum
                            };
