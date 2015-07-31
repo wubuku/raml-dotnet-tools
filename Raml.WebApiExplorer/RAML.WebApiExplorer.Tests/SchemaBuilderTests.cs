@@ -22,6 +22,14 @@ namespace RAML.WebApiExplorer.Tests
 		}
 
 		[Test]
+		public void ShouldParseTypeWithNestedTypeWhereFirstTypeHasNoSettableProperties() {
+			var schema = schemaBuilder.Get(typeof(WebLocation));
+			Assert.IsTrue(schema.Contains("\"Location\":"));
+			var obj = JsonSchema.Parse(schema);
+			Assert.IsNotNull(obj);
+		}
+
+		[Test]
 		public void ShouldParseArray()
 		{
 			var schema = schemaBuilder.Get(typeof(Owner[]));

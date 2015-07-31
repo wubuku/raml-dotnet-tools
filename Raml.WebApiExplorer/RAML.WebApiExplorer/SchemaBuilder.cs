@@ -288,7 +288,7 @@ namespace RAML.WebApiExplorer
 	                schema += GetOneOfProperty(prop, subclasses, pad);
 	        }
 
-	        if (prop != props.Last())
+	        if (prop != props.Last() && !String.IsNullOrWhiteSpace(schema))
 	            schema = schema.Substring(0, schema.Length - "\r\n".Length) + ",\r\n";
 
 	        return schema;
