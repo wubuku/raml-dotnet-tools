@@ -326,14 +326,14 @@ namespace Raml.Tools.Tests
         public async Task ShouldBuildClasses_FromDars()
         {
             var model = await GetDarsGeneratedModel();
-            Assert.AreEqual(2, model.ResponseObjects.Count());
+            Assert.AreEqual(2, model.SchemaObjects.Count());
         }
 
         [Test]
         public async Task ShouldBuildClasses_FromDarsWithParams()
         {
             var model = await GetDarsWithParamsGeneratedModel();
-            Assert.AreEqual(2, model.ResponseObjects.Count());
+            Assert.AreEqual(2, model.SchemaObjects.Count());
         }
 
 
@@ -502,6 +502,15 @@ namespace Raml.Tools.Tests
             Assert.IsTrue(model.Objects.Where(o => o.Key.EndsWith("Content")).All(o => o.Value.Properties.Count == 4));
         }
 
+        [Test]
+        public async Task ShouldNotDuplicateClasses()
+        {
+            var model = await GetDuplicationGeneratedModel();
+            Assert.AreEqual(2, model.Objects.Count(o => o.Value.Name.StartsWith("User")));
+            Assert.AreEqual(1, model.Objects.Count(o => o.Value.Name.Equals("User")));
+        }
+
+
 
         private static string GetXml(string comment)
         {
@@ -655,6 +664,14 @@ namespace Raml.Tools.Tests
         {
             var raml = await new RamlParser().LoadAsync("files/issue17.raml");
             var model = new ClientGeneratorService(raml, "Issue17").BuildModel();
+
+            return model;
+        }
+
+        private static async Task<ClientGeneratorModel> GetDuplicationGeneratedModel()
+        {
+            var raml = await new RamlParser().LoadAsync("files/duplication.raml");
+            var model = new ClientGeneratorService(raml, "Duplication").BuildModel();
 
             return model;
         }

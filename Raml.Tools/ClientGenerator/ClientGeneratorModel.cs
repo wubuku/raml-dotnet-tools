@@ -14,6 +14,7 @@ namespace Raml.Tools.ClientGenerator
 
         private string baseUri;
         public string Namespace { get; set; }
+        public IDictionary<string, ApiObject> SchemaObjects { get; set; }
         public IDictionary<string, ApiObject> ResponseObjects { get; set; }
         public IDictionary<string, ApiObject> RequestObjects { get; set; }
         public IDictionary<string, ApiObject> QueryObjects { get; set; }
@@ -31,7 +32,12 @@ namespace Raml.Tools.ClientGenerator
         {
             get
             {
-                var objects = RequestObjects.ToDictionary(requestObject => requestObject.Key, requestObject => requestObject.Value);
+                var objects = SchemaObjects.ToDictionary(requestObject => requestObject.Key, requestObject => requestObject.Value);
+                foreach (var requestObject in RequestObjects.Where(responseObject => !objects.ContainsKey(responseObject.Key)))
+                {
+                    objects.Add(requestObject.Key, requestObject.Value);
+                }
+
                 foreach (var responseObject in ResponseObjects.Where(responseObject => !objects.ContainsKey(responseObject.Key)))
                 {
                     objects.Add(responseObject.Key, responseObject.Value);

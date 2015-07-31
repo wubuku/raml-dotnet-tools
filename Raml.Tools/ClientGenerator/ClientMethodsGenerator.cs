@@ -20,8 +20,9 @@ namespace Raml.Tools.ClientGenerator
         public ClientMethodsGenerator(RamlDocument raml, IDictionary<string, ApiObject> schemaResponseObjects, 
             IDictionary<string, ApiObject> uriParameterObjects, IDictionary<string, ApiObject> queryObjects, 
             IDictionary<string, ApiObject> headerObjects, IDictionary<string, ApiObject> responseHeadersObjects,
-            IDictionary<string, ApiObject> schemaRequestObjects, IDictionary<string, string> linkKeysWithObjectNames)
-            : base(raml, schemaResponseObjects, schemaRequestObjects, linkKeysWithObjectNames)
+            IDictionary<string, ApiObject> schemaRequestObjects, IDictionary<string, string> linkKeysWithObjectNames,
+            IDictionary<string, ApiObject> schemaObjects )
+            : base(raml, schemaResponseObjects, schemaRequestObjects, linkKeysWithObjectNames, schemaObjects)
         {
             this.uriParameterObjects = uriParameterObjects;
             this.queryObjects = queryObjects;
@@ -55,8 +56,9 @@ namespace Raml.Tools.ClientGenerator
             {
                 var returnType = CollectionTypeHelper.GetBaseType(generatedMethod.ReturnType);
 
-                generatedMethod.ReturnTypeObject = schemaResponseObjects.Values
-                    .First(o => o.Name == returnType );
+                generatedMethod.ReturnTypeObject = schemaObjects.Values.Any(o => o.Name == returnType)
+                    ? schemaObjects.Values.First(o => o.Name == returnType)
+                    : schemaResponseObjects.Values.First(o => o.Name == returnType);
 
                 generatedMethod.OkReturnType = GetOkReturnType(generatedMethod);
             }

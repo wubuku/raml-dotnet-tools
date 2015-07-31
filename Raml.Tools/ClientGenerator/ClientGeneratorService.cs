@@ -41,6 +41,7 @@ namespace Raml.Tools.ClientGenerator
             uriParameterObjects = new Dictionary<string, ApiObject>();
             enums = new Dictionary<string, ApiEnum>();
 
+            ParseSchemas();
             schemaRequestObjects = GetRequestObjects();
             schemaResponseObjects = GetResponseObjects();
 
@@ -48,7 +49,8 @@ namespace Raml.Tools.ClientGenerator
             CleanProperties(schemaResponseObjects);
 
             clientMethodsGenerator = new ClientMethodsGenerator(raml, schemaResponseObjects, uriParameterObjects,
-                queryObjects, headerObjects, responseHeadersObjects, schemaRequestObjects, linkKeysWithObjectNames);
+                queryObjects, headerObjects, responseHeadersObjects, schemaRequestObjects, linkKeysWithObjectNames,
+                schemaObjects);
 
             var parentClass = new ClassObject { Name = rootClassName, Description = "Main class for grouping root resources. Nested resources are defined as properties. The constructor can optionally receive an URL and HttpClient instance to override the default ones." };
             classesNames.Add(parentClass.Name);
@@ -66,6 +68,7 @@ namespace Raml.Tools.ClientGenerator
             return new ClientGeneratorModel
                    {
                        Namespace = NetNamingMapper.GetNamespace(raml.Title),
+                       SchemaObjects = schemaObjects,
                        RequestObjects = schemaRequestObjects,
                        ResponseObjects = schemaResponseObjects,
                        QueryObjects = queryObjects,

@@ -15,17 +15,19 @@ namespace Raml.Tools
         protected readonly UriParametersGenerator uriParametersGenerator = new UriParametersGenerator();
 
         protected readonly RamlDocument raml;
+        protected readonly IDictionary<string, ApiObject> schemaObjects;
         protected readonly IDictionary<string, ApiObject> schemaResponseObjects;
         protected readonly IDictionary<string, ApiObject> schemaRequestObjects;
         private readonly IDictionary<string, string> linkKeysWithObjectNames;
 
         protected MethodsGeneratorBase(RamlDocument raml, IDictionary<string, ApiObject> schemaResponseObjects,
-            IDictionary<string, ApiObject> schemaRequestObjects, IDictionary<string, string> linkKeysWithObjectNames)
+            IDictionary<string, ApiObject> schemaRequestObjects, IDictionary<string, string> linkKeysWithObjectNames, IDictionary<string, ApiObject> schemaObjects)
         {
             this.raml = raml;
             this.schemaResponseObjects = schemaResponseObjects;
             this.schemaRequestObjects = schemaRequestObjects;
             this.linkKeysWithObjectNames = linkKeysWithObjectNames;
+            this.schemaObjects = schemaObjects;
         }
 
         protected string GetReturnType(string key, Method method, Resource resource, string fullUrl)
@@ -154,14 +156,16 @@ namespace Raml.Tools
 
         private bool ResponseHasKey(string key)
         {
-            return schemaResponseObjects.ContainsKey(key) && schemaResponseObjects[key].Properties.Any();
+            return schemaObjects.ContainsKey(key) && schemaObjects[key].Properties.Any() || schemaResponseObjects.ContainsKey(key) && schemaResponseObjects[key].Properties.Any();
         }
 
         private string GetReturnTypeFromResponseByKey(string key)
         {
-            return schemaResponseObjects[key].IsArray
-                ? CollectionTypeHelper.GetCollectionType(schemaResponseObjects[key].Name)
-                : schemaResponseObjects[key].Name;
+            var apiObject = schemaObjects.ContainsKey(key) ? schemaObjects[key] : schemaResponseObjects[key];
+
+            return apiObject.IsArray
+                ? CollectionTypeHelper.GetCollectionType(apiObject.Name)
+                : apiObject.Name;
         }
 
         protected Verb GetResourceTypeVerb(Method method, Resource resource)
@@ -270,6 +274,14 @@ namespace Raml.Tools
         private string GetReturnTypeFromName(MimeType mimeType, string returnType)
         {
             var type = mimeType.Schema.ToLowerInvariant();
+
+            if (schemaObjects.Values.Any(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type.ToLowerInvariant()))
+            {
+                var apiObject = schemaObjects.Values.First(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type.ToLowerInvariant());
+                returnType = apiObject.IsArray ? CollectionTypeHelper.GetCollectionType(apiObject.Name) : apiObject.Name;
+                return returnType;
+            }
+
             if (schemaResponseObjects.Values.Any(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type.ToLowerInvariant()))
             {
                 var apiObject = schemaResponseObjects.Values.First(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type.ToLowerInvariant());
@@ -281,11 +293,20 @@ namespace Raml.Tools
         private string GetReturnTypeFromParameter(Method method, Resource resource, MimeType mimeType, string fullUrl, string returnType)
         {
             var type = schemaParameterParser.Parse(mimeType.Schema, resource, method, fullUrl);
+
+            if (schemaObjects.Values.Any(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type.ToLowerInvariant()))
+            {
+                var apiObject = schemaObjects.Values
+                    .First(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type.ToLowerInvariant());
+                returnType = apiObject.IsArray ? CollectionTypeHelper.GetCollectionType(apiObject.Name) : apiObject.Name;
+                return returnType;
+            }
+
+
             if (schemaResponseObjects.Values.Any(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type.ToLowerInvariant()))
             {
-                var apiObject =
-                    schemaResponseObjects.Values.First(
-                        o => o.Properties.Any() && o.Name.ToLowerInvariant() == type.ToLowerInvariant());
+                var apiObject = schemaResponseObjects.Values
+                    .First(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type.ToLowerInvariant());
                 returnType = apiObject.IsArray ? CollectionTypeHelper.GetCollectionType(apiObject.Name) : apiObject.Name;
             }
             return returnType;
@@ -339,17 +360,13 @@ namespace Raml.Tools
 
         private GeneratorParameter GetGeneratorParameterByKey(string key)
         {
-            return new GeneratorParameter
-            {
-                Name = schemaRequestObjects[key].Name.ToLower(),
-                Type = schemaRequestObjects[key].Name,
-                Description = schemaRequestObjects[key].Description
-            };
+            var apiObject = schemaObjects.ContainsKey(key) ? schemaObjects[key] : schemaRequestObjects[key];
+            return CreateGeneratorParameter(apiObject);
         }
 
         private bool RequestHasKey(string key)
         {
-            return schemaRequestObjects.ContainsKey(key) && schemaRequestObjects[key].Properties.Any();
+            return schemaObjects.ContainsKey(key) && schemaObjects[key].Properties.Any() || schemaRequestObjects.ContainsKey(key) && schemaRequestObjects[key].Properties.Any();
         }
 
         private GeneratorParameter GetGeneratorParameterWhenNamed(Method method, Resource resource,
@@ -375,15 +392,17 @@ namespace Raml.Tools
             GeneratorParameter generatorParameter = null;
 
             var type = schema.ToLowerInvariant();
+
+            if (schemaObjects.Values.Any(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type))
+            {
+                var apiObject = schemaObjects.Values.First(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type);
+                generatorParameter = CreateGeneratorParameter(apiObject);
+            }
+
             if (schemaRequestObjects.Values.Any(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type))
             {
                 var apiObject = schemaRequestObjects.Values.First(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type);
-                generatorParameter = new GeneratorParameter
-                                     {
-                                         Name = apiObject.Name.ToLower(),
-                                         Type = apiObject.IsArray ? CollectionTypeHelper.GetCollectionType(apiObject.Name) : apiObject.Name,
-                                         Description = apiObject.Description
-                                     };
+                generatorParameter = CreateGeneratorParameter(apiObject);
             }
             return generatorParameter;
         }
@@ -392,16 +411,28 @@ namespace Raml.Tools
         {
             GeneratorParameter generatorParameter = null;
             var type = schemaParameterParser.Parse(schema, resource, method, fullUrl);
+            if (schemaObjects.Values.Any(o => o.Properties.Any() && o.Name.ToLower() == type.ToLowerInvariant()))
+            {
+                var apiObject = schemaObjects.Values.First(o => o.Properties.Any() && o.Name.ToLower() == type.ToLowerInvariant());
+                generatorParameter = CreateGeneratorParameter(apiObject);
+            }
+
             if (schemaRequestObjects.Values.Any(o => o.Properties.Any() && o.Name.ToLower() == type.ToLowerInvariant()))
             {
                 var apiObject = schemaRequestObjects.Values.First(o => o.Properties.Any() && o.Name.ToLower() == type.ToLowerInvariant());
-                generatorParameter = new GeneratorParameter
-                                     {
-                                         Name = apiObject.Name.ToLower(),
-                                         Type = apiObject.IsArray ? CollectionTypeHelper.GetCollectionType(apiObject.Name) : apiObject.Name,
-                                         Description = apiObject.Description
-                                     };
+                generatorParameter = CreateGeneratorParameter(apiObject);
             }
+            return generatorParameter;
+        }
+
+        private static GeneratorParameter CreateGeneratorParameter(ApiObject apiObject)
+        {
+            var generatorParameter = new GeneratorParameter
+            {
+                Name = apiObject.Name.ToLower(),
+                Type = apiObject.IsArray ? CollectionTypeHelper.GetCollectionType(apiObject.Name) : apiObject.Name,
+                Description = apiObject.Description
+            };
             return generatorParameter;
         }
 

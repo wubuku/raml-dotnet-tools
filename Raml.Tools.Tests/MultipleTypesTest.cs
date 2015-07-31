@@ -119,7 +119,7 @@ namespace Raml.Tools.Tests
                             {
                                 new Resource
                                 {
-                                    RelativeUri = "movies",
+                                    RelativeUri = "/movies",
                                     Methods = methods
                                 }
                             };
@@ -128,7 +128,8 @@ namespace Raml.Tools.Tests
 
             var service = new ClientGeneratorService(doc, "test");
             var model = service.BuildModel();
-            Assert.AreEqual(4, model.ResponseObjects.Count);
+            Assert.AreEqual(3, model.SchemaObjects.Count);
+            Assert.AreEqual(1, model.ResponseObjects.Count);
 
             var multipleModel = model.ResponseObjects.First(o => o.Key.Contains("Multiple")).Value;
 

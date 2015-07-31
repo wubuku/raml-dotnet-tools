@@ -10,8 +10,9 @@ namespace Raml.Tools
     public class WebApiMethodsGenerator : MethodsGeneratorBase
     {
         public WebApiMethodsGenerator(RamlDocument raml, IDictionary<string, ApiObject> schemaResponseObjects, 
-            IDictionary<string, ApiObject> schemaRequestObjects, IDictionary<string, string> linkKeysWithObjectNames)
-            : base(raml, schemaResponseObjects, schemaRequestObjects, linkKeysWithObjectNames)
+            IDictionary<string, ApiObject> schemaRequestObjects, IDictionary<string, string> linkKeysWithObjectNames, 
+            IDictionary<string, ApiObject> schemaObjects)
+            : base(raml, schemaResponseObjects, schemaRequestObjects, linkKeysWithObjectNames, schemaObjects)
         {
         }
 

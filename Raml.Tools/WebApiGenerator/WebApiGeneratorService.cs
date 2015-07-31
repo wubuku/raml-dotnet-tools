@@ -20,13 +20,15 @@ namespace Raml.Tools.WebApiGenerator
             warnings = new Dictionary<string, string>();
             enums = new Dictionary<string, ApiEnum>();
 
+            ParseSchemas();
             schemaRequestObjects = GetRequestObjects();
             schemaResponseObjects = GetResponseObjects();
 
+            CleanProperties(schemaObjects);
             CleanProperties(schemaRequestObjects);
             CleanProperties(schemaResponseObjects);
 
-            webApiMethodsGenerator = new WebApiMethodsGenerator(raml, schemaResponseObjects, schemaRequestObjects, linkKeysWithObjectNames);
+            webApiMethodsGenerator = new WebApiMethodsGenerator(raml, schemaResponseObjects, schemaRequestObjects, linkKeysWithObjectNames, schemaObjects);
 
             var controllers = GetControllers().ToArray();
 
@@ -36,6 +38,7 @@ namespace Raml.Tools.WebApiGenerator
                    {
                        Namespace = NetNamingMapper.GetNamespace(raml.Title),
                        Controllers = controllers,
+                       SchemaObjects = schemaObjects,
                        RequestObjects = schemaRequestObjects,
                        ResponseObjects = schemaResponseObjects,
                        Warnings = warnings,

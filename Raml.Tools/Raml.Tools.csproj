@@ -103,6 +103,7 @@
     <Compile Include="JsonSchemaParser.cs" />
     <Compile Include="Security.cs" />
     <Compile Include="SecurityParser.cs" />
+    <Compile Include="UniquenessHelper.cs" />
     <Compile Include="UriParametersGenerator.cs" />
     <Compile Include="WebApiGenerator\ControllerObject.cs" />
     <Compile Include="WebApiGenerator\IHasName.cs" />

@@ -17,6 +17,7 @@ namespace Raml.Tools
 
         protected readonly UriParametersGenerator uriParametersGenerator = new UriParametersGenerator();
         protected readonly SchemaParameterParser schemaParameterParser = new SchemaParameterParser(new EnglishPluralizationService());
+        protected IDictionary<string, ApiObject> schemaObjects = new Dictionary<string, ApiObject>();
         protected IDictionary<string, ApiObject> schemaRequestObjects = new Dictionary<string, ApiObject>();
         protected IDictionary<string, ApiObject> schemaResponseObjects = new Dictionary<string, ApiObject>();
         protected IDictionary<string, string> linkKeysWithObjectNames = new Dictionary<string, string>();
@@ -80,9 +81,9 @@ namespace Raml.Tools
                 return;
 
             var key = type.Key + "-" + name.ToLower() + RequestContentSuffix;
-            var obj = objectParser.ParseObject(key, verb.Body.Schema, schemaRequestObjects, warnings, enums, schemaResponseObjects);
+            var obj = objectParser.ParseObject(key, verb.Body.Schema, schemaRequestObjects, warnings, enums, schemaResponseObjects, schemaObjects);
 
-            AddObjectToObjectCollectionOrLink(obj, key, schemaRequestObjects);
+            AddObjectToObjectCollectionOrLink(obj, key, schemaRequestObjects, schemaObjects);
         }
 
         private void ParseTraitsResponses()
@@ -96,9 +97,9 @@ namespace Raml.Tools
                         foreach (var mimeType in response.Body)
                         {
                             var key = mimeType.Key + " " + mimeType.Value.Type + ResponseContentSuffix;
-                            var obj = objectParser.ParseObject(key, mimeType.Value.Schema, schemaResponseObjects, warnings, enums, schemaRequestObjects);
+                            var obj = objectParser.ParseObject(key, mimeType.Value.Schema, schemaResponseObjects, warnings, enums, schemaRequestObjects, schemaObjects);
 
-                            AddObjectToObjectCollectionOrLink(obj, key, schemaResponseObjects);
+                            AddObjectToObjectCollectionOrLink(obj, key, schemaResponseObjects, schemaObjects);
                         }
                     }
                 }
@@ -140,9 +141,9 @@ namespace Raml.Tools
 
                 var mimeType = GeneratorServiceHelper.GetMimeType(response);
 
-                var obj = objectParser.ParseObject(key, mimeType.Schema, schemaResponseObjects, warnings, enums, schemaRequestObjects);
+                var obj = objectParser.ParseObject(key, mimeType.Schema, schemaResponseObjects, warnings, enums, schemaRequestObjects, schemaObjects);
 
-                AddObjectToObjectCollectionOrLink(obj, key, schemaResponseObjects);
+                AddObjectToObjectCollectionOrLink(obj, key, schemaResponseObjects, schemaObjects);
             }
         }
 
@@ -162,9 +163,9 @@ namespace Raml.Tools
                             if (schemaRequestObjects.ContainsKey(key)) 
                                 continue;
 
-                            var obj = objectParser.ParseObject(key, kv.Value.Schema, schemaRequestObjects, warnings, enums, schemaResponseObjects);
+                            var obj = objectParser.ParseObject(key, kv.Value.Schema, schemaRequestObjects, warnings, enums, schemaResponseObjects, schemaObjects);
 
-                            AddObjectToObjectCollectionOrLink(obj, key, schemaRequestObjects);                                
+                            AddObjectToObjectCollectionOrLink(obj, key, schemaRequestObjects, schemaObjects);                                
                         }
                     }
                 }
@@ -173,11 +174,8 @@ namespace Raml.Tools
             }
         }
 
-
-
         protected IDictionary<string, ApiObject> GetRequestObjects()
         {
-            ParseSchemas(schemaRequestObjects, schemaResponseObjects);
             ParseResourcesRequests();
             ParseResourceTypesRequests();
 
@@ -193,7 +191,6 @@ namespace Raml.Tools
 
         protected IDictionary<string, ApiObject> GetResponseObjects()
         {
-            ParseSchemas(schemaResponseObjects, schemaRequestObjects);
             ParseResourceTypesResponses();
             ParseTraitsResponses();
             ParseResourcesResponses();
@@ -222,9 +219,9 @@ namespace Raml.Tools
                                 var key = GeneratorServiceHelper.GetKeyForResource(method, resource, fullUrl) + ParserHelpers.GetStatusCode(response.Code) + ResponseContentSuffix;
                                 if (schemaResponseObjects.ContainsKey(key)) continue;
 
-                                var obj = objectParser.ParseObject(key, kv.Value.Schema, schemaResponseObjects, warnings, enums, schemaRequestObjects);
+                                var obj = objectParser.ParseObject(key, kv.Value.Schema, schemaResponseObjects, warnings, enums, schemaRequestObjects, schemaObjects);
 
-                                AddObjectToObjectCollectionOrLink(obj, key, schemaResponseObjects);
+                                AddObjectToObjectCollectionOrLink(obj, key, schemaResponseObjects, schemaObjects);
                             }
                         }
                     }
@@ -234,19 +231,27 @@ namespace Raml.Tools
             }
         }
 
-        private void AddObjectToObjectCollectionOrLink(ApiObject obj, string key, IDictionary<string, ApiObject> objects)
+        private void AddObjectToObjectCollectionOrLink(ApiObject obj, string key, IDictionary<string, ApiObject> objects, IDictionary<string, ApiObject> otherObjects)
         {
             if (obj == null || !obj.Properties.Any())
                 return;
 
-            if (objects.All(o => o.Value.Name != obj.Name))
+            if (schemaObjects.All(o => o.Value.Name != obj.Name) && objects.All(o => o.Value.Name != obj.Name) && otherObjects.All(o => o.Value.Name != obj.Name))
             {
                 objects.Add(key, obj);
             }
             else
             {
-                if (!linkKeysWithObjectNames.ContainsKey(key))
-                    linkKeysWithObjectNames.Add(key, obj.Name);
+                if (UniquenessHelper.HasSameProperties(obj, objects, key, otherObjects, schemaObjects))
+                {
+                    if (!linkKeysWithObjectNames.ContainsKey(key))
+                        linkKeysWithObjectNames.Add(key, obj.Name);
+                }
+                else if(!objects.ContainsKey(key))
+                {
+                    obj.Name = UniquenessHelper.GetUniqueName(objects, obj.Name, schemaObjects, schemaObjects);
+                    objects.Add(key, obj);
+                }
             }
         }
 
@@ -267,7 +272,8 @@ namespace Raml.Tools
 
                     if (!NetTypeMapper.IsPrimitiveType(type) && schemaResponseObjects.All(o => o.Value.Name != type) 
                         && schemaRequestObjects.All(o => o.Value.Name != type)
-                        && enums.All(e => e.Value.Name != type))
+                        && enums.All(e => e.Value.Name != type)
+                        && schemaObjects.All(o => o.Value.Name != type))
                         apiObject.Properties.Remove(prop);
                 }
                 //if (!apiObject.Properties.Any())
@@ -280,18 +286,33 @@ namespace Raml.Tools
             return type.EndsWith(">") && type.StartsWith(CollectionTypeHelper.CollectionType);
         }
 
-        private void ParseSchemas(IDictionary<string, ApiObject> objects, IDictionary<string, ApiObject> otherObjects)
+        protected void ParseSchemas()
         {
             foreach (var schema in raml.Schemas)
             {
                 foreach (var kv in schema)
                 {
-                    if (objects.ContainsKey(kv.Key)) 
-                        continue;
+                    if (schemaObjects.ContainsKey(kv.Key))
+                    {
+                        var apiObject = schemaObjects[kv.Key];
+                        var oldName = apiObject.Name;
+                        apiObject.Name = UniquenessHelper.GetUniqueName(schemaObjects, apiObject.Name, new Dictionary<string, ApiObject>(), new Dictionary<string, ApiObject>());
+                        schemaObjects.Add(apiObject.Name, apiObject);
+                        schemaObjects.Remove(schemaObjects.First(o => o.Key == kv.Key));
+                        foreach (var apiObj in schemaObjects)
+                        {
+                            foreach (var prop in apiObj.Value.Properties)
+                            {
+                                if (prop.Type == oldName)
+                                    prop.Type = apiObject.Name;
+                            }
+                        }
+                    }
 
-                    var obj = objectParser.ParseObject(kv.Key, kv.Value, objects, warnings, enums, otherObjects);
+                    var obj = objectParser.ParseObject(kv.Key, kv.Value, schemaObjects, warnings, enums, new Dictionary<string, ApiObject>(), new Dictionary<string, ApiObject>());
+
                         
-                    AddObjectToObjectCollectionOrLink(obj, kv.Key, objects);
+                    schemaObjects.Add(kv.Key, obj);
                 }
             }
         }
