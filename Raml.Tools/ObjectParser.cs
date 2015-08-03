@@ -31,9 +31,6 @@ namespace Raml.Tools
    			if (schema == null)
 				return null;
 
-			if (schema.Trim().StartsWith("<"))
-				return ParseXmlSchema(key, schema, objects, targetNamespace);
-
             // is a reference, should then be defined elsewhere
             if (schema.Contains("<<") && schema.Contains(">>"))
                 return null;
