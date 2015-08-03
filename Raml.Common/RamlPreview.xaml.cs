@@ -1,17 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Windows.Input;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Microsoft.VisualStudio.Shell;
-using System;
-using System.IO;
-using System.Security.Permissions;
-using System.Windows;
-using System.Windows.Threading;
 using Raml.Parser;
 using Raml.Parser.Expressions;
-using Raml.Tools;
-using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Security.Permissions;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Threading;
 using Task = System.Threading.Tasks.Task;
 
 namespace Raml.Common
@@ -19,12 +19,14 @@ namespace Raml.Common
     /// <summary>
     /// Interaction logic for RamlPreview.xaml
     /// </summary>
-    public partial class RamlPreview
+    public partial class RamlPreview : INotifyPropertyChanged
     {
         private const string RamlFileExtension = ".raml";
         private readonly RamlIncludesManager includesManager = new RamlIncludesManager();
         // action to execute when clicking Ok button (add RAML Reference, Scaffold Web Api, etc.)
         private readonly Action<RamlChooserActionParams> action;
+        private readonly bool isNewContract = false;
+        private bool isContractUseCase;
 
         public string RamlTempFilePath { get; private set; }
         public string RamlOriginalSource { get; private set; }
@@ -32,7 +34,21 @@ namespace Raml.Common
 
         public IServiceProvider ServiceProvider { get; set; }
 
-        private bool IsContractUseCase { get; set; }
+        private bool IsContractUseCase
+        {
+            get { return isContractUseCase; }
+            set
+            {
+                isContractUseCase = value;
+                OnPropertyChanged("ClientUseCaseVisibility");
+                OnPropertyChanged("ContractUseCaseVisibility");
+            }
+        }
+
+        public Visibility ClientUseCaseVisibility { get { return isContractUseCase ? Visibility.Collapsed : Visibility.Visible; } }
+        public Visibility ContractUseCaseVisibility { get { return isContractUseCase ? Visibility.Visible : Visibility.Collapsed; } }
+
+        public Visibility NewContractVisibility { get { return isNewContract ? Visibility.Collapsed : Visibility.Visible; } }
 
         public RamlPreview(IServiceProvider serviceProvider, Action<RamlChooserActionParams> action, string ramlTempFilePath, string ramlOriginalSource, string ramlTitle, bool isContractUseCase)
         {
@@ -42,6 +58,18 @@ namespace Raml.Common
             RamlTitle = ramlTitle;
             IsContractUseCase = isContractUseCase;
             this.action = action;
+            InitializeComponent();
+        }
+
+        public RamlPreview(IServiceProvider serviceProvider, Action<RamlChooserActionParams> action, string ramlTitle)
+        {
+            ServiceProvider = serviceProvider;
+            RamlTitle = ramlTitle;
+            IsContractUseCase = true;
+            this.action = action;
+            isNewContract = true;
+            Height = 250;
+            OnPropertyChanged("NewContractVisibility");
             InitializeComponent();
         }
 
@@ -144,18 +172,7 @@ namespace Raml.Common
 
                 var ramlDocument = await parser.LoadRamlAsync(raml);
 
-                var filename = Path.GetFileName(url);
-
-                if (string.IsNullOrEmpty(filename))
-                    filename = "reference.raml";
-
-                if (!filename.ToLowerInvariant().EndsWith(RamlFileExtension))
-                    filename += RamlFileExtension;
-
-                filename = NetNamingMapper.RemoveIndalidChars(Path.GetFileNameWithoutExtension(filename)) +
-                                   RamlFileExtension;
-
-                txtFileName.Text = filename;
+                var filename = SetFilename(url);
 
                 var path = Path.Combine(Path.GetTempPath(), filename);
                 File.WriteAllText(path, raml);
@@ -183,6 +200,29 @@ namespace Raml.Common
                 ActivityLog.LogError(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource,
                     VisualStudioAutomationHelper.GetExceptionInfo(ex));
             }
+        }
+
+        private string SetFilename(string url)
+        {
+            var filename = GetFilename(url);
+
+            txtFileName.Text = filename;
+            return filename;
+        }
+
+        private static string GetFilename(string url)
+        {
+            var filename = Path.GetFileName(url);
+
+            if (string.IsNullOrEmpty(filename))
+                filename = "reference.raml";
+
+            if (!filename.ToLowerInvariant().EndsWith(RamlFileExtension))
+                filename += RamlFileExtension;
+
+            filename = NetNamingMapper.RemoveIndalidChars(Path.GetFileNameWithoutExtension(filename)) +
+                       RamlFileExtension;
+            return filename;
         }
 
         private static string GetFriendlyMessage(HttpRequestException rex)
@@ -220,7 +260,14 @@ namespace Raml.Common
 
                 // Execute action (add RAML Reference, Scaffold Web Api, etc)
                 var parameters = new RamlChooserActionParams(RamlOriginalSource, RamlTempFilePath, RamlTitle, path,
-                    txtFileName.Text, txtNamespace.Text, false);
+                    txtFileName.Text, txtNamespace.Text, doNotScaffold: isNewContract);
+
+                if(isContractUseCase)
+                    parameters.UseAsyncMethods = CheckBoxUseAsync.IsChecked.HasValue && CheckBoxUseAsync.IsChecked.Value;
+                
+                if(!isContractUseCase)
+                    parameters.ClientRootClassName = txtClientName.Text;
+
                 action(parameters);
 
                 ResourcesLabel.Text += "Succeeded";
@@ -266,7 +313,7 @@ namespace Raml.Common
 
             //DispatcherFrame frame = new DispatcherFrame();
             //Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background,
-            //	new DispatcherOperationCallback(ExitFrame), frame);
+            //    new DispatcherOperationCallback(ExitFrame), frame);
             //Dispatcher.PushFrame(frame);
         }
 
@@ -278,12 +325,21 @@ namespace Raml.Common
         }
         #endregion
 
+        public void NewContract()
+        {
+            SetFilename(RamlTitle + RamlFileExtension);
+            SetNamespace(txtFileName.Text);
+        }
+
         public async Task FromFile()
         {
             //TODO: check
             try
             {
                 txtFileName.Text = Path.GetFileName(RamlTempFilePath);
+
+                SetDefaultClientRootClassName();
+
                 var result = includesManager.Manage(RamlTempFilePath, Path.GetTempPath());
                 var parser = new RamlParser();
                 var document = await parser.LoadRamlAsync(result.ModifiedContents);
@@ -298,11 +354,28 @@ namespace Raml.Common
             }
         }
 
+        private void SetDefaultClientRootClassName()
+        {
+            var rootName = NetNamingMapper.GetObjectName(Path.GetFileNameWithoutExtension(RamlTempFilePath));
+            if (!rootName.ToLower().Contains("client"))
+                rootName += "Client";
+            txtClientName.Text = rootName;
+        }
+
         public async Task FromURL()
         {
+            SetDefaultClientRootClassName();
             await GetRamlFromURL();
         }
 
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
 
     }
 }

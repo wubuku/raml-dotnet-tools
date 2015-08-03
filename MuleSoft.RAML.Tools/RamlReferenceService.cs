@@ -12,92 +12,92 @@ using Raml.Common;
 
 namespace MuleSoft.RAML.Tools
 {
-	public class RamlReferenceService
-	{
-		private readonly IServiceProvider serviceProvider;
-		private readonly string nugetPackagesSource = Settings.Default.NugetPackagesSource;
-		private readonly string newtonsoftJsonPackageId = Settings.Default.NewtonsoftJsonPackageId;
-		private readonly string newtonsoftJsonPackageVersion = Settings.Default.NewtonsoftJsonPackageVersion;
-		private readonly string webApiClientPackageId = Settings.Default.WebApiClientPackageId;
-		private readonly string webApiClientPackageVersion = Settings.Default.WebApiClientPackageVersion;
-		private readonly string ramlApiCorePackageId = Settings.Default.RAMLApiCorePackageId;
-		private readonly string ramlApiCorePackageVersion = Settings.Default.RAMLApiCorePackageVersion;
-		public readonly static string ApiReferencesFolderName = Settings.Default.ApiReferencesFolderName;
+    public class RamlReferenceService
+    {
+        private readonly IServiceProvider serviceProvider;
+        private readonly string nugetPackagesSource = Settings.Default.NugetPackagesSource;
+        private readonly string newtonsoftJsonPackageId = Settings.Default.NewtonsoftJsonPackageId;
+        private readonly string newtonsoftJsonPackageVersion = Settings.Default.NewtonsoftJsonPackageVersion;
+        private readonly string webApiClientPackageId = Settings.Default.WebApiClientPackageId;
+        private readonly string webApiClientPackageVersion = Settings.Default.WebApiClientPackageVersion;
+        private readonly string ramlApiCorePackageId = Settings.Default.RAMLApiCorePackageId;
+        private readonly string ramlApiCorePackageVersion = Settings.Default.RAMLApiCorePackageVersion;
+        public readonly static string ApiReferencesFolderName = Settings.Default.ApiReferencesFolderName;
 
-	    public RamlReferenceService(IServiceProvider serviceProvider)
-		{
-			this.serviceProvider = serviceProvider;
-		}
+        public RamlReferenceService(IServiceProvider serviceProvider)
+        {
+            this.serviceProvider = serviceProvider;
+        }
 
-		public void AddRamlReference(RamlChooserActionParams parameters)
-		{
-			try
-			{
-				ActivityLog.LogInformation(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, "Add RAML Reference process started");
-				var dte = serviceProvider.GetService(typeof (SDTE)) as DTE;
-				var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+        public void AddRamlReference(RamlChooserActionParams parameters)
+        {
+            try
+            {
+                ActivityLog.LogInformation(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, "Add RAML Reference process started");
+                var dte = serviceProvider.GetService(typeof (SDTE)) as DTE;
+                var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
 
-				InstallNugetDependencies(proj);
-				ActivityLog.LogInformation(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, "Nuget Dependencies installed");
+                InstallNugetDependencies(proj);
+                ActivityLog.LogInformation(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, "Nuget Dependencies installed");
 
-				AddFilesToProject(parameters.RamlFilePath, proj, parameters.TargetNamespace, parameters.RamlSource, parameters.TargetFileName);
-				ActivityLog.LogInformation(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, "Files added to project");
-			}
-			catch (Exception ex)
-			{
-				ActivityLog.LogError(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource,
-					VisualStudioAutomationHelper.GetExceptionInfo(ex));
-				MessageBox.Show("Error when trying to add the RAML reference. " + ex.Message);
-				throw;
-			}
-		}
+                AddFilesToProject(parameters.RamlFilePath, proj, parameters.TargetNamespace, parameters.RamlSource, parameters.TargetFileName, parameters.ClientRootClassName);
+                ActivityLog.LogInformation(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource, "Files added to project");
+            }
+            catch (Exception ex)
+            {
+                ActivityLog.LogError(VisualStudioAutomationHelper.RamlVsToolsActivityLogSource,
+                    VisualStudioAutomationHelper.GetExceptionInfo(ex));
+                MessageBox.Show("Error when trying to add the RAML reference. " + ex.Message);
+                throw;
+            }
+        }
 
-		private void InstallNugetDependencies(Project proj)
-		{
-			var componentModel = (IComponentModel)serviceProvider.GetService(typeof(SComponentModel));
-			var installerServices = componentModel.GetService<IVsPackageInstallerServices>();
-			var installer = componentModel.GetService<IVsPackageInstaller>();
+        private void InstallNugetDependencies(Project proj)
+        {
+            var componentModel = (IComponentModel)serviceProvider.GetService(typeof(SComponentModel));
+            var installerServices = componentModel.GetService<IVsPackageInstallerServices>();
+            var installer = componentModel.GetService<IVsPackageInstaller>();
 
-			if (!installerServices.IsPackageInstalled(proj, newtonsoftJsonPackageId))
-			{
-				installer.InstallPackage(nugetPackagesSource, proj, newtonsoftJsonPackageId, newtonsoftJsonPackageVersion, false);
-			}
+            if (!installerServices.IsPackageInstalled(proj, newtonsoftJsonPackageId))
+            {
+                installer.InstallPackage(nugetPackagesSource, proj, newtonsoftJsonPackageId, newtonsoftJsonPackageVersion, false);
+            }
 
-			// Web Api Client (to get HttpClient)
-			if (!installerServices.IsPackageInstalled(proj, webApiClientPackageId))
-			{
-				installer.InstallPackage(nugetPackagesSource, proj, webApiClientPackageId, webApiClientPackageVersion, false);
-			}
+            // Web Api Client (to get HttpClient)
+            if (!installerServices.IsPackageInstalled(proj, webApiClientPackageId))
+            {
+                installer.InstallPackage(nugetPackagesSource, proj, webApiClientPackageId, webApiClientPackageVersion, false);
+            }
 
-			// RAML.Api.Core
-			if (!installerServices.IsPackageInstalled(proj, ramlApiCorePackageId))
-			{
+            // RAML.Api.Core
+            if (!installerServices.IsPackageInstalled(proj, ramlApiCorePackageId))
+            {
                 installer.InstallPackage(nugetPackagesSource, proj, ramlApiCorePackageId, ramlApiCorePackageVersion, false);
-			}
-		}
+            }
+        }
 
-		private void AddFilesToProject(string ramlSourceFile, Project proj, string targetNamespace, string ramlOriginalSource, string targetFileName)
-		{
-			if(!File.Exists(ramlSourceFile))
-				throw new FileNotFoundException("RAML file not found " + ramlSourceFile);
+        private void AddFilesToProject(string ramlSourceFile, Project proj, string targetNamespace, string ramlOriginalSource, string targetFileName, string clientRootClassName)
+        {
+            if(!File.Exists(ramlSourceFile))
+                throw new FileNotFoundException("RAML file not found " + ramlSourceFile);
 
-			if(Path.GetInvalidFileNameChars().Any(targetFileName.Contains))
-				throw new ArgumentException("Specified filename has invalid chars: " + targetFileName);
+            if(Path.GetInvalidFileNameChars().Any(targetFileName.Contains))
+                throw new ArgumentException("Specified filename has invalid chars: " + targetFileName);
 
-			var destFolderName = Path.GetFileNameWithoutExtension(targetFileName);
-			var apiRefsFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + ApiReferencesFolderName + Path.DirectorySeparatorChar;
-			var destFolderPath = apiRefsFolderPath + destFolderName + Path.DirectorySeparatorChar;
-			var apiRefsFolderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, ApiReferencesFolderName);
+            var destFolderName = Path.GetFileNameWithoutExtension(targetFileName);
+            var apiRefsFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + ApiReferencesFolderName + Path.DirectorySeparatorChar;
+            var destFolderPath = apiRefsFolderPath + destFolderName + Path.DirectorySeparatorChar;
+            var apiRefsFolderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, ApiReferencesFolderName);
 
-			var destFolderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(apiRefsFolderItem, destFolderName, destFolderPath);
+            var destFolderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(apiRefsFolderItem, destFolderName, destFolderPath);
 
-			InstallerServices.AddRefFile(ramlSourceFile, targetNamespace, ramlOriginalSource, destFolderPath, targetFileName);
+            InstallerServices.AddRefFile(ramlSourceFile, targetNamespace, ramlOriginalSource, destFolderPath, targetFileName, null, clientRootClassName);
 
-			var ramlProjItem = InstallerServices.AddOrUpdateRamlFile(ramlSourceFile, destFolderPath, destFolderItem, targetFileName);
+            var ramlProjItem = InstallerServices.AddOrUpdateRamlFile(ramlSourceFile, destFolderPath, destFolderItem, targetFileName);
 
-			ramlProjItem.Properties.Item("CustomTool").Value = string.Empty; // to cause a refresh when file already exists
-			ramlProjItem.Properties.Item("CustomTool").Value = "RamlClientTool";
-		}
+            ramlProjItem.Properties.Item("CustomTool").Value = string.Empty; // to cause a refresh when file already exists
+            ramlProjItem.Properties.Item("CustomTool").Value = "RamlClientTool";
+        }
 
-	}
+    }
 }

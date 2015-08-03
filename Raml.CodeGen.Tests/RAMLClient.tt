@@ -13,7 +13,7 @@
 <#
 
 	var parser = new RamlParser();
-	var ramlFile = Host.ResolvePath(@"C:\desarrollo\mulesoft\raml-files\purchaseOrderXml.raml");
+	var ramlFile = Host.ResolvePath(@"files/movies.raml");
 	var raml = parser.Load(ramlFile);
 	var service = new ClientGeneratorService(raml, "MoviesApi", "XMLPurchaseOrder");
 	var model = service.BuildModel();
@@ -355,8 +355,6 @@ namespace <#= model.Namespace #>
             if(request.Formatter == null)
                 request.Formatter = new JsonMediaTypeFormatter();
 
-            req.Content = new ObjectContent(typeof(Models.<#= method.Parameter.Type #>), request.Content, new JsonMediaTypeFormatter());                           
-<#                        
                         }
 	                }
                 }
@@ -544,7 +542,7 @@ foreach (var apiObject in model.Objects.Values.Where(o => !string.IsNullOrWhiteS
 namespace <#= model.Namespace #>.Models
 {
 <#
-foreach (var apiObject in model.Objects.Values.Where(o => string.IsNullOrWhiteSpace(o.GeneratedCode)))
+foreach (var apiObject in model.Objects.Where(o => string.IsNullOrWhiteSpace(o.GeneratedCode)))
 {
     if(hasXmlSchemas && !apiObject.Properties.Any())
         continue;

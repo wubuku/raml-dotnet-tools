@@ -8,76 +8,78 @@ using System.Linq;
 namespace Raml.Tools
 {
     public class JsonSchemaParser
-	{
-	    
-	    private readonly string[] suffixes = { "A", "B", "C", "D", "E", "F", "G" };
+    {
         private readonly ICollection<string> ids  = new Collection<string>();
-
-		public ApiObject Parse(string key, string jsonSchema, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings, IDictionary<string, ApiEnum> enums)
-		{
-			var obj = new ApiObject
-			          {
-				          Name = NetNamingMapper.GetObjectName(key),
-				          Properties = new List<Property>(),
+        private IDictionary<string, ApiObject> otherObjects = new Dictionary<string, ApiObject>();
+        private IDictionary<string, ApiObject> schemaObjects = new Dictionary<string, ApiObject>();
+        public ApiObject Parse(string key, string jsonSchema, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings, 
+            IDictionary<string, ApiEnum> enums, IDictionary<string, ApiObject> otherObjects, IDictionary<string, ApiObject> schemaObjects)
+        {
+            this.otherObjects = otherObjects;
+            this.schemaObjects = schemaObjects;
+            var obj = new ApiObject
+                      {
+                          Name = NetNamingMapper.GetObjectName(key),
+                          Properties = new List<Property>(),
                           JSONSchema = jsonSchema.Replace(Environment.NewLine, "").Replace("\r\n", "").Replace("\n", "").Replace("\"", "\\\"")
-			          };
-			JsonSchema schema = null;
-			Newtonsoft.JsonV4.Schema.JsonSchema v4Schema = null;
-		    if (jsonSchema.Contains("\"oneOf\":"))
-		    {
-		        v4Schema = ParseV4Schema(key, jsonSchema, warnings);
-		    }
-		    else
-		    {
-		        schema = ParseV3OrV4Schema(key, jsonSchema, warnings, ref v4Schema);
-		    }
+                      };
+            JsonSchema schema = null;
+            Newtonsoft.JsonV4.Schema.JsonSchema v4Schema = null;
+            if (jsonSchema.Contains("\"oneOf\":"))
+            {
+                v4Schema = ParseV4Schema(key, jsonSchema, warnings, objects);
+            }
+            else
+            {
+                schema = ParseV3OrV4Schema(key, jsonSchema, warnings, ref v4Schema, objects);
+            }
 
-		    if (schema == null && v4Schema == null)
-				return obj;
+            if (schema == null && v4Schema == null)
+                return obj;
 
-			if (schema != null)
-			{
-				if (schema.Type == JsonSchemaType.Array)
-				{
-					obj.IsArray = true;
-					if (schema.Items != null && schema.Items.Any())
-						ParseProperties(objects, obj.Properties, schema.Items.First().Properties, enums);
-				}
-				else
-				{
-					ParseProperties(objects, obj.Properties, schema.Properties, enums);
-				}
-			}
-			else
-			{
-				if (v4Schema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Array)
-				{
-					obj.IsArray = true;
-					if (v4Schema.Items != null && v4Schema.Items.Any())
-						ParseProperties(objects, obj.Properties, v4Schema.Items.First(), enums);
-				}
-				else
-				{
-					ParseProperties(objects, obj.Properties, v4Schema, enums);
-				}
-			}
-			return obj;
-		}
+            if (schema != null)
+            {
+                if (schema.Type == JsonSchemaType.Array)
+                {
+                    obj.IsArray = true;
+                    if (schema.Items != null && schema.Items.Any())
+                        ParseProperties(objects, obj.Properties, schema.Items.First().Properties, enums);
+                }
+                else
+                {
+                    ParseProperties(objects, obj.Properties, schema.Properties, enums);
+                }
+            }
+            else
+            {
+                if (v4Schema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Array)
+                {
+                    obj.IsArray = true;
+                    if (v4Schema.Items != null && v4Schema.Items.Any())
+                        ParseProperties(objects, obj.Properties, v4Schema.Items.First(), enums);
+                }
+                else
+                {
+                    ParseProperties(objects, obj.Properties, v4Schema, enums);
+                }
+            }
+            return obj;
+        }
 
         private static JsonSchema ParseV3OrV4Schema(string key, string jsonSchema, IDictionary<string, string> warnings, 
-            ref Newtonsoft.JsonV4.Schema.JsonSchema v4Schema)
+            ref Newtonsoft.JsonV4.Schema.JsonSchema v4Schema, IDictionary<string, ApiObject> objects)
         {
             JsonSchema schema = null;
             try
             {
-                schema = JsonSchema.Parse(jsonSchema);
+                schema = JsonSchema.Parse(jsonSchema, new JsonSchemaCustomResolver(objects));
             }
             catch (Exception exv3) // NewtonJson does not support Json Schema v4
             {
                 try
                 {
                     schema = null;
-                    v4Schema = Newtonsoft.JsonV4.Schema.JsonSchema.Parse(jsonSchema);
+                    v4Schema = Newtonsoft.JsonV4.Schema.JsonSchema.Parse(jsonSchema, new JsonSchemaCustomV4Resolver(objects));
                 }
                 catch (Exception exv4)
                 {
@@ -92,12 +94,12 @@ namespace Raml.Tools
             return schema;
         }
 
-        private static Newtonsoft.JsonV4.Schema.JsonSchema ParseV4Schema(string key, string jsonSchema, IDictionary<string, string> warnings)
+        private static Newtonsoft.JsonV4.Schema.JsonSchema ParseV4Schema(string key, string jsonSchema, IDictionary<string, string> warnings, IDictionary<string, ApiObject> objects)
         {
             Newtonsoft.JsonV4.Schema.JsonSchema v4Schema = null;
             try
             {
-                v4Schema = Newtonsoft.JsonV4.Schema.JsonSchema.Parse(jsonSchema);
+                v4Schema = Newtonsoft.JsonV4.Schema.JsonSchema.Parse(jsonSchema, new JsonSchemaCustomV4Resolver(objects));
             }
             catch (Exception exv4)
             {
@@ -109,87 +111,106 @@ namespace Raml.Tools
             return v4Schema;
         }
 
-        private void ParseObject(string key, IDictionary<string, JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums)
-		{
-			if (schema == null)
-				return;
+        private string ParseObject(string key, IDictionary<string, JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums)
+        {
+            if (schema == null)
+                return null;
 
-			var obj = new ApiObject
-			{
-				Name = NetNamingMapper.GetObjectName(key),
-				Properties = ParseSchema(schema, objects, enums)
-			};
+            var obj = new ApiObject
+            {
+                Name = NetNamingMapper.GetObjectName(key),
+                Properties = ParseSchema(schema, objects, enums)
+            };
 
-			// Avoid duplicated keys and names
-			if (objects.ContainsKey(key) || objects.Any(o => o.Value.Name == obj.Name) || !obj.Properties.Any())
-				return;
+            if (obj == null)
+                return null;
 
-			objects.Add(key, obj);
-		}
+            if(!obj.Properties.Any())
+                return null;
+
+            // Avoid duplicated keys and names or no properties
+            if (objects.ContainsKey(key) || objects.Any(o => o.Value.Name == obj.Name) 
+                || otherObjects.ContainsKey(key) || otherObjects.Any(o => o.Value.Name == obj.Name)
+                || schemaObjects.ContainsKey(key) || schemaObjects.Any(o => o.Value.Name == obj.Name))
+            {
+                if (UniquenessHelper.HasSameProperties(obj, objects, key, otherObjects, schemaObjects)) 
+                    return key;
+
+                obj.Name = UniquenessHelper.GetUniqueName(objects, obj.Name, otherObjects, schemaObjects);
+                key = UniquenessHelper.GetUniqueKey(objects, key, otherObjects);
+            }
+
+            objects.Add(key, obj);
+            return key;
+        }
 
 
-		private IList<Property> ParseSchema(IDictionary<string, JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums)
-		{
-			var props = new List<Property>();
-			foreach (var kv in schema)
-			{
+        private IList<Property> ParseSchema(IDictionary<string, JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums)
+        {
+            var props = new List<Property>();
+            foreach (var kv in schema)
+            {
                 var isEnum = kv.Value.Enum != null && kv.Value.Enum.Any();
 
-			    var enumName = string.Empty;
+                var enumName = string.Empty;
                 if (isEnum)
                 {
                     enumName = ParseEnum(kv.Key, kv.Value, enums, kv.Value.Description);
                 }
 
-				var prop = new Property
-				           {
-					           Name = NetNamingMapper.GetPropertyName(kv.Key),
+                var type = GetType(kv, isEnum, enumName);
+                if(type == null)
+                    continue;
+
+                var prop = new Property
+                           {
+                               Name = NetNamingMapper.GetPropertyName(kv.Key),
                                OriginalName = kv.Key,
-                               Type = GetType(kv, isEnum, enumName),
-					           Description = kv.Value.Description,
+                               Type = type,
+                               Description = kv.Value.Description,
                                IsEnum = isEnum
-				           };
+                           };
 
-				ParseComplexTypes(objects, kv.Value, prop, kv, kv.Key, enums);
-				props.Add(prop);
-			}
-			return props;
-		}
+                ParseComplexTypes(objects, kv.Value, prop, kv, kv.Key, enums);
+                props.Add(prop);
+            }
+            return props;
+        }
 
 
-		private void ParseProperties(IDictionary<string, ApiObject> objects, IList<Property> props, Newtonsoft.JsonV4.Schema.JsonSchema schema, IDictionary<string, ApiEnum> enums)
-		{
+        private void ParseProperties(IDictionary<string, ApiObject> objects, IList<Property> props, Newtonsoft.JsonV4.Schema.JsonSchema schema, IDictionary<string, ApiEnum> enums)
+        {
             var properties = schema.Properties;
 
-			foreach (var property in properties)
-			{
+            foreach (var property in properties)
+            {
                 if ((property.Value.Enum != null && !property.Value.Enum.Any()) && (property.Value.Type == null || property.Value.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Null ||
-				    property.Value.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.None))
-					continue;
+                    property.Value.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.None))
+                    continue;
 
                 var isEnum = property.Value.Enum != null && property.Value.Enum.Any();
 
-			    var enumName = string.Empty;
-			    if (isEnum)
+                var enumName = string.Empty;
+                if (isEnum)
                 {
                     enumName = ParseEnum(property.Key, property.Value, enums, property.Value.Description);
                 }
 
-			    var prop = new Property
-				           {
-					           Name = NetNamingMapper.GetPropertyName(property.Key),
-					           Type = GetType(property, isEnum, enumName),
+                var prop = new Property
+                           {
+                               Name = NetNamingMapper.GetPropertyName(property.Key),
+                               Type = GetType(property, isEnum, enumName),
                                OriginalName = property.Key,
-					           Description = property.Value.Description,
+                               Description = property.Value.Description,
                                IsEnum = isEnum
-				           };
+                           };
 
 
 
-				ParseComplexTypes(objects, schema, property.Value, prop, property, enums);
-				props.Add(prop);
-			}
-		}
+                ParseComplexTypes(objects, schema, property.Value, prop, property, enums);
+                props.Add(prop);
+            }
+        }
 
         private static string GetType(KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property, bool isEnum, string enumName)
         {
@@ -249,6 +270,17 @@ namespace Raml.Tools
             if (!string.IsNullOrWhiteSpace(property.Value.Id))
                 return NetNamingMapper.GetObjectName(property.Value.Id);
 
+            // if it is a "body less" array then I assume it's an array of strings
+            if (property.Value.Type == JsonSchemaType.Array && (property.Value.Items == null || !property.Value.Items.Any()))
+                return CollectionTypeHelper.GetCollectionType("string");
+
+            // if it is a "body less" object then use object as the type
+            if (property.Value.Type == JsonSchemaType.Object && (property.Value.Properties == null || !property.Value.Properties.Any()))
+                return "object";
+
+            if(property.Value == null)
+                return null;
+
             return NetNamingMapper.GetObjectName(property.Key);
         }
 
@@ -272,27 +304,27 @@ namespace Raml.Tools
         }
 
         private void ParseComplexTypes(IDictionary<string, ApiObject> objects, Newtonsoft.JsonV4.Schema.JsonSchema schema, Newtonsoft.JsonV4.Schema.JsonSchema propertySchema, Property prop, KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property, IDictionary<string, ApiEnum> enums)
-		{
+        {
             if (propertySchema.Type.HasValue
                 && (propertySchema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Object || propertySchema.Type.Value.ToString().Contains("Object")) 
                 && propertySchema.Properties != null)
-			{
+            {
                 if (!string.IsNullOrWhiteSpace(schema.Id) && ids.Contains(schema.Id))
                     return;
 
                 if (!string.IsNullOrWhiteSpace(schema.Id))
                     ids.Add(schema.Id);
 
-			    var type = string.IsNullOrWhiteSpace(property.Value.Id) ? property.Key : property.Value.Id;
-			    ParseObject(type, propertySchema.Properties, objects, enums);
-				prop.Type = NetNamingMapper.GetObjectName(type);
-			}
+                var type = string.IsNullOrWhiteSpace(property.Value.Id) ? property.Key : property.Value.Id;
+                ParseObject(type, propertySchema.Properties, objects, enums);
+                prop.Type = NetNamingMapper.GetObjectName(type);
+            }
             else if (propertySchema.Type.HasValue
                 && propertySchema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Object && propertySchema.OneOf != null && propertySchema.OneOf.Count > 0 && schema.Definitions != null && schema.Definitions.Count > 0)
             {
                 string baseTypeName = NetNamingMapper.GetObjectName(property.Key);
 
-                if (objects.ContainsKey(baseTypeName))
+                if (schemaObjects.ContainsKey(baseTypeName) || objects.ContainsKey(baseTypeName) || otherObjects.ContainsKey(baseTypeName))
                     return;
 
                 objects.Add(baseTypeName,
@@ -316,29 +348,38 @@ namespace Raml.Tools
                 ParseArray(objects, propertySchema, prop, property, enums);
             }
             
-		}
+        }
 
-		private void ParseObject(string key, IDictionary<string, Newtonsoft.JsonV4.Schema.JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums, string baseClass = null)
-		{
-			var obj = new ApiObject
-			          {
-				          Name = NetNamingMapper.GetObjectName(key),
-				          Properties = ParseSchema(schema, objects, enums),
+        private void ParseObject(string key, IDictionary<string, Newtonsoft.JsonV4.Schema.JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums, string baseClass = null)
+        {
+            var obj = new ApiObject
+                      {
+                          Name = NetNamingMapper.GetObjectName(key),
+                          Properties = ParseSchema(schema, objects, enums),
                           BaseClass = baseClass
-			          };
+                      };
 
-			// Avoid duplicated keys and names
-			if (objects.ContainsKey(key) || objects.Any(o => o.Value.Name == obj.Name) || !obj.Properties.Any())
-				return;
+            // Avoid duplicated keys and names
+            if (objects.ContainsKey(key) || objects.Any(o => o.Value.Name == obj.Name)
+                || otherObjects.ContainsKey(key) || otherObjects.Any(o => o.Value.Name == obj.Name)
+                || schemaObjects.ContainsKey(key) || schemaObjects.Any(o => o.Value.Name == obj.Name) 
+                || !obj.Properties.Any())
+            {
+                if (UniquenessHelper.HasSameProperties(obj, objects, key, otherObjects, schemaObjects))
+                    return;
 
-			objects.Add(key, obj);
-		}
+                obj.Name = UniquenessHelper.GetUniqueName(objects, obj.Name, otherObjects, schemaObjects);
+                key = UniquenessHelper.GetUniqueKey(objects, key, otherObjects);
+            }
 
-		private IList<Property> ParseSchema(IDictionary<string, Newtonsoft.JsonV4.Schema.JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums)
-		{
-			var props = new List<Property>();
-			foreach (var kv in schema)
-			{
+            objects.Add(key, obj);
+        }
+
+        private IList<Property> ParseSchema(IDictionary<string, Newtonsoft.JsonV4.Schema.JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums)
+        {
+            var props = new List<Property>();
+            foreach (var kv in schema)
+            {
                 var isEnum = kv.Value.Enum != null && kv.Value.Enum.Any();
 
                 var enumName = string.Empty;
@@ -347,7 +388,7 @@ namespace Raml.Tools
                     enumName = ParseEnum(kv.Key, kv.Value, enums, kv.Value.Description);
                 }
 
-			    var prop = new Property
+                var prop = new Property
                 {
                     Name = NetNamingMapper.GetPropertyName(kv.Key),
                     OriginalName = kv.Key,
@@ -357,66 +398,70 @@ namespace Raml.Tools
                 };
 
 
-				ParseComplexTypes(objects, null, kv.Value, prop, kv, enums);
-				props.Add(prop);
-			}
-			return props;
-		}
+                ParseComplexTypes(objects, null, kv.Value, prop, kv, enums);
+                props.Add(prop);
+            }
+            return props;
+        }
 
-		private void ParseArray(IDictionary<string, ApiObject> objects, Newtonsoft.JsonV4.Schema.JsonSchema schema, Property prop, KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property, IDictionary<string, ApiEnum> enums)
-		{
-			var netType = NetTypeMapper.Map(schema.Items.First().Type);
-			if (netType != null)
-			{
-				prop.Type = CollectionTypeHelper.GetCollectionType(netType);
-			}
-			else
-			{
+        private void ParseArray(IDictionary<string, ApiObject> objects, Newtonsoft.JsonV4.Schema.JsonSchema schema, Property prop, KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property, IDictionary<string, ApiEnum> enums)
+        {
+            var netType = NetTypeMapper.Map(schema.Items.First().Type);
+            if (netType != null)
+            {
+                prop.Type = CollectionTypeHelper.GetCollectionType(netType);
+            }
+            else
+            {
                 prop.Type = CollectionTypeHelper.GetCollectionType(NetNamingMapper.GetObjectName(property.Key));
-				foreach (var item in schema.Items)
-				{
-					ParseObject(property.Key, item.Properties, objects, enums);
-				}
-			}
-		}
+                foreach (var item in schema.Items)
+                {
+                    ParseObject(property.Key, item.Properties, objects, enums);
+                }
+            }
+        }
 
-	    private void ParseProperties(IDictionary<string, ApiObject> objects, ICollection<Property> props, IDictionary<string, JsonSchema> properties, IDictionary<string, ApiEnum> enums)
-		{
-			if (properties == null)
-				return;
+        private void ParseProperties(IDictionary<string, ApiObject> objects, ICollection<Property> props, IDictionary<string, JsonSchema> properties, IDictionary<string, ApiEnum> enums)
+        {
+            if (properties == null)
+                return;
 
-			foreach (var property in properties)
-			{
-				if ( (property.Value.Enum != null && !property.Value.Enum.Any()) && (property.Value.Type == null || property.Value.Type == JsonSchemaType.Null 
+            foreach (var property in properties)
+            {
+                if ( (property.Value.Enum != null && !property.Value.Enum.Any()) && (property.Value.Type == null || property.Value.Type == JsonSchemaType.Null 
                     || property.Value.Type == JsonSchemaType.None))
-					continue;
+                    continue;
 
-				var key = property.Key;
-				if (string.IsNullOrWhiteSpace(key))
-					key = GetUniqueName(props);
+                var key = property.Key;
+                if (string.IsNullOrWhiteSpace(key))
+                    key = UniquenessHelper.GetUniqueName(props);
 
-			    var isEnum = property.Value.Enum != null && property.Value.Enum.Any();
+                var isEnum = property.Value.Enum != null && property.Value.Enum.Any();
 
-			    var enumName = string.Empty;
+                var enumName = string.Empty;
                 if (isEnum)
                 {
                     enumName = ParseEnum(key, property.Value, enums, property.Value.Description);
                 }
 
-			    var prop = new Property
-				           {
-					           Name = NetNamingMapper.GetPropertyName(key),
+                var type = GetType(property, isEnum, enumName);
+                if (type == null)
+                    continue;
+
+                var prop = new Property
+                           {
+                               Name = NetNamingMapper.GetPropertyName(key),
                                OriginalName = key,
-                               Type = GetType(property, isEnum, enumName),
-					           Description = property.Value.Description,
+                               Type = type,
+                               Description = property.Value.Description,
                                IsEnum = isEnum
-				           };
+                           };
 
 
-				ParseComplexTypes(objects, property.Value, prop, property, key, enums);
-				props.Add(prop);
-			}
-		}
+                ParseComplexTypes(objects, property.Value, prop, property, key, enums);
+                props.Add(prop);
+            }
+        }
 
         private string ParseEnum(string key, JsonSchema schema, IDictionary<string, ApiEnum> enums, string description)
         {
@@ -434,7 +479,7 @@ namespace Raml.Tools
                 if (IsAlreadyAdded(enums, apiEnum))
                     return name;
 
-                apiEnum.Name = GetUniqueName(enums, name);
+                apiEnum.Name = UniquenessHelper.GetUniqueName(enums, name);
             }
 
             enums.Add(apiEnum.Name, apiEnum);
@@ -458,7 +503,7 @@ namespace Raml.Tools
                 if(IsAlreadyAdded(enums, apiEnum))
                     return name;
 
-                apiEnum.Name = GetUniqueName(enums, name);
+                apiEnum.Name = UniquenessHelper.GetUniqueName(enums, name);
             }
 
             enums.Add(apiEnum.Name, apiEnum);
@@ -481,79 +526,46 @@ namespace Raml.Tools
             return false;
         }
 
-        private string GetUniqueName(IDictionary<string, ApiEnum> enums, string name)
+
+        private void ParseComplexTypes(IDictionary<string, ApiObject> objects, JsonSchema schema, Property prop, KeyValuePair<string, JsonSchema> property, string key, IDictionary<string, ApiEnum> enums)
         {
-            for (var i = 0; i < 9; i++)
+            if (schema.Type.HasValue && (schema.Type == JsonSchemaType.Object || schema.Type.Value.ToString().Contains("Object")) && schema.Properties != null)
             {
-                var unique = name + suffixes[i];
-                if (enums.All(p => p.Key != unique))
-                    return unique;
-            }
-            for (var i = 0; i < 100; i++)
-            {
-                var unique = name + "A" + i;
-                if (enums.All(p => p.Key != unique))
-                    return unique;
-            }
-            throw new InvalidOperationException("Could not find a unique name for enum");
-        }
-
-        private string GetUniqueName(ICollection<Property> props)
-		{
-			for (var i = 0; i < 7; i++)
-			{
-				var unique = suffixes[i];
-				if (props.All(p => p.Name != unique))
-					return unique;
-			}
-			for (var i = 0; i < 100; i++)
-			{
-				var unique = "A" + i;
-				if (props.All(p => p.Name != unique))
-					return unique;
-			}
-			throw new InvalidOperationException("Could not find a unique name for property");
-		}
-
-		private void ParseComplexTypes(IDictionary<string, ApiObject> objects, JsonSchema schema, Property prop, KeyValuePair<string, JsonSchema> property, string key, IDictionary<string, ApiEnum> enums)
-		{
-			if (schema.Type.HasValue && (schema.Type == JsonSchemaType.Object || schema.Type.Value.ToString().Contains("Object")) && schema.Properties != null)
-			{
-			    if (!string.IsNullOrWhiteSpace(schema.Id) && ids.Contains(schema.Id))
+                if (!string.IsNullOrWhiteSpace(schema.Id) && ids.Contains(schema.Id))
                         return;
-			    
+                
                 if (!string.IsNullOrWhiteSpace(schema.Id))
                     ids.Add(schema.Id);
 
-			    var type = string.IsNullOrWhiteSpace(property.Value.Id) ? key : property.Value.Id;
-			    ParseObject(type, schema.Properties, objects, enums);
-				prop.Type = NetNamingMapper.GetObjectName(type);
+                var type = string.IsNullOrWhiteSpace(property.Value.Id) ? key : property.Value.Id;
+                type = ParseObject(type, schema.Properties, objects, enums);
+                prop.Type = NetNamingMapper.GetObjectName(type);
                 return;
-			}
+            }
 
-		    if (schema.Type == JsonSchemaType.Array)
-		        ParseArray(objects, schema, prop, property, enums);
+            if (schema.Type == JsonSchemaType.Array)
+                ParseArray(objects, schema, prop, property, enums);
 
-		}
+        }
 
-		private void ParseArray(IDictionary<string, ApiObject> objects, JsonSchema schema, Property prop, KeyValuePair<string, JsonSchema> property, IDictionary<string, ApiEnum> enums)
-		{
-			if (schema.Items == null || !schema.Items.Any())
-				return;
+        private void ParseArray(IDictionary<string, ApiObject> objects, JsonSchema schema, Property prop, KeyValuePair<string, JsonSchema> property, IDictionary<string, ApiEnum> enums)
+        {
+            if (schema.Items == null || !schema.Items.Any())
+                return;
 
-			var netType = NetTypeMapper.Map(schema.Items.First().Type);
-			if (netType != null)
-			{
+            var netType = NetTypeMapper.Map(schema.Items.First().Type);
+            if (netType != null)
+            {
                 prop.Type = CollectionTypeHelper.GetCollectionType(netType);
-			}
-			else
-			{
+            }
+            else
+            {
                 prop.Type = CollectionTypeHelper.GetCollectionType(NetNamingMapper.GetObjectName(property.Key));
-				foreach (var item in schema.Items)
-				{
-					ParseObject(property.Key, item.Properties, objects, enums);
-				}
-			}
-		}
-	}
+                foreach (var item in schema.Items)
+                {
+                    ParseObject(property.Key, item.Properties, objects, enums);
+                }
+            }
+        }
+    }
 }

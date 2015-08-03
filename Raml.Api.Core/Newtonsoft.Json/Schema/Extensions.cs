@@ -40,7 +40,7 @@ namespace Newtonsoft.JsonV4.Schema
         /// <param name="source">The source <see cref="JToken"/> to test.</param>
         /// <param name="schema">The schema to test with.</param>
         /// <returns>
-        /// 	<c>true</c> if the specified <see cref="JToken"/> is valid; otherwise, <c>false</c>.
+        ///     <c>true</c> if the specified <see cref="JToken"/> is valid; otherwise, <c>false</c>.
         /// </returns>
         public static bool IsValid(this JToken source, JsonSchema schema)
         {
@@ -56,7 +56,7 @@ namespace Newtonsoft.JsonV4.Schema
         /// <param name="schema">The schema to test with.</param>
         /// <param name="errorMessages">When this method returns, contains any error messages generated while validating. </param>
         /// <returns>
-        /// 	<c>true</c> if the specified <see cref="JToken"/> is valid; otherwise, <c>false</c>.
+        ///     <c>true</c> if the specified <see cref="JToken"/> is valid; otherwise, <c>false</c>.
         /// </returns>
         public static bool IsValid(this JToken source, JsonSchema schema, out IList<string> errorMessages)
         {
