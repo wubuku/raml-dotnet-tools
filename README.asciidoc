@@ -569,4 +569,4 @@ Yes, RAML Tools for .NET uses T4 templates for code generation of client and ser
 
 *I already have an API built using ASP.NET WebApi - how do I adopt RAML for my project?*
 
-The reverse engineering scenario is under development, and will be released soon. This allows you to extract a RAML definition for an existing WebApi project, allowing consumers of your API to quickly generate a client using the RAML Tools.
+To extract a RAML definition for an existing WebApi project, simply enable RAML <<Metadata>> output from the project context menu.
