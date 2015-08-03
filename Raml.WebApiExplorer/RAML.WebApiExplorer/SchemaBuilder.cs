@@ -58,7 +58,10 @@ namespace RAML.WebApiExplorer
 
 	    private static string AddTrailingComma(string schema)
 	    {
-            return schema.Substring(0, schema.Length - "\r\n".Length) + "," + Environment.NewLine;
+            if(!String.IsNullOrWhiteSpace(schema) && schema.Length > "\r\n".Length)
+                return schema.Substring(0, schema.Length - "\r\n".Length) + "," + Environment.NewLine;
+
+	        return schema;
 	    }
 
 	    private string GetDefinitions()
@@ -288,7 +291,7 @@ namespace RAML.WebApiExplorer
 	                schema += GetOneOfProperty(prop, subclasses, pad);
 	        }
 
-	        if (prop != props.Last() && schema.Length > 2)
+            if (prop != props.Last() && !String.IsNullOrWhiteSpace(schema) && schema.Length > "\r\n".Length)
 	            schema = schema.Substring(0, schema.Length - "\r\n".Length) + ",\r\n";
 
 	        return schema;
