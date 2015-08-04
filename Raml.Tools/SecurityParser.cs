@@ -34,22 +34,22 @@ namespace Raml.Tools
             var settings = securityScheme.Settings;
             var schemeDescriptor = securityScheme.DescribedBy;
 
-            return new Security
-                   {
-                       AccessTokenUri = settings == null ? null : settings.AccessTokenUri,
-                       AuthorizationGrants = settings == null ? null : settings.AuthorizationGrants,
-                       AuthorizationUri = settings == null ? null : settings.AuthorizationUri,
-                       Scopes = settings == null ? null : settings.Scopes,
-                       RequestTokenUri = settings == null ? null : settings.RequestTokenUri,
-                       TokenCredentialsUri = settings == null ? null : settings.TokenCredentialsUri,
-                       Headers = schemeDescriptor == null || schemeDescriptor.Headers == null
-                           ? new List<GeneratorParameter>()
-                           : ParametersMapper.Map(schemeDescriptor.Headers),
-                       QueryParameters = schemeDescriptor == null || schemeDescriptor.QueryParameters == null
-                           ? new List<GeneratorParameter>()
-                           : ParametersMapper.Map(schemeDescriptor.QueryParameters)
-                   };
-        }
+			return new Security
+			       {
+				       AccessTokenUri = settings == null ? null : settings.AccessTokenUri,
+				       AuthorizationGrants = settings == null ? null : settings.AuthorizationGrants.ToArray(),
+				       AuthorizationUri = settings == null ? null : settings.AuthorizationUri,
+				       Scopes = settings == null ? null : settings.Scopes.ToArray(),
+				       RequestTokenUri = settings == null ? null : settings.RequestTokenUri,
+				       TokenCredentialsUri = settings == null ? null : settings.TokenCredentialsUri,
+				       Headers = schemeDescriptor == null || schemeDescriptor.Headers == null
+					       ? new List<GeneratorParameter>()
+					       : ParametersMapper.Map(schemeDescriptor.Headers).ToList(),
+				       QueryParameters = schemeDescriptor == null || schemeDescriptor.QueryParameters == null
+					       ? new List<GeneratorParameter>()
+					       : ParametersMapper.Map(schemeDescriptor.QueryParameters).ToList()
+			       };
+		}
 
         private static SecurityScheme GetSchemeWithType(RamlDocument ramlDocument, string type)
         {
