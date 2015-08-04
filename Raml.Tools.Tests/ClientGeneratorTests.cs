@@ -265,7 +265,7 @@ namespace Raml.Tools.Tests
         public async Task ShouldBuildResponseObjects_FromTwitter()
         {
             var model = await GetTwitterGeneratedModel();
-            Assert.AreEqual(61, model.ResponseObjects.Count);
+            Assert.AreEqual(62, model.ResponseObjects.Count);
         }
 
         [Test]
@@ -286,7 +286,7 @@ namespace Raml.Tools.Tests
         public async Task ShouldBuildResponseObjects_FromGitHub()
         {
             var model = await GetGitHubGeneratedModel();
-            Assert.AreEqual(66, model.ResponseObjects.Count);
+            Assert.AreEqual(67, model.ResponseObjects.Count);
         }
 
 

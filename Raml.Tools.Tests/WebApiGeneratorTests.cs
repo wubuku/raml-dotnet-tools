@@ -92,7 +92,7 @@ namespace Raml.Tools.Tests
         {
             var model = await GetTwitterGeneratedModel();
             Assert.IsTrue(model.Objects.Any(o => o.Name == "ContainedWithin"));
-            Assert.AreEqual(61, model.Objects.Count());
+            Assert.AreEqual(62, model.Objects.Count());
         }
 
         [Test]
