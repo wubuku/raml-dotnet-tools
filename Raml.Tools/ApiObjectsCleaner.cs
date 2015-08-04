@@ -19,7 +19,7 @@ namespace Raml.Tools
             this.schemaObjects = schemaObjects;
         }
 
-		public void CleanObjects(IEnumerable<ControllerObject> controllers, IDictionary<string, ApiObject> objects, Func<IEnumerable<ControllerObject>, ApiObject, bool> checkAction)
+        public void CleanObjects(IEnumerable<ControllerObject> controllers, IDictionary<string, ApiObject> objects, Func<IEnumerable<ControllerObject>, ApiObject, bool> checkAction)
         {
             var keys = objects.Keys.ToArray();
             foreach (var key in keys)
@@ -38,7 +38,6 @@ namespace Raml.Tools
                 objects.Remove(key);
             }
         }
-
 
         public void CleanObjects(IEnumerable<ClassObject> classes, IDictionary<string, ApiObject> objects, Func<IEnumerable<ClassObject>, ApiObject, bool> checkAction)
         {

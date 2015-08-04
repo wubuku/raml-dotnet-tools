@@ -1,10 +1,11 @@
-using Raml.Common;
-using Raml.Parser.Expressions;
-using Raml.Tools.Pluralization;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
+using Raml.Common;
+using Raml.Parser.Expressions;
+using Raml.Tools.Pluralization;
 
 namespace Raml.Tools
 {
@@ -188,6 +189,7 @@ namespace Raml.Tools
             var resources = raml.Resources;
             ParseResourceRequestsRecursively(resources, "");
         }
+
 
         protected IDictionary<string, ApiObject> GetResponseObjects()
         {

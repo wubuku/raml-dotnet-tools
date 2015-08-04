@@ -312,6 +312,7 @@ namespace Raml.Tools
             return returnType;
         }
 
+
         protected GeneratorParameter GetParameter(string key, Method method, Resource resource, string fullUrl)
         {
             var schema = GetJsonSchemaOrDefault(method.Body);
@@ -392,6 +393,12 @@ namespace Raml.Tools
 
             var type = schema.ToLowerInvariant();
 
+            if (schemaObjects.Values.Any(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type))
+            {
+                var apiObject = schemaObjects.Values.First(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type);
+                generatorParameter = CreateGeneratorParameter(apiObject);
+            }
+
             if (schemaRequestObjects.Values.Any(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type))
             {
                 var apiObject = schemaRequestObjects.Values.First(o => o.Properties.Any() && o.Name.ToLowerInvariant() == type);
@@ -399,7 +406,6 @@ namespace Raml.Tools
             }
             return generatorParameter;
         }
-
 
         private GeneratorParameter GetParameterByParametrizedName(Method method, Resource resource, string schema, string fullUrl)
         {
