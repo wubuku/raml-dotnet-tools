@@ -9,10 +9,10 @@ schemas:
   post:
     description: Create a new purchase order
     body:
-      schema: purchaseOrder
+      schema: PurchaseOrderType
   /{id}:
     get:
       responses:
         200:
           body:
-            schema: purchaseOrder
+            schema: PurchaseOrderType
