@@ -156,6 +156,7 @@ namespace <#= model.Namespace #>
 	                {
                         if(method.RequestContentTypes.Any(c => c.Contains("xml")) && !method.RequestContentTypes.Any(c => c.Contains("json"))){
 #>
+
             var stringWriter = new StringWriter();
         	new XmlSerializer(typeof (Models.<#= method.Parameter.Type #>)).Serialize(stringWriter, <#= method.Parameter.Name #>);
             req.Content = new  StringContent(stringWriter.GetStringBuilder().ToString(), Encoding.UTF8, "application/xml");     
@@ -354,7 +355,7 @@ namespace <#= model.Namespace #>
 #>
             if(request.Formatter == null)
                 request.Formatter = new JsonMediaTypeFormatter();
-
+<#
                         }
 	                }
                 }
@@ -525,7 +526,7 @@ namespace <#= model.Namespace #>
 
 <#
 var hasXmlSchemas = false;
-foreach (var apiObject in model.Objects.Values.Where(o => !string.IsNullOrWhiteSpace(o.GeneratedCode)))
+foreach (var apiObject in model.Objects.Where(o => !string.IsNullOrWhiteSpace(o.GeneratedCode)))
 {
     hasXmlSchemas = true;
 #>
@@ -535,6 +536,7 @@ foreach (var apiObject in model.Objects.Values.Where(o => !string.IsNullOrWhiteS
 <#
 }
 #>
+
 
 
 
@@ -932,7 +934,7 @@ foreach (var apiObject in model.ApiResponseObjects)
                     var task = RawContent.ReadAsStreamAsync();
 
                     var xmlStream = task.GetAwaiter().GetResult();
-                    typedContent = (<#= body.Type #>)new XmlSerializer(typeof(Models.<#= body.Type #>)).Deserialize(xmlStream);
+                    typedContent = (<#= body.Type #>)new XmlSerializer(typeof(<#= body.Type #>)).Deserialize(xmlStream);
                 }
                 else
                 {

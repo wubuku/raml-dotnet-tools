@@ -19,6 +19,9 @@ namespace Raml.Tools.ClientGenerator
         public string RequestType { get; set; }
         public string ResponseType { get; set; }
 
+        public IEnumerable<string> RequestContentTypes { get; set; }
+        public IEnumerable<string> ResponseContentTypes { get; set; }
+
         public string XmlComment
         {
             get

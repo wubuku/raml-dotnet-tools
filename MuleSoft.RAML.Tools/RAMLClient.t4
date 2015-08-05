@@ -345,7 +345,7 @@ namespace $(namespace)
 #>
             if(request.Formatter == null)
                 request.Formatter = new JsonMediaTypeFormatter();
-
+<#
                         }
 	                }
                 }
@@ -516,7 +516,7 @@ namespace $(namespace)
 
 <#
 var hasXmlSchemas = false;
-foreach (var apiObject in model.Objects.Values.Where(o => !string.IsNullOrWhiteSpace(o.GeneratedCode)))
+foreach (var apiObject in model.Objects.Where(o => !string.IsNullOrWhiteSpace(o.GeneratedCode)))
 {
     hasXmlSchemas = true;
 #>
@@ -925,7 +925,7 @@ foreach (var apiObject in model.ApiResponseObjects)
                     var task = RawContent.ReadAsStreamAsync();
 
                     var xmlStream = task.GetAwaiter().GetResult();
-                    typedContent = (<#= body.Type #>)new XmlSerializer(typeof(Models.<#= body.Type #>)).Deserialize(xmlStream);
+                    typedContent = (<#= body.Type #>)new XmlSerializer(typeof(<#= body.Type #>)).Deserialize(xmlStream);
                 }
                 else
                 {

@@ -289,9 +289,6 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(67, model.ResponseObjects.Count);
         }
 
-
-
-
         [Test]
         public async Task ShouldParseArrays()
         {

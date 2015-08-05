@@ -698,11 +698,11 @@ schemas:
     responses:
       200:
         body:
-          schema: purchaseOrder
+          schema: PurchaseOrderType
 ----
 
 
-Note that the schema does not use the key on the schemas section ("xmlschema") but "purchaseOrder" which is the name of the type as it appears on the XML.
+Note that the schema does not use the key on the schemas section ("xmlschema") but "PurchaseOrderType" which is the name of a type as it appears on the XML.
 
 
 
