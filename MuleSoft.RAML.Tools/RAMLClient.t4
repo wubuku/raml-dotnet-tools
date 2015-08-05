@@ -500,7 +500,7 @@ namespace $(namespace)
 namespace $(namespace).Models
 {
 <#
-foreach (var apiObject in model.Objects.Values)
+foreach (var apiObject in model.Objects)
 {
 	if (!string.IsNullOrWhiteSpace(apiObject.Description))
 	{

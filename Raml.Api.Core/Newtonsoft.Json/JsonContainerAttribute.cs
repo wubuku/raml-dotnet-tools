@@ -68,7 +68,7 @@ namespace Newtonsoft.JsonV4
         /// Gets or sets a value that indicates whether to preserve object references.
         /// </summary>
         /// <value>
-        /// 	<c>true</c> to keep object reference; otherwise, <c>false</c>. The default is <c>false</c>.
+        ///     <c>true</c> to keep object reference; otherwise, <c>false</c>. The default is <c>false</c>.
         /// </value>
         public bool IsReference
         {
@@ -80,7 +80,7 @@ namespace Newtonsoft.JsonV4
         /// Gets or sets a value that indicates whether to preserve collection's items references.
         /// </summary>
         /// <value>
-        /// 	<c>true</c> to keep collection's items object references; otherwise, <c>false</c>. The default is <c>false</c>.
+        ///     <c>true</c> to keep collection's items object references; otherwise, <c>false</c>. The default is <c>false</c>.
         /// </value>
         public bool ItemIsReference
         {

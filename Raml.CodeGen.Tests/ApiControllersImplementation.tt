@@ -11,7 +11,7 @@
 <#
 
 	var parser = new RamlParser();
-	var ramlFile = Host.ResolvePath("twitter.raml");
+	var ramlFile = Host.ResolvePath("files/movies.raml");
 	var raml = parser.Load(ramlFile);
 	var service = new WebApiGeneratorService(raml);
 	var model = service.BuildModel();
@@ -38,7 +38,7 @@ namespace <#= model.Namespace #>
 		{
 #>
 
-        public IHttpActionResult <#= method.Name #>(<#= method.ParametersString #>)
+        public async Task<IHttpActionResult> <#= method.Name #>(<#= method.ParametersString #>)
         {
             // put your code here
             return Ok();

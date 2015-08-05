@@ -5,16 +5,16 @@ using Raml.Tools.ClientGenerator;
 
 namespace Raml.Tools
 {
-	public class HeadersParser
-	{
-		public static ApiObject GetHeadersObject(ClientGeneratorMethod generatedMethod, Method method, string objectName)
-		{
-			return new ApiObject
-			{
-			    Name = generatedMethod.Name + objectName + "Header",
-			    Properties = ParseHeaders(method)
-			};
-		}
+    public class HeadersParser
+    {
+        public static ApiObject GetHeadersObject(ClientGeneratorMethod generatedMethod, Method method, string objectName)
+        {
+            return new ApiObject
+            {
+                Name = generatedMethod.Name + objectName + "Header",
+                Properties = ParseHeaders(method)
+            };
+        }
 
         public static ApiObject GetHeadersObject(ClientGeneratorMethod generatedMethod, Response response, string objectName)
         {
@@ -25,23 +25,23 @@ namespace Raml.Tools
             };
         }
 
-		public static IList<Property> ParseHeaders(Method method)
-		{
+        public static IList<Property> ParseHeaders(Method method)
+        {
             return ConvertHeadersToProperties(method.Headers);
-		}
+        }
 
         public static IList<Property> ParseHeaders(Response response)
         {
             return ConvertHeadersToProperties(response.Headers);
         }
 
-		public static IList<Property> ConvertHeadersToProperties(IEnumerable<Parameter> headers)
-		{
+        public static IList<Property> ConvertHeadersToProperties(IEnumerable<Parameter> headers)
+        {
             var properties = new List<Property>();
-		    if (headers == null)
-		    {
-		        return properties;
-		    }
+            if (headers == null)
+            {
+                return properties;
+            }
 
             foreach (var header in headers)
             {
@@ -61,6 +61,6 @@ namespace Raml.Tools
                                });
             }
             return properties;
-		}
-	}
+        }
+    }
 }

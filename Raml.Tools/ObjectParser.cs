@@ -1,45 +1,59 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Raml.Common;
 
 namespace Raml.Tools
 {
-	public class ObjectParser
-	{
-		private readonly JsonSchemaParser jsonSchemaParser = new JsonSchemaParser();
+    public class ObjectParser
+    {
+        private readonly JsonSchemaParser jsonSchemaParser = new JsonSchemaParser();
 
-		public ApiObject ParseObject(string key, string value, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings, IDictionary<string, ApiEnum> enums)
-		{
-			var obj = ParseSchema(key, value, objects, warnings, enums);
-			if (obj == null)
-				return null;
+        public ApiObject ParseObject(string key, string value, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings, IDictionary<string, ApiEnum> enums, IDictionary<string, ApiObject> otherObjects, IDictionary<string, ApiObject> schemaObjects)
+        {
+            var obj = ParseSchema(key, value, objects, warnings, enums, otherObjects, schemaObjects);
+            if (obj == null)
+                return null;
 
-			obj.Name = NetNamingMapper.GetObjectName(key);
+            obj.Name = NetNamingMapper.GetObjectName(key);
 
-			return obj;
-		}
+            if (schemaObjects.Values.Any(o => o.Name == obj.Name) || objects.Values.Any(o => o.Name == obj.Name) ||
+                otherObjects.Values.Any(o => o.Name == obj.Name))
+            {
+                if(UniquenessHelper.HasSameProperties(obj, objects, key, otherObjects, schemaObjects))
+                    return null;
 
-		private ApiObject ParseSchema(string key, string schema, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings, IDictionary<string, ApiEnum> enums)
-		{
-			if (schema == null)
-				return null;
+                obj.Name = UniquenessHelper.GetUniqueName(objects, obj.Name, otherObjects, schemaObjects);
+            }
 
-			// is a reference, should then be defined elsewhere
-			if (schema.Contains("<<") && schema.Contains(">>"))
-				return null;
+            return obj;
+        }
 
-			if (schema.Trim().StartsWith("<"))
-				return ParseXmlSchema(key, schema, objects);
+        private ApiObject ParseSchema(string key, string schema, IDictionary<string, ApiObject> objects, IDictionary<string, string> warnings, IDictionary<string, ApiEnum> enums, IDictionary<string, ApiObject> otherObjects, IDictionary<string, ApiObject> schemaObjects)
+        {
+            if (schema == null)
+                return null;
 
-			return jsonSchemaParser.Parse(key, schema, objects, warnings, enums);
-		}
+            // is a reference, should then be defined elsewhere
+            if (schema.Contains("<<") && schema.Contains(">>"))
+                return null;
+
+            if (schema.Trim().StartsWith("<"))
+                return ParseXmlSchema(key, schema, objects);
+
+            if (!schema.Contains("{"))
+                return null;
+
+            return jsonSchemaParser.Parse(key, schema, objects, warnings, enums, otherObjects, schemaObjects);
+        }
 
 
 
-		// TODO
-		private ApiObject ParseXmlSchema(string key, string schema, IDictionary<string, ApiObject> objects)
-		{
-			throw new System.NotImplementedException("XML Schema Parsing not implemented - " + key);
-		}
+        // TODO
+        private ApiObject ParseXmlSchema(string key, string schema, IDictionary<string, ApiObject> objects)
+        {
+            throw new System.NotImplementedException("XML Schema Parsing not implemented - " + key);
+        }
 
-	}
+    }
 }
