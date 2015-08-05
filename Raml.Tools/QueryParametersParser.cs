@@ -29,19 +29,24 @@ namespace Raml.Tools
             {
                 var description = ParserHelpers.RemoveNewLines(parameter.Value.Description);
 
-                properties.Add(new Property
-                               {
-                                   Type =
-                                       NetTypeMapper.Map(parameter.Value.Type) +
-                                       (NetTypeMapper.Map(parameter.Value.Type) == "string" || parameter.Value.Required ? "" : "?"),
-                                   Name = NetNamingMapper.GetPropertyName(parameter.Key),
+				properties.Add(new Property
+				               {
+					               Type = GetType(parameter.Value),
+					               Name = NetNamingMapper.GetPropertyName(parameter.Key),
                                    OriginalName = parameter.Key,
-                                   Description = description,
-                                   Example = parameter.Value.Example,
-                                   Required = parameter.Value.Required
-                               });
-            }
-            return properties;
-        }
-    }
+					               Description = description,
+					               Example = parameter.Value.Example,
+					               Required = parameter.Value.Required
+				               });
+			}
+			return properties;
+		}
+
+	    private static string GetType(Parameter param)
+	    {
+	        return param.Type == null ? "string" : (
+	            NetTypeMapper.Map(param.Type) +
+	            (NetTypeMapper.Map(param.Type) == "string" || param.Required ? "" : "?"));
+	    }
+	}
 }
