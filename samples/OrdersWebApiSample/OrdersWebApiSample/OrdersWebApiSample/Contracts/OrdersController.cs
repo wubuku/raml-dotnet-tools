@@ -69,7 +69,7 @@ namespace OrdersWebApiSample.OrdersXml
         }
 
         /// <summary>
-		/// gets the items of an order
+		/// gets the not shipped items of an order
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns>ItemsType</returns>
