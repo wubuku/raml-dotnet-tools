@@ -233,6 +233,14 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(6, model.Objects.Count());
         }
 
+        [Test]
+        public async Task ShouldInheritUriParametersType_Issue23()
+        {
+            var model = await GetIssue23GeneratedModel();
+            Assert.AreEqual("int", model.Controllers.First().Methods.First(m => m.Name == "GetById").UriParameters.First().Type);
+            Assert.AreEqual("int", model.Controllers.First().Methods.First(m => m.Name == "GetHistory").UriParameters.First().Type);
+        }
+        
 
 
         private static string GetXml(string comment)
@@ -359,5 +367,12 @@ namespace Raml.Tools.Tests
             return model;
         }
 
+        private static async Task<WebApiGeneratorModel> GetIssue23GeneratedModel()
+        {
+            var raml = await new RamlParser().LoadAsync("files/issue23.raml");
+            var model = new WebApiGeneratorService(raml).BuildModel();
+
+            return model;
+        }
     }
 }

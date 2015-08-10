@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using Raml.Parser.Expressions;
 using Raml.Tools.ClientGenerator;
+using Raml.Tools.WebApiGenerator;
 
 namespace Raml.Tools.Tests
 {
@@ -44,7 +45,7 @@ namespace Raml.Tools.Tests
             var uriParameterObjects = new Dictionary<string, ApiObject>();
             var generatorMethod = new ClientGeneratorMethod { Name = "MethodOne"};
 
-            generator.Generate(resource, "/movies/{bucket}/abc{token}{code}", generatorMethod, uriParameterObjects);
+            generator.Generate(resource, "/movies/{bucket}/abc{token}{code}", generatorMethod, uriParameterObjects, new Dictionary<string, Parameter>());
 
             Assert.AreEqual(1, uriParameterObjects.Count);
             Assert.AreEqual(3, generatorMethod.UriParameters.Count());
@@ -174,5 +175,336 @@ namespace Raml.Tools.Tests
         }
 
 
+        [Test]
+        public void Should_Inherit_Uri_Parameters_When_Nested_Resources()
+        {
+            var doc = new RamlDocument { Title = "test" };
+
+            var uriParameters1 = new Dictionary<string, Parameter>
+                                {
+                                    {
+                                        "id", new Parameter
+                                                {
+                                                    DisplayName = "id",
+                                                    Type = "integer"
+                                                }
+                                    }
+                                };
+
+            var uriParameters2 = new Dictionary<string, Parameter>
+                                {
+                                    {
+                                        "current", new Parameter
+                                                 {
+                                                     DisplayName = "current",
+                                                     Type = "boolean"
+                                                 }
+                                    }
+                                };
+
+            var methods = new List<Method>
+                          {
+                              new Method
+                              {
+                                  Verb = "get"
+                              }
+                          };
+
+            var resources = new Collection<Resource>
+            {
+                new Resource
+                {
+                    RelativeUri = "/movies",
+                    Methods = methods,
+                    Resources = new[]
+                    {
+                        new Resource
+                        {
+                            RelativeUri = "/{id}",
+                            Methods = methods,
+                            UriParameters = uriParameters1,
+                            Resources = new Collection<Resource>
+                            {
+                                new Resource
+                                {
+                                    RelativeUri = "/something",
+                                    Methods = methods,
+                                    Resources = new Collection<Resource>
+                                    {
+                                        new Resource
+                                        {
+                                            RelativeUri = "/{current}",
+                                            Methods = methods,
+                                            UriParameters = uriParameters2,
+                                            Resources = new Collection<Resource>
+                                            {
+                                                new Resource
+                                                {
+                                                    RelativeUri = "/deep",
+                                                    Methods = methods
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            doc.Resources = resources;
+
+            var service = new WebApiGeneratorService(doc);
+            var model = service.BuildModel();
+            Assert.AreEqual("bool", model.Controllers.First().Methods.First(m => m.Name.Contains("Deep")).UriParameters.First(p => p.Name == "current").Type);
+            Assert.AreEqual("int", model.Controllers.First().Methods.First(m => m.Name.Contains("Deep")).UriParameters.First(p => p.Name == "id").Type);
+        }
+
+        [Test]
+        public void Should_Inherit_Uri_Parameters_When_Nested_Resources_Case2()
+        {
+            var doc = new RamlDocument { Title = "test" };
+
+            var uriParameters1 = new Dictionary<string, Parameter>
+                                {
+                                    {
+                                        "id", new Parameter
+                                                {
+                                                    DisplayName = "id",
+                                                    Type = "integer"
+                                                }
+                                    }
+                                };
+
+            var uriParameters2 = new Dictionary<string, Parameter>
+                                {
+                                    {
+                                        "current", new Parameter
+                                                 {
+                                                     DisplayName = "current",
+                                                     Type = "boolean"
+                                                 }
+                                    }
+                                };
+
+            var methods = new List<Method>
+                          {
+                              new Method
+                              {
+                                  Verb = "get"
+                              }
+                          };
+
+            var resources = new Collection<Resource>
+            {
+                new Resource
+                {
+                    RelativeUri = "/{id}",
+                    Methods = methods,
+                    UriParameters = uriParameters1,
+                    Resources = new Collection<Resource>
+                    {
+                        new Resource
+                        {
+                            RelativeUri = "/something",
+                            Methods = methods,
+                            Resources = new Collection<Resource>
+                            {
+                                new Resource
+                                {
+                                    RelativeUri = "/{current}",
+                                    Methods = methods,
+                                    UriParameters = uriParameters2,
+                                    Resources = new Collection<Resource>
+                                    {
+                                        new Resource
+                                        {
+                                            RelativeUri = "/deep",
+                                            Methods = methods
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            doc.Resources = resources;
+
+            var service = new WebApiGeneratorService(doc);
+            var model = service.BuildModel();
+            Assert.AreEqual("bool", model.Controllers.First().Methods.First(m => m.Name.Contains("Deep")).UriParameters.First(p => p.Name == "current").Type);
+            Assert.AreEqual("int", model.Controllers.First().Methods.First(m => m.Name.Contains("Deep")).UriParameters.First(p => p.Name == "id").Type);
+        }
+
+        [Test]
+        public void Should_Inherit_Uri_Parameters_When_Nested_Resources_Client()
+        {
+            var doc = new RamlDocument { Title = "test" };
+
+            var uriParameters1 = new Dictionary<string, Parameter>
+                                {
+                                    {
+                                        "id", new Parameter
+                                                {
+                                                    DisplayName = "id",
+                                                    Type = "integer"
+                                                }
+                                    }
+                                };
+
+            var uriParameters2 = new Dictionary<string, Parameter>
+                                {
+                                    {
+                                        "current", new Parameter
+                                                 {
+                                                     DisplayName = "current",
+                                                     Type = "boolean"
+                                                 }
+                                    }
+                                };
+
+            var methods = new List<Method>
+                          {
+                              new Method
+                              {
+                                  Verb = "get"
+                              }
+                          };
+
+            var resources = new Collection<Resource>
+            {
+                new Resource
+                {
+                    RelativeUri = "/movies",
+                    Methods = methods,
+                    Resources = new[]
+                    {
+                        new Resource
+                        {
+                            RelativeUri = "/{id}",
+                            Methods = methods,
+                            UriParameters = uriParameters1,
+                            Resources = new Collection<Resource>
+                            {
+                                new Resource
+                                {
+                                    RelativeUri = "/something",
+                                    Methods = methods,
+                                    Resources = new Collection<Resource>
+                                    {
+                                        new Resource
+                                        {
+                                            RelativeUri = "/{current}",
+                                            Methods = methods,
+                                            UriParameters = uriParameters2,
+                                            Resources = new Collection<Resource>
+                                            {
+                                                new Resource
+                                                {
+                                                    RelativeUri = "/deep",
+                                                    Methods = methods
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            doc.Resources = resources;
+
+            var service = new ClientGeneratorService(doc,"test");
+            var model = service.BuildModel();
+            Assert.AreEqual("bool", model.Classes.First(m => m.Name.Contains("Deep")).Methods.First().UriParameters.First(p => p.Name == "current").Type);
+            Assert.AreEqual("int", model.Classes.First(m => m.Name.Contains("Deep")).Methods.First().UriParameters.First(p => p.Name == "id").Type);
+        }
+
+        [Test]
+        public void Should_Inherit_Uri_Parameters_When_Nested_Resources_ClientCase2()
+        {
+            var doc = new RamlDocument { Title = "test" };
+
+            var uriParameters1 = new Dictionary<string, Parameter>
+                                {
+                                    {
+                                        "id", new Parameter
+                                                {
+                                                    DisplayName = "id",
+                                                    Type = "integer"
+                                                }
+                                    }
+                                };
+
+            var uriParameters2 = new Dictionary<string, Parameter>
+                                {
+                                    {
+                                        "current", new Parameter
+                                                 {
+                                                     DisplayName = "current",
+                                                     Type = "boolean"
+                                                 }
+                                    }
+                                };
+
+            var methods = new List<Method>
+                          {
+                              new Method
+                              {
+                                  Verb = "get"
+                              }
+                          };
+
+            var resources = new Collection<Resource>
+            {
+                new Resource
+                {
+                    RelativeUri = "/{id}",
+                    Methods = methods,
+                    UriParameters = uriParameters1,
+                    Resources = new Collection<Resource>
+                    {
+                        new Resource
+                        {
+                            RelativeUri = "/something",
+                            Methods = methods,
+                            Resources = new Collection<Resource>
+                            {
+                                new Resource
+                                {
+                                    RelativeUri = "/{current}",
+                                    Methods = methods,
+                                    UriParameters = uriParameters2,
+                                    Resources = new Collection<Resource>
+                                    {
+                                        new Resource
+                                        {
+                                            RelativeUri = "/deep",
+                                            Methods = methods
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            doc.Resources = resources;
+
+            var service = new ClientGeneratorService(doc,"test");
+            var model = service.BuildModel();
+            Assert.AreEqual("bool", model.Classes.First(m => m.Name.Contains("Deep")).Methods.First().UriParameters.First(p => p.Name == "current").Type);
+            Assert.AreEqual("int", model.Classes.First(m => m.Name.Contains("Deep")).Methods.First().UriParameters.First(p => p.Name == "id").Type);
+        }
     }
 }

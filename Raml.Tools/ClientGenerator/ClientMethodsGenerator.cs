@@ -30,7 +30,7 @@ namespace Raml.Tools.ClientGenerator
             this.responseHeadersObjects = responseHeadersObjects;
         }
 
-        public ICollection<ClientGeneratorMethod> GetMethods(Resource resource, string url, ClassObject parent, string objectName)
+        public ICollection<ClientGeneratorMethod> GetMethods(Resource resource, string url, ClassObject parent, string objectName, IDictionary<string, Parameter> parentUriParameters)
         {
             var methodsNames = new List<string>();
             if (parent != null)
@@ -42,14 +42,14 @@ namespace Raml.Tools.ClientGenerator
 
             foreach (var method in resource.Methods)
             {
-                AddGeneratedMethod(resource, url, objectName, method, methodsNames, generatorMethods);
+                AddGeneratedMethod(resource, url, objectName, method, methodsNames, generatorMethods, parentUriParameters);
             }
 
             return generatorMethods;
         }
 
         private void AddGeneratedMethod(Resource resource, string url, string objectName, Method method, ICollection<string> methodsNames, 
-            ICollection<ClientGeneratorMethod> generatorMethods)
+            ICollection<ClientGeneratorMethod> generatorMethods, IDictionary<string, Parameter> parentUriParameters)
         {
             var generatedMethod = BuildClassMethod(url, method, resource);
             if (generatedMethod.ReturnType != "string")
@@ -62,7 +62,7 @@ namespace Raml.Tools.ClientGenerator
 
                 generatedMethod.OkReturnType = GetOkReturnType(generatedMethod);
             }
-            uriParametersGenerator.Generate(resource, url, generatedMethod, uriParameterObjects);
+            uriParametersGenerator.Generate(resource, url, generatedMethod, uriParameterObjects, parentUriParameters);
 
             if (!IsVerbForMethod(method)) return;
 

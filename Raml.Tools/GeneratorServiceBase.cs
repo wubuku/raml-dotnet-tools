@@ -54,7 +54,14 @@ namespace Raml.Tools
             return url.GetHashCode().ToString(CultureInfo.InvariantCulture);
         }
 
-
+        protected static void GetInheritedUriParams(IDictionary<string, Parameter> parentUriParameters, Resource resource)
+        {
+            foreach (var uriParams in resource.UriParameters)
+            {
+                if (!parentUriParameters.ContainsKey(uriParams.Key))
+                    parentUriParameters.Add(uriParams);
+            }
+        }
 
         private void ParseResourceTypesRequests()
         {

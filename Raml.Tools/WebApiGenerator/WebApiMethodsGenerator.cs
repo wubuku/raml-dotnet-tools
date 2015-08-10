@@ -16,7 +16,7 @@ namespace Raml.Tools
         {
         }
 
-        public IEnumerable<ControllerMethod> GetMethods(Resource resource, string url, ControllerObject parent, string objectName)
+        public IEnumerable<ControllerMethod> GetMethods(Resource resource, string url, ControllerObject parent, string objectName, IDictionary<string, Parameter> parentUriParameters)
         {
             var methodsNames = new List<string>();
             if (parent != null && parent.Methods != null)
@@ -28,7 +28,7 @@ namespace Raml.Tools
 
             foreach (var method in resource.Methods)
             {
-                var generatedMethod = BuildControllerMethod(url, method, resource, parent);
+                var generatedMethod = BuildControllerMethod(url, method, resource, parent, parentUriParameters);
 
                 if (IsVerbForMethod(method))
                 {
@@ -49,7 +49,7 @@ namespace Raml.Tools
             return generatorMethods;
         }
 
-        private ControllerMethod BuildControllerMethod(string url, Method method, Resource resource, ControllerObject parent)
+        private ControllerMethod BuildControllerMethod(string url, Method method, Resource resource, ControllerObject parent, IDictionary<string, Parameter> parentUriParameters)
         {
             var relativeUri = UrlGeneratorHelper.GetRelativeUri(url, parent.PrefixUri);
 
@@ -59,7 +59,7 @@ namespace Raml.Tools
             {
                 Name = NetNamingMapper.GetMethodName(method.Verb ?? "Get" + resource.RelativeUri),
                 Parameter = GetParameter(GeneratorServiceHelper.GetKeyForResource(method, resource, parentUrl), method, resource, url),
-                UriParameters = uriParametersGenerator.GetUriParameters(resource, url),
+                UriParameters = uriParametersGenerator.GetUriParameters(resource, url, parentUriParameters),
                 ReturnType = GetReturnType(GeneratorServiceHelper.GetKeyForResource(method, resource, parentUrl), method, resource, url),
                 Comment = GetComment(resource, method),
                 Url = relativeUri,
