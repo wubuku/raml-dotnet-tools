@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Raml.Tools.ClientGenerator;
-
+ 
 namespace Raml.Tools.WebApiGenerator
 {
     [Serializable]
