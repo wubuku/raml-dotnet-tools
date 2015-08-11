@@ -31,7 +31,7 @@ namespace Raml.Common
         }
 
 
-        public RamlIncludesManagerResult Manage(string ramlSource, string destinationFolder, bool confirmOverrite = false)
+        public RamlIncludesManagerResult Manage(string ramlSource, string destinationFolder, string rootRamlPath, bool confirmOverrite = false)
         {
             string path;
             string[] lines;
@@ -61,7 +61,7 @@ namespace Raml.Common
             if (lines.Any(l => l.Contains(IncludeDirective)) && !Directory.Exists(destinationFolder))
                 Directory.CreateDirectory(destinationFolder);
 
-            ManageNestedFiles(lines, destinationFolder, includedFiles, path, path, destinationFilePath, confirmOverrite);
+            ManageNestedFiles(lines, destinationFolder, includedFiles, path, path, destinationFilePath, confirmOverrite, rootRamlPath);
 
             return new RamlIncludesManagerResult(string.Join(Environment.NewLine, lines), includedFiles);
         }
@@ -98,21 +98,21 @@ namespace Raml.Common
             return uri;
         }
 
-        private void ManageNestedFiles(IList<string> lines, string destinationFolder, ICollection<string> includedFiles, string path, string relativePath, string writeToFilePath, bool confirmOvewrite)
+        private void ManageNestedFiles(IList<string> lines, string destinationFolder, ICollection<string> includedFiles, string path, string relativePath, string writeToFilePath, bool confirmOvewrite, string rootRamlPath)
         {
             var scopeIncludedFiles = new Collection<string>();
             for (var i = 0; i < lines.Count; i++)
             {
-                ManageInclude(lines, destinationFolder, includedFiles, path, relativePath, confirmOvewrite, i, scopeIncludedFiles);
+                ManageInclude(lines, destinationFolder, includedFiles, path, relativePath, confirmOvewrite, i, scopeIncludedFiles, rootRamlPath);
             }
 
             File.WriteAllText(writeToFilePath, string.Join(Environment.NewLine, lines).Trim());
 
-            ManageIncludedFiles(destinationFolder, includedFiles, path, relativePath, confirmOvewrite, scopeIncludedFiles);
+            ManageIncludedFiles(destinationFolder, includedFiles, path, relativePath, confirmOvewrite, scopeIncludedFiles, rootRamlPath);
         }
 
         private void ManageInclude(IList<string> lines, string destinationFolder, ICollection<string> includedFiles, string path,
-            string relativePath, bool confirmOvewrite, int i, Collection<string> scopeIncludedFiles)
+            string relativePath, bool confirmOvewrite, int i, Collection<string> scopeIncludedFiles, string rootRamlPath)
         {
             var line = lines[i];
             if (!line.Contains(IncludeDirective))
@@ -144,7 +144,20 @@ namespace Raml.Common
             }
 
             // replace old include for new include
-            lines[i] = lines[i].Replace(includeSource, "includes\\\\" + Path.GetFileName(destinationFilePath));
+            var relativeInclude = GetRelativeInclude(destinationFilePath, rootRamlPath);
+            lines[i] = lines[i].Replace(includeSource, relativeInclude);
+        }
+
+        private static string GetRelativeInclude(string destinationFilePath, string rootRamlPath)
+        {
+            if (!rootRamlPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                rootRamlPath += Path.DirectorySeparatorChar;
+
+            var relativeInclude = destinationFilePath;
+            if(destinationFilePath.StartsWith(rootRamlPath))
+                relativeInclude = destinationFilePath.Substring(rootRamlPath.Length);
+
+            return relativeInclude;
         }
 
         private void ManageLocalFile(string path, string relativePath, bool confirmOvewrite, string includeSource,
@@ -181,7 +194,7 @@ namespace Raml.Common
         }
 
         private void ManageIncludedFiles(string destinationFolder, ICollection<string> includedFiles, string path, string relativePath,
-            bool confirmOvewrite, IEnumerable<string> scopeIncludedFiles)
+            bool confirmOvewrite, IEnumerable<string> scopeIncludedFiles, string rootRamlPath)
         {
             foreach (var includedFile in scopeIncludedFiles)
             {
@@ -196,7 +209,7 @@ namespace Raml.Common
 
                 var nestedFileLines = File.ReadAllLines(includedFile);
 
-                ManageNestedFiles(nestedFileLines, destinationFolder, includedFiles, path, relativePath, includedFile, confirmOvewrite);
+                ManageNestedFiles(nestedFileLines, destinationFolder, includedFiles, path, relativePath, includedFile, confirmOvewrite, rootRamlPath);
             }
         }
 
