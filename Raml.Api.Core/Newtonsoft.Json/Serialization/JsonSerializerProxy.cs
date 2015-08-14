@@ -28,7 +28,6 @@ using System.Globalization;
 using System.Runtime.Serialization.Formatters;
 using Newtonsoft.JsonV4.Utilities;
 using System.Runtime.Serialization;
-using Newtonsoft.JsonV4.Utilities;
 
 namespace Newtonsoft.JsonV4.Serialization
 {
