@@ -1,11 +1,13 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ assembly name="$(binDir)Raml.Tools.dll" #>
 <#@ assembly name="$(binDir)RAML.Api.Core.dll" #>
+<#@ assembly name="System.Runtime" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="Raml.Common" #>
 <#@ import namespace="Raml.Tools" #>
 <#@ import namespace="Raml.Tools.ClientGenerator" #>
 <#@ import namespace="System.Linq" #>
+<#@ import namespace="System" #>
 <#@ parameter name="model" type="Raml.Tools.ClientGenerator.ClientGeneratorModel" #>
 <#@ output extension=".cs" #>
 

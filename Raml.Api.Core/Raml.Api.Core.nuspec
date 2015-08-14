@@ -2,16 +2,16 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>$version$</version>
-    <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
+    <version>0.9.3.1</version>
+    <title>RAML.Api.Core</title>
+    <authors>MuleSoft Inc</authors>
+    <owners>MuleSoft Inc</owners>
     <projectUrl>https://github.com/raml-org/raml-dotnet-tools</projectUrl>
 	<licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
 	<iconUrl>http://raml.org/images/logo.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>$description$</description>
-    <copyright>$copyright$</copyright>
+    <description>RAML Tools Core classes</description>
+    <copyright>Copyright © 2015 MuleSoft</copyright>
     <tags>RAML REST</tags>
 	<dependencies>
 	  <group targetFramework="net45">
