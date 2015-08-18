@@ -389,7 +389,7 @@ namespace Raml.Tools.Tests
         private static async Task<WebApiGeneratorModel> GetIssue23GeneratedModel()
         {
             var raml = await new RamlParser().LoadAsync("files/issue23.raml");
-            var model = new WebApiGeneratorService(raml).BuildModel();
+            var model = new WebApiGeneratorService(raml, "TargetNamespace").BuildModel();
 
             return model;
         }

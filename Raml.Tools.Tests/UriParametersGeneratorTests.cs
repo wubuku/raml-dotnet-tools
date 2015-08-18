@@ -257,7 +257,7 @@ namespace Raml.Tools.Tests
 
             doc.Resources = resources;
 
-            var service = new WebApiGeneratorService(doc);
+            var service = new WebApiGeneratorService(doc, "TargetNamespace");
             var model = service.BuildModel();
             Assert.AreEqual("bool", model.Controllers.First().Methods.First(m => m.Name.Contains("Deep")).UriParameters.First(p => p.Name == "current").Type);
             Assert.AreEqual("int", model.Controllers.First().Methods.First(m => m.Name.Contains("Deep")).UriParameters.First(p => p.Name == "id").Type);
@@ -336,7 +336,7 @@ namespace Raml.Tools.Tests
 
             doc.Resources = resources;
 
-            var service = new WebApiGeneratorService(doc);
+            var service = new WebApiGeneratorService(doc, "TargetNamespace");
             var model = service.BuildModel();
             Assert.AreEqual("bool", model.Controllers.First().Methods.First(m => m.Name.Contains("Deep")).UriParameters.First(p => p.Name == "current").Type);
             Assert.AreEqual("int", model.Controllers.First().Methods.First(m => m.Name.Contains("Deep")).UriParameters.First(p => p.Name == "id").Type);
@@ -423,7 +423,7 @@ namespace Raml.Tools.Tests
 
             doc.Resources = resources;
 
-            var service = new ClientGeneratorService(doc,"test");
+            var service = new ClientGeneratorService(doc, "test", "TargetNamespace");
             var model = service.BuildModel();
             Assert.AreEqual("bool", model.Classes.First(m => m.Name.Contains("Deep")).Methods.First().UriParameters.First(p => p.Name == "current").Type);
             Assert.AreEqual("int", model.Classes.First(m => m.Name.Contains("Deep")).Methods.First().UriParameters.First(p => p.Name == "id").Type);
@@ -502,7 +502,7 @@ namespace Raml.Tools.Tests
 
             doc.Resources = resources;
 
-            var service = new ClientGeneratorService(doc,"test");
+            var service = new ClientGeneratorService(doc, "test", "TargetNamespace");
             var model = service.BuildModel();
             Assert.AreEqual("bool", model.Classes.First(m => m.Name.Contains("Deep")).Methods.First().UriParameters.First(p => p.Name == "current").Type);
             Assert.AreEqual("int", model.Classes.First(m => m.Name.Contains("Deep")).Methods.First().UriParameters.First(p => p.Name == "id").Type);
