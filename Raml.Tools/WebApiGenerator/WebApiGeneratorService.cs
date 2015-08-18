@@ -7,12 +7,12 @@ using Raml.Parser.Expressions;
 
 namespace Raml.Tools.WebApiGenerator
 {
-    public class WebApiGeneratorService : GeneratorServiceBase
-    {
-        private WebApiMethodsGenerator webApiMethodsGenerator;
-        public WebApiGeneratorService(RamlDocument raml) : base(raml)
-        {
-        }
+	public class WebApiGeneratorService : GeneratorServiceBase
+	{
+		private WebApiMethodsGenerator webApiMethodsGenerator;
+		public WebApiGeneratorService(RamlDocument raml, string targetNamespace) : base(raml, targetNamespace)
+		{
+		}
 
         public WebApiGeneratorModel BuildModel()
         {

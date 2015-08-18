@@ -139,15 +139,15 @@ namespace MuleSoft.RAML.Tools
             }
         }
 
-        private Result GenerateCodeUsingTemplate(string wszInputFilePath, RamlInfo ramlInfo, System.IServiceProvider globalProvider,
+		private Result GenerateCodeUsingTemplate(string wszInputFilePath, RamlInfo ramlInfo, System.IServiceProvider globalProvider,
             string refFilePath, string clientRootClassName)
         {
-            var model = GetGeneratorModel(clientRootClassName, ramlInfo);
+            var targetNamespace = RamlReferenceReader.GetRamlNamespace(refFilePath);
+            var model = GetGeneratorModel(clientRootClassName, ramlInfo, targetNamespace);
             var templateFolder = GetTemplateFolder(wszInputFilePath);
             var templateFilePath = Path.Combine(templateFolder, ClientT4TemplateName);
             var extensionPath = Path.GetDirectoryName(GetType().Assembly.Location) + Path.DirectorySeparatorChar;
             var t4Service = new T4Service(globalProvider);
-            var targetNamespace = RamlReferenceReader.GetRamlNamespace(refFilePath);
             var res = t4Service.TransformText(templateFilePath, model, extensionPath, wszInputFilePath, targetNamespace);
             return res;
         }
@@ -176,9 +176,10 @@ namespace MuleSoft.RAML.Tools
             return result;
         }
 
-        private static ClientGeneratorModel GetGeneratorModel(string clientRootClassName, RamlInfo ramlInfo)
+
+        private static ClientGeneratorModel GetGeneratorModel(string clientRootClassName, RamlInfo ramlInfo, string targetNamespace)
         {
-            var model = new ClientGeneratorService(ramlInfo.RamlDocument, clientRootClassName).BuildModel();
+            var model = new ClientGeneratorService(ramlInfo.RamlDocument, clientRootClassName, targetNamespace).BuildModel();
             return model;
         }
 

@@ -114,6 +114,7 @@
     <Compile Include="WebApiGenerator\ControllerMethod.cs" />
     <Compile Include="WebApiGenerator\WebApiMethodsGenerator.cs" />
     <Compile Include="XmlCommentHelper.cs" />
+    <Compile Include="XmlSchemaParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

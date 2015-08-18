@@ -100,9 +100,9 @@ namespace Raml.Tools.Tests
 
             doc.Resources = resources;
 
-            var service = new ClientGeneratorService(doc, "test");
-            var model = service.BuildModel();
-            Assert.AreEqual(2, model.UriParameterObjects.Count);
+            var service = new ClientGeneratorService(doc, "test", "TestNs");
+			var model = service.BuildModel();
+			Assert.AreEqual(2, model.UriParameterObjects.Count);
 
             var moviesUriParamObj = model.UriParameterObjects.First(o => o.Key.ToLowerInvariant().Contains("movies")).Value;
             var directorsUriParamObj = model.UriParameterObjects.First(o => o.Key.ToLowerInvariant().Contains("directors")).Value;
@@ -163,9 +163,10 @@ namespace Raml.Tools.Tests
 
             doc.Resources = resources;
 
-            var service = new ClientGeneratorService(doc, "test");
-            var model = service.BuildModel();
-            Assert.AreEqual(2, model.UriParameterObjects.Count);
+
+            var service = new ClientGeneratorService(doc, "test", "TestNs");
+			var model = service.BuildModel();
+			Assert.AreEqual(2, model.UriParameterObjects.Count);
 
             var moviesUriParamObj = model.UriParameterObjects.First().Value;
             var directorsUriParamObj = model.UriParameterObjects.Last().Value;
@@ -256,7 +257,7 @@ namespace Raml.Tools.Tests
 
             doc.Resources = resources;
 
-            var service = new WebApiGeneratorService(doc);
+            var service = new WebApiGeneratorService(doc, "TargetNamespace");
             var model = service.BuildModel();
             Assert.AreEqual("bool", model.Controllers.First().Methods.First(m => m.Name.Contains("Deep")).UriParameters.First(p => p.Name == "current").Type);
             Assert.AreEqual("int", model.Controllers.First().Methods.First(m => m.Name.Contains("Deep")).UriParameters.First(p => p.Name == "id").Type);
@@ -335,7 +336,7 @@ namespace Raml.Tools.Tests
 
             doc.Resources = resources;
 
-            var service = new WebApiGeneratorService(doc);
+            var service = new WebApiGeneratorService(doc, "TargetNamespace");
             var model = service.BuildModel();
             Assert.AreEqual("bool", model.Controllers.First().Methods.First(m => m.Name.Contains("Deep")).UriParameters.First(p => p.Name == "current").Type);
             Assert.AreEqual("int", model.Controllers.First().Methods.First(m => m.Name.Contains("Deep")).UriParameters.First(p => p.Name == "id").Type);
@@ -422,7 +423,7 @@ namespace Raml.Tools.Tests
 
             doc.Resources = resources;
 
-            var service = new ClientGeneratorService(doc,"test");
+            var service = new ClientGeneratorService(doc, "test", "TargetNamespace");
             var model = service.BuildModel();
             Assert.AreEqual("bool", model.Classes.First(m => m.Name.Contains("Deep")).Methods.First().UriParameters.First(p => p.Name == "current").Type);
             Assert.AreEqual("int", model.Classes.First(m => m.Name.Contains("Deep")).Methods.First().UriParameters.First(p => p.Name == "id").Type);
@@ -501,7 +502,7 @@ namespace Raml.Tools.Tests
 
             doc.Resources = resources;
 
-            var service = new ClientGeneratorService(doc,"test");
+            var service = new ClientGeneratorService(doc, "test", "TargetNamespace");
             var model = service.BuildModel();
             Assert.AreEqual("bool", model.Classes.First(m => m.Name.Contains("Deep")).Methods.First().UriParameters.First(p => p.Name == "current").Type);
             Assert.AreEqual("int", model.Classes.First(m => m.Name.Contains("Deep")).Methods.First().UriParameters.First(p => p.Name == "id").Type);

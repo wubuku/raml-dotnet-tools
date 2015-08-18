@@ -26,8 +26,8 @@ namespace Raml.Tools.ClientGenerator
         private readonly ApiRequestObjectsGenerator apiRequestGenerator = new ApiRequestObjectsGenerator();
         private readonly ApiResponseObjectsGenerator apiResponseGenerator = new ApiResponseObjectsGenerator();
 
-        public ClientGeneratorService(RamlDocument raml, string rootClassName)
-            : base(raml)
+	    public ClientGeneratorService(RamlDocument raml, string rootClassName, string targetNamespace)
+            : base(raml, targetNamespace)
         {
             this.rootClassName = rootClassName;
         }
@@ -66,6 +66,7 @@ namespace Raml.Tools.ClientGenerator
 
             CleanNotUsedObjects(classObjects);
 
+
             return new ClientGeneratorModel
                    {
                        Namespace = NetNamingMapper.GetNamespace(raml.Title),
@@ -74,10 +75,12 @@ namespace Raml.Tools.ClientGenerator
                        ResponseObjects = schemaResponseObjects,
                        QueryObjects = queryObjects,
                        HeaderObjects = headerObjects,
-                       ApiRequestObjects = apiRequestObjects,
-                       ApiResponseObjects = apiResponseObjects,
+
+                       ApiRequestObjects = apiRequestObjects.ToArray(),
+                       ApiResponseObjects = apiResponseObjects.ToArray(),
                        ResponseHeaderObjects = responseHeadersObjects,
-                       BaseUriParameters = ParametersMapper.Map(raml.BaseUriParameters),
+
+                       BaseUriParameters = ParametersMapper.Map(raml.BaseUriParameters).ToArray(),
                        BaseUri = raml.BaseUri,
                        Security = SecurityParser.GetSecurity(raml),
                        Version = raml.Version,
@@ -85,7 +88,7 @@ namespace Raml.Tools.ClientGenerator
                        Classes = classObjects.Where(c => c.Name != rootClassName).ToArray(),
                        Root = classObjects.First(c => c.Name == rootClassName),
                        UriParameterObjects = uriParameterObjects,
-                       Enums = Enums
+                       Enums = Enums.ToArray()
                    };
         }
 

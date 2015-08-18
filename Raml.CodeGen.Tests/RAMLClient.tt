@@ -15,13 +15,14 @@
 	var parser = new RamlParser();
 	var ramlFile = Host.ResolvePath(@"files/movies.raml");
 	var raml = parser.Load(ramlFile);
-	var service = new ClientGeneratorService(raml, "MoviesApi");
+	var service = new ClientGeneratorService(raml, "MoviesApi", "XMLPurchaseOrder");
 	var model = service.BuildModel();
 
 #>
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -30,10 +31,12 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using RAML.Api.Core;
 using Raml.Common;
+
 
 namespace <#= model.Namespace #>
 {
@@ -146,14 +149,23 @@ namespace <#= model.Namespace #>
 	                if (method.Parameter == null || method.Parameter.Type == "string")
 	                {
 #>
-            req.Content = new StringContent(json);
+            req.Content = new StringContent(content);
 <#
 	                }
 	                else
 	                {
+                        if(method.RequestContentTypes.Any(c => c.Contains("xml")) && !method.RequestContentTypes.Any(c => c.Contains("json"))){
 #>
-            req.Content = new ObjectContent(typeof(Models.<#= method.Parameter.Type #>), <#= method.Parameter.Name #>, new JsonMediaTypeFormatter());
+
+            var stringWriter = new StringWriter();
+        	new XmlSerializer(typeof (Models.<#= method.Parameter.Type #>)).Serialize(stringWriter, <#= method.Parameter.Name #>);
+            req.Content = new  StringContent(stringWriter.GetStringBuilder().ToString(), Encoding.UTF8, "application/xml");     
 <#
+                        } else {
+#>
+            req.Content = new ObjectContent(typeof(Models.<#= method.Parameter.Type #>), <#= method.Parameter.Name #>, new JsonMediaTypeFormatter());                           
+<#                        
+                        }
         	        }
                 }
 #>
@@ -333,12 +345,18 @@ namespace <#= model.Namespace #>
 	                }
 	                else
 	                {
+                        if(method.RequestContentTypes.Any(c => c.Contains("xml")) && !method.RequestContentTypes.Any(c => c.Contains("json"))){
+#>
+            var stringWriter = new StringWriter();
+        	new XmlSerializer(typeof (Models.<#= method.Parameter.Type #>)).Serialize(stringWriter, request.Content);
+            req.Content = new  StringContent(stringWriter.GetStringBuilder().ToString(), Encoding.UTF8, "application/xml");     
+<#
+                        } else {
 #>
             if(request.Formatter == null)
                 request.Formatter = new JsonMediaTypeFormatter();
-
-            req.Content = new ObjectContent(typeof(Models.<#= method.Parameter.Type #>), request.Content, request.Formatter);
 <#
+                        }
 	                }
                 }
 #>
@@ -506,6 +524,19 @@ namespace <#= model.Namespace #>
 
 
 
+<#
+var hasXmlSchemas = false;
+foreach (var apiObject in model.Objects.Where(o => !string.IsNullOrWhiteSpace(o.GeneratedCode)))
+{
+    hasXmlSchemas = true;
+#>
+
+<#= apiObject.GeneratedCode #>
+
+<#
+}
+#>
+
 
 
 
@@ -513,8 +544,11 @@ namespace <#= model.Namespace #>
 namespace <#= model.Namespace #>.Models
 {
 <#
-foreach (var apiObject in model.Objects.Values)
+foreach (var apiObject in model.Objects.Where(o => string.IsNullOrWhiteSpace(o.GeneratedCode)))
 {
+    if(hasXmlSchemas && !apiObject.Properties.Any())
+        continue;
+
 	if (!string.IsNullOrWhiteSpace(apiObject.Description))
 	{
 #>
@@ -841,12 +875,30 @@ foreach (var apiObject in model.ApiResponseObjects)
 					return typedContent;
 
 		        typedContent = new <#= body.Type #>();
-		        var task = Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode), Formatters).ConfigureAwait(false)
-                            : RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode)).ConfigureAwait(false);
+
+                IEnumerable<string> values = new List<string>();
+                if (RawContent != null && RawContent.Headers != null)
+                    RawContent.Headers.TryGetValues("Content-Type", out values);
+
+                if (values.Any(hv => hv.ToLowerInvariant().Contains("xml")) &&
+                    !values.Any(hv => hv.ToLowerInvariant().Contains("json")))
+                {
+                    var task = RawContent.ReadAsStreamAsync();
+
+                    var xmlStream = task.GetAwaiter().GetResult();
+                    var content = new XmlSerializer(typedContent.GetTypeByStatusCode(StatusCode)).Deserialize(xmlStream);
+                    typedContent.SetPropertyByStatusCode(StatusCode, content);
+                }
+                else
+                {
+		            var task = Formatters != null && Formatters.Any() 
+                                ? RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode), Formatters).ConfigureAwait(false)
+                                : RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode)).ConfigureAwait(false);
 		        
-		        var content = task.GetAwaiter().GetResult();
-		        typedContent.SetPropertyByStatusCode(StatusCode, content);
+		            var content = task.GetAwaiter().GetResult();
+                    typedContent.SetPropertyByStatusCode(StatusCode, content);
+                }
+
 		        return typedContent;
 	        }
     	}  
@@ -872,11 +924,27 @@ foreach (var apiObject in model.ApiResponseObjects)
 		        if (typedContent != null)
 			        return typedContent;
 
-		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<<#= body.Type #>>(Formatters).ConfigureAwait(false)
-                            : RawContent.ReadAsAsync<<#= body.Type #>>().ConfigureAwait(false);
+                IEnumerable<string> values = new List<string>();
+                if (RawContent != null && RawContent.Headers != null)
+                    RawContent.Headers.TryGetValues("Content-Type", out values);
+
+                if (values.Any(hv => hv.ToLowerInvariant().Contains("xml")) &&
+                    !values.Any(hv => hv.ToLowerInvariant().Contains("json")))
+                {
+                    var task = RawContent.ReadAsStreamAsync();
+
+                    var xmlStream = task.GetAwaiter().GetResult();
+                    typedContent = (<#= body.Type #>)new XmlSerializer(typeof(<#= body.Type #>)).Deserialize(xmlStream);
+                }
+                else
+                {
+                    var task =  Formatters != null && Formatters.Any() 
+                                ? RawContent.ReadAsAsync<<#= body.Type #>>(Formatters).ConfigureAwait(false)
+                                : RawContent.ReadAsAsync<<#= body.Type #>>().ConfigureAwait(false);
 		        
-		        typedContent = task.GetAwaiter().GetResult();
+		            typedContent = task.GetAwaiter().GetResult();
+                }
+
 		        return typedContent;
 	        }
 	    }

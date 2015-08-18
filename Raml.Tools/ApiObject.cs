@@ -21,6 +21,8 @@ namespace Raml.Tools
         public bool IsMultiple { get; set; }
         public string JSONSchema { get; set; }
 
+	    public string GeneratedCode { get; set; }
+
         public string BaseClass { get; set; }
 
         public string ConstructorParams
