@@ -11,9 +11,9 @@ namespace Raml.Tools
     public class UriParametersGenerator
     {
         public void Generate(Resource resource, string url, ClientGeneratorMethod clientGeneratorMethod,
-            IDictionary<string, ApiObject> uriParameterObjects)
+            IDictionary<string, ApiObject> uriParameterObjects, IDictionary<string, Parameter> parentUriParameters)
         {
-            var parameters = GetUriParameters(resource, url).ToArray();
+            var parameters = GetUriParameters(resource, url, parentUriParameters).ToArray();
             clientGeneratorMethod.UriParameters = parameters;
 
             if (!parameters.Any())
@@ -33,8 +33,9 @@ namespace Raml.Tools
                     .Where(up => properties.All(p => !String.Equals(up.Name, p.Name, StringComparison.InvariantCultureIgnoreCase))));
 
             var urlParameters = ExtractParametersFromUrl(url).ToArray();
-
-            foreach (var urlParameter in urlParameters)
+            var matchedParameters = MatchParameters(parentUriParameters, urlParameters);
+            
+            foreach (var urlParameter in matchedParameters)
             {
                 var property = ConvertGeneratorParamToProperty(urlParameter);
                 if (properties.All(p => !String.Equals(property.Name, p.Name, StringComparison.InvariantCultureIgnoreCase)))
@@ -50,7 +51,7 @@ namespace Raml.Tools
             uriParameterObjects.Add(name, apiObject);
         }
 
-        public IEnumerable<GeneratorParameter> GetUriParameters(Resource resource, string url)
+        public IEnumerable<GeneratorParameter> GetUriParameters(Resource resource, string url, IDictionary<string, Parameter> parentUriParameters)
         {
             var parameters = resource.BaseUriParameters
                     .Select(p => new GeneratorParameter { Name = p.Key, Type = NetTypeMapper.Map(p.Value.Type), Description = p.Value.Description })
@@ -60,7 +61,26 @@ namespace Raml.Tools
                 .ToList());
 
             var urlParameters = ExtractParametersFromUrl(url).ToArray();
-            parameters.AddRange(urlParameters.Where(up => parameters.All(p => up.Name != p.Name)).ToArray());
+            var distincUrlParameters = urlParameters.Where(up => parameters.All(p => up.Name != p.Name)).ToArray();
+
+            var matchedParameters = MatchParameters(parentUriParameters, distincUrlParameters);
+
+            parameters.AddRange(matchedParameters);
+            return parameters;
+        }
+
+        private IEnumerable<GeneratorParameter> MatchParameters(IDictionary<string, Parameter> parentUriParameters, GeneratorParameter[] urlParameters)
+        {
+            var parameters = new List<GeneratorParameter>();
+            foreach (var param in urlParameters)
+            {
+                if (parentUriParameters.ContainsKey(param.Name))
+                {
+                    param.Type = NetTypeMapper.Map(parentUriParameters[param.Name].Type);
+                    param.Description = parentUriParameters[param.Name].Description;
+                }
+                parameters.Add(param);
+            }
             return parameters;
         }
 

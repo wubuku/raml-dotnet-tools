@@ -58,7 +58,7 @@ namespace Raml.Tools.ClientGenerator
             classes.Add(parentClass);
             classesObjectsRegistry.Add(rootClassName, parentClass);
 
-            var classObjects = GetClasses(raml.Resources, null, parentClass, null);
+            var classObjects = GetClasses(raml.Resources, null, parentClass, null, new Dictionary<string, Parameter>());
             SetClassesProperties(classesObjectsRegistry[rootClassName]);
 
             var apiRequestObjects = apiRequestGenerator.Generate(classObjects);
@@ -101,7 +101,7 @@ namespace Raml.Tools.ClientGenerator
         }
 
 
-        private ICollection<ClassObject> GetClasses(IEnumerable<Resource> resources, Resource parent, ClassObject parentClass, string url)
+        private ICollection<ClassObject> GetClasses(IEnumerable<Resource> resources, Resource parent, ClassObject parentClass, string url, IDictionary<string, Parameter> parentUriParameters)
         {
             if (resources == null)
                 return classes;
@@ -115,14 +115,16 @@ namespace Raml.Tools.ClientGenerator
                 // when the resource is a parameter dont generate a class but add it's methods and children to the parent
                 if (resource.RelativeUri.StartsWith("/{") && resource.RelativeUri.EndsWith("}"))
                 {
-                    var generatedMethods = clientMethodsGenerator.GetMethods(resource, fullUrl, parentClass, parentClass.Name);
+                    var generatedMethods = clientMethodsGenerator.GetMethods(resource, fullUrl, parentClass, parentClass.Name, parentUriParameters);
 
                     foreach (var method in generatedMethods)
                     {
                         parentClass.Methods.Add(method);
                     }
 
-                    var children = GetClasses(resource.Resources, resource, parentClass, fullUrl);
+                    GetInheritedUriParams(parentUriParameters, resource);
+
+                    var children = GetClasses(resource.Resources, resource, parentClass, fullUrl, parentUriParameters);
                     foreach (var child in children)
                     {
                         parentClass.Children.Add(child);
@@ -135,9 +137,11 @@ namespace Raml.Tools.ClientGenerator
                                    Name = GetUniqueObjectName(resource, parent),
                                    Description = resource.Description
                                };
-                classObj.Methods = clientMethodsGenerator.GetMethods(resource, fullUrl, null, classObj.Name);
+                classObj.Methods = clientMethodsGenerator.GetMethods(resource, fullUrl, null, classObj.Name, parentUriParameters);
 
-                classObj.Children = GetClasses(resource.Resources, resource, classObj, fullUrl);
+                GetInheritedUriParams(parentUriParameters, resource);
+
+                classObj.Children = GetClasses(resource.Resources, resource, classObj, fullUrl, parentUriParameters);
                 
                 //TODO: check
                 parentClass.Children.Add(classObj);

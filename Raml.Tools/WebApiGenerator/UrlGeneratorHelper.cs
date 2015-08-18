@@ -7,6 +7,10 @@ namespace Raml.Tools.WebApiGenerator
         public static string GetRelativeUri(string url, string controllerPrefix)
         {
             var controllerRoutePrefix = controllerPrefix.StartsWith("/") ? controllerPrefix.Substring(1) : controllerPrefix;
+
+            if (controllerRoutePrefix.Trim() == string.Empty)
+                return url;
+
             var relativeUri = url.Replace(controllerRoutePrefix, string.Empty);
             relativeUri = ReplaceMultipleMediaTypeExtensionParamaters(relativeUri);
             relativeUri = FixConsecutiveParameters(relativeUri);

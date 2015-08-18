@@ -144,7 +144,7 @@ namespace Raml.Common
             }
 
             // replace old include for new include
-            lines[i] = lines[i].Replace(includeSource, destinationFilePath.Replace("\\", "\\\\"));
+            lines[i] = lines[i].Replace(includeSource, "includes\\\\" + Path.GetFileName(destinationFilePath));
         }
 
         private void ManageLocalFile(string path, string relativePath, bool confirmOvewrite, string includeSource,
