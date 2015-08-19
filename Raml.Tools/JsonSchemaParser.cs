@@ -199,7 +199,7 @@ namespace Raml.Tools
                 var prop = new Property
                            {
                                Name = NetNamingMapper.GetPropertyName(property.Key),
-                               Type = GetType(property, isEnum, enumName),
+                               Type = GetType(property, isEnum, enumName, schema.Required),
                                OriginalName = property.Key,
                                Description = property.Value.Description,
                                IsEnum = isEnum
@@ -212,7 +212,7 @@ namespace Raml.Tools
             }
         }
 
-        private static string GetType(KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property, bool isEnum, string enumName)
+        private static string GetType(KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property, bool isEnum, string enumName, ICollection<string> requiredProps)
         {
             if (property.Value.OneOf != null && property.Value.OneOf.Count > 0)
                 return NetNamingMapper.GetObjectName(property.Key);
@@ -220,8 +220,14 @@ namespace Raml.Tools
             if (isEnum) 
                 return enumName;
 
-            if (!string.IsNullOrWhiteSpace(NetTypeMapper.Map(property.Value.Type)))
-                return NetTypeMapper.Map(property.Value.Type);
+            var type = NetTypeMapper.Map(property.Value.Type);
+            if (!string.IsNullOrWhiteSpace(type))
+            {
+                if (type == "string" || (requiredProps != null && requiredProps.Contains(property.Key)))
+                    return type;
+
+                return type + "?";
+            }
 
             if (HasMultipleTypes(property))
                 return HandleMultipleTypes(property);
@@ -261,8 +267,14 @@ namespace Raml.Tools
             if (isEnum)
                 return enumName;
 
-            if (!string.IsNullOrWhiteSpace(NetTypeMapper.Map(property.Value.Type)))
-                return NetTypeMapper.Map(property.Value.Type);
+            var type = NetTypeMapper.Map(property.Value.Type);
+            if (!string.IsNullOrWhiteSpace(type))
+            {
+                if(type == "string" || (property.Value.Required != null && property.Value.Required.Value))
+                    return type;
+
+                return type + "?";
+            }
 
             if (HasMultipleTypes(property))
                 return HandleMultipleTypes(property);
@@ -392,7 +404,7 @@ namespace Raml.Tools
                 {
                     Name = NetNamingMapper.GetPropertyName(kv.Key),
                     OriginalName = kv.Key,
-                    Type = GetType(kv, isEnum, enumName),
+                    Type = GetType(kv, isEnum, enumName, kv.Value.Required),
                     Description = kv.Value.Description,
                     IsEnum = isEnum
                 };
