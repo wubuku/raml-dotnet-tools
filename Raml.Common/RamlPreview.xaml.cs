@@ -170,7 +170,7 @@ namespace Raml.Common
                 var raml = result.ModifiedContents;
                 var parser = new RamlParser();
 
-                var ramlDocument = await parser.LoadRamlAsync(raml, RamlOriginalSource);
+                var ramlDocument = await parser.LoadRamlAsync(raml, Path.GetTempPath());
 
                 var filename = SetFilename(url);
 

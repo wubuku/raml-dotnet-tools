@@ -324,9 +324,20 @@ namespace Raml.Common
         private static string GetFullWebSource(string path, string includeSource)
         {
             if (!includeSource.StartsWith("http"))
-                includeSource = path.EndsWith("/") || includeSource.StartsWith("/") ? path + includeSource : path + "/" + includeSource;
+                includeSource = GetFullWebIncludeSource(path, includeSource);
 
             return includeSource;
+        }
+
+        private static string GetFullWebIncludeSource(string path, string includeSource)
+        {
+            if (path.EndsWith("/") && includeSource.StartsWith("/"))
+                return path + includeSource.Substring(1);
+            
+            if (path.EndsWith("/") || includeSource.StartsWith("/"))
+                return path + includeSource;
+
+            return path + "/" + includeSource;
         }
 
         private static bool IsWebSource(string path, string includeSource)
