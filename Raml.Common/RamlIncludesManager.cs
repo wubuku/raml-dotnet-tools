@@ -68,8 +68,7 @@ namespace Raml.Common
 
         private static string GetPath(string ramlSource, Uri uri)
         {
-            string path;
-            path = uri.AbsolutePath;
+            var path = uri.AbsolutePath;
             if (ramlSource.Contains("/"))
                 path = ramlSource.Substring(0, ramlSource.LastIndexOf("/", StringComparison.InvariantCulture) + 1);
             return path;
@@ -150,7 +149,7 @@ namespace Raml.Common
 
         private static string GetRelativeInclude(string destinationFilePath, string rootRamlPath)
         {
-            if (!rootRamlPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            if (!rootRamlPath.EndsWith(Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture)))
                 rootRamlPath += Path.DirectorySeparatorChar;
 
             var relativeInclude = destinationFilePath;
@@ -291,7 +290,7 @@ namespace Raml.Common
         {
             var filename = Path.GetFileName(ramlSource);
             if (string.IsNullOrWhiteSpace(filename))
-                filename = NetNamingMapper.GetObjectName(ramlSource) + ".raml"; //TODO: check
+                filename = NetNamingMapper.GetObjectName(ramlSource) + ".raml";
             return filename;
         }
 

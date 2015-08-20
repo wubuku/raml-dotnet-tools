@@ -342,7 +342,7 @@ namespace Raml.Common
 
                 var result = includesManager.Manage(RamlTempFilePath, Path.GetTempPath(), Path.GetTempPath());
                 var parser = new RamlParser();
-                var document = await parser.LoadRamlAsync(result.ModifiedContents, RamlTempFilePath);
+                var document = await parser.LoadRamlAsync(result.ModifiedContents, Path.GetTempPath());
 
                 SetPreview(document);
             }
