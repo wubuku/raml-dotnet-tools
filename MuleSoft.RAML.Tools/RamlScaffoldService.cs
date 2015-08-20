@@ -274,8 +274,6 @@ namespace MuleSoft.RAML.Tools
 
         private void AddContractFromFile(string ramlFilePath, string targetNamespace, string ramlSource, ProjectItem folderItem, string folderPath, string targetFilename, bool useAsyncMethod)
         {
-            InstallerServices.AddRefFile(ramlFilePath, targetNamespace, ramlSource, folderPath, targetFilename, useAsyncMethod);
-
             var includesFolderPath = folderPath + Path.DirectorySeparatorChar + InstallerServices.IncludesFolderName;
 
             var includesManager = new RamlIncludesManager();
@@ -296,6 +294,9 @@ namespace MuleSoft.RAML.Tools
 
             var ramlProjItem = AddOrUpdateRamlFile(result.ModifiedContents, folderItem, folderPath, targetFilename);
             InstallerServices.RemoveSubItemsAndAssociatedFiles(ramlProjItem);
+
+            var refFilePath = InstallerServices.AddRefFile(ramlFilePath, targetNamespace, ramlSource, folderPath, targetFilename, useAsyncMethod);
+            ramlProjItem.ProjectItems.AddFromFile(refFilePath);
 
             Scaffold(ramlProjItem.FileNames[0], targetNamespace, targetFilename, useAsyncMethod);
         }
@@ -335,28 +336,30 @@ namespace MuleSoft.RAML.Tools
             var newContractFile = Path.Combine(folderPath, filename);
             var contents = CreateNewRamlContents(title);
 
-            InstallerServices.AddRefFile(newContractFile, targetNamespace, newContractFile, folderPath, targetFilename, useAsyncMethods);
-
+            ProjectItem ramlProjItem;
             if (File.Exists(newContractFile))
             {
                 var dialogResult = InstallerServices.ShowConfirmationDialog(filename);
                 if (dialogResult == MessageBoxResult.Yes)
                 {
                     File.WriteAllText(newContractFile, contents);
-                    folderItem.ProjectItems.AddFromFile(newContractFile);
+                    ramlProjItem = folderItem.ProjectItems.AddFromFile(newContractFile);
                 }
                 else
                 {
-                    var item = folderItem.ProjectItems.Cast<ProjectItem>().FirstOrDefault(i => i.Name == newContractFile);
-                    if (item == null)
-                        folderItem.ProjectItems.AddFromFile(newContractFile);
+                    ramlProjItem = folderItem.ProjectItems.Cast<ProjectItem>().FirstOrDefault(i => i.Name == newContractFile);
+                    if (ramlProjItem == null)
+                        ramlProjItem = folderItem.ProjectItems.AddFromFile(newContractFile);
                 }
             }
             else
             {
                 File.WriteAllText(newContractFile, contents);
-                folderItem.ProjectItems.AddFromFile(newContractFile);
+                ramlProjItem = folderItem.ProjectItems.AddFromFile(newContractFile);
             }
+
+            var refFilePath = InstallerServices.AddRefFile(newContractFile, targetNamespace, newContractFile, folderPath, targetFilename, useAsyncMethods);
+            ramlProjItem.ProjectItems.AddFromFile(refFilePath);
         }
 
         private static string CreateNewRamlContents(string title)
