@@ -560,7 +560,7 @@ namespace Raml.Tools.Tests
         public void should_parse_properties_as_nullable_when_not_required_v4()
         {
             const string schema = "{\r\n" +
-                                  "      \"$schema\": \"http://json-schema.org/draft-03/schema\",\r\n" +
+                                  "      \"$schema\": \"http://json-schema.org/draft-04/schema\",\r\n" +
                                   "      \"type\": \"object\",\r\n" +
                                   "      \"properties\": \r\n" +
                                   "      {\r\n" +
@@ -589,5 +589,56 @@ namespace Raml.Tools.Tests
             Assert.AreEqual("string", obj.Properties.First(p => p.Name == "Description").Type);
             Assert.AreEqual("string", obj.Properties.First(p => p.Name == "Comment").Type);
         }
+
+        [Test]
+        public void should_parse_additionalProperties_as_dictionary()
+        {
+            const string schema = "{\r\n" +
+                                  "      \"$schema\": \"http://json-schema.org/draft-03/schema\",\r\n" +
+                                  "      \"type\": \"object\",\r\n" +
+                                  "      \"properties\": \r\n" +
+                                  "      {\r\n" +
+                                  "        \"id\": { \"type\": \"integer\" },\r\n" +
+                                  "        \"price\": { \"type\": \"number\" }\r\n" +
+                                  "      },\r\n" +
+                                  "     \"additionalProperties\": {\"type\": \"string\"}\r\n" +
+                                  "    }\r\n";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>(), new Dictionary<string, ApiObject>());
+
+            Assert.AreEqual(3, obj.Properties.Count);
+            Assert.AreEqual("IDictionary<string, object>", obj.Properties.First(p => p.Name == "AdditionalProperties").Type);
+        }
+
+        [Test]
+        public void should_parse_additionalProperties_as_dictionary_v4()
+        {
+            const string schema = "{\r\n" +
+                                  "      \"$schema\": \"http://json-schema.org/draft-04/schema\",\r\n" +
+                                  "      \"type\": \"object\",\r\n" +
+                                  "      \"properties\": \r\n" +
+                                  "      {\r\n" +
+                                  "        \"id\": { \"type\": \"integer\" },\r\n" +
+                                  "        \"price\": { \"type\": \"number\" }\r\n" +
+                                  "      },\r\n" +
+                                  "    \"required\": [\"id\", \"price\", \"description\"],\r\n" +
+                                  "     \"additionalProperties\": {\"type\": \"string\"}\r\n" +
+                                  "    }\r\n";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>(), new Dictionary<string, ApiObject>());
+
+            Assert.AreEqual(3, obj.Properties.Count);
+            Assert.AreEqual("IDictionary<string, object>", obj.Properties.First(p => p.Name == "AdditionalProperties").Type);
+        }
+
+
     }
 }

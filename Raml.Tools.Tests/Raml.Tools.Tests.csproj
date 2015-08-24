@@ -53,7 +53,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
-
     <Reference Include="Raml.Parser, Version=0.8.102.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Raml.Parser.0.8.102\lib\net45\Raml.Parser.dll</HintPath>
       <Private>True</Private>
@@ -120,6 +119,9 @@
     <None Include="app.config" />
     <None Include="files\75039.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="files\additionalprops.raml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="files\annotations00101m1.xsd">

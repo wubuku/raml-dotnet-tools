@@ -54,6 +54,7 @@ namespace $(namespace)
 		foreach (var property in classObject.Properties)
 		{
 #>
+
         public virtual <#= property.Name #> <#= property.Name #>
         {
             get { return new <#= property.Name #>(proxy); }
@@ -67,6 +68,7 @@ namespace $(namespace)
 		{
         // Simple method ----------------------------------------------------------------------------------------
 #>
+
         <#= method.XmlSimpleComment #>
         public virtual async Task<<#= method.ResponseType #>> <#= method.Name #>(<#= method.SimpleParameterString #>)
         {
@@ -487,6 +489,7 @@ namespace $(namespace)
 	foreach (var property in model.Root.Properties)
 	{
 #>
+
         public virtual <#= property.Name #> <#= property.Name #>
         {
             get { return new <#= property.Name #>(this); }
@@ -601,6 +604,10 @@ foreach (var apiObject in model.Objects.Where(o => string.IsNullOrWhiteSpace(o.G
 
 	foreach (var property in apiObject.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 	{
+    // this if a whitespace line to separate properties, do not delete !
+#>
+
+<#
 	    if (!string.IsNullOrWhiteSpace(property.Description))
 	    {
 #>
@@ -609,6 +616,12 @@ foreach (var apiObject in model.Objects.Where(o => string.IsNullOrWhiteSpace(o.G
         /// </summary>
 <#
     	}
+        if(property.IsAdditionalProperties)
+        {
+#>
+        [JsonExtensionData]
+<#
+        }
 		if(!string.IsNullOrWhiteSpace(property.OriginalName) && property.OriginalName != property.Name)
 		{
 #>
@@ -649,6 +662,11 @@ foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any())
 <#
 	foreach (var property in header.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 	{
+    // this if a whitespace line to separate properties, do not delete !
+#>
+
+<#
+
 	    if (!string.IsNullOrWhiteSpace(property.Description))
 	    {
 #>
@@ -657,7 +675,12 @@ foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any())
         /// </summary>
 <#
 		}
-
+        if(property.IsAdditionalProperties)
+        {
+#>
+        [JsonExtensionData]
+<#
+        }
 		if(!string.IsNullOrWhiteSpace(property.OriginalName) && property.OriginalName != property.Name)
 		{
 #>
@@ -736,6 +759,10 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
 
 	foreach (var property in respHeader.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 	{
+    // this if a whitespace line to separate properties, do not delete !
+#>
+
+<#
 	    if (!string.IsNullOrWhiteSpace(property.Description))
 	    {
 #>
@@ -744,7 +771,12 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
         /// </summary>
 <#
 	    }
-
+        if(property.IsAdditionalProperties)
+        {
+#>
+        [JsonExtensionData]
+<#
+        }
 		if(!string.IsNullOrWhiteSpace(property.OriginalName) && property.OriginalName != property.Name)
 		{
 #>
@@ -795,6 +827,10 @@ foreach (var apiObject in model.ApiRequestObjects)
 <#
 	foreach (var property in apiObject.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 	{
+    // this if a whitespace line to separate properties, do not delete !
+#>
+
+<#
 	    if (!string.IsNullOrWhiteSpace(property.Description))
 	    {
 #>
@@ -832,9 +868,12 @@ foreach (var apiObject in model.ApiResponseObjects)
     {
 
 <#
-
 	foreach (var property in apiObject.Properties.Where(p => p != null && p.Type != null && p.Name != null && p.Name != "Content").ToArray())
 	{
+    // this if a whitespace line to separate properties, do not delete !
+#>
+
+<#
 	    if (!string.IsNullOrWhiteSpace(property.Description))
 	    {
 #>

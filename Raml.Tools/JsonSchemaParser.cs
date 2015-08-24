@@ -25,7 +25,7 @@ namespace Raml.Tools
                       };
             JsonSchema schema = null;
             Newtonsoft.JsonV4.Schema.JsonSchema v4Schema = null;
-            if (jsonSchema.Contains("\"oneOf\":"))
+            if (jsonSchema.Contains("\"oneOf\""))
             {
                 v4Schema = ParseV4Schema(key, jsonSchema, warnings, objects);
             }
@@ -48,6 +48,7 @@ namespace Raml.Tools
                 else
                 {
                     ParseProperties(objects, obj.Properties, schema.Properties, enums);
+                    AdditionalProperties(obj.Properties, schema);
                 }
             }
             else
@@ -210,6 +211,31 @@ namespace Raml.Tools
                 ParseComplexTypes(objects, schema, property.Value, prop, property, enums);
                 props.Add(prop);
             }
+
+            AdditionalProperties(props, schema);
+        }
+
+        private static void AdditionalProperties(ICollection<Property> props, JsonSchema schema)
+        {
+            if (schema.AdditionalProperties == null || !schema.AdditionalProperties.AllowAdditionalProperties) return;
+
+            AddAdditionalPropertiesProperty(props);
+        }
+
+        private static void AdditionalProperties(ICollection<Property> props, Newtonsoft.JsonV4.Schema.JsonSchema schema)
+        {
+            if (schema.AdditionalProperties == null || !schema.AdditionalProperties.AllowAdditionalProperties) return;
+
+            AddAdditionalPropertiesProperty(props);
+        }
+
+        private static void AddAdditionalPropertiesProperty(ICollection<Property> props)
+        {
+            props.Add(new Property
+            {
+                Name = "AdditionalProperties",
+                Type = "IDictionary<string, object>"
+            });
         }
 
         private static string GetType(KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property, bool isEnum, string enumName, ICollection<string> requiredProps)
@@ -413,6 +439,7 @@ namespace Raml.Tools
                 ParseComplexTypes(objects, null, kv.Value, prop, kv, enums);
                 props.Add(prop);
             }
+
             return props;
         }
 
@@ -472,6 +499,8 @@ namespace Raml.Tools
 
                 ParseComplexTypes(objects, property.Value, prop, property, key, enums);
                 props.Add(prop);
+
+                AdditionalProperties(props, property.Value);
             }
         }
 

@@ -279,6 +279,9 @@ namespace Raml.Tools
                     if (!string.IsNullOrWhiteSpace(type) && IsCollectionType(type))
                         type = CollectionTypeHelper.GetBaseType(type);
 
+                    if(prop.IsAdditionalProperties)
+                        continue;
+
                     if (!NetTypeMapper.IsPrimitiveType(type) && schemaResponseObjects.All(o => o.Value.Name != type) 
                         && schemaRequestObjects.All(o => o.Value.Name != type)
                         && enums.All(e => e.Value.Name != type)
