@@ -115,7 +115,7 @@ namespace MuleSoft.RAML.Tools.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2.0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("3.0")]
         public string ServerTemplatesVersion {
             get {
                 return ((string)(this["ServerTemplatesVersion"]));
@@ -124,7 +124,7 @@ namespace MuleSoft.RAML.Tools.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2.0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("3.0")]
         public string ClientTemplatesVersion {
             get {
                 return ((string)(this["ClientTemplatesVersion"]));

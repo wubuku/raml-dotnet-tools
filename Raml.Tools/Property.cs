@@ -34,5 +34,10 @@ namespace Raml.Tools
 
         public string JSONSchema { get; set; }
         public bool IsEnum { get; set; }
+
+        public bool IsAdditionalProperties
+        {
+            get { return Name == "AdditionalProperties" && Type == "IDictionary<string, object>"; }
+        }
     }
 }

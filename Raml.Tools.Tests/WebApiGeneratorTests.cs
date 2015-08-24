@@ -250,8 +250,13 @@ namespace Raml.Tools.Tests
             Assert.AreEqual("int", model.Controllers.First().Methods.First(m => m.Name == "GetById").UriParameters.First().Type);
             Assert.AreEqual("int", model.Controllers.First().Methods.First(m => m.Name == "GetHistory").UriParameters.First().Type);
         }
-        
 
+        [Test]
+        public async Task ShouldNotRemoveAdditionalPropertiesProperty()
+        {
+            var model = await GetAdditionalPropertiesGeneratedModel();
+            Assert.IsTrue(model.Objects.Any(o => o.Properties.Any(p => p.IsAdditionalProperties)));
+        }
 
         private static string GetXml(string comment)
         {
@@ -393,5 +398,14 @@ namespace Raml.Tools.Tests
 
             return model;
         }
+
+        private static async Task<WebApiGeneratorModel> GetAdditionalPropertiesGeneratedModel()
+        {
+            var raml = await new RamlParser().LoadAsync("files/additionalprops.raml");
+            var model = new WebApiGeneratorService(raml, "TargetNamespace").BuildModel();
+
+            return model;
+        }
+
     }
 }
