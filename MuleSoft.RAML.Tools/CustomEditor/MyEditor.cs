@@ -45,7 +45,7 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             // TODO: detect drive ! also, any rights will work ?
             var fileName = "file://127.0.0.1/c$" + Path.GetFileName(filePath);
             //var fileName = Path.GetFileName(filePath);
-            webBrowser1.Document.InvokeScript("load", new object[] { Path.GetDirectoryName(filePath), fileName });
+            //webBrowser1.Document.InvokeScript("load", new object[] { Path.GetDirectoryName(filePath), fileName });
         }
 
         private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)

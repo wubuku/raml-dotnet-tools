@@ -1,7 +1,9 @@
+<!-- saved from url=(0014)about:internet -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>ACE in Action</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <style type="text/css" media="screen">
         #editor {
             position: absolute;
@@ -23,11 +25,16 @@
     <script src="src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
     <script>
         function load(path, file) {
+            document.getElementById("editor").innerHTML = 'dsfsdfs';
             var editor = ace.edit("editor");
             editor.setTheme("ace/theme/monokai");
             editor.getSession().setMode("ace/mode/javascript");
         }
-        load("dsds","sdd");
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // your code here
+            load("", "");
+        }, false);
     </script>
 </body>
 </html>
