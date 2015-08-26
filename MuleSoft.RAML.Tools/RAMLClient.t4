@@ -111,7 +111,7 @@ namespace $(namespace)
 <#
 	            }
 #>
-            var req = new HttpRequestMessage(HttpMethod.<#= string.IsNullOrWhiteSpace(method.Verb) ? "Get" : method.Verb #>, url);
+            var req = new HttpRequestMessage(<#= method.NetHttpMethod #>, url);
 <#
 
 		        if (method.UseSecurity && model.Security != null && !string.IsNullOrWhiteSpace(model.Security.AccessTokenUri))
@@ -277,7 +277,7 @@ namespace $(namespace)
 <#
 	            }
 #>
-            var req = new HttpRequestMessage(HttpMethod.<#= string.IsNullOrWhiteSpace(method.Verb) ? "Get" : method.Verb #>, url);
+            var req = new HttpRequestMessage(<#= method.NetHttpMethod #>, url);
 
 <#
 		        if (method.UseSecurity && model.Security != null && !string.IsNullOrWhiteSpace(model.Security.AccessTokenUri))

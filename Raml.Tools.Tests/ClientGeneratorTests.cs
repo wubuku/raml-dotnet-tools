@@ -255,10 +255,10 @@ namespace Raml.Tools.Tests
         }
 
         [Test]
-        public async Task ShouldExcludePatchFromMethods()
+        public async Task ShouldIncludePatchFromMethods()
         {
             var model = await GetCongoGeneratedModel();
-            Assert.AreEqual(0, model.Classes.SelectMany(c => c.Methods).Count(m => m.Verb == "Patch"));
+            Assert.IsTrue(model.Classes.SelectMany(c => c.Methods).Count(m => m.Verb == "Patch") > 0);
         }
 
         [Test]
@@ -507,6 +507,14 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(1, model.Objects.Count(o => o.Name.Equals("User")));
         }
 
+        [Test]
+        public async Task ShouldGenerateMethodsForPatch()
+        {
+            var model = await GetPatchGeneratedModel();
+            Assert.AreEqual(2, model.Classes.Sum(o => o.Methods.Count));
+            Assert.AreEqual(3, model.Objects.Count());
+        }
+
 
 
         private static string GetXml(string comment)
@@ -670,6 +678,14 @@ namespace Raml.Tools.Tests
         {
             var raml = await new RamlParser().LoadAsync("files/duplication.raml");
             var model = new ClientGeneratorService(raml, "Duplication", "TargetNamespace").BuildModel();
+
+            return model;
+        }
+
+        private static async Task<ClientGeneratorModel> GetPatchGeneratedModel()
+        {
+            var raml = await new RamlParser().LoadAsync("files/patch.raml");
+            var model = new ClientGeneratorService(raml, "Patch", "TargetNamespace").BuildModel();
 
             return model;
         }
