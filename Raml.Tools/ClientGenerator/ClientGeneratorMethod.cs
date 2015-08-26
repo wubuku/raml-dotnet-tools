@@ -87,6 +87,21 @@ namespace Raml.Tools.ClientGenerator
         public string Url { get; set; }
 
         public string Verb { get; set; }
+
+        public string NetHttpMethod
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(Verb))
+                    return "HttpMethod.Get";
+                
+                if(Verb == "Patch")
+                    return "new HttpMethod(\"Patch\")";
+
+                return "HttpMethod." + Verb;
+            }
+        }
+
         public IEnumerable<GeneratorParameter> UriParameters { get; set; }
 
         public ClientGeneratorMethod Parent { get; set; }
@@ -159,7 +174,7 @@ namespace Raml.Tools.ClientGenerator
 
         public bool HasInputParameter()
         {
-            return (Verb == "Post" || Verb == "Put") && Parameter != null;
+            return (Verb == "Post" || Verb == "Put" || Verb == "Patch") && Parameter != null;
         }
 
     }

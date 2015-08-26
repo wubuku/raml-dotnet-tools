@@ -88,7 +88,7 @@ namespace Raml.Tools.WebApiGenerator
 
         private bool HasInputParameter()
         {
-            return (Verb == "Post" || Verb == "Put") && Parameter != null;
+            return (Verb == "Post" || Verb == "Put" || Verb == "Patch") && Parameter != null;
         }
 
         public IList<Property> QueryParameters { get; set; }
