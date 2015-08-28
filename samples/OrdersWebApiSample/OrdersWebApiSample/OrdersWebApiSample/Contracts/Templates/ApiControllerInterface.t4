@@ -1,7 +1,7 @@
 <#
 // title: Controller Interface
 // hash: fd1042f9d17dd576dbe3fb68fc63641c
-// version: 2.0
+// version: 3.0
 #>
 <#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ assembly name="$(binDir)Raml.Tools.dll" #>

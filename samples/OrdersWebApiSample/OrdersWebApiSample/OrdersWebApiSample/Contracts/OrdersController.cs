@@ -1,4 +1,4 @@
-// Template: Base Controller (ApiControllerBase.t4) version 2.0
+// Template: Base Controller (ApiControllerBase.t4) version 3.0
 
 using System;
 using System.Collections.Generic;

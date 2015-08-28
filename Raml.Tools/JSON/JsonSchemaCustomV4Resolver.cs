@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Newtonsoft.JsonV4.Schema;
 
-namespace Raml.Tools
+namespace Raml.Tools.JSON
 {
     public class JsonSchemaCustomV4Resolver : JsonSchemaResolver
     {

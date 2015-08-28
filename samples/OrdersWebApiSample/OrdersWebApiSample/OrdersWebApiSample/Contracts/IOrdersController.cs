@@ -1,4 +1,4 @@
-// Template: Controller Interface (ApiControllerInterface.t4) version 2.0
+// Template: Controller Interface (ApiControllerInterface.t4) version 3.0
 
 using System;
 using System.Collections.Generic;

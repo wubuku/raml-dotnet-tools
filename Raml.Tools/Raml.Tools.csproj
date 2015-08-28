@@ -68,6 +68,7 @@
     <Compile Include="ApiEnum.cs" />
     <Compile Include="ApiObject.cs" />
     <Compile Include="ApiObjectsCleaner.cs" />
+    <Compile Include="XML\ArraysToCollectionsExtension.cs" />
     <Compile Include="ClientGenerator\ApiRequestObjectsGenerator.cs" />
     <Compile Include="ClientGenerator\ApiResponseObjectsGenerator.cs" />
     <Compile Include="ClientGenerator\ClassObject.cs" />
@@ -81,8 +82,9 @@
     <Compile Include="GeneratorServiceHelper.cs" />
     <Compile Include="HeadersParser.cs" />
     <Compile Include="ClientGenerator\ClientMethodsGenerator.cs" />
-    <Compile Include="JsonSchemaCustomResolver.cs" />
-    <Compile Include="JsonSchemaCustomV4Resolver.cs" />
+    <Compile Include="XML\ICodeExtension.cs" />
+    <Compile Include="JSON\JsonSchemaCustomResolver.cs" />
+    <Compile Include="JSON\JsonSchemaCustomV4Resolver.cs" />
     <Compile Include="MethodsGeneratorBase.cs" />
     <Compile Include="NetTypeMapper.cs" />
     <Compile Include="ObjectParser.cs" />
@@ -100,7 +102,7 @@
     <Compile Include="QueryParametersParser.cs" />
     <Compile Include="RamlParserExtensions.cs" />
     <Compile Include="SchemaParameterParser.cs" />
-    <Compile Include="JsonSchemaParser.cs" />
+    <Compile Include="JSON\JsonSchemaParser.cs" />
     <Compile Include="Security.cs" />
     <Compile Include="SecurityParser.cs" />
     <Compile Include="UniquenessHelper.cs" />
@@ -114,7 +116,8 @@
     <Compile Include="WebApiGenerator\ControllerMethod.cs" />
     <Compile Include="WebApiGenerator\WebApiMethodsGenerator.cs" />
     <Compile Include="XmlCommentHelper.cs" />
-    <Compile Include="XmlSchemaParser.cs" />
+    <Compile Include="XML\XmlSchemaParser.cs" />
+    <Compile Include="XML\FieldsToPropertiesExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

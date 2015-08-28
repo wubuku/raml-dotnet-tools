@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Raml.Common;
+using Raml.Tools.JSON;
+using Raml.Tools.XML;
 
 namespace Raml.Tools
 {

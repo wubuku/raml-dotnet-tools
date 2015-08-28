@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
+using Raml.Tools.JSON;
 
 namespace Raml.Tools.Tests
 {

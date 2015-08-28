@@ -1,4 +1,4 @@
-// Template: Controller Implementation (ApiControllerImplementation.t4) version 2.0
+// Template: Controller Implementation (ApiControllerImplementation.t4) version 3.0
 
 using System;
 using System.Collections.Generic;

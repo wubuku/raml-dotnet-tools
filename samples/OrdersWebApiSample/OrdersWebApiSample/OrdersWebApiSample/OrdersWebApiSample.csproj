@@ -152,10 +152,10 @@
     <Compile Include="Contracts\IOrdersController.cs">
       <DependentUpon>ordersXml.raml</DependentUpon>
     </Compile>
-    <Compile Include="Contracts\OrdersController.cs">
+    <Compile Include="Contracts\Models.cs">
       <DependentUpon>ordersXml.raml</DependentUpon>
     </Compile>
-    <Compile Include="Contracts\Xml.cs">
+    <Compile Include="Contracts\OrdersController.cs">
       <DependentUpon>ordersXml.raml</DependentUpon>
     </Compile>
     <Compile Include="Controllers\HomeController.cs" />
@@ -164,6 +164,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\OrdersRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
@@ -197,6 +198,9 @@
       <SubType>Designer</SubType>
     </None>
     <Content Include="Contracts\ordersXml.raml" />
+    <Content Include="Contracts\ordersXml.ref">
+      <DependentUpon>ordersXml.raml</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />

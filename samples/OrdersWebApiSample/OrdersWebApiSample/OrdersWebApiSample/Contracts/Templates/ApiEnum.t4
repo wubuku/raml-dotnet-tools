@@ -1,7 +1,7 @@
 <#
 // title: Enums
 // hash: 31fb41855dc49c28b38bdfa18ab07608
-// version: 2.0
+// version: 3.0
 #>
 <#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ assembly name="$(binDir)Raml.Tools.dll" #>

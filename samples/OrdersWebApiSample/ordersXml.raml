@@ -3,7 +3,7 @@ title: Api
 baseUri: /
 mediaType: application/xml
 schemas:
-    - xml: !include ipo.xsd
+    - models: !include ipo.xsd
 /orders:
     post:
         description: Create a new purchase order
@@ -14,6 +14,7 @@ schemas:
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xmlns:ipo="http://www.example.com/IPO"
                   orderDate="1999-12-01"
+                  id="113"
                   xsi:schemaLocation="http://www.example.com/IPO ipo.xsd">
                     <shipTo exportCode="1" xsi:type="ipo:UKAddress">
                         <name>Helen Zoe</name>
