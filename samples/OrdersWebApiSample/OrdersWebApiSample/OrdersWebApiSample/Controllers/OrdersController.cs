@@ -6,20 +6,47 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using OrdersWebApiSample.OrdersXml.Models;
+using OrdersWebApiSample.Repositories;
 
 namespace OrdersWebApiSample.OrdersXml
 {
     public partial class OrdersController : IOrdersController
     {
+        private readonly IOrdersRepository ordersRepository;
 
-		/// <summary>
+        public OrdersController(IOrdersRepository ordersRepository)
+        {
+            this.ordersRepository = ordersRepository;
+        }
+
+        /// <summary>
 		/// Create a new purchase order
 		/// </summary>
 		/// <param name="purchaseordertype"></param>
         public IHttpActionResult Post(Models.PurchaseOrderType purchaseordertype)
         {
-            // TODO: implement Post - route: orders/
+            ordersRepository.Add(purchaseordertype);
 			return Ok();
+        }
+
+		/// <summary>
+		/// gets already shipped orders
+		/// </summary>
+		/// <returns>PurchaseOrdersType</returns>
+        public IHttpActionResult Get()
+		{
+		    var result = ordersRepository.GetShipped();
+            return Ok(result);
+        }
+
+		/// <summary>
+		/// gets not shipped orders
+		/// </summary>
+		/// <returns>PurchaseOrdersType</returns>
+        public IHttpActionResult GetNotshipped()
+        {
+            var result = ordersRepository.GetNotShipped(); 
+            return Ok(result);
         }
 
 		/// <summary>
@@ -27,12 +54,9 @@ namespace OrdersWebApiSample.OrdersXml
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns>PurchaseOrderType</returns>
-        public IHttpActionResult Get([FromUri] string id)
+        public IHttpActionResult GetById([FromUri] string id)
         {
-            // TODO: implement Get - route: orders/{id}
-			// var result = new PurchaseOrderType();
-			// return Ok(result);
-			return Ok();
+			return Ok(ordersRepository.Get(id));
         }
 
 		/// <summary>
@@ -42,44 +66,20 @@ namespace OrdersWebApiSample.OrdersXml
 		/// <param name="id"></param>
         public IHttpActionResult Put(Models.PurchaseOrderType purchaseordertype,[FromUri] string id)
         {
-            // TODO: implement Put - route: orders/{id}
+            ordersRepository.Update(purchaseordertype);
 			return Ok();
         }
 
 		/// <summary>
-		/// ship one or more order items
+		/// marks order as shipped
 		/// </summary>
-		/// <param name="itemstype"></param>
+		/// <param name="content"></param>
 		/// <param name="id"></param>
-        public IHttpActionResult PutShip(Models.ItemsType itemstype,[FromUri] string id)
-        {
-            // TODO: implement PutShip - route: orders/{id}/ship
-			return Ok();
-        }
-
-		/// <summary>
-		/// gets the not shipped items of an order
-		/// </summary>
-		/// <param name="id"></param>
-		/// <returns>ItemsType</returns>
-        public IHttpActionResult GetNotshipped([FromUri] string id)
-        {
-            // TODO: implement GetNotshipped - route: orders/{id}/notshipped
-			// var result = new ItemsType();
-			// return Ok(result);
-			return Ok();
-        }
-
-		/// <summary>
-		/// gets the already shipped items of an order
-		/// </summary>
-		/// <param name="id"></param>
-		/// <returns>ItemsType</returns>
-        public IHttpActionResult GetShipped([FromUri] string id)
-        {
-            // TODO: implement GetShipped - route: orders/{id}/shipped
-			// var result = new ItemsType();
-			// return Ok(result);
+        public IHttpActionResult PostShip([FromBody] string content,[FromUri] string id)
+		{
+		    var order = ordersRepository.Get(id);
+		    order.shipped = true;
+            ordersRepository.Update(order);
 			return Ok();
         }
 

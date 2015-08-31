@@ -30,6 +30,10 @@ namespace OrdersWebApiSample.OrdersXml.Models {
         
         private string idField;
         
+        private bool shippedField;
+        
+        private bool shippedFieldSpecified;
+        
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("billTo", typeof(AddressType), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
         [System.Xml.Serialization.XmlElementAttribute("shipTo", typeof(AddressType), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
@@ -115,13 +119,35 @@ namespace OrdersWebApiSample.OrdersXml.Models {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+        [System.Xml.Serialization.XmlAttributeAttribute()]
         public string id {
             get {
                 return this.idField;
             }
             set {
                 this.idField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public bool shipped {
+            get {
+                return this.shippedField;
+            }
+            set {
+                this.shippedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool shippedSpecified {
+            get {
+                return this.shippedFieldSpecified;
+            }
+            set {
+                this.shippedFieldSpecified = value;
             }
         }
     }
@@ -543,6 +569,29 @@ namespace OrdersWebApiSample.OrdersXml.Models {
         shipComment,
     }
     
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.34230")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.example.com/IPO")]
+    [System.Xml.Serialization.XmlRootAttribute("orders", Namespace="http://www.example.com/IPO", IsNullable=false)]
+    public partial class PurchaseOrdersType {
+        
+        private PurchaseOrderTypeCollection ordersField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("orders", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public PurchaseOrderTypeCollection orders {
+            get {
+                return this.ordersField;
+            }
+            set {
+                this.ordersField = value;
+            }
+        }
+    }
+    
     public class AddressTypeCollection : System.Collections.CollectionBase {
         
         public AddressType this[int idx] {
@@ -619,6 +668,22 @@ namespace OrdersWebApiSample.OrdersXml.Models {
         }
         
         public int Add(ItemsChoiceType1 value) {
+            return base.InnerList.Add(value);
+        }
+    }
+    
+    public class PurchaseOrderTypeCollection : System.Collections.CollectionBase {
+        
+        public PurchaseOrderType this[int idx] {
+            get {
+                return ((PurchaseOrderType)(base.InnerList[idx]));
+            }
+            set {
+                base.InnerList[idx] = value;
+            }
+        }
+        
+        public int Add(PurchaseOrderType value) {
             return base.InnerList.Add(value);
         }
     }

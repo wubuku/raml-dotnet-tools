@@ -3,7 +3,9 @@
         xmlns:ipo="http://www.example.com/IPO">
 
  <xsd:element name="purchaseOrder" type="ipo:PurchaseOrderType"/>
- 
+
+ <xsd:element name="orders" type="ipo:PurchaseOrdersType"/>  
+  
  <xsd:element name="comment" type="xsd:string"/>
  <xsd:element name="shipComment" type="xsd:string"
   substitutionGroup="ipo:comment"/>
@@ -22,9 +24,16 @@
   <xsd:attributeGroup ref="ipo:OrderDetails"/>   
  </xsd:complexType>
 
+ <xsd:complexType name="PurchaseOrdersType">
+  <xsd:sequence>
+   <xsd:element minOccurs="0" maxOccurs="unbounded" name="orders" type="ipo:PurchaseOrderType"/>
+  </xsd:sequence>
+ </xsd:complexType>
+
   <xsd:attributeGroup name="OrderDetails">
     <xsd:attribute name="orderDate" type="xsd:date"/>
-    <xsd:attribute name="id" type="xsd:integer"/>
+    <xsd:attribute name="id" type="xsd:string"/>
+    <xsd:attribute name="shipped" type="xsd:boolean"/>
   </xsd:attributeGroup>
 
   <xsd:group name="shipAndBill">

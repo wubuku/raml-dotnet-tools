@@ -14,10 +14,10 @@ namespace OrdersWebApiSample.OrdersXml
     {
 
         IHttpActionResult Post(Models.PurchaseOrderType purchaseordertype);
-        IHttpActionResult Get([FromUri] string id);
+        IHttpActionResult Get();
+        IHttpActionResult GetNotshipped();
+        IHttpActionResult GetById([FromUri] string id);
         IHttpActionResult Put(Models.PurchaseOrderType purchaseordertype,[FromUri] string id);
-        IHttpActionResult PutShip(Models.ItemsType itemstype,[FromUri] string id);
-        IHttpActionResult GetNotshipped([FromUri] string id);
-        IHttpActionResult GetShipped([FromUri] string id);
+        IHttpActionResult PostShip([FromBody] string content,[FromUri] string id);
     }
 }
