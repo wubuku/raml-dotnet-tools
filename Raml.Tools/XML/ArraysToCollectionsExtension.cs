@@ -1,7 +1,6 @@
 using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Xml.Schema;
 
 namespace Raml.Tools.XML
@@ -14,72 +13,91 @@ namespace Raml.Tools.XML
     {
         #region ICodeExtension Members
 
-        private IDictionary<string, string> systemCollections = new Dictionary<string, string>();
+        private readonly IDictionary<string, string> systemCollections = new Dictionary<string, string>();
 
         public void Process(CodeNamespace code, XmlSchema schema)
         {
             // Copy as we will be adding types.
-            CodeTypeDeclaration[] types =
-                new CodeTypeDeclaration[code.Types.Count];
+            var types = new CodeTypeDeclaration[code.Types.Count];
             code.Types.CopyTo(types, 0);
 
-            foreach (CodeTypeDeclaration type in types)
+            foreach (var type in types)
             {
-                if (type.IsClass || type.IsStruct)
+                if (!type.IsClass && !type.IsStruct) continue;
+
+                foreach (CodeTypeMember member in type.Members)
                 {
-                    foreach (CodeTypeMember member in type.Members)
-                    {
-                        // Process fields only.
-                        if ((member is CodeMemberField && ((CodeMemberField) member).Type.ArrayElementType != null)
-                            || (member is CodeMemberProperty && ((CodeMemberProperty) member).Type.ArrayElementType != null))
-                        {
-                            if (member is CodeMemberProperty)
-                            {
-                                CodeMemberProperty prop = (CodeMemberProperty) member;
-                                CodeTypeDeclaration col = GetCollection(prop.Type.ArrayElementType);
-                                if (col.Name.StartsWith("System."))
-                                {
-                                    col.Name = col.Name.Substring("System.".Length);
-                                }
-                                prop.Type = new CodeTypeReference(col.Name);
-                            }
-                            else
-                            {
-                                CodeMemberField field = (CodeMemberField) member;
-                                CodeTypeDeclaration col = GetCollection(field.Type.ArrayElementType);
-                                // Change field type to collection.
-                                if (col.Name.StartsWith("System."))
-                                {
-                                    col.Name = col.Name.Substring("System.".Length);
+                    if ((!(member is CodeMemberField) || ((CodeMemberField) member).Type.ArrayElementType == null) &&
+                        (!(member is CodeMemberProperty) || ((CodeMemberProperty) member).Type.ArrayElementType == null))
+                        continue;
 
-                                    if (systemCollections.ContainsKey(col.Name))
-                                    {
-                                        field.Type = new CodeTypeReference(col.Name);
-                                        continue;
-                                    }
-
-                                    systemCollections.Add(col.Name, col.Name);
-                                }
-                                field.Type = new CodeTypeReference(col.Name);
-                                code.Types.Add(col);
-                            }
-                        }
-                    }
+                    ProcessFieldsAndProperties(code, member);
                 }
             }
+        }
+
+        private void ProcessFieldsAndProperties(CodeNamespace code, CodeTypeMember member)
+        {
+            if (member is CodeMemberProperty)
+            {
+                ProcessProperty(member);
+            }
+            else
+            {
+                ProcessField(code, member);
+            }
+        }
+
+        private void ProcessField(CodeNamespace code, CodeTypeMember member)
+        {
+            var field = (CodeMemberField) member;
+            var col = GetCollection(field.Type.ArrayElementType);
+            // Change field type to collection.
+            if (col.Name.Contains("."))
+            {
+                GetValidName(col);
+
+                if (systemCollections.ContainsKey(col.Name))
+                {
+                    field.Type = new CodeTypeReference(col.Name);
+                    return;
+                }
+
+                systemCollections.Add(col.Name, col.Name);
+            }
+
+            field.Type = new CodeTypeReference(col.Name);
+            code.Types.Add(col);
+        }
+
+        private void ProcessProperty(CodeTypeMember member)
+        {
+            var prop = (CodeMemberProperty) member;
+            var col = GetCollection(prop.Type.ArrayElementType);
+            if (col.Name.Contains("."))
+            {
+                GetValidName(col);
+            }
+            prop.Type = new CodeTypeReference(col.Name);
+        }
+
+        private static void GetValidName(CodeTypeDeclaration col)
+        {
+            col.Name = col.Name.StartsWith("System.") ? col.Name.Substring("System.".Length) : col.Name;
+            col.Name = col.Name.Replace(".", string.Empty);
         }
 
         #endregion
 
         public CodeTypeDeclaration GetCollection(CodeTypeReference forType)
         {
-            CodeTypeDeclaration col = new CodeTypeDeclaration(
+            var col = new CodeTypeDeclaration(
                 forType.BaseType + "Collection");
             col.BaseTypes.Add(typeof(CollectionBase));
             col.Attributes = MemberAttributes.Final | MemberAttributes.Public;
 
             // Add method
-            CodeMemberMethod add = new CodeMemberMethod();
+            var add = new CodeMemberMethod();
             add.Attributes = MemberAttributes.Final | MemberAttributes.Public;
             add.Name = "Add";
             add.ReturnType = new CodeTypeReference(typeof(int));
@@ -100,7 +118,7 @@ namespace Raml.Tools.XML
             col.Members.Add(add);
 
             // Indexer property ( 'this' )
-            CodeMemberProperty indexer = new CodeMemberProperty();
+            var indexer = new CodeMemberProperty();
             indexer.Attributes = MemberAttributes.Final | MemberAttributes.Public;
             indexer.Name = "Item";
             indexer.Type = forType;
