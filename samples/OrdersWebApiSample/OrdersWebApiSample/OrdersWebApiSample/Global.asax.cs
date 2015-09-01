@@ -20,14 +20,14 @@ namespace OrdersWebApiSample
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            UnityConfig.RegisterComponents();
 
             var ordersRepository = new OrdersRepository();
 
             var order = new PurchaseOrderType();
             order.id = "113";
             order.orderDate = DateTime.Now;
-            order.Items = new AddressTypeCollection();
-            order.Items[0] = new AddressType {city = "LA", name = "MuleSoft Inc", street = "117, Colorado Av."};
+            order.items = new ItemsType();
             order.items.item = new ItemsTypeItemCollection();
             order.items.item.Add(new ItemsTypeItem
             {
@@ -42,8 +42,7 @@ namespace OrdersWebApiSample
             var order2 = new PurchaseOrderType();
             order2.id = "117";
             order2.orderDate = DateTime.Now.Subtract(new TimeSpan(1,0,0,0));
-            order2.Items = new AddressTypeCollection();
-            order2.Items.Add(new AddressType { city = "NY", name = "Apple Inc", street = "114, First Av." });
+            order2.items = new ItemsType();
             order2.items.item = new ItemsTypeItemCollection();
             order2.items.item.Add(new ItemsTypeItem
             {
@@ -58,8 +57,7 @@ namespace OrdersWebApiSample
             var order3 = new PurchaseOrderType();
             order3.id = "111";
             order3.orderDate = DateTime.Now.Subtract(new TimeSpan(5, 0, 0, 0));
-            order3.Items = new AddressTypeCollection();
-            order3.Items.Add(new AddressType { city = "NY", name = "Salesforce Inc", street = "14, Fifth Av." });
+            order3.items = new ItemsType();
             order3.items.item = new ItemsTypeItemCollection();
             order3.items.item.Add(new ItemsTypeItem
             {
