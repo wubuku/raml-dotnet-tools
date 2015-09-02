@@ -14,9 +14,9 @@ namespace OrdersWebApiSample.OrdersXml.Models {
     [System.Xml.Serialization.XmlRootAttribute("purchaseOrder", Namespace="http://www.example.com/IPO", IsNullable=false)]
     public partial class PurchaseOrderType {
         
-        private AddressTypeCollection itemsField;
+        private AddressType[] itemsField;
         
-        private ItemsChoiceTypeCollection itemsElementNameField;
+        private ItemsChoiceType[] itemsElementNameField;
         
         private string itemField;
         
@@ -39,7 +39,7 @@ namespace OrdersWebApiSample.OrdersXml.Models {
         [System.Xml.Serialization.XmlElementAttribute("shipTo", typeof(AddressType), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
         [System.Xml.Serialization.XmlElementAttribute("singleAddress", typeof(AddressType), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
         [System.Xml.Serialization.XmlChoiceIdentifierAttribute("ItemsElementName")]
-        public AddressTypeCollection Items {
+        public AddressType[] Items {
             get {
                 return this.itemsField;
             }
@@ -51,7 +51,7 @@ namespace OrdersWebApiSample.OrdersXml.Models {
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("ItemsElementName")]
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public ItemsChoiceTypeCollection ItemsElementName {
+        public ItemsChoiceType[] ItemsElementName {
             get {
                 return this.itemsElementNameField;
             }
@@ -210,13 +210,13 @@ namespace OrdersWebApiSample.OrdersXml.Models {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.example.com/IPO")]
     public partial class ItemsType {
         
-        private ItemsTypeItemCollection itemField;
+        private ItemsTypeItem[] itemField;
         
-        private StringCollection textField;
+        private string[] textField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("item", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public ItemsTypeItemCollection item {
+        public ItemsTypeItem[] item {
             get {
                 return this.itemField;
             }
@@ -227,7 +227,7 @@ namespace OrdersWebApiSample.OrdersXml.Models {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlTextAttribute()]
-        public StringCollection Text {
+        public string[] Text {
             get {
                 return this.textField;
             }
@@ -251,9 +251,9 @@ namespace OrdersWebApiSample.OrdersXml.Models {
         
         private decimal uSPriceField;
         
-        private StringCollection itemsField;
+        private string[] itemsField;
         
-        private ItemsChoiceType1Collection itemsElementNameField;
+        private ItemsChoiceType1[] itemsElementNameField;
         
         private System.DateTime shipDateField;
         
@@ -307,7 +307,7 @@ namespace OrdersWebApiSample.OrdersXml.Models {
         [System.Xml.Serialization.XmlElementAttribute("customerComment", typeof(string))]
         [System.Xml.Serialization.XmlElementAttribute("shipComment", typeof(string))]
         [System.Xml.Serialization.XmlChoiceIdentifierAttribute("ItemsElementName")]
-        public StringCollection Items {
+        public string[] Items {
             get {
                 return this.itemsField;
             }
@@ -319,7 +319,7 @@ namespace OrdersWebApiSample.OrdersXml.Models {
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("ItemsElementName")]
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public ItemsChoiceType1Collection ItemsElementName {
+        public ItemsChoiceType1[] ItemsElementName {
             get {
                 return this.itemsElementNameField;
             }
@@ -578,113 +578,17 @@ namespace OrdersWebApiSample.OrdersXml.Models {
     [System.Xml.Serialization.XmlRootAttribute("orders", Namespace="http://www.example.com/IPO", IsNullable=false)]
     public partial class PurchaseOrdersType {
         
-        private PurchaseOrderTypeCollection ordersField;
+        private PurchaseOrderType[] ordersField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("orders", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public PurchaseOrderTypeCollection orders {
+        public PurchaseOrderType[] orders {
             get {
                 return this.ordersField;
             }
             set {
                 this.ordersField = value;
             }
-        }
-    }
-    
-    public class AddressTypeCollection : System.Collections.CollectionBase {
-        
-        public AddressType this[int idx] {
-            get {
-                return ((AddressType)(base.InnerList[idx]));
-            }
-            set {
-                base.InnerList[idx] = value;
-            }
-        }
-        
-        public int Add(AddressType value) {
-            return base.InnerList.Add(value);
-        }
-    }
-    
-    public class ItemsChoiceTypeCollection : System.Collections.CollectionBase {
-        
-        public ItemsChoiceType this[int idx] {
-            get {
-                return ((ItemsChoiceType)(base.InnerList[idx]));
-            }
-            set {
-                base.InnerList[idx] = value;
-            }
-        }
-        
-        public int Add(ItemsChoiceType value) {
-            return base.InnerList.Add(value);
-        }
-    }
-    
-    public class ItemsTypeItemCollection : System.Collections.CollectionBase {
-        
-        public ItemsTypeItem this[int idx] {
-            get {
-                return ((ItemsTypeItem)(base.InnerList[idx]));
-            }
-            set {
-                base.InnerList[idx] = value;
-            }
-        }
-        
-        public int Add(ItemsTypeItem value) {
-            return base.InnerList.Add(value);
-        }
-    }
-    
-    public class StringCollection : System.Collections.CollectionBase {
-        
-        public string this[int idx] {
-            get {
-                return ((string)(base.InnerList[idx]));
-            }
-            set {
-                base.InnerList[idx] = value;
-            }
-        }
-        
-        public int Add(string value) {
-            return base.InnerList.Add(value);
-        }
-    }
-    
-    public class ItemsChoiceType1Collection : System.Collections.CollectionBase {
-        
-        public ItemsChoiceType1 this[int idx] {
-            get {
-                return ((ItemsChoiceType1)(base.InnerList[idx]));
-            }
-            set {
-                base.InnerList[idx] = value;
-            }
-        }
-        
-        public int Add(ItemsChoiceType1 value) {
-            return base.InnerList.Add(value);
-        }
-    }
-    
-    public class PurchaseOrderTypeCollection : System.Collections.CollectionBase {
-        
-        public PurchaseOrderType this[int idx] {
-            get {
-                return ((PurchaseOrderType)(base.InnerList[idx]));
-            }
-            set {
-                base.InnerList[idx] = value;
-            }
-        }
-        
-        public int Add(PurchaseOrderType value) {
-            return base.InnerList.Add(value);
         }
     }
 }

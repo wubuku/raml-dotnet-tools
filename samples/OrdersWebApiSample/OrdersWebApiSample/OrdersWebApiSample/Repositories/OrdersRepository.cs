@@ -37,11 +37,13 @@ namespace OrdersWebApiSample.Repositories
 
         public PurchaseOrdersType GetShipped()
         {
-            var collection = new PurchaseOrderTypeCollection();
-            var notShippedOrders = orders.Values.Where(o => !o.shipped);
-            foreach (var order in notShippedOrders)
+            var collection = new PurchaseOrderType[orders.Values.Count(o => o.shipped)];
+            var shippedOrders = orders.Values.Where(o => o.shipped);
+            var i = 0;
+            foreach (var order in shippedOrders)
             {
-                collection.Add(order);
+                collection[i] = order;
+                i++;
             }
             
             return new PurchaseOrdersType { orders = collection };
@@ -49,11 +51,13 @@ namespace OrdersWebApiSample.Repositories
 
         public PurchaseOrdersType GetNotShipped()
         {
-            var collection = new PurchaseOrderTypeCollection();
-            var notShippedOrders = orders.Values.Where(o => o.shipped);
+            var collection = new PurchaseOrderType[orders.Values.Count(o => !o.shipped)];
+            var notShippedOrders = orders.Values.Where(o => !o.shipped);
+            var i = 0;
             foreach (var order in notShippedOrders)
             {
-                collection.Add(order);
+                collection[i] = order;
+                i++;
             }
 
             return new PurchaseOrdersType { orders = collection };

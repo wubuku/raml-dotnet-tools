@@ -25,41 +25,41 @@ namespace OrdersWebApiSample
             var ordersRepository = new OrdersRepository();
 
             var order = new PurchaseOrderType();
-            order.id = "113";
+            order.shipped = false;
             order.orderDate = DateTime.Now;
             order.items = new ItemsType();
-            order.items.item = new ItemsTypeItemCollection();
-            order.items.item.Add(new ItemsTypeItem
+            order.items.item = new ItemsTypeItem[1];
+            order.items.item[0] = new ItemsTypeItem
             {
                 productName = "XBOX One",
                 partNum = "5465653",
                 quantity = "1",
                 USPrice = 400
-            });
+            };
 
             ordersRepository.Add(order);
 
             var order2 = new PurchaseOrderType();
-            order2.id = "117";
+            order2.shipped = true;
             order2.orderDate = DateTime.Now.Subtract(new TimeSpan(1,0,0,0));
             order2.items = new ItemsType();
-            order2.items.item = new ItemsTypeItemCollection();
-            order2.items.item.Add(new ItemsTypeItem
+            order2.items.item = new ItemsTypeItem[1];
+            order2.items.item[0] = new ItemsTypeItem
             {
                 productName = "iPod Nano",
                 partNum = "32312312",
                 quantity = "2",
                 USPrice = 200
-            });
+            };
 
             ordersRepository.Add(order2);
 
             var order3 = new PurchaseOrderType();
-            order3.id = "111";
+            order3.shipped = true;
             order3.orderDate = DateTime.Now.Subtract(new TimeSpan(5, 0, 0, 0));
             order3.items = new ItemsType();
-            order3.items.item = new ItemsTypeItemCollection();
-            order3.items.item.Add(new ItemsTypeItem
+            order3.items.item = new ItemsTypeItem[1];
+            order3.items.item[0] = new ItemsTypeItem
             {
                 productName = "iPod Nano Touch",
                 partNum = "32312888",
@@ -67,7 +67,7 @@ namespace OrdersWebApiSample
                 USPrice = 250,
                 shipDate = DateTime.Now,
                 weightKg = 1
-            });
+            };
 
             ordersRepository.Add(order3);
 

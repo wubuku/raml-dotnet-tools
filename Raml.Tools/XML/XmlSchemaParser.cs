@@ -76,8 +76,8 @@ namespace Raml.Tools.XML
 
             // execute extensions
 
-            var collectionsExt = new ArraysToCollectionsExtension();
-            collectionsExt.Process(ns, xsd);
+            //var collectionsExt = new ArraysToCollectionsExtension();
+            //collectionsExt.Process(ns, xsd);
 
             //var filedsExt = new FieldsToPropertiesExtension();
             //filedsExt.Process(ns, xsd);
