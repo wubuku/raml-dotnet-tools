@@ -1,13 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Formatting;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Http;
-using System.Xml.Serialization;
+﻿using System.Web.Http;
 
 namespace OrdersWebApiSample
 {
@@ -16,6 +7,8 @@ namespace OrdersWebApiSample
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
+            config.Formatters.Remove(config.Formatters.XmlFormatter);
+            config.Formatters.Add(new XmlSerializerFormatter());
 
             // Web API routes
             config.MapHttpAttributeRoutes();

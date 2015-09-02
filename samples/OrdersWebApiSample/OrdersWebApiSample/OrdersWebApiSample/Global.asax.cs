@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
@@ -28,14 +29,16 @@ namespace OrdersWebApiSample
             order.shipped = false;
             order.orderDate = DateTime.Now;
             order.items = new ItemsType();
-            order.items.item = new ItemsTypeItem[1];
-            order.items.item[0] = new ItemsTypeItem
+            
+            var items = new Collection<ItemsTypeItem>();
+            items.Add(new ItemsTypeItem
             {
                 productName = "XBOX One",
                 partNum = "5465653",
                 quantity = "1",
                 USPrice = 400
-            };
+            });
+            order.items.item = items.ToArray();
 
             ordersRepository.Add(order);
 
@@ -43,14 +46,15 @@ namespace OrdersWebApiSample
             order2.shipped = true;
             order2.orderDate = DateTime.Now.Subtract(new TimeSpan(1,0,0,0));
             order2.items = new ItemsType();
-            order2.items.item = new ItemsTypeItem[1];
-            order2.items.item[0] = new ItemsTypeItem
+            var items2 = new Collection<ItemsTypeItem>();
+            items2.Add(new ItemsTypeItem
             {
                 productName = "iPod Nano",
                 partNum = "32312312",
                 quantity = "2",
                 USPrice = 200
-            };
+            });
+            order2.items.item = items2.ToArray();
 
             ordersRepository.Add(order2);
 
@@ -58,8 +62,9 @@ namespace OrdersWebApiSample
             order3.shipped = true;
             order3.orderDate = DateTime.Now.Subtract(new TimeSpan(5, 0, 0, 0));
             order3.items = new ItemsType();
-            order3.items.item = new ItemsTypeItem[1];
-            order3.items.item[0] = new ItemsTypeItem
+
+            var items3 = new Collection<ItemsTypeItem>();
+            items3.Add(new ItemsTypeItem
             {
                 productName = "iPod Nano Touch",
                 partNum = "32312888",
@@ -67,10 +72,10 @@ namespace OrdersWebApiSample
                 USPrice = 250,
                 shipDate = DateTime.Now,
                 weightKg = 1
-            };
+            });
+            order3.items.item = items3.ToArray();
 
             ordersRepository.Add(order3);
-
         }
     }
 }
