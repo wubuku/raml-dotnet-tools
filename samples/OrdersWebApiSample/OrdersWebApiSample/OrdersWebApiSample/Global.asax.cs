@@ -27,9 +27,10 @@ namespace OrdersWebApiSample
 
             var order = new PurchaseOrderType();
             order.shipped = false;
+            order.orderDateSpecified = true;
             order.orderDate = DateTime.Now;
             order.items = new ItemsType();
-            
+
             var items = new Collection<ItemsTypeItem>();
             items.Add(new ItemsTypeItem
             {
@@ -40,11 +41,20 @@ namespace OrdersWebApiSample
             });
             order.items.item = items.ToArray();
 
+            var addresses = new Collection<AddressType>();
+            addresses.Add(new AddressType
+            {
+                city = "LA",
+                street = "35, Rodeo Dr"
+            });
+            order.Items = addresses.ToArray();
+            order.ItemsElementName = new[] { ItemsChoiceType.shipTo };
             ordersRepository.Add(order);
 
             var order2 = new PurchaseOrderType();
             order2.shipped = true;
-            order2.orderDate = DateTime.Now.Subtract(new TimeSpan(1,0,0,0));
+            order2.orderDateSpecified = true;
+            order2.orderDate = DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0));
             order2.items = new ItemsType();
             var items2 = new Collection<ItemsTypeItem>();
             items2.Add(new ItemsTypeItem
@@ -55,11 +65,20 @@ namespace OrdersWebApiSample
                 USPrice = 200
             });
             order2.items.item = items2.ToArray();
+            var addresses2 = new Collection<AddressType>();
+            addresses2.Add(new AddressType
+            {
+                city = "NY",
+                street = "433, Fith Av."
+            });
+            order2.ItemsElementName = new[] { ItemsChoiceType.shipTo };
+            order2.Items = addresses2.ToArray();
 
             ordersRepository.Add(order2);
 
             var order3 = new PurchaseOrderType();
             order3.shipped = true;
+            order3.orderDateSpecified = true;
             order3.orderDate = DateTime.Now.Subtract(new TimeSpan(5, 0, 0, 0));
             order3.items = new ItemsType();
 
