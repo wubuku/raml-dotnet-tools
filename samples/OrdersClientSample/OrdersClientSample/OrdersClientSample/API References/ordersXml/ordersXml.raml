@@ -3,41 +3,57 @@ title: Api
 baseUri: /
 mediaType: application/xml
 schemas:
-    - xml: !include C:\\desarrollo\\mulesoft\\raml-dotnet-tools\\samples\\OrdersClientSample\\OrdersClientSample\\OrdersClientSample\\API References\\ordersXml\\includes\\ipo.xsd
+    - models: !include includes\\ipo.xsd
 /orders:
     post:
         description: Create a new purchase order
         body:
             schema: PurchaseOrderType
             example: |
-                <ipo:purchaseOrder
-                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                  xmlns:ipo="http://www.example.com/IPO"
-                  orderDate="1999-12-01"
-                  xsi:schemaLocation="http://www.example.com/IPO ipo.xsd">
-                    <shipTo exportCode="1" xsi:type="ipo:UKAddress">
-                        <name>Helen Zoe</name>
-                        <street>47 Eden Street</street>
-                        <city>Cambridge</city>
-                        <postcode>CB1 1JR</postcode>
-                    </shipTo>
-                    <billTo xsi:type="ipo:USAddress">
-                        <name>Robert Smith</name>
-                        <street>8 Oak Avenue</street>
-                        <city>Old Town</city>
-                        <state>PA</state>
-                        <zip>95819</zip>
-                    </billTo>
-                    <items>
-                        <item partNum="833-AA">
-                            <productName>Lapis necklace</productName>
-                            <quantity>1</quantity>
-                            <USPrice>99.95</USPrice>
-                            <ipo:comment>Want this for the holidays!</ipo:comment>
-                            <shipDate>1999-12-05</shipDate>
-                        </item>
-                    </items>
-                </ipo:purchaseOrder>
+                      <ipo:purchaseOrder
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xmlns:ipo="http://www.example.com/IPO"
+                        orderDate="1999-12-01"
+                        id="113"
+                        shipped="false"
+                        xsi:schemaLocation="http://www.example.com/IPO ipo.xsd">
+                            <shipTo exportCode="1" xsi:type="ipo:UKAddress">
+                                <name>Helen Zoe</name>
+                                <street>47 Eden Street</street>
+                                <city>Cambridge</city>
+                                <postcode>CB1 1JR</postcode>
+                            </shipTo>
+                            <billTo xsi:type="ipo:USAddress">
+                                <name>Robert Smith</name>
+                                <street>8 Oak Avenue</street>
+                                <city>Old Town</city>
+                                <state>PA</state>
+                                <zip>95819</zip>
+                            </billTo>
+                            <items>
+                                <item partNum="833-AA">
+                                    <productName>Lapis necklace</productName>
+                                    <quantity>1</quantity>
+                                    <USPrice>99.95</USPrice>
+                                    <ipo:comment>Want this for the holidays!</ipo:comment>
+                                    <shipDate>1999-12-05</shipDate>
+                                </item>
+                            </items>
+                      </ipo:purchaseOrder>
+    /shipped:
+        get:
+            description: gets already shipped orders
+            responses:
+                200:
+                    body:
+                        schema: PurchaseOrdersType
+    /notshipped:
+        get:
+            description: gets not shipped orders
+            responses:
+                200:
+                    body:
+                        schema: PurchaseOrdersType
     /{id}:
         get:
             description: gets an order by id
@@ -50,21 +66,5 @@ schemas:
             body:
                 schema: PurchaseOrderType
         /ship:
-            put:
-                description: ship one or more order items
-                body:
-                    schema: ItemsType
-        /notshipped:
-            get:
-                description: gets the items of an order
-                responses:
-                    200:
-                        body:
-                            schema: ItemsType
-        /shipped:
-            get:
-                description: gets the already shipped items of an order
-                responses:
-                    200:
-                        body:
-                            schema: ItemsType
+            post:
+                description: marks order as shipped
