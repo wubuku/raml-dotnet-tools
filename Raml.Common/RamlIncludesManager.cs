@@ -152,6 +152,11 @@ namespace Raml.Common
             if (!rootRamlPath.EndsWith(Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture)))
                 rootRamlPath += Path.DirectorySeparatorChar;
 
+            rootRamlPath = rootRamlPath.Replace(
+                Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture) +
+                Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture),
+                Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture));
+
             var relativeInclude = destinationFilePath;
             if(destinationFilePath.StartsWith(rootRamlPath))
                 relativeInclude = destinationFilePath.Substring(rootRamlPath.Length);
