@@ -262,7 +262,7 @@ namespace MuleSoft.RAML.Tools
             var includesFolderPath = generatedFolderPath + Path.DirectorySeparatorChar + InstallerServices.IncludesFolderName;
             var ramlSource = RamlReferenceReader.GetRamlSource(refFilePath);
             var includesManager = new RamlIncludesManager();
-            var result = includesManager.Manage(ramlSource, includesFolderPath);
+            var result = includesManager.Manage(ramlSource, includesFolderPath, generatedFolderPath + Path.DirectorySeparatorChar);
             if (result.IsSuccess)
             {
                 File.WriteAllText(ramlFilePath, result.ModifiedContents);
@@ -277,7 +277,7 @@ namespace MuleSoft.RAML.Tools
             var includesFolderPath = folderPath + Path.DirectorySeparatorChar + InstallerServices.IncludesFolderName;
 
             var includesManager = new RamlIncludesManager();
-            var result = includesManager.Manage(ramlSource, includesFolderPath, confirmOverrite: true);
+            var result = includesManager.Manage(ramlSource, includesFolderPath, confirmOverrite: true, rootRamlPath: folderPath + Path.DirectorySeparatorChar);
 
             var includesFolderItem = folderItem.ProjectItems.Cast<ProjectItem>().FirstOrDefault(i => i.Name == InstallerServices.IncludesFolderName);
             if (includesFolderItem == null)

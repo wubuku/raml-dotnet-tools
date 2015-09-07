@@ -165,7 +165,7 @@ namespace MuleSoft.RAML.Tools
             InstallerServices.RemoveSubItemsAndAssociatedFiles(includesFolderItem);
 
             var includeManager = new RamlIncludesManager();
-            var result = includeManager.Manage(ramlSource, containingFolder + Path.DirectorySeparatorChar + InstallerServices.IncludesFolderName);
+            var result = includeManager.Manage(ramlSource, containingFolder + Path.DirectorySeparatorChar + InstallerServices.IncludesFolderName, containingFolder + Path.DirectorySeparatorChar);
 
             if (!result.IsSuccess) 
                 return result;
