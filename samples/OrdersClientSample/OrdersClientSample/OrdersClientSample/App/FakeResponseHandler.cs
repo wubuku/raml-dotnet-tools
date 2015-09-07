@@ -1,15 +1,13 @@
 using System;
 using System.IO;
 using System.Net.Http;
-using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using Newtonsoft.Json;
 using OrdersClientSample.OrdersXml.Models;
 
-namespace OrdersClientSample
+namespace OrdersClientSample.App
 {
 	public class FakeResponseHandler : DelegatingHandler
 	{
@@ -50,7 +48,9 @@ namespace OrdersClientSample
             // POST /orders
             if (localPath.EndsWith("/orders") && request.Method == HttpMethod.Post)
             {
-                var newOrder = (PurchaseOrderType)orderSerializer.Deserialize(request.Content.ReadAsStreamAsync().GetAwaiter().GetResult());
+                var result = request.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
+                var xml = Encoding.UTF8.GetString(result);
+                var newOrder = (PurchaseOrderType)orderSerializer.Deserialize(new StringReader(xml));
                 repository.Add(newOrder);
 	        }
 

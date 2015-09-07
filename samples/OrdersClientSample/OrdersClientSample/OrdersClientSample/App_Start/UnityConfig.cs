@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Practices.Unity;
+using OrdersClientSample.App;
 
 namespace OrdersClientSample.App_Start
 {

@@ -2,7 +2,7 @@
 using System.Linq;
 using OrdersClientSample.OrdersXml.Models;
 
-namespace OrdersClientSample
+namespace OrdersClientSample.App
 {
     public interface IOrdersRepository
     {

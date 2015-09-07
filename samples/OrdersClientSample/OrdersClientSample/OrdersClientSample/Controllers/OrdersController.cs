@@ -1,28 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Collections.Generic;
+using OrdersClientSample.App;
 using OrdersClientSample.Models;
 using OrdersClientSample.OrdersXml;
-using OrdersClientSample.OrdersXml.Models;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace OrdersClientSample.Controllers
 {
     [RoutePrefix("orders")]
     public class OrdersController : Controller
     {
-        private readonly IOrdersRepository ordersRepository;
         private readonly OrdersXmlClient client;
 
         public OrdersController(IOrdersRepository ordersRepository)
         {
-            this.ordersRepository = ordersRepository;
             var fakeResponseHandler = new FakeResponseHandler(ordersRepository);
-            var httpClient = new HttpClient(fakeResponseHandler) { BaseAddress = new Uri("http://test.com/api/") };
+            var httpClient = new HttpClient(fakeResponseHandler) {BaseAddress = new Uri("http://test.com/api/")};
             client = new OrdersXmlClient(httpClient);
         }
 
@@ -32,7 +27,7 @@ namespace OrdersClientSample.Controllers
             ViewBag.Title = "Not Shipped Orders";
             var resp = await client.Orders.Notshipped.Get();
             var orders = resp.Content;
-            var viewModels = Map(orders);
+            var viewModels = Mappers.Map(orders);
             return View(viewModels);
         }
 
@@ -41,7 +36,7 @@ namespace OrdersClientSample.Controllers
         {
             var resp = await client.Orders.Get(id);
             var order = resp.Content;
-            var viewModel = Map(order);
+            var viewModel = Mappers.Map(order);
             return View("View", viewModel);
         }
 
@@ -51,75 +46,46 @@ namespace OrdersClientSample.Controllers
             ViewBag.Title = "Shipped Orders";
             var resp = await client.Orders.Shipped.Get();
             var orders = resp.Content;
-            var viewModels = Map(orders);
+            var viewModels = Mappers.Map(orders);
             return View("Index", viewModels);
         }
 
-        private IEnumerable<OrderViewModel> Map(PurchaseOrdersType orders)
+        [Route("add")]
+        public ActionResult Add()
         {
-            var viewModels = new Collection<OrderViewModel>();
-            foreach (var order in orders.orders)
+            ViewBag.Title = "Add Order";
+            Products.Clear();
+            return View("Edit", new OrderEditModel());
+        }
+
+        [Route("")]
+        [HttpPost]
+        public async Task<ActionResult> Post(OrderEditModel model)
+        {
+            model.Products = Products;
+            var order = Mappers.Map(model);
+            await client.Orders.Post(order);
+            Products.Clear();
+            return RedirectToAction("Index");
+        }
+
+        [Route("addproduct")]
+        [HttpPost]
+        public ActionResult AddProduct(ProductViewModel model)
+        {
+            Products.Add(model);
+            return Json(Products);
+        }
+
+        private IList<ProductViewModel> Products
+        {
+            get
             {
-                viewModels.Add(Map(order));
+                if (Session["products"] == null)
+                    Session["products"] = new List<ProductViewModel>();
+
+                return (IList<ProductViewModel>)Session["products"];
             }
-            return viewModels;
         }
-
-        private OrderViewModel Map(PurchaseOrderType order)
-        {
-            var vm = new OrderViewModel
-            {
-                Id = order.id,
-                Date = order.orderDate,
-                Shipped = order.shipped,
-                Addresses = Map(order.Items),
-                Products = Map(order.items.item)
-            };
-            return vm;
-        }
-
-        private IEnumerable<ProductViewModel> Map(ItemsTypeItem[] items)
-        {
-            var viewModels = new Collection<ProductViewModel>();
-            if (items == null)
-                return viewModels;
-
-            foreach (var item in items)
-            {
-                var vm = new ProductViewModel
-                {
-                    Name = item.productName,
-                    Quantity = item.quantity,
-                    PartNumber = item.partNum,
-                    Price = item.USPrice
-                };
-                viewModels.Add(vm);
-            }
-            return viewModels;
-        }
-
-        private IEnumerable<string> Map(AddressType[] addresses)
-        {
-            var viewModels = new Collection<string>();
-            if (addresses == null)
-                return viewModels;
-
-            foreach (var item in addresses)
-            {
-                var vm = "";
-                if (!string.IsNullOrWhiteSpace(item.name))
-                    vm += " " + item.name;
-
-                if (!string.IsNullOrWhiteSpace(item.street))
-                    vm += " " + item.street;
-
-                if (!string.IsNullOrWhiteSpace(item.city))
-                    vm += " " + item.city;
-
-                viewModels.Add(vm);
-            }
-            return viewModels;
-        }
-
     }
 }
