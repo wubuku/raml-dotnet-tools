@@ -460,7 +460,7 @@ namespace Raml.Tools
             if (method.Verb == null)
                 return true;
 
-            return method.Verb.ToLower() != "options" && method.Verb.ToLower() != "head" && method.Verb.ToLower() != "trace" && method.Verb.ToLower() != "connect" && method.Verb.ToLower() != "patch";
+            return method.Verb.ToLower() != "options" && method.Verb.ToLower() != "head" && method.Verb.ToLower() != "trace" && method.Verb.ToLower() != "connect";
         }
 
         protected string GetUniqueName(ICollection<string> methodsNames, string methodName, string relativeUri)

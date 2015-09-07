@@ -1,7 +1,7 @@
 <#
 // title: Models
-// hash: ec8f3ba9e495d386c00b81497ae8efe1
-// version: 2.0
+// hash: 01606b41d2f93324bf31bc49adbb4ad4
+// version: 3.0
 #>
 <#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ assembly name="$(binDir)Raml.Tools.dll" #>
@@ -55,6 +55,10 @@ namespace $(namespace).Models
 <#
 	foreach (var property in apiObject.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 	{
+    // this if a whitespace line to separate properties, do not delete !
+#>
+
+<#
 	    if (!string.IsNullOrWhiteSpace(property.Description))
 	    {
 #>
@@ -63,7 +67,13 @@ namespace $(namespace).Models
         /// </summary>
 <#
 	    }
-		
+
+        if(property.IsAdditionalProperties)
+        {
+#>
+        [JsonExtensionData]
+<#
+        }		
 		if(!string.IsNullOrWhiteSpace(property.OriginalName) && property.OriginalName != property.Name)
 		{
 #>

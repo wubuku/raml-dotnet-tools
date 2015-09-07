@@ -1,4 +1,4 @@
-// Template: Base Controller (ApiControllerBase.t4) version 2.0
+// Template: Base Controller (ApiControllerBase.t4) version 3.0
 
 using System;
 using System.Collections.Generic;
@@ -29,6 +29,32 @@ namespace OrdersWebApiSample.OrdersXml
         }
 
         /// <summary>
+		/// gets already shipped orders
+		/// </summary>
+		/// <returns>PurchaseOrdersType</returns>
+        [ResponseType(typeof(PurchaseOrdersType))]
+        [HttpGet]
+        [Route("shipped")]
+        public virtual IHttpActionResult GetBase()
+        {
+            // Do not modify this code
+            return  ((IOrdersController)this).Get();
+        }
+
+        /// <summary>
+		/// gets not shipped orders
+		/// </summary>
+		/// <returns>PurchaseOrdersType</returns>
+        [ResponseType(typeof(PurchaseOrdersType))]
+        [HttpGet]
+        [Route("notshipped")]
+        public virtual IHttpActionResult GetNotshippedBase()
+        {
+            // Do not modify this code
+            return  ((IOrdersController)this).GetNotshipped();
+        }
+
+        /// <summary>
 		/// gets an order by id
 		/// </summary>
 		/// <param name="id"></param>
@@ -36,10 +62,10 @@ namespace OrdersWebApiSample.OrdersXml
         [ResponseType(typeof(PurchaseOrderType))]
         [HttpGet]
         [Route("{id}")]
-        public virtual IHttpActionResult GetBase([FromUri] string id)
+        public virtual IHttpActionResult GetByIdBase([FromUri] string id)
         {
             // Do not modify this code
-            return  ((IOrdersController)this).Get(id);
+            return  ((IOrdersController)this).GetById(id);
         }
 
         /// <summary>
@@ -56,44 +82,16 @@ namespace OrdersWebApiSample.OrdersXml
         }
 
         /// <summary>
-		/// ship one or more order items
+		/// marks order as shipped
 		/// </summary>
-		/// <param name="itemstype"></param>
+		/// <param name="content"></param>
 		/// <param name="id"></param>
-        [HttpPut]
+        [HttpPost]
         [Route("{id}/ship")]
-        public virtual IHttpActionResult PutShipBase(Models.ItemsType itemstype,[FromUri] string id)
+        public virtual IHttpActionResult PostShipBase([FromBody] string content,[FromUri] string id)
         {
             // Do not modify this code
-            return  ((IOrdersController)this).PutShip(itemstype,id);
-        }
-
-        /// <summary>
-		/// gets the not shipped items of an order
-		/// </summary>
-		/// <param name="id"></param>
-		/// <returns>ItemsType</returns>
-        [ResponseType(typeof(ItemsType))]
-        [HttpGet]
-        [Route("{id}/notshipped")]
-        public virtual IHttpActionResult GetNotshippedBase([FromUri] string id)
-        {
-            // Do not modify this code
-            return  ((IOrdersController)this).GetNotshipped(id);
-        }
-
-        /// <summary>
-		/// gets the already shipped items of an order
-		/// </summary>
-		/// <param name="id"></param>
-		/// <returns>ItemsType</returns>
-        [ResponseType(typeof(ItemsType))]
-        [HttpGet]
-        [Route("{id}/shipped")]
-        public virtual IHttpActionResult GetShippedBase([FromUri] string id)
-        {
-            // Do not modify this code
-            return  ((IOrdersController)this).GetShipped(id);
+            return  ((IOrdersController)this).PostShip(content,id);
         }
     }
 }

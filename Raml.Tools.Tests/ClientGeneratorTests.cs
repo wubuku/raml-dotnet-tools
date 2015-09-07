@@ -136,7 +136,7 @@ namespace Raml.Tools.Tests
         public async Task ShouldBuildMethodsFromRegression()
         {
             var model = await GetRegressionGeneratedModel();
-            Assert.AreEqual(15, model.Classes.SelectMany(c => c.Methods).Count());
+            Assert.AreEqual(18, model.Classes.SelectMany(c => c.Methods).Count());
         }
 
 
@@ -255,10 +255,10 @@ namespace Raml.Tools.Tests
         }
 
         [Test]
-        public async Task ShouldExcludePatchFromMethods()
+        public async Task ShouldIncludePatchFromMethods()
         {
             var model = await GetCongoGeneratedModel();
-            Assert.AreEqual(0, model.Classes.SelectMany(c => c.Methods).Count(m => m.Verb == "Patch"));
+            Assert.IsTrue(model.Classes.SelectMany(c => c.Methods).Count(m => m.Verb == "Patch") > 0);
         }
 
         [Test]
@@ -272,7 +272,7 @@ namespace Raml.Tools.Tests
         public async Task ShouldBuildRequestObjects_FromGitHub()
         {
             var model = await GetGitHubGeneratedModel();
-            Assert.AreEqual(32, model.RequestObjects.Count);
+            Assert.AreEqual(47, model.RequestObjects.Count);
         }
 
         [Test]
@@ -286,7 +286,7 @@ namespace Raml.Tools.Tests
         public async Task ShouldBuildResponseObjects_FromGitHub()
         {
             var model = await GetGitHubGeneratedModel();
-            Assert.AreEqual(67, model.ResponseObjects.Count);
+            Assert.AreEqual(79, model.ResponseObjects.Count);
         }
 
         [Test]
@@ -308,7 +308,7 @@ namespace Raml.Tools.Tests
         public async Task ShouldParse_Congo()
         {
             var model = await GetCongoGeneratedModel();
-            Assert.AreEqual(9, model.Classes.SelectMany(c => c.Methods).Count());
+            Assert.AreEqual(11, model.Classes.SelectMany(c => c.Methods).Count());
             Assert.AreEqual(13, model.Objects.Count());
         }
 
@@ -390,7 +390,7 @@ namespace Raml.Tools.Tests
         public async void Should_Generate_Properties_When_GitHub()
         {
             var model = await GetGitHubGeneratedModel();
-            Assert.AreEqual(856, model.Objects.Sum(c => c.Properties.Count));
+            Assert.AreEqual(1006, model.Objects.Sum(c => c.Properties.Count));
         }
 
         [Test]
@@ -411,7 +411,7 @@ namespace Raml.Tools.Tests
         public async void Should_Generate_Properties_When_Regression()
         {
             var model = await GetRegressionGeneratedModel();
-            Assert.AreEqual(114, model.Objects.Sum(c => c.Properties.Count));
+            Assert.AreEqual(144, model.Objects.Sum(c => c.Properties.Count));
         }
 
         [Test]
@@ -505,6 +505,14 @@ namespace Raml.Tools.Tests
             var model = await GetDuplicationGeneratedModel();
             Assert.AreEqual(2, model.Objects.Count(o => o.Name.StartsWith("User")));
             Assert.AreEqual(1, model.Objects.Count(o => o.Name.Equals("User")));
+        }
+
+        [Test]
+        public async Task ShouldGenerateMethodsForPatch()
+        {
+            var model = await GetPatchGeneratedModel();
+            Assert.AreEqual(1, model.Classes.Sum(o => o.Methods.Count(m => m.Verb == "Patch")));
+            Assert.AreEqual(2, model.Objects.Count(o => o.Name.Contains("Patch")));
         }
 
 
@@ -670,6 +678,14 @@ namespace Raml.Tools.Tests
         {
             var raml = await new RamlParser().LoadAsync("files/duplication.raml");
             var model = new ClientGeneratorService(raml, "Duplication", "TargetNamespace").BuildModel();
+
+            return model;
+        }
+
+        private static async Task<ClientGeneratorModel> GetPatchGeneratedModel()
+        {
+            var raml = await new RamlParser().LoadAsync("files/patch.raml");
+            var model = new ClientGeneratorService(raml, "Patch", "TargetNamespace").BuildModel();
 
             return model;
         }

@@ -1,4 +1,4 @@
-// Template: Client Proxy T4 Template (RAMLClient.t4) version 2.0
+// Template: Client Proxy T4 Template (RAMLClient.t4) version 3.0
 
 using System;
 using System.Collections.Generic;
@@ -19,59 +19,56 @@ using Raml.Common;
 
 namespace OrdersClientSample.OrdersXml
 {
-    public partial class Ship
+    public partial class Shipped
     {
         private readonly OrdersXmlClient proxy;
 
-        internal Ship(OrdersXmlClient proxy)
+        internal Shipped(OrdersXmlClient proxy)
         {
             this.proxy = proxy;
         }
 
+
         /// <summary>
-		/// ship one or more order items
+		/// gets already shipped orders
 		/// </summary>
-		/// <param name="itemstype"></param>
-		/// <param name="id"></param>
-        public virtual async Task<ApiResponse> Put(Models.ItemsType itemstype, string id)
+        public virtual async Task<Models.ShippedGetResponse> Get()
         {
 
-            var url = "orders/{id}/ship";
-            url = url.Replace("{id}", id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Put, url);
-
-            var stringWriter = new StringWriter();
-        	new XmlSerializer(typeof (Models.ItemsType)).Serialize(stringWriter, itemstype);
-            req.Content = new  StringContent(stringWriter.GetStringBuilder().ToString(), Encoding.UTF8, "application/xml");     
+            var url = "orders/shipped";
+            var req = new HttpRequestMessage(HttpMethod.Get, url);
 	        var response = await proxy.Client.SendAsync(req);
+			
+			if (proxy.SchemaValidation.Enabled)
+		    {
+				if(proxy.SchemaValidation.RaiseExceptions) 
+				{
+					await SchemaValidator.ValidateWithExceptionAsync("", response.Content);
+				}
+					
+			}
 
-            return new ApiResponse  
+            return new Models.ShippedGetResponse  
                                             {
                                                 RawContent = response.Content,
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase,
-												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid("", response.Content), true)
                                             };
 
         }
 
         /// <summary>
-		/// ship one or more order items
+		/// gets already shipped orders
 		/// </summary>
-		/// <param name="request">Models.ShipPutRequest</param>
-        public virtual async Task<ApiResponse> Put(Models.ShipPutRequest request)
+		/// <param name="request">ApiRequest</param>
+		/// <param name="responseFormatters">response formmaters</param>
+        public virtual async Task<Models.ShippedGetResponse> Get(ApiRequest request, IEnumerable<MediaTypeFormatter> responseFormatters = null)
         {
 
-            var url = "orders/{id}/ship";
-			if(request.UriParameters == null)
-				throw new InvalidOperationException("Uri Parameters cannot be null");               
-
-			if(request.UriParameters.Id == null)
-				throw new InvalidOperationException("Uri Parameter Id cannot be null");
-
-            url = url.Replace("{id}", request.UriParameters.Id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Put, url);
+            var url = "orders/shipped";
+            var req = new HttpRequestMessage(HttpMethod.Get, url);
 
             if(request.RawHeaders != null)
             {
@@ -80,17 +77,23 @@ namespace OrdersClientSample.OrdersXml
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
-            var stringWriter = new StringWriter();
-        	new XmlSerializer(typeof (Models.ItemsType)).Serialize(stringWriter, request.Content);
-            req.Content = new  StringContent(stringWriter.GetStringBuilder().ToString(), Encoding.UTF8, "application/xml");     
 	        var response = await proxy.Client.SendAsync(req);
-            return new ApiResponse  
+			if (proxy.SchemaValidation.Enabled && proxy.SchemaValidation.RaiseExceptions)
+            {
+				if(proxy.SchemaValidation.RaiseExceptions)
+				{
+					await SchemaValidator.ValidateWithExceptionAsync("", response.Content);
+				}
+				
+            }
+            return new Models.ShippedGetResponse  
                                             {
                                                 RawContent = response.Content,
                                                 RawHeaders = response.Headers,
+	                                            Formatters = responseFormatters,
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase,
-												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid("", response.Content), true)
                                             };
         }
 
@@ -105,15 +108,14 @@ namespace OrdersClientSample.OrdersXml
             this.proxy = proxy;
         }
 
+
         /// <summary>
-		/// gets the items of an order
+		/// gets not shipped orders
 		/// </summary>
-		/// <param name="id"></param>
-        public virtual async Task<Models.NotshippedGetResponse> Get(string id)
+        public virtual async Task<Models.NotshippedGetResponse> Get()
         {
 
-            var url = "orders/{id}/notshipped";
-            url = url.Replace("{id}", id.ToString());
+            var url = "orders/notshipped";
             var req = new HttpRequestMessage(HttpMethod.Get, url);
 	        var response = await proxy.Client.SendAsync(req);
 			
@@ -138,21 +140,14 @@ namespace OrdersClientSample.OrdersXml
         }
 
         /// <summary>
-		/// gets the items of an order
+		/// gets not shipped orders
 		/// </summary>
-		/// <param name="request">Models.NotshippedGetRequest</param>
+		/// <param name="request">ApiRequest</param>
 		/// <param name="responseFormatters">response formmaters</param>
-        public virtual async Task<Models.NotshippedGetResponse> Get(Models.NotshippedGetRequest request, IEnumerable<MediaTypeFormatter> responseFormatters = null)
+        public virtual async Task<Models.NotshippedGetResponse> Get(ApiRequest request, IEnumerable<MediaTypeFormatter> responseFormatters = null)
         {
 
-            var url = "orders/{id}/notshipped";
-			if(request.UriParameters == null)
-				throw new InvalidOperationException("Uri Parameters cannot be null");               
-
-			if(request.UriParameters.Id == null)
-				throw new InvalidOperationException("Uri Parameter Id cannot be null");
-
-            url = url.Replace("{id}", request.UriParameters.Id.ToString());
+            var url = "orders/notshipped";
             var req = new HttpRequestMessage(HttpMethod.Get, url);
 
             if(request.RawHeaders != null)
@@ -184,56 +179,49 @@ namespace OrdersClientSample.OrdersXml
 
     }
 
-    public partial class Shipped
+    public partial class Ship
     {
         private readonly OrdersXmlClient proxy;
 
-        internal Shipped(OrdersXmlClient proxy)
+        internal Ship(OrdersXmlClient proxy)
         {
             this.proxy = proxy;
         }
 
+
         /// <summary>
-		/// gets the already shipped items of an order
+		/// marks order as shipped
 		/// </summary>
+		/// <param name="content"></param>
 		/// <param name="id"></param>
-        public virtual async Task<Models.ShippedGetResponse> Get(string id)
+        public virtual async Task<ApiResponse> Post(string content, string id)
         {
 
-            var url = "orders/{id}/shipped";
+            var url = "orders/{id}/ship";
             url = url.Replace("{id}", id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Get, url);
+            var req = new HttpRequestMessage(HttpMethod.Post, url);
+            req.Content = new StringContent(content);
 	        var response = await proxy.Client.SendAsync(req);
-			
-			if (proxy.SchemaValidation.Enabled)
-		    {
-				if(proxy.SchemaValidation.RaiseExceptions) 
-				{
-					await SchemaValidator.ValidateWithExceptionAsync("", response.Content);
-				}
-					
-			}
 
-            return new Models.ShippedGetResponse  
+            return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
                                                 RawHeaders = response.Headers, 
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase,
-												SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid("", response.Content), true)
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
 
         }
 
         /// <summary>
-		/// gets the already shipped items of an order
+		/// marks order as shipped
 		/// </summary>
-		/// <param name="request">Models.ShippedGetRequest</param>
-		/// <param name="responseFormatters">response formmaters</param>
-        public virtual async Task<Models.ShippedGetResponse> Get(Models.ShippedGetRequest request, IEnumerable<MediaTypeFormatter> responseFormatters = null)
+		/// <param name="request">Models.ShipPostRequest</param>
+        public virtual async Task<ApiResponse> Post(Models.ShipPostRequest request)
         {
 
-            var url = "orders/{id}/shipped";
+            var url = "orders/{id}/ship";
 			if(request.UriParameters == null)
 				throw new InvalidOperationException("Uri Parameters cannot be null");               
 
@@ -241,7 +229,7 @@ namespace OrdersClientSample.OrdersXml
 				throw new InvalidOperationException("Uri Parameter Id cannot be null");
 
             url = url.Replace("{id}", request.UriParameters.Id.ToString());
-            var req = new HttpRequestMessage(HttpMethod.Get, url);
+            var req = new HttpRequestMessage(HttpMethod.Post, url);
 
             if(request.RawHeaders != null)
             {
@@ -250,23 +238,15 @@ namespace OrdersClientSample.OrdersXml
                     req.Headers.TryAddWithoutValidation(header.Key, string.Join(",", header.Value));
                 }
             }
+            req.Content = request.Content;
 	        var response = await proxy.Client.SendAsync(req);
-			if (proxy.SchemaValidation.Enabled && proxy.SchemaValidation.RaiseExceptions)
-            {
-				if(proxy.SchemaValidation.RaiseExceptions)
-				{
-					await SchemaValidator.ValidateWithExceptionAsync("", response.Content);
-				}
-				
-            }
-            return new Models.ShippedGetResponse  
+            return new ApiResponse  
                                             {
                                                 RawContent = response.Content,
                                                 RawHeaders = response.Headers,
-	                                            Formatters = responseFormatters,
                                                 StatusCode = response.StatusCode,
                                                 ReasonPhrase = response.ReasonPhrase,
-												SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid("", response.Content), true)
+												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
         }
 
@@ -280,18 +260,22 @@ namespace OrdersClientSample.OrdersXml
         {
             this.proxy = proxy;
         }
-        public virtual Ship Ship
-        {
-            get { return new Ship(proxy); }
-        }
-        public virtual Notshipped Notshipped
-        {
-            get { return new Notshipped(proxy); }
-        }
+
         public virtual Shipped Shipped
         {
             get { return new Shipped(proxy); }
         }
+
+        public virtual Notshipped Notshipped
+        {
+            get { return new Notshipped(proxy); }
+        }
+
+        public virtual Ship Ship
+        {
+            get { return new Ship(proxy); }
+        }
+
 
         /// <summary>
 		/// Create a new purchase order
@@ -349,6 +333,7 @@ namespace OrdersClientSample.OrdersXml
 												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
         }
+
 
         /// <summary>
 		/// gets an order by id
@@ -426,6 +411,7 @@ namespace OrdersClientSample.OrdersXml
 												SchemaValidation = new Lazy<SchemaValidationResults>(() => SchemaValidator.IsValid("", response.Content), true)
                                             };
         }
+
 
         /// <summary>
 		/// updates an order
@@ -552,6 +538,7 @@ namespace OrdersClientSample.OrdersXml
         }
 
         
+
         public virtual Orders Orders
         {
             get { return new Orders(this); }
@@ -602,6 +589,12 @@ namespace OrdersClientSample.OrdersXml.Models {
         private System.DateTime orderDateField;
         
         private bool orderDateFieldSpecified;
+        
+        private string idField;
+        
+        private bool shippedField;
+        
+        private bool shippedFieldSpecified;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("billTo", typeof(AddressType), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
@@ -684,6 +677,39 @@ namespace OrdersClientSample.OrdersXml.Models {
             }
             set {
                 this.orderDateFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public bool shipped {
+            get {
+                return this.shippedField;
+            }
+            set {
+                this.shippedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool shippedSpecified {
+            get {
+                return this.shippedFieldSpecified;
+            }
+            set {
+                this.shippedFieldSpecified = value;
             }
         }
     }
@@ -1104,6 +1130,29 @@ namespace OrdersClientSample.OrdersXml.Models {
         /// <remarks/>
         shipComment,
     }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.34230")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.example.com/IPO")]
+    [System.Xml.Serialization.XmlRootAttribute("orders", Namespace="http://www.example.com/IPO", IsNullable=false)]
+    public partial class PurchaseOrdersType {
+        
+        private PurchaseOrderType[] ordersField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("orders", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public PurchaseOrderType[] orders {
+            get {
+                return this.ordersField;
+            }
+            set {
+                this.ordersField = value;
+            }
+        }
+    }
 }
 
 
@@ -1120,6 +1169,7 @@ namespace OrdersClientSample.OrdersXml.Models
     /// </summary>
     public partial class  OrdersIdUriParameters 
     {
+
 		[JsonProperty("id")]
         public string Id { get; set; }
 
@@ -1131,6 +1181,7 @@ namespace OrdersClientSample.OrdersXml.Models
     /// </summary>
     public partial class  OrdersIdShipUriParameters 
     {
+
 		[JsonProperty("id")]
         public string Id { get; set; }
 
@@ -1138,85 +1189,32 @@ namespace OrdersClientSample.OrdersXml.Models
     } // end class
 
     /// <summary>
-    /// Uri Parameters for resource /notshipped
+    /// Request object for method Post of class Ship
     /// </summary>
-    public partial class  OrdersIdNotshippedUriParameters 
+    public partial class ShipPostRequest : ApiRequest
     {
-		[JsonProperty("id")]
-        public string Id { get; set; }
-
-
-    } // end class
-
-    /// <summary>
-    /// Uri Parameters for resource /shipped
-    /// </summary>
-    public partial class  OrdersIdShippedUriParameters 
-    {
-		[JsonProperty("id")]
-        public string Id { get; set; }
-
-
-    } // end class
-
-    /// <summary>
-    /// Request object for method Put of class Ship
-    /// </summary>
-    public partial class ShipPutRequest : ApiRequest
-    {
-        public ShipPutRequest(OrdersIdShipUriParameters UriParameters, ItemsType Content = null, MediaTypeFormatter Formatter = null)
+        public ShipPostRequest(OrdersIdShipUriParameters UriParameters, HttpContent Content = null, MediaTypeFormatter Formatter = null)
         {
             this.Content = Content;
             this.Formatter = Formatter;
             this.UriParameters = UriParameters;
         }
 
+
         /// <summary>
         /// Request content
         /// </summary>
-        public ItemsType Content { get; set; }
+        public HttpContent Content { get; set; }
+
         /// <summary>
         /// Request formatter
         /// </summary>
         public MediaTypeFormatter Formatter { get; set; }
+
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
         public OrdersIdShipUriParameters UriParameters { get; set; }
-
-    } // end class
-
-    /// <summary>
-    /// Request object for method Get of class Notshipped
-    /// </summary>
-    public partial class NotshippedGetRequest : ApiRequest
-    {
-        public NotshippedGetRequest(OrdersIdNotshippedUriParameters UriParameters)
-        {
-            this.UriParameters = UriParameters;
-        }
-
-        /// <summary>
-        /// Request Uri Parameters
-        /// </summary>
-        public OrdersIdNotshippedUriParameters UriParameters { get; set; }
-
-    } // end class
-
-    /// <summary>
-    /// Request object for method Get of class Shipped
-    /// </summary>
-    public partial class ShippedGetRequest : ApiRequest
-    {
-        public ShippedGetRequest(OrdersIdShippedUriParameters UriParameters)
-        {
-            this.UriParameters = UriParameters;
-        }
-
-        /// <summary>
-        /// Request Uri Parameters
-        /// </summary>
-        public OrdersIdShippedUriParameters UriParameters { get; set; }
 
     } // end class
 
@@ -1231,10 +1229,12 @@ namespace OrdersClientSample.OrdersXml.Models
             this.Formatter = Formatter;
         }
 
+
         /// <summary>
         /// Request content
         /// </summary>
         public PurchaseOrderType Content { get; set; }
+
         /// <summary>
         /// Request formatter
         /// </summary>
@@ -1251,6 +1251,7 @@ namespace OrdersClientSample.OrdersXml.Models
         {
             this.UriParameters = UriParameters;
         }
+
 
         /// <summary>
         /// Request Uri Parameters
@@ -1271,14 +1272,17 @@ namespace OrdersClientSample.OrdersXml.Models
             this.UriParameters = UriParameters;
         }
 
+
         /// <summary>
         /// Request content
         /// </summary>
         public PurchaseOrderType Content { get; set; }
+
         /// <summary>
         /// Request formatter
         /// </summary>
         public MediaTypeFormatter Formatter { get; set; }
+
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
@@ -1287,18 +1291,18 @@ namespace OrdersClientSample.OrdersXml.Models
     } // end class
 
     /// <summary>
-    /// Response object for method Get of class Notshipped
+    /// Response object for method Get of class Shipped
     /// </summary>
 
-    public partial class NotshippedGetResponse : ApiResponse
+    public partial class ShippedGetResponse : ApiResponse
     {
 
 
-	    private ItemsType typedContent;
+	    private PurchaseOrdersType typedContent;
         /// <summary>
         /// Typed Response content
         /// </summary>
-        public ItemsType Content 
+        public PurchaseOrdersType Content 
     	{
 	        get
 	        {
@@ -1315,13 +1319,13 @@ namespace OrdersClientSample.OrdersXml.Models
                     var task = RawContent.ReadAsStreamAsync();
 
                     var xmlStream = task.GetAwaiter().GetResult();
-                    typedContent = (ItemsType)new XmlSerializer(typeof(ItemsType)).Deserialize(xmlStream);
+                    typedContent = (PurchaseOrdersType)new XmlSerializer(typeof(PurchaseOrdersType)).Deserialize(xmlStream);
                 }
                 else
                 {
                     var task =  Formatters != null && Formatters.Any() 
-                                ? RawContent.ReadAsAsync<ItemsType>(Formatters).ConfigureAwait(false)
-                                : RawContent.ReadAsAsync<ItemsType>().ConfigureAwait(false);
+                                ? RawContent.ReadAsAsync<PurchaseOrdersType>(Formatters).ConfigureAwait(false)
+                                : RawContent.ReadAsAsync<PurchaseOrdersType>().ConfigureAwait(false);
 		        
 		            typedContent = task.GetAwaiter().GetResult();
                 }
@@ -1336,18 +1340,18 @@ namespace OrdersClientSample.OrdersXml.Models
     } // end class
 
     /// <summary>
-    /// Response object for method Get of class Shipped
+    /// Response object for method Get of class Notshipped
     /// </summary>
 
-    public partial class ShippedGetResponse : ApiResponse
+    public partial class NotshippedGetResponse : ApiResponse
     {
 
 
-	    private ItemsType typedContent;
+	    private PurchaseOrdersType typedContent;
         /// <summary>
         /// Typed Response content
         /// </summary>
-        public ItemsType Content 
+        public PurchaseOrdersType Content 
     	{
 	        get
 	        {
@@ -1364,13 +1368,13 @@ namespace OrdersClientSample.OrdersXml.Models
                     var task = RawContent.ReadAsStreamAsync();
 
                     var xmlStream = task.GetAwaiter().GetResult();
-                    typedContent = (ItemsType)new XmlSerializer(typeof(ItemsType)).Deserialize(xmlStream);
+                    typedContent = (PurchaseOrdersType)new XmlSerializer(typeof(PurchaseOrdersType)).Deserialize(xmlStream);
                 }
                 else
                 {
                     var task =  Formatters != null && Formatters.Any() 
-                                ? RawContent.ReadAsAsync<ItemsType>(Formatters).ConfigureAwait(false)
-                                : RawContent.ReadAsAsync<ItemsType>().ConfigureAwait(false);
+                                ? RawContent.ReadAsAsync<PurchaseOrdersType>(Formatters).ConfigureAwait(false)
+                                : RawContent.ReadAsAsync<PurchaseOrdersType>().ConfigureAwait(false);
 		        
 		            typedContent = task.GetAwaiter().GetResult();
                 }

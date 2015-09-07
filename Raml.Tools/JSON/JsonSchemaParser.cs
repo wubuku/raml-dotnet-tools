@@ -1,11 +1,11 @@
-using Newtonsoft.Json.Schema;
-using Raml.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Newtonsoft.Json.Schema;
+using Raml.Common;
 
-namespace Raml.Tools
+namespace Raml.Tools.JSON
 {
     public class JsonSchemaParser
     {
@@ -25,7 +25,7 @@ namespace Raml.Tools
                       };
             JsonSchema schema = null;
             Newtonsoft.JsonV4.Schema.JsonSchema v4Schema = null;
-            if (jsonSchema.Contains("\"oneOf\":"))
+            if (jsonSchema.Contains("\"oneOf\""))
             {
                 v4Schema = ParseV4Schema(key, jsonSchema, warnings, objects);
             }
@@ -48,6 +48,7 @@ namespace Raml.Tools
                 else
                 {
                     ParseProperties(objects, obj.Properties, schema.Properties, enums);
+                    AdditionalProperties(obj.Properties, schema);
                 }
             }
             else
@@ -199,7 +200,7 @@ namespace Raml.Tools
                 var prop = new Property
                            {
                                Name = NetNamingMapper.GetPropertyName(property.Key),
-                               Type = GetType(property, isEnum, enumName),
+                               Type = GetType(property, isEnum, enumName, schema.Required),
                                OriginalName = property.Key,
                                Description = property.Value.Description,
                                IsEnum = isEnum
@@ -210,9 +211,34 @@ namespace Raml.Tools
                 ParseComplexTypes(objects, schema, property.Value, prop, property, enums);
                 props.Add(prop);
             }
+
+            AdditionalProperties(props, schema);
         }
 
-        private static string GetType(KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property, bool isEnum, string enumName)
+        private static void AdditionalProperties(ICollection<Property> props, JsonSchema schema)
+        {
+            if (schema.AdditionalProperties == null || !schema.AdditionalProperties.AllowAdditionalProperties) return;
+
+            AddAdditionalPropertiesProperty(props);
+        }
+
+        private static void AdditionalProperties(ICollection<Property> props, Newtonsoft.JsonV4.Schema.JsonSchema schema)
+        {
+            if (schema.AdditionalProperties == null || !schema.AdditionalProperties.AllowAdditionalProperties) return;
+
+            AddAdditionalPropertiesProperty(props);
+        }
+
+        private static void AddAdditionalPropertiesProperty(ICollection<Property> props)
+        {
+            props.Add(new Property
+            {
+                Name = "AdditionalProperties",
+                Type = "IDictionary<string, object>"
+            });
+        }
+
+        private static string GetType(KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property, bool isEnum, string enumName, ICollection<string> requiredProps)
         {
             if (property.Value.OneOf != null && property.Value.OneOf.Count > 0)
                 return NetNamingMapper.GetObjectName(property.Key);
@@ -220,8 +246,14 @@ namespace Raml.Tools
             if (isEnum) 
                 return enumName;
 
-            if (!string.IsNullOrWhiteSpace(NetTypeMapper.Map(property.Value.Type)))
-                return NetTypeMapper.Map(property.Value.Type);
+            var type = NetTypeMapper.Map(property.Value.Type);
+            if (!string.IsNullOrWhiteSpace(type))
+            {
+                if (type == "string" || (requiredProps != null && requiredProps.Contains(property.Key)))
+                    return type;
+
+                return type + "?";
+            }
 
             if (HasMultipleTypes(property))
                 return HandleMultipleTypes(property);
@@ -261,8 +293,14 @@ namespace Raml.Tools
             if (isEnum)
                 return enumName;
 
-            if (!string.IsNullOrWhiteSpace(NetTypeMapper.Map(property.Value.Type)))
-                return NetTypeMapper.Map(property.Value.Type);
+            var type = NetTypeMapper.Map(property.Value.Type);
+            if (!string.IsNullOrWhiteSpace(type))
+            {
+                if(type == "string" || (property.Value.Required != null && property.Value.Required.Value))
+                    return type;
+
+                return type + "?";
+            }
 
             if (HasMultipleTypes(property))
                 return HandleMultipleTypes(property);
@@ -392,7 +430,7 @@ namespace Raml.Tools
                 {
                     Name = NetNamingMapper.GetPropertyName(kv.Key),
                     OriginalName = kv.Key,
-                    Type = GetType(kv, isEnum, enumName),
+                    Type = GetType(kv, isEnum, enumName, kv.Value.Required),
                     Description = kv.Value.Description,
                     IsEnum = isEnum
                 };
@@ -401,6 +439,7 @@ namespace Raml.Tools
                 ParseComplexTypes(objects, null, kv.Value, prop, kv, enums);
                 props.Add(prop);
             }
+
             return props;
         }
 
@@ -460,6 +499,8 @@ namespace Raml.Tools
 
                 ParseComplexTypes(objects, property.Value, prop, property, key, enums);
                 props.Add(prop);
+
+                AdditionalProperties(props, property.Value);
             }
         }
 

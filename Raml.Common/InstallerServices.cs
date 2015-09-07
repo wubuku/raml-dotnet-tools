@@ -11,7 +11,7 @@ namespace Raml.Common
     {
         public const string IncludesFolderName = "includes";
 
-        public static void AddRefFile(string ramlSourceFile, string targetNamespace, string ramlOriginalSource, string destFolderPath, string targetFileName, bool? useAsyncMethods = null, string clientRootClassName = null)
+        public static string AddRefFile(string ramlSourceFile, string targetNamespace, string ramlOriginalSource, string destFolderPath, string targetFileName, bool? useAsyncMethods = null, string clientRootClassName = null)
         {
             var refFileName = Path.GetFileNameWithoutExtension(targetFileName) + ".ref";
             var refFilePath = Path.Combine(destFolderPath, refFileName);
@@ -22,6 +22,8 @@ namespace Raml.Common
 
             File.WriteAllText(refFilePath, content);
             new FileInfo(refFilePath).IsReadOnly = true;
+
+            return refFilePath;
         }
 
 
