@@ -32,6 +32,7 @@ namespace MoviesClientSample
 			var httpClient = new HttpClient(fakeResponseHandler) {BaseAddress = new Uri("http://test.com/api/")};
 
 		    client = new MoviesClient(httpClient);
+		    client.SchemaValidation.RaiseExceptions = false;
 		    var movies = await client.Movies.Get();
 		    return movies.Content;
 	    }
@@ -42,8 +43,8 @@ namespace MoviesClientSample
 			var item = (MoviesGetOKResponseContent)dataGridView1.CurrentRow.DataBoundItem;
 
 		    cmdAddToWishlist.Enabled = true;
-		    cmdRent.Enabled = !item.Rented;
-			cmdReturn.Enabled = item.Rented;
+		    cmdRent.Enabled = !item.Rented.HasValue || !item.Rented.Value;
+			cmdReturn.Enabled = item.Rented.HasValue && item.Rented.Value;
 	    }
 
 		private async void cmdRent_Click(object sender, EventArgs e)
