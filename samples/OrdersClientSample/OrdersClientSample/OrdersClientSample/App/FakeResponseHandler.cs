@@ -57,7 +57,9 @@ namespace OrdersClientSample.App
             // PUT /orders
 	        if (request.Method == HttpMethod.Put)
 	        {
-                var orderToUpdate = (PurchaseOrderType)orderSerializer.Deserialize(request.Content.ReadAsStreamAsync().GetAwaiter().GetResult());
+                var result = request.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
+                var xml = Encoding.UTF8.GetString(result);
+                var orderToUpdate = (PurchaseOrderType)orderSerializer.Deserialize(new StringReader(xml));
                 repository.Update(orderToUpdate);            
 	        }
 

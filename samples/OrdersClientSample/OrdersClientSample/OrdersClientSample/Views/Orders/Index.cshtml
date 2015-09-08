@@ -17,9 +17,12 @@
             @foreach (var order in Model) { 
                 <tr>
                     <td>@order.Date.ToShortDateString()</td>
-                    <td>@string.Join(" ", order.Addresses)</td>
-                    <td>@string.Join(" ", order.Products.Select(p => p.Description))</td>
-                    <td><a href="@string.Format("/orders/{0}", @order.Id)"><i class="glyphicon glyphicon-zoom-in"></i></a></td>
+                    <td>@string.Join(", ", order.Addresses)</td>
+                    <td>@string.Join(", ", order.Products.Select(p => p.Description))</td>
+                    <td>
+                        <a href="@string.Format("/orders/{0}", @order.Id)"><i class="glyphicon glyphicon-zoom-in"></i></a> 
+                        <a href="@string.Format("/orders/{0}/edit", @order.Id)"><i class="glyphicon glyphicon-pencil"></i></a>
+                    </td>
                 </tr>
             }
             </tbody>

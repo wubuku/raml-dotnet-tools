@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using OrdersClientSample.App;
 using OrdersClientSample.Models;
 using OrdersClientSample.OrdersXml;
@@ -60,13 +62,31 @@ namespace OrdersClientSample.Controllers
 
         [Route("")]
         [HttpPost]
-        public async Task<ActionResult> Post(OrderEditModel model)
+        public async Task<ActionResult> Save(OrderEditModel model)
         {
             model.Products = Products;
             var order = Mappers.Map(model);
-            await client.Orders.Post(order);
+            
+            if(!string.IsNullOrWhiteSpace(order.id))
+                await client.Orders.Put(order, order.id);
+            else
+                await client.Orders.Post(order);
+
             Products.Clear();
             return RedirectToAction("Index");
+        }
+
+        [Route("{id}/edit")]
+        public async Task<ActionResult> Edit(string id)
+        {
+            ViewBag.Title = "Edit Order";
+            var response = await client.Orders.Get(id);
+            if(response.StatusCode == HttpStatusCode.NotFound)
+                return new HttpNotFoundResult("Order not found " + id);
+
+            Products = Mappers.Map(response.Content.items.item).ToList();
+
+            return View("Edit", Mappers.MapToEditModel(response.Content));
         }
 
         [Route("addproduct")]
@@ -85,6 +105,11 @@ namespace OrdersClientSample.Controllers
                     Session["products"] = new List<ProductViewModel>();
 
                 return (IList<ProductViewModel>)Session["products"];
+            }
+
+            set
+            {
+                Session["products"] = value;
             }
         }
     }

@@ -65,7 +65,7 @@ namespace OrdersClientSample.App
             return vm;
         }
 
-        private static IEnumerable<ProductViewModel> Map(ItemsTypeItem[] items)
+        public static IEnumerable<ProductViewModel> Map(ItemsTypeItem[] items)
         {
             var viewModels = new Collection<ProductViewModel>();
             if (items == null)
@@ -108,5 +108,38 @@ namespace OrdersClientSample.App
             return viewModels;
         }
 
+        public static OrderEditModel MapToEditModel(PurchaseOrderType purchaseOrderType)
+        {
+            return new OrderEditModel
+            {
+                Id = purchaseOrderType.id,
+                Date = purchaseOrderType.orderDate,
+                Products = Mappers.Map(purchaseOrderType.items.item).ToList(),
+                BillTo = GetAddressType(purchaseOrderType, ItemsChoiceType.billTo),
+                ShipTo = GetAddressType(purchaseOrderType, ItemsChoiceType.shipTo)
+            };
+        }
+
+        private static AddressType GetAddressType(PurchaseOrderType purchaseOrderType, ItemsChoiceType itemsChoiceType)
+        {
+            if (!purchaseOrderType.ItemsElementName.Any(i => i == itemsChoiceType)) 
+                return new AddressType();
+
+            var index = FindIndex(purchaseOrderType, itemsChoiceType);
+            if(index == -1)
+                return new AddressType();
+
+            return purchaseOrderType.Items[index];
+        }
+
+        private static int FindIndex(PurchaseOrderType purchaseOrderType, ItemsChoiceType itemsChoiceType)
+        {
+            for (var i = 0; i < purchaseOrderType.ItemsElementName.Length; i++)
+            {
+                if (purchaseOrderType.ItemsElementName[i] == itemsChoiceType)
+                    return i;
+            }
+            return -1;
+        }
     }
 }

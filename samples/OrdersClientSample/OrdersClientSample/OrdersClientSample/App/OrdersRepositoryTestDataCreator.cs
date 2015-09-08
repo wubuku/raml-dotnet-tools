@@ -30,6 +30,7 @@ namespace OrdersClientSample.App
             var addresses = new Collection<AddressType>();
             addresses.Add(new AddressType
             {
+                name = "John Doe",
                 city = "LA",
                 street = "35, Rodeo Dr"
             });
@@ -54,6 +55,7 @@ namespace OrdersClientSample.App
             var addresses2 = new Collection<AddressType>();
             addresses2.Add(new AddressType
             {
+                name = "Jack Smith",
                 city = "NY",
                 street = "433, Fith Av."
             });
@@ -80,6 +82,22 @@ namespace OrdersClientSample.App
             });
             order3.items.item = items3.ToArray();
 
+            var addresses3 = new Collection<AddressType>();
+            addresses3.Add(new AddressType
+            {
+                name = "Will Jackson",
+                city = "NY",
+                street = "433, Fith Av."
+            });
+            addresses3.Add(new AddressType
+            {
+                name = "Mary Jackson",
+                city = "NY",
+                street = "433, Fith Av."
+            });
+            order3.ItemsElementName = new[] { ItemsChoiceType.shipTo, ItemsChoiceType.billTo };
+            order3.Items = addresses3.ToArray();
+            
             ordersRepository.Add(order3);
         }
     }
