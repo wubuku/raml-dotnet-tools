@@ -253,7 +253,7 @@ namespace Raml.Tools
             {
                 if (UniquenessHelper.HasSameProperties(obj, objects, key, otherObjects, schemaObjects))
                 {
-                    if (!linkKeysWithObjectNames.ContainsKey(key))
+                    if (string.IsNullOrWhiteSpace(obj.GeneratedCode) && !linkKeysWithObjectNames.ContainsKey(key))
                         linkKeysWithObjectNames.Add(key, obj.Name);
                 }
                 else if(!objects.ContainsKey(key))
