@@ -1,7 +1,7 @@
 <#
 // title: Controller Interface
-// hash: 07bc51fdb3e9fa6f4c58259e4adbb262
-// version: 0.1
+// hash: fd1042f9d17dd576dbe3fb68fc63641c
+// version: 3.0
 #>
 <#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ assembly name="$(binDir)Raml.Tools.dll" #>
@@ -10,13 +10,19 @@
 <#@ import namespace="Raml.Tools.WebApiGenerator" #>
 <#@ import namespace="System.Linq" #>
 <#@ parameter name="controllerObject" type="Raml.Tools.WebApiGenerator.ControllerObject" #>
+<#@ parameter name="hasModels" type="System.Boolean" #>
+<#@ parameter name="useAsyncMethods" type="System.Boolean" #>
 <#@ output extension=".cs" #>
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+<# if(hasModels){ #>
 using $(namespace).Models;
+<# } #>
+
 
 namespace $(namespace)
 {
@@ -26,10 +32,18 @@ namespace $(namespace)
 <#
 		foreach (var method in controllerObject.Methods)
 		{
+            if(useAsyncMethods)
+            {
+#>
+        Task<IHttpActionResult> <#= method.Name #>(<#= method.ParametersString #>);
+<#          
+            } 
+            else 
+            { 
 #>
         IHttpActionResult <#= method.Name #>(<#= method.ParametersString #>);
-
 <#
+            }
 		}
 #>
     }
