@@ -8,7 +8,7 @@ namespace OrdersWebApiSample
         {
             // Web API configuration and services
             config.Formatters.Remove(config.Formatters.XmlFormatter);
-            config.Formatters.Add(new XmlSerializerFormatter());
+            config.Formatters.Add(new RAML.Api.Core.XmlSerializerFormatter());
 
             // Web API routes
             config.MapHttpAttributeRoutes();
