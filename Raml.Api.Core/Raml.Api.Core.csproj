@@ -251,6 +251,7 @@
     <Compile Include="SchemaValidationResults.cs" />
     <Compile Include="SchemaValidationSettings.cs" />
     <Compile Include="SchemaValidator.cs" />
+    <Compile Include="XmlSerializerFormatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

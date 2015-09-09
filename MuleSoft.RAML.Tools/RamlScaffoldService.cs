@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using EnvDTE;
+﻿using EnvDTE;
+using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using MuleSoft.RAML.Tools.Properties;
+using NuGet.VisualStudio;
 using Raml.Common;
 using Raml.Tools;
 using Raml.Tools.WebApiGenerator;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows;
 
 namespace MuleSoft.RAML.Tools
 {
@@ -30,6 +31,10 @@ namespace MuleSoft.RAML.Tools
         private static readonly string ContractsFolder = Path.DirectorySeparatorChar + Settings.Default.ContractsFolderName + Path.DirectorySeparatorChar;
         private static readonly string IncludesFolder = Path.DirectorySeparatorChar + "includes" + Path.DirectorySeparatorChar;
 
+        private readonly string nugetPackagesSource = Settings.Default.NugetPackagesSource;
+        private readonly string ramlApiCorePackageId = Settings.Default.RAMLApiCorePackageId;
+        private readonly string ramlApiCorePackageVersion = Settings.Default.RAMLApiCorePackageVersion;
+
         public RamlScaffoldService(IT4Service t4Service, IServiceProvider serviceProvider)
         {
             this.t4Service = t4Service;
@@ -40,6 +45,10 @@ namespace MuleSoft.RAML.Tools
         {
             var dte = serviceProvider.GetService(typeof(SDTE)) as DTE;
             var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+
+            AddRamlApiCore(proj);
+            AddXmlFormatterInWebApiConfig(proj);
+
             var folderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, ContractsFolderName);
             var generatedFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + ContractsFolderName + Path.DirectorySeparatorChar;
 
@@ -94,6 +103,78 @@ namespace MuleSoft.RAML.Tools
                 return;
 
             ScaffoldMainRamlFiles(GetMainRamlFiles(document));
+        }
+
+        private void AddRamlApiCore(Project proj)
+        {
+            // RAML.Api.Core
+            var componentModel = (IComponentModel)serviceProvider.GetService(typeof(SComponentModel));
+            var installerServices = componentModel.GetService<IVsPackageInstallerServices>();
+            var installer = componentModel.GetService<IVsPackageInstaller>();
+            if (!installerServices.IsPackageInstalled(proj, ramlApiCorePackageId))
+            {
+                //installer.InstallPackage(nugetPackagesSource, proj, ramlApiCorePackageId, ramlApiCorePackageVersion, false);
+                installer.InstallPackage(@"C:\desarrollo\nuget\nugets\", proj, ramlApiCorePackageId, ramlApiCorePackageVersion, false);
+            }
+        }
+
+        private static void AddXmlFormatterInWebApiConfig(Project proj)
+        {
+            var appStart = proj.ProjectItems.Cast<ProjectItem>().FirstOrDefault(i => i.Name == "App_Start");
+            if (appStart == null) return;
+
+            var webApiConfig = appStart.ProjectItems.Cast<ProjectItem>().FirstOrDefault(i => i.Name == "WebApiConfig.cs");
+            if (webApiConfig == null) return;
+
+            var path = webApiConfig.FileNames[0];
+            var lines = File.ReadAllLines(path).ToList();
+
+            if (lines.Any(l => l.Contains("XmlSerializerFormatter")))
+                return;
+
+            InsertLine(lines);
+
+            File.WriteAllText(path, string.Join(Environment.NewLine, lines));
+        }
+
+        private static void InsertLine(List<string> lines)
+        {
+            var line = FindLineWith(lines, "Register(HttpConfiguration config)");
+            var inserted = false;
+
+            if (line != -1)
+            {
+                if (lines[line + 1].Contains("{"))
+                {
+                    InsertLines(lines, line + 2);
+                    inserted = true;
+                }
+            }
+
+            if (inserted) return;
+
+            line = FindLineWith(lines, ".MapHttpAttributeRoutes();");
+            if (line != -1)
+            {
+                InsertLines(lines, line + 1);
+            }
+        }
+
+        private static void InsertLines(IList<string> lines, int index)
+        {
+            lines.Insert(index, "\t\t\tconfig.Formatters.Remove(config.Formatters.XmlFormatter);");
+            lines.Insert(index, "\t\t\tconfig.Formatters.Add(new RAML.Api.Core.XmlSerializerFormatter());");
+        }
+
+        private static int FindLineWith(IReadOnlyList<string> lines, string find)
+        {
+            var line = -1;
+            for (var i = 0; i < lines.Count(); i++)
+            {
+                if (lines[i].Contains(find))
+                    line = i;
+            }
+            return line;
         }
 
         private static void ScaffoldMainRamlFiles(IEnumerable<string> ramlFiles)
