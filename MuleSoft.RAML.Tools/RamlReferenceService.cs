@@ -18,8 +18,8 @@ namespace MuleSoft.RAML.Tools
         private readonly string nugetPackagesSource = Settings.Default.NugetPackagesSource;
         private readonly string newtonsoftJsonPackageId = Settings.Default.NewtonsoftJsonPackageId;
         private readonly string newtonsoftJsonPackageVersion = Settings.Default.NewtonsoftJsonPackageVersion;
-        private readonly string webApiClientPackageId = Settings.Default.WebApiClientPackageId;
-        private readonly string webApiClientPackageVersion = Settings.Default.WebApiClientPackageVersion;
+        private readonly string webApiCorePackageId = Settings.Default.WebApiCorePackageId;
+        private readonly string webApiCorePackageVersion = Settings.Default.WebApiCorePackageVersion;
         private readonly string ramlApiCorePackageId = Settings.Default.RAMLApiCorePackageId;
         private readonly string ramlApiCorePackageVersion = Settings.Default.RAMLApiCorePackageVersion;
         public readonly static string ApiReferencesFolderName = Settings.Default.ApiReferencesFolderName;
@@ -63,10 +63,10 @@ namespace MuleSoft.RAML.Tools
                 installer.InstallPackage(nugetPackagesSource, proj, newtonsoftJsonPackageId, newtonsoftJsonPackageVersion, false);
             }
 
-            // Web Api Client (to get HttpClient)
-            if (!installerServices.IsPackageInstalled(proj, webApiClientPackageId))
+            // Web Api Core (to get HttpClient and System.Web.Http)
+            if (!installerServices.IsPackageInstalled(proj, webApiCorePackageId))
             {
-                installer.InstallPackage(nugetPackagesSource, proj, webApiClientPackageId, webApiClientPackageVersion, false);
+                installer.InstallPackage(nugetPackagesSource, proj, webApiCorePackageId, webApiCorePackageVersion, false);
             }
 
             // RAML.Api.Core

@@ -52,19 +52,19 @@ namespace MuleSoft.RAML.Tools.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Microsoft.AspNet.WebApi.Client")]
-        public string WebApiClientPackageId {
+        [global::System.Configuration.DefaultSettingValueAttribute("Microsoft.AspNet.WebApi.Core")]
+        public string WebApiCorePackageId {
             get {
-                return ((string)(this["WebApiClientPackageId"]));
+                return ((string)(this["WebApiCorePackageId"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("5.1.2")]
-        public string WebApiClientPackageVersion {
+        public string WebApiCorePackageVersion {
             get {
-                return ((string)(this["WebApiClientPackageVersion"]));
+                return ((string)(this["WebApiCorePackageVersion"]));
             }
         }
         
