@@ -1251,9 +1251,9 @@ namespace Movies.Models
 
         static readonly Dictionary<HttpStatusCode, string> schemas = new Dictionary<HttpStatusCode, string>
         {
-			{ HttpStatusCode.OK, "{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": [\"string\", \"null\"] },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": [\"number\", \"null\"] },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}"},
-			{ HttpStatusCode.BadRequest, "{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"object\",  \"description\": \"bad request error\",  \"properties\":     {      \"error\": { \"type\": \"string\"},      \"code\": { \"type\": \"integer\" }    }  }"},
-		};
+            { HttpStatusCode.OK, "{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"array\",  \"description\": \"movies\",  \"items\":     {      \"type\": \"object\",        \"properties\": {        \"id\": { \"type\": \"integer\" },        \"name\": { \"type\": \"string\"},        \"director\": { \"type\": \"string\"},        \"genre\": { \"type\": [\"string\", \"null\"] },        \"cast\":{ \"type\": \"string\" },        \"duration\":{ \"type\": [\"number\", \"null\"] },        \"storyline\":{ \"type\": \"string\" },        \"language\":{ \"type\": \"string\" },        \"rented\":{ \"type\": \"boolean\" }    }  }}"},
+            { HttpStatusCode.BadRequest, "{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"object\",  \"description\": \"bad request error\",  \"properties\":     {      \"error\": { \"type\": \"string\"},      \"code\": { \"type\": \"integer\" }    }  }"},
+        };
 
         public static string GetSchema(HttpStatusCode statusCode)
         {
@@ -1280,10 +1280,10 @@ namespace Movies.Models
 
         static readonly Dictionary<HttpStatusCode, string> schemas = new Dictionary<HttpStatusCode, string>
         {
-			{ HttpStatusCode.OK, "{   \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"object\",  \"description\": \"a movie\",  \"properties\": {    \"id\": { \"type\": \"integer\"},    \"name\": { \"type\": \"string\"},    \"director\": { \"type\": \"string\"},    \"genre\": { \"type\": \"string\" },    \"cast\":{ \"type\": \"string\" },    \"duration\":{ \"type\": \"number\" },    \"storyline\":{ \"type\": \"string\" },    \"language\":{ \"type\": \"string\" },    \"rented\":{ \"type\": \"boolean\" }  }}"},
-			{ HttpStatusCode.BadRequest, "{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"object\",  \"description\": \"bad request error\",  \"properties\":     {      \"error\": { \"type\": \"string\"},      \"code\": { \"type\": \"integer\" }    }  }"},
-			{ HttpStatusCode.NotFound, "{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"object\",  \"description\": \"not found\",  \"properties\":     {      \"id\": { \"type\": \"integer\" },      \"error\": { \"type\": \"string\"},      \"code\": { \"type\": \"integer\" }    }  }"},
-		};
+            { HttpStatusCode.OK, "{   \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"object\",  \"description\": \"a movie\",  \"properties\": {    \"id\": { \"type\": \"integer\"},    \"name\": { \"type\": \"string\"},    \"director\": { \"type\": \"string\"},    \"genre\": { \"type\": \"string\" },    \"cast\":{ \"type\": \"string\" },    \"duration\":{ \"type\": \"number\" },    \"storyline\":{ \"type\": \"string\" },    \"language\":{ \"type\": \"string\" },    \"rented\":{ \"type\": \"boolean\" }  }}"},
+            { HttpStatusCode.BadRequest, "{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"object\",  \"description\": \"bad request error\",  \"properties\":     {      \"error\": { \"type\": \"string\"},      \"code\": { \"type\": \"integer\" }    }  }"},
+            { HttpStatusCode.NotFound, "{ \"$schema\": \"http://json-schema.org/draft-03/schema\",  \"type\": \"object\",  \"description\": \"not found\",  \"properties\":     {      \"id\": { \"type\": \"integer\" },      \"error\": { \"type\": \"string\"},      \"code\": { \"type\": \"integer\" }    }  }"},
+        };
 
         public static string GetSchema(HttpStatusCode statusCode)
         {

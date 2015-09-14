@@ -52,19 +52,19 @@ namespace MuleSoft.RAML.Tools.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Microsoft.AspNet.WebApi.Client")]
-        public string WebApiClientPackageId {
+        [global::System.Configuration.DefaultSettingValueAttribute("Microsoft.AspNet.WebApi.Core")]
+        public string WebApiCorePackageId {
             get {
-                return ((string)(this["WebApiClientPackageId"]));
+                return ((string)(this["WebApiCorePackageId"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("5.1.2")]
-        public string WebApiClientPackageVersion {
+        public string WebApiCorePackageVersion {
             get {
-                return ((string)(this["WebApiClientPackageVersion"]));
+                return ((string)(this["WebApiCorePackageVersion"]));
             }
         }
         
@@ -115,7 +115,7 @@ namespace MuleSoft.RAML.Tools.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("3.0")]
         public string ServerTemplatesVersion {
             get {
                 return ((string)(this["ServerTemplatesVersion"]));
@@ -124,7 +124,7 @@ namespace MuleSoft.RAML.Tools.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("3.0")]
         public string ClientTemplatesVersion {
             get {
                 return ((string)(this["ClientTemplatesVersion"]));
@@ -223,7 +223,7 @@ namespace MuleSoft.RAML.Tools.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.8.101")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.8.103")]
         public string RAMLParserPackageVersion {
             get {
                 return ((string)(this["RAMLParserPackageVersion"]));

@@ -10,132 +10,146 @@ namespace Raml.Tools.WebApiGenerator
 	public class WebApiGeneratorService : GeneratorServiceBase
 	{
 		private WebApiMethodsGenerator webApiMethodsGenerator;
-		public WebApiGeneratorService(RamlDocument raml) : base(raml)
+		public WebApiGeneratorService(RamlDocument raml, string targetNamespace) : base(raml, targetNamespace)
 		{
 		}
 
-		public WebApiGeneratorModel BuildModel()
-		{
-			classesNames = new Collection<string>();
-			warnings = new Dictionary<string, string>();
+        public WebApiGeneratorModel BuildModel()
+        {
+            classesNames = new Collection<string>();
+            warnings = new Dictionary<string, string>();
             enums = new Dictionary<string, ApiEnum>();
 
-			schemaRequestObjects = GetRequestObjects();
-			schemaResponseObjects = GetResponseObjects();
+            ParseSchemas();
+            schemaRequestObjects = GetRequestObjects();
+            schemaResponseObjects = GetResponseObjects();
 
-			CleanProperties(schemaRequestObjects);
-			CleanProperties(schemaResponseObjects);
+            CleanProperties(schemaObjects);
+            CleanProperties(schemaRequestObjects);
+            CleanProperties(schemaResponseObjects);
 
-            webApiMethodsGenerator = new WebApiMethodsGenerator(raml, schemaResponseObjects, schemaRequestObjects, linkKeysWithObjectNames);
+            webApiMethodsGenerator = new WebApiMethodsGenerator(raml, schemaResponseObjects, schemaRequestObjects, linkKeysWithObjectNames, schemaObjects);
 
-			var controllers = GetControllers().ToArray();
+            var controllers = GetControllers().ToArray();
 
-			CleanNotUsedObjects(controllers);
+            CleanNotUsedObjects(controllers);
 
-			return new WebApiGeneratorModel
-			       {
-					   Namespace = NetNamingMapper.GetNamespace(raml.Title),
-				       Controllers = controllers,
-					   RequestObjects = schemaRequestObjects,
-					   ResponseObjects = schemaResponseObjects,
+            return new WebApiGeneratorModel
+                   {
+                       Namespace = NetNamingMapper.GetNamespace(raml.Title),
+                       Controllers = controllers,
+                       SchemaObjects = schemaObjects,
+                       RequestObjects = schemaRequestObjects,
+                       ResponseObjects = schemaResponseObjects,
                        Warnings = warnings,
                        Enums = Enums
-			       };
-		}
+                   };
+        }
 
-		private void CleanNotUsedObjects(IEnumerable<ControllerObject> controllers)
-		{
-			apiObjectsCleaner.CleanObjects(controllers, schemaRequestObjects, apiObjectsCleaner.IsUsedAsParameterInAnyMethod);
+        private void CleanNotUsedObjects(IEnumerable<ControllerObject> controllers)
+        {
+            apiObjectsCleaner.CleanObjects(controllers, schemaRequestObjects, apiObjectsCleaner.IsUsedAsParameterInAnyMethod);
 
-			apiObjectsCleaner.CleanObjects(controllers, schemaResponseObjects, apiObjectsCleaner.IsUsedAsResponseInAnyMethod);
-		}
+            apiObjectsCleaner.CleanObjects(controllers, schemaResponseObjects, apiObjectsCleaner.IsUsedAsResponseInAnyMethod);
+        }
 
-		private IEnumerable<ControllerObject> GetControllers()
-		{
-			var classes = new List<ControllerObject>();
-			var classesObjectsRegistry = new Dictionary<string, ControllerObject>();
+        private IEnumerable<ControllerObject> GetControllers()
+        {
+            var classes = new List<ControllerObject>();
+            var classesObjectsRegistry = new Dictionary<string, ControllerObject>();
 
-			GetControllers(classes, classesNames, classesObjectsRegistry);
+            GetControllers(classes, classesNames, classesObjectsRegistry, new Dictionary<string, Parameter>());
 
-			return classes;
-		}
+            return classes;
+        }
 
-		private void GetControllers(IList<ControllerObject> classes, 
-			ICollection<string> classesNames, IDictionary<string, ControllerObject> classesObjectsRegistry)
-		{
-			var rootController = new ControllerObject { Name = "Home", PrefixUri = "/" };
+        private void GetControllers(IList<ControllerObject> classes, 
+            ICollection<string> classesNames, IDictionary<string, ControllerObject> classesObjectsRegistry, IDictionary<string, Parameter> parentUriParameters)
+        {
+            var rootController = new ControllerObject { Name = "Home", PrefixUri = "/" };
 
-			foreach (var resource in raml.Resources)
-			{
-				if (resource == null)
-					continue;
+            foreach (var resource in raml.Resources)
+            {
+                if (resource == null)
+                    continue;
 
-				var fullUrl = GetUrl(string.Empty, resource.RelativeUri);
+                var fullUrl = GetUrl(string.Empty, resource.RelativeUri);
 
-				// when the resource is a parameter dont generate a class but add it's methods and children to the parent
-				if (resource.RelativeUri.StartsWith("/{") && resource.RelativeUri.EndsWith("}"))
-				{
-					var generatedMethods = webApiMethodsGenerator.GetMethods(resource, fullUrl, rootController, rootController.Name);
-					foreach (var method in generatedMethods)
-					{
-						rootController.Methods.Add(method);
-					}
+                // when the resource is a parameter dont generate a class but add it's methods and children to the parent
+                if (resource.RelativeUri.StartsWith("/{") && resource.RelativeUri.EndsWith("}"))
+                {
+                    AddMethodsToRootController(classes, classesNames, classesObjectsRegistry, resource, fullUrl, rootController, parentUriParameters);
+                    
+                    GetMethodsFromChildResources(resource.Resources, fullUrl, rootController, resource.UriParameters);
+                }
+                else
+                {
+                    var controller = CreateControllerAndAddMethods(classes, classesNames, classesObjectsRegistry, resource, fullUrl, parentUriParameters);
 
-					GetMethodsFromChildResources(resource.Resources, fullUrl, rootController);
+                    GetMethodsFromChildResources(resource.Resources, fullUrl, controller, resource.UriParameters);
+                }
+            }
+        }
 
-					classesNames.Add(rootController.Name);
-					classesObjectsRegistry.Add(CalculateClassKey("/"), rootController);
-					classes.Add(rootController);
-				}
-				else
-				{
-					var controller = new ControllerObject
-					{
-						Name = GetUniqueObjectName(resource, null),
-						PrefixUri = UrlGeneratorHelper.FixControllerRoutePrefix(fullUrl),
-						Description = resource.Description,
-					};
+        private ControllerObject CreateControllerAndAddMethods(IList<ControllerObject> classes, ICollection<string> classesNames,
+            IDictionary<string, ControllerObject> classesObjectsRegistry, Resource resource, string fullUrl, IDictionary<string, Parameter> parentUriParameters)
+        {
+            var controller = new ControllerObject
+            {
+                Name = GetUniqueObjectName(resource, null),
+                PrefixUri = UrlGeneratorHelper.FixControllerRoutePrefix(fullUrl),
+                Description = resource.Description,
+            };
 
-					var methods = webApiMethodsGenerator.GetMethods(resource, fullUrl, controller, controller.Name);
-					foreach (var method in methods)
-					{
-						controller.Methods.Add(method);
-					}
+            var methods = webApiMethodsGenerator.GetMethods(resource, fullUrl, controller, controller.Name, parentUriParameters);
+            foreach (var method in methods)
+            {
+                controller.Methods.Add(method);
+            }
 
-					classesNames.Add(controller.Name);
-					classes.Add(controller);
-					classesObjectsRegistry.Add(CalculateClassKey(fullUrl), controller);
+            classesNames.Add(controller.Name);
+            classes.Add(controller);
+            classesObjectsRegistry.Add(CalculateClassKey(fullUrl), controller);
+            return controller;
+        }
 
-					GetMethodsFromChildResources(resource.Resources, fullUrl, controller);
-				}
-			}
-		}
+        private void AddMethodsToRootController(IList<ControllerObject> classes, ICollection<string> classesNames, IDictionary<string, ControllerObject> classesObjectsRegistry,
+            Resource resource, string fullUrl, ControllerObject rootController, IDictionary<string, Parameter> parentUriParameters)
+        {
+            var generatedMethods = webApiMethodsGenerator.GetMethods(resource, fullUrl, rootController, rootController.Name, parentUriParameters);
+            foreach (var method in generatedMethods)
+            {
+                rootController.Methods.Add(method);
+            }
 
-
-		private void GetMethodsFromChildResources(IEnumerable<Resource> resources, string url, ControllerObject parentController)
-		{
-			if (resources == null)
-				return;
-
-			foreach (var resource in resources)
-			{
-				if (resource == null)
-					continue;
-
-				var fullUrl = GetUrl(url, resource.RelativeUri);
-
-				var methods = webApiMethodsGenerator.GetMethods(resource, fullUrl, parentController, parentController.Name);
-				foreach (var method in methods)
-				{
-					parentController.Methods.Add(method);
-				}
-
-				GetMethodsFromChildResources(resource.Resources, fullUrl, parentController);
-			}
-		}
+            classesNames.Add(rootController.Name);
+            classesObjectsRegistry.Add(CalculateClassKey("/"), rootController);
+            classes.Add(rootController);
+        }
 
 
+        private void GetMethodsFromChildResources(IEnumerable<Resource> resources, string url, ControllerObject parentController, IDictionary<string, Parameter> parentUriParameters)
+        {
+            if (resources == null)
+                return;
 
+            foreach (var resource in resources)
+            {
+                if (resource == null)
+                    continue;
 
-	}
+                var fullUrl = GetUrl(url, resource.RelativeUri);
+
+                var methods = webApiMethodsGenerator.GetMethods(resource, fullUrl, parentController, parentController.Name, parentUriParameters);
+                foreach (var method in methods)
+                {
+                    parentController.Methods.Add(method);
+                }
+
+                GetInheritedUriParams(parentUriParameters, resource);
+
+                GetMethodsFromChildResources(resource.Resources, fullUrl, parentController, parentUriParameters);
+            }
+        }
+    }
 }

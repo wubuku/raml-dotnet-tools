@@ -14,6 +14,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raml.Common", "Raml.Common\Raml.Common.csproj", "{05A60B40-E199-435D-99A4-0DD7637F5690}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DD39147D-2814-4B26-81D7-76A354193023}"
+	ProjectSection(SolutionItems) = preProject
+		README.asciidoc = README.asciidoc
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAML.Api.Core", "RAML.Api.Core\RAML.Api.Core.csproj", "{38B9703D-6167-4AAE-BAED-0C896C24A762}"
 EndProject

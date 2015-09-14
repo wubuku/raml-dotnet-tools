@@ -53,7 +53,7 @@ namespace Newtonsoft.JsonV4
         /// Gets or sets a value that indicates whether the object's properties are required.
         /// </summary>
         /// <value>
-        /// 	A value indicating whether the object's properties are required.
+        ///     A value indicating whether the object's properties are required.
         /// </value>
         public Required ItemRequired
         {

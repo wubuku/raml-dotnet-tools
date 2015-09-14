@@ -208,7 +208,7 @@ namespace Newtonsoft.JsonV4.Linq
         /// Gets a value indicating whether this token has child tokens.
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this token has child values; otherwise, <c>false</c>.
+        ///     <c>true</c> if this token has child values; otherwise, <c>false</c>.
         /// </value>
         public override bool HasValues
         {
@@ -948,7 +948,7 @@ namespace Newtonsoft.JsonV4.Linq
         /// This instance is greater than <paramref name="obj"/>.
         /// </returns>
         /// <exception cref="T:System.ArgumentException">
-        /// 	<paramref name="obj"/> is not the same type as this instance.
+        ///     <paramref name="obj"/> is not the same type as this instance.
         /// </exception>
         public int CompareTo(JValue obj)
         {

@@ -37,6 +37,7 @@
     <WarningLevel>4</WarningLevel>
     <CopyVsixExtensionFiles>False</CopyVsixExtensionFiles>
     <PlatformTarget>x86</PlatformTarget>
+    <DeployExtension>True</DeployExtension>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -91,9 +92,9 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Raml.Parser, Version=0.8.101.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Raml.Parser.0.8.101\lib\net45\Raml.Parser.dll</HintPath>
+    <Reference Include="Raml.Parser, Version=0.8.103.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Raml.Parser.0.8.103\lib\net45\Raml.Parser.dll</HintPath>    
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -110,7 +111,9 @@
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="VSLangProj, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
@@ -182,7 +185,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="RamlClientTool.cs" />
-    <Compile Include="RamlReferenceReader.cs" />
     <Compile Include="RamlScaffoldService.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -695,10 +697,6 @@
     <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\test-request-protocols.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Templates\RAMLWebApi2Scaffolder\ApiEnum.t4">
-      <LastGenOutput>Objects.cs.cs</LastGenOutput>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Resource Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\testdata.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -746,6 +744,10 @@
     </Content>
     <Content Include="node_modules\raml-parser\test\specs\validator.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\RAMLWebApi2Scaffolder\ApiEnum.t4">
+      <LastGenOutput>Objects.cs.cs</LastGenOutput>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\MuleSoft-Logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

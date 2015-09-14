@@ -26,7 +26,10 @@ namespace Raml.Common
 			name = ReplaceSpecialChars(name, "/");
 			name = ReplaceSpecialChars(name, "_");
 			name = ReplaceSpecialChars(name, ":");
-
+            name = ReplaceSpecialChars(name, "(");
+            name = ReplaceSpecialChars(name, ")");
+            name = ReplaceSpecialChars(name, "'");
+            name = ReplaceSpecialChars(name, "`");
 			name = ReplaceSpecialChars(name, "{");
 			name = ReplaceSpecialChars(name, "}");
 
@@ -89,6 +92,10 @@ namespace Raml.Common
 			name = ReplaceSpecialChars(name, "\\");
 			name = ReplaceSpecialChars(name, "/");
 			name = ReplaceSpecialChars(name, "_");
+            name = ReplaceSpecialChars(name, "(");
+            name = ReplaceSpecialChars(name, ")");
+            name = ReplaceSpecialChars(name, "'");
+            name = ReplaceSpecialChars(name, "`");
 			name = ReplaceUriParameters(name);
 			name = name.Replace(":", string.Empty);
 			name = RemoveIndalidChars(name);
@@ -129,6 +136,7 @@ namespace Raml.Common
 			var propName = name.Replace(":", string.Empty);
 			propName = propName.Replace("/", string.Empty);
 			propName = propName.Replace("-", string.Empty);
+            propName = propName.Replace("`", string.Empty);
             propName = propName.Replace("+", "Plus");
             propName = propName.Replace(".", "Dot");
 			propName = Capitalize(propName);

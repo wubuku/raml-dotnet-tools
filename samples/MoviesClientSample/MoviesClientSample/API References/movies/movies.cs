@@ -1,7 +1,8 @@
-// Template: Client Proxy T4 Template (RAMLClient.t4) version 0.1
+// Template: Client Proxy T4 Template (RAMLClient.t4) version 3.0
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -10,7 +11,9 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using RAML.Api.Core;
 using Raml.Common;
 
@@ -28,12 +31,13 @@ namespace MoviesClientSample.Movies
             this.proxy = proxy;
         }
 
+
         /// <summary>
 		/// rent a movie
 		/// </summary>
-		/// <param name="json"></param>
+		/// <param name="content"></param>
 		/// <param name="id"></param>
-        public virtual async Task<ApiResponse> Put(string json, string id)
+        public virtual async Task<ApiResponse> Put(string content, string id)
         {
 
             var url = "movies/{id}/rent";
@@ -42,7 +46,7 @@ namespace MoviesClientSample.Movies
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-            req.Content = new StringContent(json);
+            req.Content = new StringContent(content);
 	        var response = await proxy.Client.SendAsync(req);
 
             return new ApiResponse  
@@ -109,12 +113,13 @@ namespace MoviesClientSample.Movies
             this.proxy = proxy;
         }
 
+
         /// <summary>
 		/// return a movie
 		/// </summary>
-		/// <param name="json"></param>
+		/// <param name="content"></param>
 		/// <param name="id"></param>
-        public virtual async Task<ApiResponse> Put(string json, string id)
+        public virtual async Task<ApiResponse> Put(string content, string id)
         {
 
             var url = "movies/{id}/return";
@@ -123,7 +128,7 @@ namespace MoviesClientSample.Movies
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-            req.Content = new StringContent(json);
+            req.Content = new StringContent(content);
 	        var response = await proxy.Client.SendAsync(req);
 
             return new ApiResponse  
@@ -186,6 +191,7 @@ namespace MoviesClientSample.Movies
         {
             this.proxy = proxy;
         }
+
 
         /// <summary>
 		/// gets the current user movies wishlist
@@ -261,12 +267,13 @@ namespace MoviesClientSample.Movies
                                             };
         }
 
+
         /// <summary>
 		/// add a movie to the current user movies wishlist
 		/// </summary>
-		/// <param name="json"></param>
+		/// <param name="content"></param>
 		/// <param name="id"></param>
-        public virtual async Task<ApiResponse> Post(string json, string id)
+        public virtual async Task<ApiResponse> Post(string content, string id)
         {
 
             var url = "movies/wishlist/{id}";
@@ -275,7 +282,7 @@ namespace MoviesClientSample.Movies
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-            req.Content = new StringContent(json);
+            req.Content = new StringContent(content);
 	        var response = await proxy.Client.SendAsync(req);
 
             return new ApiResponse  
@@ -327,6 +334,7 @@ namespace MoviesClientSample.Movies
 												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
         }
+
 
         /// <summary>
 		/// removes a movie from the current user movies wishlist
@@ -402,6 +410,7 @@ namespace MoviesClientSample.Movies
         {
             this.proxy = proxy;
         }
+
 
         /// <summary>
 		/// gets the user rented movies
@@ -482,6 +491,7 @@ namespace MoviesClientSample.Movies
             this.proxy = proxy;
         }
 
+
         /// <summary>
 		/// get all movies that are not currently rented
 		/// </summary>
@@ -560,26 +570,32 @@ namespace MoviesClientSample.Movies
         {
             this.proxy = proxy;
         }
+
         public virtual Wishlist Wishlist
         {
             get { return new Wishlist(proxy); }
         }
+
         public virtual Rented Rented
         {
             get { return new Rented(proxy); }
         }
+
         public virtual Available Available
         {
             get { return new Available(proxy); }
         }
+
         public virtual Rent Rent
         {
             get { return new Rent(proxy); }
         }
+
         public virtual Return Return
         {
             get { return new Return(proxy); }
         }
+
 
         /// <summary>
 		/// gets all movies in the catalogue
@@ -649,6 +665,7 @@ namespace MoviesClientSample.Movies
                                             };
         }
 
+
         /// <summary>
 		/// adds a movie to the catalogue
 		/// </summary>
@@ -661,7 +678,7 @@ namespace MoviesClientSample.Movies
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
-            req.Content = new ObjectContent(typeof(Models.MoviesPostRequestContent), moviespostrequestcontent, new JsonMediaTypeFormatter());
+            req.Content = new ObjectContent(typeof(Models.MoviesPostRequestContent), moviespostrequestcontent, new JsonMediaTypeFormatter());                           
 	        var response = await proxy.Client.SendAsync(req);
 
             return new ApiResponse  
@@ -697,8 +714,6 @@ namespace MoviesClientSample.Movies
             }
             if(request.Formatter == null)
                 request.Formatter = new JsonMediaTypeFormatter();
-
-            req.Content = new ObjectContent(typeof(Models.MoviesPostRequestContent), request.Content, request.Formatter);
 	        var response = await proxy.Client.SendAsync(req);
             return new ApiResponse  
                                             {
@@ -709,6 +724,7 @@ namespace MoviesClientSample.Movies
 												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
         }
+
 
         /// <summary>
 		/// get the info of a movie
@@ -787,18 +803,19 @@ namespace MoviesClientSample.Movies
                                             };
         }
 
+
         /// <summary>
 		/// update the info of a movie
 		/// </summary>
-		/// <param name="idputrequestcontent"></param>
+		/// <param name="moviesidputrequestcontent"></param>
 		/// <param name="id"></param>
-        public virtual async Task<ApiResponse> Put(Models.IdPutRequestContent idputrequestcontent, string id)
+        public virtual async Task<ApiResponse> Put(Models.MoviesIdPutRequestContent moviesidputrequestcontent, string id)
         {
 
             var url = "movies/{id}";
             url = url.Replace("{id}", id.ToString());
             var req = new HttpRequestMessage(HttpMethod.Put, url);
-            req.Content = new ObjectContent(typeof(Models.IdPutRequestContent), idputrequestcontent, new JsonMediaTypeFormatter());
+            req.Content = new ObjectContent(typeof(Models.MoviesIdPutRequestContent), moviesidputrequestcontent, new JsonMediaTypeFormatter());                           
 	        var response = await proxy.Client.SendAsync(req);
 
             return new ApiResponse  
@@ -838,8 +855,6 @@ namespace MoviesClientSample.Movies
             }
             if(request.Formatter == null)
                 request.Formatter = new JsonMediaTypeFormatter();
-
-            req.Content = new ObjectContent(typeof(Models.IdPutRequestContent), request.Content, request.Formatter);
 	        var response = await proxy.Client.SendAsync(req);
             return new ApiResponse  
                                             {
@@ -850,6 +865,7 @@ namespace MoviesClientSample.Movies
 												SchemaValidation = new Lazy<SchemaValidationResults>(() => new SchemaValidationResults(true), true)
                                             };
         }
+
 
         /// <summary>
 		/// remove a movie from the catalogue
@@ -919,6 +935,7 @@ namespace MoviesClientSample.Movies
         {
             this.proxy = proxy;
         }
+
 
         /// <summary>
 		/// search movies by name or director
@@ -1072,11 +1089,13 @@ namespace MoviesClientSample.Movies
         }
 
         
+
         public virtual Movies Movies
         {
             get { return new Movies(this); }
         }
                 
+
         public virtual Search Search
         {
             get { return new Search(this); }
@@ -1102,200 +1121,349 @@ namespace MoviesClientSample.Movies
 
 
 
+
+
+
+
+
 namespace MoviesClientSample.Movies.Models
 {
     public partial class  MoviesPostRequestContent 
     {
+
 		[JsonProperty("id")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
+
+
 		[JsonProperty("name")]
         public string Name { get; set; }
+
+
 		[JsonProperty("director")]
         public string Director { get; set; }
+
+
 		[JsonProperty("genre")]
         public string Genre { get; set; }
+
+
 		[JsonProperty("cast")]
         public string Cast { get; set; }
+
+
 		[JsonProperty("duration")]
-        public decimal Duration { get; set; }
+        public decimal? Duration { get; set; }
+
+
 		[JsonProperty("storyline")]
         public string Storyline { get; set; }
+
+
 		[JsonProperty("language")]
         public string Language { get; set; }
+
 
     } // end class
 
-    public partial class  IdPutRequestContent 
+    public partial class  MoviesIdPutRequestContent 
     {
+
 		[JsonProperty("id")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
+
+
 		[JsonProperty("name")]
         public string Name { get; set; }
+
+
 		[JsonProperty("director")]
         public string Director { get; set; }
+
+
 		[JsonProperty("genre")]
         public string Genre { get; set; }
+
+
 		[JsonProperty("cast")]
         public string Cast { get; set; }
+
+
 		[JsonProperty("duration")]
-        public decimal Duration { get; set; }
+        public decimal? Duration { get; set; }
+
+
 		[JsonProperty("storyline")]
         public string Storyline { get; set; }
+
+
 		[JsonProperty("language")]
         public string Language { get; set; }
+
 
     } // end class
 
     public partial class  MoviesGetOKResponseContent 
     {
+
 		[JsonProperty("id")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
+
+
 		[JsonProperty("name")]
         public string Name { get; set; }
+
+
 		[JsonProperty("director")]
         public string Director { get; set; }
+
+
 		[JsonProperty("genre")]
         public string Genre { get; set; }
+
+
 		[JsonProperty("cast")]
         public string Cast { get; set; }
+
+
 		[JsonProperty("duration")]
-        public decimal Duration { get; set; }
+        public decimal? Duration { get; set; }
+
+
 		[JsonProperty("storyline")]
         public string Storyline { get; set; }
+
+
 		[JsonProperty("language")]
         public string Language { get; set; }
+
+
 		[JsonProperty("rented")]
-        public bool Rented { get; set; }
+        public bool? Rented { get; set; }
+
 
     } // end class
 
-    public partial class  IdGetOKResponseContent 
+    public partial class  MoviesIdGetOKResponseContent 
     {
+
 		[JsonProperty("id")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
+
+
 		[JsonProperty("name")]
         public string Name { get; set; }
+
+
 		[JsonProperty("director")]
         public string Director { get; set; }
+
+
 		[JsonProperty("genre")]
         public string Genre { get; set; }
+
+
 		[JsonProperty("cast")]
         public string Cast { get; set; }
+
+
 		[JsonProperty("duration")]
-        public decimal Duration { get; set; }
+        public decimal? Duration { get; set; }
+
+
 		[JsonProperty("storyline")]
         public string Storyline { get; set; }
+
+
 		[JsonProperty("language")]
         public string Language { get; set; }
+
+
 		[JsonProperty("rented")]
-        public bool Rented { get; set; }
+        public bool? Rented { get; set; }
+
 
     } // end class
 
-    public partial class  WishlistGetOKResponseContent 
+    public partial class  MoviesWishlistGetOKResponseContent 
     {
+
 		[JsonProperty("id")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
+
+
 		[JsonProperty("name")]
         public string Name { get; set; }
+
+
 		[JsonProperty("director")]
         public string Director { get; set; }
+
+
 		[JsonProperty("genre")]
         public string Genre { get; set; }
+
+
 		[JsonProperty("cast")]
         public string Cast { get; set; }
+
+
 		[JsonProperty("duration")]
-        public decimal Duration { get; set; }
+        public decimal? Duration { get; set; }
+
+
 		[JsonProperty("storyline")]
         public string Storyline { get; set; }
+
+
 		[JsonProperty("language")]
         public string Language { get; set; }
+
+
 		[JsonProperty("rented")]
-        public bool Rented { get; set; }
+        public bool? Rented { get; set; }
+
 
     } // end class
 
-    public partial class  RentedGetOKResponseContent 
+    public partial class  MoviesRentedGetOKResponseContent 
     {
+
 		[JsonProperty("id")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
+
+
 		[JsonProperty("name")]
         public string Name { get; set; }
+
+
 		[JsonProperty("director")]
         public string Director { get; set; }
+
+
 		[JsonProperty("genre")]
         public string Genre { get; set; }
+
+
 		[JsonProperty("cast")]
         public string Cast { get; set; }
+
+
 		[JsonProperty("duration")]
-        public decimal Duration { get; set; }
+        public decimal? Duration { get; set; }
+
+
 		[JsonProperty("storyline")]
         public string Storyline { get; set; }
+
+
 		[JsonProperty("language")]
         public string Language { get; set; }
+
+
 		[JsonProperty("rented")]
-        public bool Rented { get; set; }
+        public bool? Rented { get; set; }
+
 
     } // end class
 
-    public partial class  AvailableGetOKResponseContent 
+    public partial class  MoviesAvailableGetOKResponseContent 
     {
+
 		[JsonProperty("id")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
+
+
 		[JsonProperty("name")]
         public string Name { get; set; }
+
+
 		[JsonProperty("director")]
         public string Director { get; set; }
+
+
 		[JsonProperty("genre")]
         public string Genre { get; set; }
+
+
 		[JsonProperty("cast")]
         public string Cast { get; set; }
+
+
 		[JsonProperty("duration")]
-        public decimal Duration { get; set; }
+        public decimal? Duration { get; set; }
+
+
 		[JsonProperty("storyline")]
         public string Storyline { get; set; }
+
+
 		[JsonProperty("language")]
         public string Language { get; set; }
+
+
 		[JsonProperty("rented")]
-        public bool Rented { get; set; }
+        public bool? Rented { get; set; }
+
 
     } // end class
 
     public partial class  SearchGetOKResponseContent 
     {
+
 		[JsonProperty("id")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
+
+
 		[JsonProperty("name")]
         public string Name { get; set; }
+
+
 		[JsonProperty("director")]
         public string Director { get; set; }
+
+
 		[JsonProperty("genre")]
         public string Genre { get; set; }
+
+
 		[JsonProperty("cast")]
         public string Cast { get; set; }
+
+
 		[JsonProperty("duration")]
-        public decimal Duration { get; set; }
+        public decimal? Duration { get; set; }
+
+
 		[JsonProperty("storyline")]
         public string Storyline { get; set; }
+
+
 		[JsonProperty("language")]
         public string Language { get; set; }
+
+
 		[JsonProperty("rented")]
-        public bool Rented { get; set; }
+        public bool? Rented { get; set; }
+
 
     } // end class
 
     public partial class  GetSearchQuery 
     {
+
         /// <summary>
         /// Name of the movie
         /// </summary>
 		[JsonProperty("name")]
         public string Name { get; set; }
+
+
         /// <summary>
         /// Director of the movie
         /// </summary>
 		[JsonProperty("director")]
         public string Director { get; set; }
+
 
     } // end class
 
@@ -1304,8 +1472,10 @@ namespace MoviesClientSample.Movies.Models
     /// </summary>
     public partial class  MoviesIdUriParameters 
     {
+
 		[JsonProperty("id")]
         public string Id { get; set; }
+
 
     } // end class
 
@@ -1314,8 +1484,10 @@ namespace MoviesClientSample.Movies.Models
     /// </summary>
     public partial class  MoviesIdRentUriParameters 
     {
+
 		[JsonProperty("id")]
         public string Id { get; set; }
+
 
     } // end class
 
@@ -1324,8 +1496,10 @@ namespace MoviesClientSample.Movies.Models
     /// </summary>
     public partial class  MoviesIdReturnUriParameters 
     {
+
 		[JsonProperty("id")]
         public string Id { get; set; }
+
 
     } // end class
 
@@ -1334,8 +1508,10 @@ namespace MoviesClientSample.Movies.Models
     /// </summary>
     public partial class  MoviesWishlistIdUriParameters 
     {
+
 		[JsonProperty("id")]
         public string Id { get; set; }
+
 
     } // end class
 
@@ -1351,14 +1527,17 @@ namespace MoviesClientSample.Movies.Models
             this.UriParameters = UriParameters;
         }
 
+
         /// <summary>
         /// Request content
         /// </summary>
         public HttpContent Content { get; set; }
+
         /// <summary>
         /// Request formatter
         /// </summary>
         public MediaTypeFormatter Formatter { get; set; }
+
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
@@ -1378,14 +1557,17 @@ namespace MoviesClientSample.Movies.Models
             this.UriParameters = UriParameters;
         }
 
+
         /// <summary>
         /// Request content
         /// </summary>
         public HttpContent Content { get; set; }
+
         /// <summary>
         /// Request formatter
         /// </summary>
         public MediaTypeFormatter Formatter { get; set; }
+
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
@@ -1405,14 +1587,17 @@ namespace MoviesClientSample.Movies.Models
             this.UriParameters = UriParameters;
         }
 
+
         /// <summary>
         /// Request content
         /// </summary>
         public HttpContent Content { get; set; }
+
         /// <summary>
         /// Request formatter
         /// </summary>
         public MediaTypeFormatter Formatter { get; set; }
+
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
@@ -1429,6 +1614,7 @@ namespace MoviesClientSample.Movies.Models
         {
             this.UriParameters = UriParameters;
         }
+
 
         /// <summary>
         /// Request Uri Parameters
@@ -1448,10 +1634,12 @@ namespace MoviesClientSample.Movies.Models
             this.Formatter = Formatter;
         }
 
+
         /// <summary>
         /// Request content
         /// </summary>
         public MoviesPostRequestContent Content { get; set; }
+
         /// <summary>
         /// Request formatter
         /// </summary>
@@ -1469,6 +1657,7 @@ namespace MoviesClientSample.Movies.Models
             this.UriParameters = UriParameters;
         }
 
+
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
@@ -1481,21 +1670,24 @@ namespace MoviesClientSample.Movies.Models
     /// </summary>
     public partial class MoviesPutRequest : ApiRequest
     {
-        public MoviesPutRequest(MoviesIdUriParameters UriParameters, IdPutRequestContent Content = null, MediaTypeFormatter Formatter = null)
+        public MoviesPutRequest(MoviesIdUriParameters UriParameters, MoviesIdPutRequestContent Content = null, MediaTypeFormatter Formatter = null)
         {
             this.Content = Content;
             this.Formatter = Formatter;
             this.UriParameters = UriParameters;
         }
 
+
         /// <summary>
         /// Request content
         /// </summary>
-        public IdPutRequestContent Content { get; set; }
+        public MoviesIdPutRequestContent Content { get; set; }
+
         /// <summary>
         /// Request formatter
         /// </summary>
         public MediaTypeFormatter Formatter { get; set; }
+
         /// <summary>
         /// Request Uri Parameters
         /// </summary>
@@ -1512,6 +1704,7 @@ namespace MoviesClientSample.Movies.Models
         {
             this.UriParameters = UriParameters;
         }
+
 
         /// <summary>
         /// Request Uri Parameters
@@ -1530,6 +1723,7 @@ namespace MoviesClientSample.Movies.Models
             this.Query = Query;
         }
 
+
         /// <summary>
         /// Request query string properties
         /// </summary>
@@ -1545,22 +1739,38 @@ namespace MoviesClientSample.Movies.Models
     {
 
 
-	    private IList<WishlistGetOKResponseContent> typedContent;
+	    private IList<MoviesWishlistGetOKResponseContent> typedContent;
         /// <summary>
         /// Typed Response content
         /// </summary>
-        public IList<WishlistGetOKResponseContent> Content 
+        public IList<MoviesWishlistGetOKResponseContent> Content 
     	{
 	        get
 	        {
 		        if (typedContent != null)
 			        return typedContent;
 
-		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<IList<WishlistGetOKResponseContent>>(Formatters).ConfigureAwait(false)
-                            : RawContent.ReadAsAsync<IList<WishlistGetOKResponseContent>>().ConfigureAwait(false);
+                IEnumerable<string> values = new List<string>();
+                if (RawContent != null && RawContent.Headers != null)
+                    RawContent.Headers.TryGetValues("Content-Type", out values);
+
+                if (values.Any(hv => hv.ToLowerInvariant().Contains("xml")) &&
+                    !values.Any(hv => hv.ToLowerInvariant().Contains("json")))
+                {
+                    var task = RawContent.ReadAsStreamAsync();
+
+                    var xmlStream = task.GetAwaiter().GetResult();
+                    typedContent = (IList<MoviesWishlistGetOKResponseContent>)new XmlSerializer(typeof(IList<MoviesWishlistGetOKResponseContent>)).Deserialize(xmlStream);
+                }
+                else
+                {
+                    var task =  Formatters != null && Formatters.Any() 
+                                ? RawContent.ReadAsAsync<IList<MoviesWishlistGetOKResponseContent>>(Formatters).ConfigureAwait(false)
+                                : RawContent.ReadAsAsync<IList<MoviesWishlistGetOKResponseContent>>().ConfigureAwait(false);
 		        
-		        typedContent = task.GetAwaiter().GetResult();
+		            typedContent = task.GetAwaiter().GetResult();
+                }
+
 		        return typedContent;
 	        }
 	    }
@@ -1578,22 +1788,38 @@ namespace MoviesClientSample.Movies.Models
     {
 
 
-	    private IList<RentedGetOKResponseContent> typedContent;
+	    private IList<MoviesRentedGetOKResponseContent> typedContent;
         /// <summary>
         /// Typed Response content
         /// </summary>
-        public IList<RentedGetOKResponseContent> Content 
+        public IList<MoviesRentedGetOKResponseContent> Content 
     	{
 	        get
 	        {
 		        if (typedContent != null)
 			        return typedContent;
 
-		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<IList<RentedGetOKResponseContent>>(Formatters).ConfigureAwait(false)
-                            : RawContent.ReadAsAsync<IList<RentedGetOKResponseContent>>().ConfigureAwait(false);
+                IEnumerable<string> values = new List<string>();
+                if (RawContent != null && RawContent.Headers != null)
+                    RawContent.Headers.TryGetValues("Content-Type", out values);
+
+                if (values.Any(hv => hv.ToLowerInvariant().Contains("xml")) &&
+                    !values.Any(hv => hv.ToLowerInvariant().Contains("json")))
+                {
+                    var task = RawContent.ReadAsStreamAsync();
+
+                    var xmlStream = task.GetAwaiter().GetResult();
+                    typedContent = (IList<MoviesRentedGetOKResponseContent>)new XmlSerializer(typeof(IList<MoviesRentedGetOKResponseContent>)).Deserialize(xmlStream);
+                }
+                else
+                {
+                    var task =  Formatters != null && Formatters.Any() 
+                                ? RawContent.ReadAsAsync<IList<MoviesRentedGetOKResponseContent>>(Formatters).ConfigureAwait(false)
+                                : RawContent.ReadAsAsync<IList<MoviesRentedGetOKResponseContent>>().ConfigureAwait(false);
 		        
-		        typedContent = task.GetAwaiter().GetResult();
+		            typedContent = task.GetAwaiter().GetResult();
+                }
+
 		        return typedContent;
 	        }
 	    }
@@ -1611,22 +1837,38 @@ namespace MoviesClientSample.Movies.Models
     {
 
 
-	    private IList<AvailableGetOKResponseContent> typedContent;
+	    private IList<MoviesAvailableGetOKResponseContent> typedContent;
         /// <summary>
         /// Typed Response content
         /// </summary>
-        public IList<AvailableGetOKResponseContent> Content 
+        public IList<MoviesAvailableGetOKResponseContent> Content 
     	{
 	        get
 	        {
 		        if (typedContent != null)
 			        return typedContent;
 
-		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<IList<AvailableGetOKResponseContent>>(Formatters).ConfigureAwait(false)
-                            : RawContent.ReadAsAsync<IList<AvailableGetOKResponseContent>>().ConfigureAwait(false);
+                IEnumerable<string> values = new List<string>();
+                if (RawContent != null && RawContent.Headers != null)
+                    RawContent.Headers.TryGetValues("Content-Type", out values);
+
+                if (values.Any(hv => hv.ToLowerInvariant().Contains("xml")) &&
+                    !values.Any(hv => hv.ToLowerInvariant().Contains("json")))
+                {
+                    var task = RawContent.ReadAsStreamAsync();
+
+                    var xmlStream = task.GetAwaiter().GetResult();
+                    typedContent = (IList<MoviesAvailableGetOKResponseContent>)new XmlSerializer(typeof(IList<MoviesAvailableGetOKResponseContent>)).Deserialize(xmlStream);
+                }
+                else
+                {
+                    var task =  Formatters != null && Formatters.Any() 
+                                ? RawContent.ReadAsAsync<IList<MoviesAvailableGetOKResponseContent>>(Formatters).ConfigureAwait(false)
+                                : RawContent.ReadAsAsync<IList<MoviesAvailableGetOKResponseContent>>().ConfigureAwait(false);
 		        
-		        typedContent = task.GetAwaiter().GetResult();
+		            typedContent = task.GetAwaiter().GetResult();
+                }
+
 		        return typedContent;
 	        }
 	    }
@@ -1655,11 +1897,27 @@ namespace MoviesClientSample.Movies.Models
 		        if (typedContent != null)
 			        return typedContent;
 
-		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<IList<MoviesGetOKResponseContent>>(Formatters).ConfigureAwait(false)
-                            : RawContent.ReadAsAsync<IList<MoviesGetOKResponseContent>>().ConfigureAwait(false);
+                IEnumerable<string> values = new List<string>();
+                if (RawContent != null && RawContent.Headers != null)
+                    RawContent.Headers.TryGetValues("Content-Type", out values);
+
+                if (values.Any(hv => hv.ToLowerInvariant().Contains("xml")) &&
+                    !values.Any(hv => hv.ToLowerInvariant().Contains("json")))
+                {
+                    var task = RawContent.ReadAsStreamAsync();
+
+                    var xmlStream = task.GetAwaiter().GetResult();
+                    typedContent = (IList<MoviesGetOKResponseContent>)new XmlSerializer(typeof(IList<MoviesGetOKResponseContent>)).Deserialize(xmlStream);
+                }
+                else
+                {
+                    var task =  Formatters != null && Formatters.Any() 
+                                ? RawContent.ReadAsAsync<IList<MoviesGetOKResponseContent>>(Formatters).ConfigureAwait(false)
+                                : RawContent.ReadAsAsync<IList<MoviesGetOKResponseContent>>().ConfigureAwait(false);
 		        
-		        typedContent = task.GetAwaiter().GetResult();
+		            typedContent = task.GetAwaiter().GetResult();
+                }
+
 		        return typedContent;
 	        }
 	    }
@@ -1677,22 +1935,38 @@ namespace MoviesClientSample.Movies.Models
     {
 
 
-	    private IdGetOKResponseContent typedContent;
+	    private MoviesIdGetOKResponseContent typedContent;
         /// <summary>
         /// Typed Response content
         /// </summary>
-        public IdGetOKResponseContent Content 
+        public MoviesIdGetOKResponseContent Content 
     	{
 	        get
 	        {
 		        if (typedContent != null)
 			        return typedContent;
 
-		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<IdGetOKResponseContent>(Formatters).ConfigureAwait(false)
-                            : RawContent.ReadAsAsync<IdGetOKResponseContent>().ConfigureAwait(false);
+                IEnumerable<string> values = new List<string>();
+                if (RawContent != null && RawContent.Headers != null)
+                    RawContent.Headers.TryGetValues("Content-Type", out values);
+
+                if (values.Any(hv => hv.ToLowerInvariant().Contains("xml")) &&
+                    !values.Any(hv => hv.ToLowerInvariant().Contains("json")))
+                {
+                    var task = RawContent.ReadAsStreamAsync();
+
+                    var xmlStream = task.GetAwaiter().GetResult();
+                    typedContent = (MoviesIdGetOKResponseContent)new XmlSerializer(typeof(MoviesIdGetOKResponseContent)).Deserialize(xmlStream);
+                }
+                else
+                {
+                    var task =  Formatters != null && Formatters.Any() 
+                                ? RawContent.ReadAsAsync<MoviesIdGetOKResponseContent>(Formatters).ConfigureAwait(false)
+                                : RawContent.ReadAsAsync<MoviesIdGetOKResponseContent>().ConfigureAwait(false);
 		        
-		        typedContent = task.GetAwaiter().GetResult();
+		            typedContent = task.GetAwaiter().GetResult();
+                }
+
 		        return typedContent;
 	        }
 	    }
@@ -1721,11 +1995,27 @@ namespace MoviesClientSample.Movies.Models
 		        if (typedContent != null)
 			        return typedContent;
 
-		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<IList<SearchGetOKResponseContent>>(Formatters).ConfigureAwait(false)
-                            : RawContent.ReadAsAsync<IList<SearchGetOKResponseContent>>().ConfigureAwait(false);
+                IEnumerable<string> values = new List<string>();
+                if (RawContent != null && RawContent.Headers != null)
+                    RawContent.Headers.TryGetValues("Content-Type", out values);
+
+                if (values.Any(hv => hv.ToLowerInvariant().Contains("xml")) &&
+                    !values.Any(hv => hv.ToLowerInvariant().Contains("json")))
+                {
+                    var task = RawContent.ReadAsStreamAsync();
+
+                    var xmlStream = task.GetAwaiter().GetResult();
+                    typedContent = (IList<SearchGetOKResponseContent>)new XmlSerializer(typeof(IList<SearchGetOKResponseContent>)).Deserialize(xmlStream);
+                }
+                else
+                {
+                    var task =  Formatters != null && Formatters.Any() 
+                                ? RawContent.ReadAsAsync<IList<SearchGetOKResponseContent>>(Formatters).ConfigureAwait(false)
+                                : RawContent.ReadAsAsync<IList<SearchGetOKResponseContent>>().ConfigureAwait(false);
 		        
-		        typedContent = task.GetAwaiter().GetResult();
+		            typedContent = task.GetAwaiter().GetResult();
+                }
+
 		        return typedContent;
 	        }
 	    }
