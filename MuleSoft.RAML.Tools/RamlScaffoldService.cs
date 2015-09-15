@@ -36,6 +36,8 @@ namespace MuleSoft.RAML.Tools
         private readonly string ramlApiCorePackageVersion = Settings.Default.RAMLApiCorePackageVersion;
         private readonly string newtonsoftJsonPackageId = Settings.Default.NewtonsoftJsonPackageId;
         private readonly string newtonsoftJsonPackageVersion = Settings.Default.NewtonsoftJsonPackageVersion;
+        private readonly string microsoftNetHttpPackageId = Settings.Default.MicrosoftNetHttpPackageId;
+        private readonly string microsoftNetHttpPackageVersion = Settings.Default.MicrosoftNetHttpPackageVersion;
 
         public RamlScaffoldService(IT4Service t4Service, IServiceProvider serviceProvider)
         {
@@ -48,7 +50,7 @@ namespace MuleSoft.RAML.Tools
             var dte = serviceProvider.GetService(typeof(SDTE)) as DTE;
             var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
 
-            AddRamlApiCore(proj);
+            InstallNugetDependencies(proj);
             AddXmlFormatterInWebApiConfig(proj);
 
             var folderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, ContractsFolderName);
@@ -107,22 +109,16 @@ namespace MuleSoft.RAML.Tools
             ScaffoldMainRamlFiles(GetMainRamlFiles(document));
         }
 
-        private void AddRamlApiCore(Project proj)
+        private void InstallNugetDependencies(Project proj)
         {
             // RAML.Api.Core
             var componentModel = (IComponentModel)serviceProvider.GetService(typeof(SComponentModel));
             var installerServices = componentModel.GetService<IVsPackageInstallerServices>();
             var installer = componentModel.GetService<IVsPackageInstaller>();
 
-            if (!installerServices.IsPackageInstalledEx(proj, newtonsoftJsonPackageId, "6.0.4"))
-            {
-                installer.InstallPackage(nugetPackagesSource, proj, newtonsoftJsonPackageId, "6.0.4", false);
-            }
-
-            if (!installerServices.IsPackageInstalled(proj, "Microsoft.Net.Http"))
-            {
-                installer.InstallPackage(nugetPackagesSource, proj, "Microsoft.Net.Http", "2.2.29", false);
-            }
+            var packs = installerServices.GetInstalledPackages(proj).ToArray();
+            NugetInstallerHelper.InstallPackageIfNeeded(proj, packs, installer, newtonsoftJsonPackageId, newtonsoftJsonPackageVersion);
+            NugetInstallerHelper.InstallPackageIfNeeded(proj, packs, installer, microsoftNetHttpPackageId, microsoftNetHttpPackageVersion);
 
             // RAML.Api.Core
             if (!installerServices.IsPackageInstalled(proj, ramlApiCorePackageId))

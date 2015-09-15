@@ -100,5 +100,6 @@ namespace Raml.Common
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
             return dialogResult;
         }
+
     }
 }

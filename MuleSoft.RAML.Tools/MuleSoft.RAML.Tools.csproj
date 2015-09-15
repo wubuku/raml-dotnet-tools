@@ -93,7 +93,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="Raml.Parser, Version=0.8.103.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Raml.Parser.0.8.103\lib\net45\Raml.Parser.dll</HintPath>    
+      <HintPath>..\packages\Raml.Parser.0.8.103\lib\net45\Raml.Parser.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -177,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeGeneratorRegistrationAttribute.cs" />
+    <Compile Include="NugetInstallerHelper.cs" />
     <Compile Include="RamlReferenceService.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

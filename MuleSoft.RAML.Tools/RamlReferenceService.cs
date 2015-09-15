@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -23,6 +24,8 @@ namespace MuleSoft.RAML.Tools
         private readonly string ramlApiCorePackageId = Settings.Default.RAMLApiCorePackageId;
         private readonly string ramlApiCorePackageVersion = Settings.Default.RAMLApiCorePackageVersion;
         public readonly static string ApiReferencesFolderName = Settings.Default.ApiReferencesFolderName;
+        private readonly string microsoftNetHttpPackageId = Settings.Default.MicrosoftNetHttpPackageId;
+        private readonly string microsoftNetHttpPackageVersion = Settings.Default.MicrosoftNetHttpPackageVersion;
 
         public RamlReferenceService(IServiceProvider serviceProvider)
         {
@@ -58,23 +61,20 @@ namespace MuleSoft.RAML.Tools
             var installerServices = componentModel.GetService<IVsPackageInstallerServices>();
             var installer = componentModel.GetService<IVsPackageInstaller>();
 
-            if (!installerServices.IsPackageInstalled(proj, newtonsoftJsonPackageId))
-            {
-                installer.InstallPackage(nugetPackagesSource, proj, newtonsoftJsonPackageId, newtonsoftJsonPackageVersion, false);
-            }
-
-            // Web Api Core (to get HttpClient and System.Web.Http)
-            if (!installerServices.IsPackageInstalled(proj, webApiCorePackageId))
-            {
-                installer.InstallPackage(nugetPackagesSource, proj, webApiCorePackageId, webApiCorePackageVersion, false);
-            }
+            var packs = installerServices.GetInstalledPackages(proj).ToArray();
+            NugetInstallerHelper.InstallPackageIfNeeded(proj, packs, installer, newtonsoftJsonPackageId, newtonsoftJsonPackageVersion);
+            NugetInstallerHelper.InstallPackageIfNeeded(proj, packs, installer, microsoftNetHttpPackageId, microsoftNetHttpPackageVersion);
+            NugetInstallerHelper.InstallPackageIfNeeded(proj, packs, installer, webApiCorePackageId, webApiCorePackageVersion);
 
             // RAML.Api.Core
             if (!installerServices.IsPackageInstalled(proj, ramlApiCorePackageId))
             {
-                installer.InstallPackage(nugetPackagesSource, proj, ramlApiCorePackageId, ramlApiCorePackageVersion, false);
+                //installer.InstallPackage(nugetPackagesSource, proj, ramlApiCorePackageId, ramlApiCorePackageVersion, false);
+                installer.InstallPackage(@"C:\desarrollo\nuget\nugets\", proj, ramlApiCorePackageId, ramlApiCorePackageVersion, false);
             }
         }
+
+
 
         private void AddFilesToProject(string ramlSourceFile, Project proj, string targetNamespace, string ramlOriginalSource, string targetFileName, string clientRootClassName)
         {

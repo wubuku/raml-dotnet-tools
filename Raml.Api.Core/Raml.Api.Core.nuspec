@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>0.9.3.2</version>
+    <version>0.9.4</version>
     <title>RAML.Api.Core</title>
     <authors>MuleSoft Inc</authors>
     <owners>MuleSoft Inc</owners>

@@ -17,7 +17,6 @@ namespace Raml.Common
         private string source;
         private string clientName;
         private bool useAsyncMethods;
-        private Visibility serverVisibility;
 
         public string Namespace
         {

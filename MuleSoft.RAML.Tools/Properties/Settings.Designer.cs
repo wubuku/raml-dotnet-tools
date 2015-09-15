@@ -88,7 +88,7 @@ namespace MuleSoft.RAML.Tools.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.9.3.2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.9.4")]
         public string RAMLApiCorePackageVersion {
             get {
                 return ((string)(this["RAMLApiCorePackageVersion"]));
@@ -227,6 +227,24 @@ namespace MuleSoft.RAML.Tools.Properties {
         public string RAMLParserPackageVersion {
             get {
                 return ((string)(this["RAMLParserPackageVersion"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Microsoft.Net.Http")]
+        public string MicrosoftNetHttpPackageId {
+            get {
+                return ((string)(this["MicrosoftNetHttpPackageId"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2.2.29")]
+        public string MicrosoftNetHttpPackageVersion {
+            get {
+                return ((string)(this["MicrosoftNetHttpPackageVersion"]));
             }
         }
     }
