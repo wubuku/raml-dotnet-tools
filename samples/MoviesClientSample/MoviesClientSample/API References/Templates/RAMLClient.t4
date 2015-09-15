@@ -1,6 +1,6 @@
 <#
 // title: Client Proxy T4 Template
-// hash: f76f742897e51af142fefeb323172b28
+// hash: 3bc5c03fc7f854925cfa6c3d2efa3dfc
 // version: 3.0
 #>
 <#@ template debug="false" hostspecific="false" language="C#" #>
@@ -8,11 +8,13 @@
 <#@ assembly name="$(binDir)EdgeJs.dll" #>
 <#@ assembly name="$(binDir)Raml.Tools.dll" #>
 <#@ assembly name="$(binDir)RAML.Api.Core.dll" #>
+<#@ assembly name="System.Runtime" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="Raml.Common" #>
 <#@ import namespace="Raml.Tools" #>
 <#@ import namespace="Raml.Tools.ClientGenerator" #>
 <#@ import namespace="System.Linq" #>
+<#@ import namespace="System" #>
 <#@ parameter name="model" type="Raml.Tools.ClientGenerator.ClientGeneratorModel" #>
 <#@ output extension=".cs" #>
 
