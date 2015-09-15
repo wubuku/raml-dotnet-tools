@@ -34,6 +34,8 @@ namespace MuleSoft.RAML.Tools
         private readonly string nugetPackagesSource = Settings.Default.NugetPackagesSource;
         private readonly string ramlApiCorePackageId = Settings.Default.RAMLApiCorePackageId;
         private readonly string ramlApiCorePackageVersion = Settings.Default.RAMLApiCorePackageVersion;
+        private readonly string newtonsoftJsonPackageId = Settings.Default.NewtonsoftJsonPackageId;
+        private readonly string newtonsoftJsonPackageVersion = Settings.Default.NewtonsoftJsonPackageVersion;
 
         public RamlScaffoldService(IT4Service t4Service, IServiceProvider serviceProvider)
         {
@@ -111,6 +113,18 @@ namespace MuleSoft.RAML.Tools
             var componentModel = (IComponentModel)serviceProvider.GetService(typeof(SComponentModel));
             var installerServices = componentModel.GetService<IVsPackageInstallerServices>();
             var installer = componentModel.GetService<IVsPackageInstaller>();
+
+            if (!installerServices.IsPackageInstalledEx(proj, newtonsoftJsonPackageId, "6.0.4"))
+            {
+                installer.InstallPackage(nugetPackagesSource, proj, newtonsoftJsonPackageId, "6.0.4", false);
+            }
+
+            if (!installerServices.IsPackageInstalled(proj, "Microsoft.Net.Http"))
+            {
+                installer.InstallPackage(nugetPackagesSource, proj, "Microsoft.Net.Http", "2.2.29", false);
+            }
+
+            // RAML.Api.Core
             if (!installerServices.IsPackageInstalled(proj, ramlApiCorePackageId))
             {
                 //installer.InstallPackage(nugetPackagesSource, proj, ramlApiCorePackageId, ramlApiCorePackageVersion, false);
