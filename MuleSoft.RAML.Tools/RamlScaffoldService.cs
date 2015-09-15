@@ -123,8 +123,7 @@ namespace MuleSoft.RAML.Tools
             // RAML.Api.Core
             if (!installerServices.IsPackageInstalled(proj, ramlApiCorePackageId))
             {
-                //installer.InstallPackage(nugetPackagesSource, proj, ramlApiCorePackageId, ramlApiCorePackageVersion, false);
-                installer.InstallPackage(@"C:\desarrollo\nuget\nugets\", proj, ramlApiCorePackageId, ramlApiCorePackageVersion, false);
+                installer.InstallPackage(nugetPackagesSource, proj, ramlApiCorePackageId, ramlApiCorePackageVersion, false);
             }
         }
 
