@@ -375,13 +375,17 @@ namespace RAML.WebApiExplorer
 			return Nullable.GetUnderlyingType(t) != null;
 		}
 
-		private static bool IsArrayOrEnumerable(Type type)
-		{
-			return type.IsArray || (type.IsGenericType &&
-			                        (type.GetGenericTypeDefinition() == typeof (IEnumerable<>)
-			                         || type.GetGenericTypeDefinition() == typeof (ICollection<>)
-			                         || type.GetGenericTypeDefinition() == typeof (IList<>)));
-		}
+	    private static bool IsArrayOrEnumerable(Type type)
+	    {
+	        return type.IsArray || (type.IsGenericType &&
+	                                (type.GetGenericTypeDefinition() == typeof (IEnumerable<>)
+	                                 || type.GetGenericTypeDefinition() == typeof (ICollection<>)
+	                                 || type.GetGenericTypeDefinition() == typeof (Collection<>)
+	                                 || type.GetGenericTypeDefinition() == typeof (IList<>)
+	                                 || type.GetGenericTypeDefinition() == typeof (List<>)
+	                                    )
+	            );
+	    }
 
 	}
 }
