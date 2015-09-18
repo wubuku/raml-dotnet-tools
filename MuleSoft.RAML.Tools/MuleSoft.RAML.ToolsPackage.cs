@@ -1,9 +1,13 @@
-﻿using EnvDTE;
+﻿using System.Collections.Generic;
+using System.Configuration;
+using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
+using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Shell.Settings;
 using MuleSoft.RAML.Tools.Properties;
 using NuGet.VisualStudio;
 using Raml.Common;
@@ -34,6 +38,9 @@ namespace MuleSoft.RAML.Tools
         private static Events events;
         private static DocumentEvents documentEvents;
         private IVsThreadedWaitDialog3 attachingDialog;
+
+        const string CollectionPath = "ToolsConfig";
+        public static string RamlExchangeUrl = "https://library.mulesoft.com/#!/?types=api";
 
         public MuleSoft_RAML_ToolsPackage()
         {
@@ -119,6 +126,46 @@ namespace MuleSoft.RAML.Tools
             events = dte.Events;
             documentEvents = events.DocumentEvents;
             documentEvents.DocumentSaved += RamlScaffoldService.TriggerScaffoldOnRamlChanged;
+
+            SaveSettings();
+            LoadSettings();
+        }
+
+        private void LoadSettings()
+        {
+            SettingsManager settingsManager = new ShellSettingsManager(ServiceProvider.GlobalProvider);
+            WritableSettingsStore writableSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
+
+            try
+            {
+                if (writableSettingsStore.PropertyExists(CollectionPath, "RAMLExchangeUrl"))
+                {
+                    RamlExchangeUrl = writableSettingsStore.GetString(CollectionPath, "RAMLExchangeUrl");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Fail(ex.Message);
+            }
+        }
+
+        void SaveSettings()
+        {
+            SettingsManager settingsManager = new ShellSettingsManager(ServiceProvider.GlobalProvider);
+            WritableSettingsStore writableSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
+            try
+            {
+                if (!writableSettingsStore.CollectionExists(CollectionPath))
+                {
+                    writableSettingsStore.CreateCollection(CollectionPath);
+                }
+
+                writableSettingsStore.SetString(CollectionPath, "RAMLExchangeUrl", RamlExchangeUrl);
+            }
+            catch (Exception ex)
+            {
+                Debug.Fail(ex.Message);
+            }
         }
 
         private void AddRamlContractFolderCommandOnBeforeQueryStatus(object sender, EventArgs eventArgs)

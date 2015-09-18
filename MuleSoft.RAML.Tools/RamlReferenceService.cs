@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
+﻿using System.Collections.Generic;
 using EnvDTE;
 using Microsoft.VisualStudio.ComponentModelHost;
+using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Shell.Settings;
 using MuleSoft.RAML.Tools.Properties;
 using NuGet.VisualStudio;
 using Raml.Common;
+using System;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace MuleSoft.RAML.Tools
 {
