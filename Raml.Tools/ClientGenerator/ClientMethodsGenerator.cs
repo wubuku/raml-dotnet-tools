@@ -56,11 +56,16 @@ namespace Raml.Tools.ClientGenerator
             {
                 var returnType = CollectionTypeHelper.GetBaseType(generatedMethod.ReturnType);
 
-                generatedMethod.ReturnTypeObject = schemaObjects.Values.Any(o => o.Name == returnType)
+                var returnTypeObject = schemaObjects.Values.Any(o => o.Name == returnType)
                     ? schemaObjects.Values.First(o => o.Name == returnType)
-                    : schemaResponseObjects.Values.First(o => o.Name == returnType);
+                    : schemaResponseObjects.Values.FirstOrDefault(o => o.Name == returnType);
 
-                generatedMethod.OkReturnType = GetOkReturnType(generatedMethod);
+                if (returnTypeObject != null)
+                {
+                    generatedMethod.ReturnTypeObject = returnTypeObject;
+                    generatedMethod.OkReturnType = GetOkReturnType(generatedMethod);
+                }
+
             }
             uriParametersGenerator.Generate(resource, url, generatedMethod, uriParameterObjects, parentUriParameters);
 

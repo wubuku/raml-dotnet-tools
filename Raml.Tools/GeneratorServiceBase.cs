@@ -242,7 +242,7 @@ namespace Raml.Tools
 
         private void AddObjectToObjectCollectionOrLink(ApiObject obj, string key, IDictionary<string, ApiObject> objects, IDictionary<string, ApiObject> otherObjects)
         {
-            if (obj == null || !obj.Properties.Any())
+            if (obj == null || (!obj.Properties.Any() && obj.Type == null))
                 return;
 
             if (schemaObjects.All(o => o.Value.Name != obj.Name) && objects.All(o => o.Value.Name != obj.Name) && otherObjects.All(o => o.Value.Name != obj.Name))

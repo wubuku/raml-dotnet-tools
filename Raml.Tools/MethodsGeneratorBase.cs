@@ -163,9 +163,7 @@ namespace Raml.Tools
         {
             var apiObject = schemaObjects.ContainsKey(key) ? schemaObjects[key] : schemaResponseObjects[key];
 
-            return apiObject.IsArray
-                ? CollectionTypeHelper.GetCollectionType(apiObject.Name)
-                : apiObject.Name;
+            return GetTypeFromApiObject(apiObject);
         }
 
         protected Verb GetResourceTypeVerb(Method method, Resource resource)
@@ -278,16 +276,28 @@ namespace Raml.Tools
             if (schemaObjects.Values.Any(o => o.Name.ToLowerInvariant() == type.ToLowerInvariant()))
             {
                 var apiObject = schemaObjects.Values.First(o => o.Name.ToLowerInvariant() == type.ToLowerInvariant());
-                returnType = apiObject.IsArray ? CollectionTypeHelper.GetCollectionType(apiObject.Name) : apiObject.Name;
+                returnType = GetTypeFromApiObject(apiObject);
                 return returnType;
             }
 
             if (schemaResponseObjects.Values.Any(o => o.Name.ToLowerInvariant() == type.ToLowerInvariant()))
             {
                 var apiObject = schemaResponseObjects.Values.First(o => o.Name.ToLowerInvariant() == type.ToLowerInvariant());
-                returnType = apiObject.IsArray ? CollectionTypeHelper.GetCollectionType(apiObject.Name) : apiObject.Name;
+                return GetTypeFromApiObject(apiObject);
             }
+
             return returnType;
+        }
+
+        private static string GetTypeFromApiObject(ApiObject apiObject)
+        {
+            if (!apiObject.IsArray) 
+                return apiObject.Name;
+
+            if(apiObject.Type == null)
+                return CollectionTypeHelper.GetCollectionType(apiObject.Name);
+
+            return CollectionTypeHelper.GetCollectionType(apiObject.Type);
         }
 
         private string GetReturnTypeFromParameter(Method method, Resource resource, MimeType mimeType, string fullUrl, string returnType)
@@ -298,8 +308,7 @@ namespace Raml.Tools
             {
                 var apiObject = schemaObjects.Values
                     .First(o => o.Name.ToLowerInvariant() == type.ToLowerInvariant());
-                returnType = apiObject.IsArray ? CollectionTypeHelper.GetCollectionType(apiObject.Name) : apiObject.Name;
-                return returnType;
+                return GetTypeFromApiObject(apiObject);
             }
 
 
@@ -307,8 +316,9 @@ namespace Raml.Tools
             {
                 var apiObject = schemaResponseObjects.Values
                     .First(o => o.Name.ToLowerInvariant() == type.ToLowerInvariant());
-                returnType = apiObject.IsArray ? CollectionTypeHelper.GetCollectionType(apiObject.Name) : apiObject.Name;
+                return GetTypeFromApiObject(apiObject);
             }
+
             return returnType;
         }
 
@@ -430,7 +440,7 @@ namespace Raml.Tools
             var generatorParameter = new GeneratorParameter
             {
                 Name = apiObject.Name.ToLower(),
-                Type = apiObject.IsArray ? CollectionTypeHelper.GetCollectionType(apiObject.Name) : apiObject.Name,
+                Type = GetTypeFromApiObject(apiObject),
                 Description = apiObject.Description
             };
             return generatorParameter;

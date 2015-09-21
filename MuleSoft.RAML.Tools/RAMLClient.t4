@@ -157,7 +157,7 @@ namespace $(namespace)
 <#
                         } else {
 #>
-            req.Content = new ObjectContent(typeof(Models.<#= method.Parameter.Type #>), <#= method.Parameter.Name #>, new JsonMediaTypeFormatter());                           
+            req.Content = new ObjectContent(typeof(<#= method.QualifiedParameterType #>), <#= method.Parameter.Name #>, new JsonMediaTypeFormatter());                           
 <#                        
                         }
         	        }
@@ -543,6 +543,9 @@ namespace $(namespace).Models
 foreach (var apiObject in model.Objects.Where(o => string.IsNullOrWhiteSpace(o.GeneratedCode)))
 {
     if(hasXmlSchemas && !apiObject.Properties.Any())
+        continue;
+
+    if(apiObject.IsArray && apiObject.Type != null)
         continue;
 
 	if (!string.IsNullOrWhiteSpace(apiObject.Description))

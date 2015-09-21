@@ -640,6 +640,33 @@ namespace Raml.Tools.Tests
             Assert.AreEqual("IDictionary<string, object>", obj.Properties.First(p => p.Name == "AdditionalProperties").Type);
         }
 
+        [Test]
+        public void should_parse_primitive_arrays()
+        {
+            var schema = @"
+                {
+                  '$schema': 'http://json-schema.org/draft-04/schema#',
+                  'id': 'IdList',
+                  'type': 'array',
+                  'minItems': 1,
+                  'uniqueItems': false,
+                  'additionalItems': true,
+                  'items': {
+                    'id': '0',
+                    'type': 'integer'
+                  }
+                }";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>(), new Dictionary<string, ApiObject>());
+
+            Assert.AreEqual(true, obj.IsArray);
+            Assert.AreEqual("int", obj.Type);
+            Assert.AreEqual(0, obj.Properties.Count);
+        }
 
     }
 }

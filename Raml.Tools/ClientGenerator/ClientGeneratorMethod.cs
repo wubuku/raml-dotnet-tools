@@ -127,7 +127,16 @@ namespace Raml.Tools.ClientGenerator
 
         public string SimpleReturnTypeString
         {
-            get { return ReturnType == "string" ? "HttpContent" : ModelsNamespacePrefix + OkReturnType; }
+            get
+            {
+                if (ReturnType == "string") 
+                    return "HttpContent";
+
+                if (CollectionTypeHelper.IsCollection(ReturnType))
+                    return ReturnType;
+
+                return ModelsNamespacePrefix + OkReturnType;
+            }
         }
 
         public string SimpleParameterString
@@ -136,7 +145,9 @@ namespace Raml.Tools.ClientGenerator
             {
                 var paramsString = string.Empty;
                 if (HasInputParameter())
-                    paramsString += (Parameter.Type == "string" ? Parameter.Type : ModelsNamespacePrefix + Parameter.Type) + " " + Parameter.Name;
+                    paramsString += (Parameter.Type == "string" || CollectionTypeHelper.IsCollection(Parameter.Type)
+                        ? Parameter.Type 
+                        : ModelsNamespacePrefix + Parameter.Type) + " " + Parameter.Name;
 
                 if (!string.IsNullOrWhiteSpace(UriParametersString))
                 {
@@ -166,6 +177,17 @@ namespace Raml.Tools.ClientGenerator
                     paramsString += ", IEnumerable<MediaTypeFormatter> responseFormatters = null";
 
                 return paramsString;
+            }
+        }
+
+        public string QualifiedParameterType
+        {
+            get
+            {
+                if (Parameter.Type != "string" && !CollectionTypeHelper.IsCollection(Parameter.Type))
+                    return "Models." + Parameter.Type;
+
+                return Parameter.Type;
             }
         }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Schema;
 using Raml.Tools.WebApiGenerator;
 
 namespace Raml.Tools
@@ -46,5 +47,7 @@ namespace Raml.Tools
                 return res + (string.IsNullOrWhiteSpace(res) ? "" : ", ") + string.Join(", ", paramStrings);
             }
         }
+
+        public string Type { get; set; }
     }
 }
