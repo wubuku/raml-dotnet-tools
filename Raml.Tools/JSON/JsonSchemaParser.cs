@@ -43,7 +43,16 @@ namespace Raml.Tools.JSON
                 {
                     obj.IsArray = true;
                     if (schema.Items != null && schema.Items.Any())
-                        ParseProperties(objects, obj.Properties, schema.Items.First().Properties, enums);
+                    {
+                        if (schema.Items.First().Properties != null)
+                        {
+                            ParseProperties(objects, obj.Properties, schema.Items.First().Properties, enums);
+                        }
+                        else
+                        {
+                            obj.Type = NetTypeMapper.Map(schema.Items.First().Type);
+                        }
+                    }
                 }
                 else
                 {
@@ -57,7 +66,17 @@ namespace Raml.Tools.JSON
                 {
                     obj.IsArray = true;
                     if (v4Schema.Items != null && v4Schema.Items.Any())
-                        ParseProperties(objects, obj.Properties, v4Schema.Items.First(), enums);
+                    {
+                        if (schema.Items.First().Properties != null)
+                        {
+                            ParseProperties(objects, obj.Properties, v4Schema.Items.First(), enums);
+                        }
+                        else
+                        {
+                            obj.Type = NetTypeMapper.Map(v4Schema.Items.First().Type);
+                        }
+                    }
+                        
                 }
                 else
                 {

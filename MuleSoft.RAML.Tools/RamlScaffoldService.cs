@@ -321,6 +321,8 @@ namespace MuleSoft.RAML.Tools
             if (model.Objects.Any(o => !string.IsNullOrWhiteSpace(o.GeneratedCode)))
                 models = model.Objects.Where(o => o.Properties.Any() || !string.IsNullOrWhiteSpace(o.GeneratedCode));
 
+            models = models.Where(o => !o.IsArray || o.Type == null); // skip array of primitives
+
             var apiObjectTemplateParams = new TemplateParams<ApiObject>(
                 Path.Combine(templatesFolder, ModelTemplateName), ramlItem, "apiObject", models,
                 generatedFolderPath, folderItem, extensionPath, targetNamespace);

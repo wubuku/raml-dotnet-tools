@@ -17,5 +17,11 @@ namespace Raml.Tools
             type = type.Substring(1, type.Length - 2);
             return type;
         }
+
+        public static bool IsCollection(string type)
+        {
+            return type.StartsWith(CollectionType);
+        }
+
     }
 }
