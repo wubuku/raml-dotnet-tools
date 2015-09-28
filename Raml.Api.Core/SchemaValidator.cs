@@ -25,8 +25,13 @@ namespace RAML.Api.Core
 
         public static async Task<SchemaValidationResults> IsValidAsync(string rawSchema, HttpContent content)
         {
+#if !PORTABLE
             if (content.Headers.ContentType == null || !content.Headers.ContentType.MediaType.Equals("application/json",
                 StringComparison.InvariantCultureIgnoreCase))
+#else
+            if (content.Headers.ContentType == null || !content.Headers.ContentType.MediaType.Equals("application/json",
+                StringComparison.OrdinalIgnoreCase))
+#endif
             {
                 return new SchemaValidationResults(true, new List<string>());
             }
@@ -37,8 +42,13 @@ namespace RAML.Api.Core
 
         public static SchemaValidationResults IsValid(string rawSchema, HttpContent content)
         {
+#if !PORTABLE
             if (content.Headers.ContentType == null || !content.Headers.ContentType.MediaType.Equals("application/json",
                 StringComparison.InvariantCultureIgnoreCase))
+#else
+            if (content.Headers.ContentType == null || !content.Headers.ContentType.MediaType.Equals("application/json",
+                StringComparison.OrdinalIgnoreCase))
+#endif
             {
                 return new SchemaValidationResults(true, new List<string>());
             }

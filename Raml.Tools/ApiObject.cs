@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Schema;
 using Raml.Tools.WebApiGenerator;
 
 namespace Raml.Tools
@@ -20,6 +21,8 @@ namespace Raml.Tools
         public bool IsArray { get; set; }
         public bool IsMultiple { get; set; }
         public string JSONSchema { get; set; }
+
+	    public string GeneratedCode { get; set; }
 
         public string BaseClass { get; set; }
 
@@ -44,5 +47,7 @@ namespace Raml.Tools
                 return res + (string.IsNullOrWhiteSpace(res) ? "" : ", ") + string.Join(", ", paramStrings);
             }
         }
+
+        public string Type { get; set; }
     }
 }

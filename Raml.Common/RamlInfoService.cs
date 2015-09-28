@@ -91,7 +91,7 @@ namespace Raml.Common
                 }
             }
 
-            var task = new RamlParser().LoadRamlAsync(info.RamlContents);
+            var task = new RamlParser().LoadRamlAsync(info.RamlContents, ramlSource);
             task.WaitWithPumping();
             info.RamlDocument = task.Result;
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -18,11 +19,13 @@ namespace MuleSoft.RAML.Tools
         private readonly string nugetPackagesSource = Settings.Default.NugetPackagesSource;
         private readonly string newtonsoftJsonPackageId = Settings.Default.NewtonsoftJsonPackageId;
         private readonly string newtonsoftJsonPackageVersion = Settings.Default.NewtonsoftJsonPackageVersion;
-        private readonly string webApiClientPackageId = Settings.Default.WebApiClientPackageId;
-        private readonly string webApiClientPackageVersion = Settings.Default.WebApiClientPackageVersion;
+        private readonly string webApiCorePackageId = Settings.Default.WebApiCorePackageId;
+        private readonly string webApiCorePackageVersion = Settings.Default.WebApiCorePackageVersion;
         private readonly string ramlApiCorePackageId = Settings.Default.RAMLApiCorePackageId;
         private readonly string ramlApiCorePackageVersion = Settings.Default.RAMLApiCorePackageVersion;
         public readonly static string ApiReferencesFolderName = Settings.Default.ApiReferencesFolderName;
+        private readonly string microsoftNetHttpPackageId = Settings.Default.MicrosoftNetHttpPackageId;
+        private readonly string microsoftNetHttpPackageVersion = Settings.Default.MicrosoftNetHttpPackageVersion;
 
         public RamlReferenceService(IServiceProvider serviceProvider)
         {
@@ -58,16 +61,10 @@ namespace MuleSoft.RAML.Tools
             var installerServices = componentModel.GetService<IVsPackageInstallerServices>();
             var installer = componentModel.GetService<IVsPackageInstaller>();
 
-            if (!installerServices.IsPackageInstalled(proj, newtonsoftJsonPackageId))
-            {
-                installer.InstallPackage(nugetPackagesSource, proj, newtonsoftJsonPackageId, newtonsoftJsonPackageVersion, false);
-            }
-
-            // Web Api Client (to get HttpClient)
-            if (!installerServices.IsPackageInstalled(proj, webApiClientPackageId))
-            {
-                installer.InstallPackage(nugetPackagesSource, proj, webApiClientPackageId, webApiClientPackageVersion, false);
-            }
+            var packs = installerServices.GetInstalledPackages(proj).ToArray();
+            NugetInstallerHelper.InstallPackageIfNeeded(proj, packs, installer, newtonsoftJsonPackageId, newtonsoftJsonPackageVersion);
+            NugetInstallerHelper.InstallPackageIfNeeded(proj, packs, installer, microsoftNetHttpPackageId, microsoftNetHttpPackageVersion);
+            NugetInstallerHelper.InstallPackageIfNeeded(proj, packs, installer, webApiCorePackageId, webApiCorePackageVersion);
 
             // RAML.Api.Core
             if (!installerServices.IsPackageInstalled(proj, ramlApiCorePackageId))
@@ -75,6 +72,8 @@ namespace MuleSoft.RAML.Tools
                 installer.InstallPackage(nugetPackagesSource, proj, ramlApiCorePackageId, ramlApiCorePackageVersion, false);
             }
         }
+
+
 
         private void AddFilesToProject(string ramlSourceFile, Project proj, string targetNamespace, string ramlOriginalSource, string targetFileName, string clientRootClassName)
         {
@@ -91,9 +90,9 @@ namespace MuleSoft.RAML.Tools
 
             var destFolderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(apiRefsFolderItem, destFolderName, destFolderPath);
 
-            InstallerServices.AddRefFile(ramlSourceFile, targetNamespace, ramlOriginalSource, destFolderPath, targetFileName, null, clientRootClassName);
-
             var ramlProjItem = InstallerServices.AddOrUpdateRamlFile(ramlSourceFile, destFolderPath, destFolderItem, targetFileName);
+            var refFilePath = InstallerServices.AddRefFile(ramlSourceFile, targetNamespace, ramlOriginalSource, destFolderPath, targetFileName, null, clientRootClassName);
+            ramlProjItem.ProjectItems.AddFromFile(refFilePath);
 
             ramlProjItem.Properties.Item("CustomTool").Value = string.Empty; // to cause a refresh when file already exists
             ramlProjItem.Properties.Item("CustomTool").Value = "RamlClientTool";

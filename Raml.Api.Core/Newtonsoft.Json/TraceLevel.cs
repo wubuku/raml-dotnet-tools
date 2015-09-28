@@ -2,7 +2,7 @@
 #if (NETFX_CORE || PORTABLE40 || PORTABLE)
 using Newtonsoft.Json.Serialization;
 
-namespace Newtonsoft.Json
+namespace Newtonsoft.JsonV4
 {
     /// <summary>
     /// Specifies what messages to output for the <see cref="ITraceWriter"/> class.

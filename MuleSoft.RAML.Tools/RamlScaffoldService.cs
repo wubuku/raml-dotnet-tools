@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using EnvDTE;
+﻿using EnvDTE;
+using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using MuleSoft.RAML.Tools.Properties;
+using NuGet.VisualStudio;
 using Raml.Common;
 using Raml.Tools;
 using Raml.Tools.WebApiGenerator;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows;
 
 namespace MuleSoft.RAML.Tools
 {
@@ -30,6 +31,14 @@ namespace MuleSoft.RAML.Tools
         private static readonly string ContractsFolder = Path.DirectorySeparatorChar + Settings.Default.ContractsFolderName + Path.DirectorySeparatorChar;
         private static readonly string IncludesFolder = Path.DirectorySeparatorChar + "includes" + Path.DirectorySeparatorChar;
 
+        private readonly string nugetPackagesSource = Settings.Default.NugetPackagesSource;
+        private readonly string ramlApiCorePackageId = Settings.Default.RAMLApiCorePackageId;
+        private readonly string ramlApiCorePackageVersion = Settings.Default.RAMLApiCorePackageVersion;
+        private readonly string newtonsoftJsonPackageId = Settings.Default.NewtonsoftJsonPackageId;
+        private readonly string newtonsoftJsonPackageVersion = Settings.Default.NewtonsoftJsonPackageVersion;
+        private readonly string microsoftNetHttpPackageId = Settings.Default.MicrosoftNetHttpPackageId;
+        private readonly string microsoftNetHttpPackageVersion = Settings.Default.MicrosoftNetHttpPackageVersion;
+
         public RamlScaffoldService(IT4Service t4Service, IServiceProvider serviceProvider)
         {
             this.t4Service = t4Service;
@@ -40,6 +49,10 @@ namespace MuleSoft.RAML.Tools
         {
             var dte = serviceProvider.GetService(typeof(SDTE)) as DTE;
             var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+
+            InstallNugetDependencies(proj);
+            AddXmlFormatterInWebApiConfig(proj);
+
             var folderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, ContractsFolderName);
             var generatedFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + ContractsFolderName + Path.DirectorySeparatorChar;
 
@@ -94,6 +107,83 @@ namespace MuleSoft.RAML.Tools
                 return;
 
             ScaffoldMainRamlFiles(GetMainRamlFiles(document));
+        }
+
+        private void InstallNugetDependencies(Project proj)
+        {
+            // RAML.Api.Core
+            var componentModel = (IComponentModel)serviceProvider.GetService(typeof(SComponentModel));
+            var installerServices = componentModel.GetService<IVsPackageInstallerServices>();
+            var installer = componentModel.GetService<IVsPackageInstaller>();
+
+            var packs = installerServices.GetInstalledPackages(proj).ToArray();
+            NugetInstallerHelper.InstallPackageIfNeeded(proj, packs, installer, newtonsoftJsonPackageId, newtonsoftJsonPackageVersion);
+            NugetInstallerHelper.InstallPackageIfNeeded(proj, packs, installer, microsoftNetHttpPackageId, microsoftNetHttpPackageVersion);
+
+            // RAML.Api.Core
+            if (!installerServices.IsPackageInstalled(proj, ramlApiCorePackageId))
+            {
+                installer.InstallPackage(nugetPackagesSource, proj, ramlApiCorePackageId, ramlApiCorePackageVersion, false);
+            }
+        }
+
+        private static void AddXmlFormatterInWebApiConfig(Project proj)
+        {
+            var appStart = proj.ProjectItems.Cast<ProjectItem>().FirstOrDefault(i => i.Name == "App_Start");
+            if (appStart == null) return;
+
+            var webApiConfig = appStart.ProjectItems.Cast<ProjectItem>().FirstOrDefault(i => i.Name == "WebApiConfig.cs");
+            if (webApiConfig == null) return;
+
+            var path = webApiConfig.FileNames[0];
+            var lines = File.ReadAllLines(path).ToList();
+
+            if (lines.Any(l => l.Contains("XmlSerializerFormatter")))
+                return;
+
+            InsertLine(lines);
+
+            File.WriteAllText(path, string.Join(Environment.NewLine, lines));
+        }
+
+        private static void InsertLine(List<string> lines)
+        {
+            var line = FindLineWith(lines, "Register(HttpConfiguration config)");
+            var inserted = false;
+
+            if (line != -1)
+            {
+                if (lines[line + 1].Contains("{"))
+                {
+                    InsertLines(lines, line + 2);
+                    inserted = true;
+                }
+            }
+
+            if (inserted) return;
+
+            line = FindLineWith(lines, ".MapHttpAttributeRoutes();");
+            if (line != -1)
+            {
+                InsertLines(lines, line + 1);
+            }
+        }
+
+        private static void InsertLines(IList<string> lines, int index)
+        {
+            lines.Insert(index, "\t\t\tconfig.Formatters.Remove(config.Formatters.XmlFormatter);");
+            lines.Insert(index, "\t\t\tconfig.Formatters.Add(new RAML.Api.Core.XmlSerializerFormatter());");
+        }
+
+        private static int FindLineWith(IReadOnlyList<string> lines, string find)
+        {
+            var line = -1;
+            for (var i = 0; i < lines.Count(); i++)
+            {
+                if (lines[i].Contains(find))
+                    line = i;
+            }
+            return line;
         }
 
         private static void ScaffoldMainRamlFiles(IEnumerable<string> ramlFiles)
@@ -225,8 +315,16 @@ namespace MuleSoft.RAML.Tools
             templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ModelTemplateName,
                 Settings.Default.ModelsTemplateTitle);
             var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
+            
+            var models = model.Objects;
+            // when is an XML model, skip empty objects
+            if (model.Objects.Any(o => !string.IsNullOrWhiteSpace(o.GeneratedCode)))
+                models = model.Objects.Where(o => o.Properties.Any() || !string.IsNullOrWhiteSpace(o.GeneratedCode));
+
+            models = models.Where(o => !o.IsArray || o.Type == null); // skip array of primitives
+
             var apiObjectTemplateParams = new TemplateParams<ApiObject>(
-                Path.Combine(templatesFolder, ModelTemplateName), ramlItem, "apiObject", model.Objects,
+                Path.Combine(templatesFolder, ModelTemplateName), ramlItem, "apiObject", models,
                 generatedFolderPath, folderItem, extensionPath, targetNamespace);
             apiObjectTemplateParams.Title = Settings.Default.ModelsTemplateTitle;
             GenerateCodeFromTemplate(apiObjectTemplateParams);
@@ -256,7 +354,7 @@ namespace MuleSoft.RAML.Tools
             var includesFolderPath = generatedFolderPath + Path.DirectorySeparatorChar + InstallerServices.IncludesFolderName;
             var ramlSource = RamlReferenceReader.GetRamlSource(refFilePath);
             var includesManager = new RamlIncludesManager();
-            var result = includesManager.Manage(ramlSource, includesFolderPath);
+            var result = includesManager.Manage(ramlSource, includesFolderPath, generatedFolderPath + Path.DirectorySeparatorChar);
             if (result.IsSuccess)
             {
                 File.WriteAllText(ramlFilePath, result.ModifiedContents);
@@ -268,12 +366,10 @@ namespace MuleSoft.RAML.Tools
 
         private void AddContractFromFile(string ramlFilePath, string targetNamespace, string ramlSource, ProjectItem folderItem, string folderPath, string targetFilename, bool useAsyncMethod)
         {
-            InstallerServices.AddRefFile(ramlFilePath, targetNamespace, ramlSource, folderPath, targetFilename, useAsyncMethod);
-
             var includesFolderPath = folderPath + Path.DirectorySeparatorChar + InstallerServices.IncludesFolderName;
 
             var includesManager = new RamlIncludesManager();
-            var result = includesManager.Manage(ramlSource, includesFolderPath, confirmOverrite: true);
+            var result = includesManager.Manage(ramlSource, includesFolderPath, confirmOverrite: true, rootRamlPath: folderPath + Path.DirectorySeparatorChar);
 
             var includesFolderItem = folderItem.ProjectItems.Cast<ProjectItem>().FirstOrDefault(i => i.Name == InstallerServices.IncludesFolderName);
             if (includesFolderItem == null)
@@ -290,6 +386,9 @@ namespace MuleSoft.RAML.Tools
 
             var ramlProjItem = AddOrUpdateRamlFile(result.ModifiedContents, folderItem, folderPath, targetFilename);
             InstallerServices.RemoveSubItemsAndAssociatedFiles(ramlProjItem);
+
+            var refFilePath = InstallerServices.AddRefFile(ramlFilePath, targetNamespace, ramlSource, folderPath, targetFilename, useAsyncMethod);
+            ramlProjItem.ProjectItems.AddFromFile(refFilePath);
 
             Scaffold(ramlProjItem.FileNames[0], targetNamespace, targetFilename, useAsyncMethod);
         }
@@ -329,28 +428,30 @@ namespace MuleSoft.RAML.Tools
             var newContractFile = Path.Combine(folderPath, filename);
             var contents = CreateNewRamlContents(title);
 
-            InstallerServices.AddRefFile(newContractFile, targetNamespace, newContractFile, folderPath, targetFilename, useAsyncMethods);
-
+            ProjectItem ramlProjItem;
             if (File.Exists(newContractFile))
             {
                 var dialogResult = InstallerServices.ShowConfirmationDialog(filename);
                 if (dialogResult == MessageBoxResult.Yes)
                 {
                     File.WriteAllText(newContractFile, contents);
-                    folderItem.ProjectItems.AddFromFile(newContractFile);
+                    ramlProjItem = folderItem.ProjectItems.AddFromFile(newContractFile);
                 }
                 else
                 {
-                    var item = folderItem.ProjectItems.Cast<ProjectItem>().FirstOrDefault(i => i.Name == newContractFile);
-                    if (item == null)
-                        folderItem.ProjectItems.AddFromFile(newContractFile);
+                    ramlProjItem = folderItem.ProjectItems.Cast<ProjectItem>().FirstOrDefault(i => i.Name == newContractFile);
+                    if (ramlProjItem == null)
+                        ramlProjItem = folderItem.ProjectItems.AddFromFile(newContractFile);
                 }
             }
             else
             {
                 File.WriteAllText(newContractFile, contents);
-                folderItem.ProjectItems.AddFromFile(newContractFile);
+                ramlProjItem = folderItem.ProjectItems.AddFromFile(newContractFile);
             }
+
+            var refFilePath = InstallerServices.AddRefFile(newContractFile, targetNamespace, newContractFile, folderPath, targetFilename, useAsyncMethods);
+            ramlProjItem.ProjectItems.AddFromFile(refFilePath);
         }
 
         private static string CreateNewRamlContents(string title)

@@ -303,7 +303,7 @@ namespace RAML.WebApiExplorer
 
 	    private string AddSchema(Type type)
 	    {
-	        var schemaName = type.Name;
+	        var schemaName = type.Name.Replace("`", string.Empty);
 	        if (schemaTypes.Contains(type)) 
                 return schemaName;
 

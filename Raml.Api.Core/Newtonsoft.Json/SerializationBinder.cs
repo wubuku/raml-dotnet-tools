@@ -3,7 +3,7 @@
 using System;
 using System.Reflection;
 
-namespace Newtonsoft.Json
+namespace Newtonsoft.JsonV4
 {
     /// <summary>
     /// Allows users to control class loading and mandate what class to load.

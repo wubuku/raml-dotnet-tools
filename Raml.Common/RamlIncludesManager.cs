@@ -31,7 +31,7 @@ namespace Raml.Common
         }
 
 
-        public RamlIncludesManagerResult Manage(string ramlSource, string destinationFolder, bool confirmOverrite = false)
+        public RamlIncludesManagerResult Manage(string ramlSource, string destinationFolder, string rootRamlPath, bool confirmOverrite = false)
         {
             string path;
             string[] lines;
@@ -61,15 +61,14 @@ namespace Raml.Common
             if (lines.Any(l => l.Contains(IncludeDirective)) && !Directory.Exists(destinationFolder))
                 Directory.CreateDirectory(destinationFolder);
 
-            ManageNestedFiles(lines, destinationFolder, includedFiles, path, path, destinationFilePath, confirmOverrite);
+            ManageNestedFiles(lines, destinationFolder, includedFiles, path, path, destinationFilePath, confirmOverrite, rootRamlPath);
 
             return new RamlIncludesManagerResult(string.Join(Environment.NewLine, lines), includedFiles);
         }
 
         private static string GetPath(string ramlSource, Uri uri)
         {
-            string path;
-            path = uri.AbsolutePath;
+            var path = uri.AbsolutePath;
             if (ramlSource.Contains("/"))
                 path = ramlSource.Substring(0, ramlSource.LastIndexOf("/", StringComparison.InvariantCulture) + 1);
             return path;
@@ -98,21 +97,21 @@ namespace Raml.Common
             return uri;
         }
 
-        private void ManageNestedFiles(IList<string> lines, string destinationFolder, ICollection<string> includedFiles, string path, string relativePath, string writeToFilePath, bool confirmOvewrite)
+        private void ManageNestedFiles(IList<string> lines, string destinationFolder, ICollection<string> includedFiles, string path, string relativePath, string writeToFilePath, bool confirmOvewrite, string rootRamlPath)
         {
             var scopeIncludedFiles = new Collection<string>();
             for (var i = 0; i < lines.Count; i++)
             {
-                ManageInclude(lines, destinationFolder, includedFiles, path, relativePath, confirmOvewrite, i, scopeIncludedFiles);
+                ManageInclude(lines, destinationFolder, includedFiles, path, relativePath, confirmOvewrite, i, scopeIncludedFiles, rootRamlPath);
             }
 
             File.WriteAllText(writeToFilePath, string.Join(Environment.NewLine, lines).Trim());
 
-            ManageIncludedFiles(destinationFolder, includedFiles, path, relativePath, confirmOvewrite, scopeIncludedFiles);
+            ManageIncludedFiles(destinationFolder, includedFiles, path, relativePath, confirmOvewrite, scopeIncludedFiles, rootRamlPath);
         }
 
         private void ManageInclude(IList<string> lines, string destinationFolder, ICollection<string> includedFiles, string path,
-            string relativePath, bool confirmOvewrite, int i, Collection<string> scopeIncludedFiles)
+            string relativePath, bool confirmOvewrite, int i, Collection<string> scopeIncludedFiles, string rootRamlPath)
         {
             var line = lines[i];
             if (!line.Contains(IncludeDirective))
@@ -144,7 +143,25 @@ namespace Raml.Common
             }
 
             // replace old include for new include
-            lines[i] = lines[i].Replace(includeSource, destinationFilePath.Replace("\\", "\\\\"));
+            var relativeInclude = GetRelativeInclude(destinationFilePath, rootRamlPath);
+            lines[i] = lines[i].Replace(includeSource, relativeInclude);
+        }
+
+        private static string GetRelativeInclude(string destinationFilePath, string rootRamlPath)
+        {
+            if (!rootRamlPath.EndsWith(Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture)))
+                rootRamlPath += Path.DirectorySeparatorChar;
+
+            rootRamlPath = rootRamlPath.Replace(
+                Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture) +
+                Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture),
+                Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture));
+
+            var relativeInclude = destinationFilePath;
+            if(destinationFilePath.StartsWith(rootRamlPath))
+                relativeInclude = destinationFilePath.Substring(rootRamlPath.Length);
+
+            return relativeInclude;
         }
 
         private void ManageLocalFile(string path, string relativePath, bool confirmOvewrite, string includeSource,
@@ -181,7 +198,7 @@ namespace Raml.Common
         }
 
         private void ManageIncludedFiles(string destinationFolder, ICollection<string> includedFiles, string path, string relativePath,
-            bool confirmOvewrite, IEnumerable<string> scopeIncludedFiles)
+            bool confirmOvewrite, IEnumerable<string> scopeIncludedFiles, string rootRamlPath)
         {
             foreach (var includedFile in scopeIncludedFiles)
             {
@@ -196,7 +213,7 @@ namespace Raml.Common
 
                 var nestedFileLines = File.ReadAllLines(includedFile);
 
-                ManageNestedFiles(nestedFileLines, destinationFolder, includedFiles, path, relativePath, includedFile, confirmOvewrite);
+                ManageNestedFiles(nestedFileLines, destinationFolder, includedFiles, path, relativePath, includedFile, confirmOvewrite, rootRamlPath);
             }
         }
 
@@ -278,7 +295,7 @@ namespace Raml.Common
         {
             var filename = Path.GetFileName(ramlSource);
             if (string.IsNullOrWhiteSpace(filename))
-                filename = NetNamingMapper.GetObjectName(ramlSource) + ".raml"; //TODO: check
+                filename = NetNamingMapper.GetObjectName(ramlSource) + ".raml";
             return filename;
         }
 
@@ -311,9 +328,20 @@ namespace Raml.Common
         private static string GetFullWebSource(string path, string includeSource)
         {
             if (!includeSource.StartsWith("http"))
-                includeSource = path.EndsWith("/") || includeSource.StartsWith("/") ? path + includeSource : path + "/" + includeSource;
+                includeSource = GetFullWebIncludeSource(path, includeSource);
 
             return includeSource;
+        }
+
+        private static string GetFullWebIncludeSource(string path, string includeSource)
+        {
+            if (path.EndsWith("/") && includeSource.StartsWith("/"))
+                return path + includeSource.Substring(1);
+            
+            if (path.EndsWith("/") || includeSource.StartsWith("/"))
+                return path + includeSource;
+
+            return path + "/" + includeSource;
         }
 
         private static bool IsWebSource(string path, string includeSource)

@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("Raml.Common")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyCompany("MuleSoft Inc")]
 [assembly: AssemblyProduct("Raml.Common")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2014")]
+[assembly: AssemblyCopyright("Copyright © 2015 MuleSoft")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

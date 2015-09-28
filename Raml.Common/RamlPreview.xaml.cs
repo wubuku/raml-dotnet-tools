@@ -165,12 +165,12 @@ namespace Raml.Common
             try
             {
                 var url = RamlOriginalSource;
-                var result = includesManager.Manage(url, Path.GetTempPath());
+                var result = includesManager.Manage(url, Path.GetTempPath(), Path.GetTempPath());
 
                 var raml = result.ModifiedContents;
                 var parser = new RamlParser();
 
-                var ramlDocument = await parser.LoadRamlAsync(raml);
+                var ramlDocument = await parser.LoadRamlAsync(raml, Path.GetTempPath());
 
                 var filename = SetFilename(url);
 
@@ -340,9 +340,9 @@ namespace Raml.Common
 
                 SetDefaultClientRootClassName();
 
-                var result = includesManager.Manage(RamlTempFilePath, Path.GetTempPath());
+                var result = includesManager.Manage(RamlTempFilePath, Path.GetTempPath(), Path.GetTempPath());
                 var parser = new RamlParser();
-                var document = await parser.LoadRamlAsync(result.ModifiedContents);
+                var document = await parser.LoadRamlAsync(result.ModifiedContents, Path.GetTempPath());
 
                 SetPreview(document);
             }

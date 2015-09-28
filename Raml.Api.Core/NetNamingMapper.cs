@@ -6,148 +6,165 @@ using System.Text.RegularExpressions;
 
 namespace Raml.Common
 {
-    public class NetNamingMapper
-    {
-        private static readonly string[] reservedWords = {"Get", "Post", "Put", "Delete", "Options", "Head"};
+	public class NetNamingMapper
+	{
+		private static readonly string[] reservedWords = {"Get", "Post", "Put", "Delete", "Options", "Head"};
 
-        public static string GetNamespace(string title)
-        {
-            return Capitalize(RemoveIndalidChars(title));
-        }
+		public static string GetNamespace(string title)
+		{
+			return Capitalize(RemoveIndalidChars(title));
+		}
 
-        public static string GetObjectName(string input)
-        {
-            if (string.IsNullOrWhiteSpace(input))
-                return "NullInput";
+		public static string GetObjectName(string input)
+		{
+			if (string.IsNullOrWhiteSpace(input))
+				return "NullInput";
 
             var name = ReplaceSpecialChars(input, "{mediaTypeExtension}");
             name = ReplaceSpecialChars(name, "-");
-            name = ReplaceSpecialChars(name, "\\");
-            name = ReplaceSpecialChars(name, "/");
-            name = ReplaceSpecialChars(name, "_");
-            name = ReplaceSpecialChars(name, ":");
+			name = ReplaceSpecialChars(name, "\\");
+			name = ReplaceSpecialChars(name, "/");
+			name = ReplaceSpecialChars(name, "_");
+			name = ReplaceSpecialChars(name, ":");
             name = ReplaceSpecialChars(name, "(");
             name = ReplaceSpecialChars(name, ")");
             name = ReplaceSpecialChars(name, "'");
+            name = ReplaceSpecialChars(name, "`");
+			name = ReplaceSpecialChars(name, "{");
+			name = ReplaceSpecialChars(name, "}");
 
-            name = ReplaceSpecialChars(name, "{");
-            name = ReplaceSpecialChars(name, "}");
+			name = RemoveIndalidChars(name);
 
-            name = RemoveIndalidChars(name);
+			if (reservedWords.Contains(name))
+				name += "Object";
 
-            if (reservedWords.Contains(name))
-                name += "Object";
+			if (StartsWithNumber(name))
+				name = "O" + name;
 
-            if (StartsWithNumber(name))
-                name = "O" + name;
+			return name;
+		}
 
-            return name;
-        }
+		private static string ReplaceSpecialChars(string key, string separator)
+		{
+			return ReplaceSpecialChars(key, new[] {separator});
+		}
 
-        private static string ReplaceSpecialChars(string key, string separator)
-        {
-            return ReplaceSpecialChars(key, new[] {separator});
-        }
+		private static string ReplaceSpecialChars(string key, string[] separator)
+		{
+			var name = String.Empty;
+			var words = key.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+			return words.Aggregate(name, (current, word) => current + Capitalize(word));
+		}
 
-        private static string ReplaceSpecialChars(string key, string[] separator)
-        {
-            var name = String.Empty;
-            var words = key.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-            return words.Aggregate(name, (current, word) => current + Capitalize(word));
-        }
+		public static string Capitalize(string word)
+		{
+			return word.Substring(0, 1).ToUpper() + word.Substring(1);
+		}
 
-        public static string Capitalize(string word)
-        {
-            return word.Substring(0, 1).ToUpper() + word.Substring(1);
-        }
-
-        public static string RemoveIndalidChars(string input)
-        {
+		public static string RemoveIndalidChars(string input)
+		{
+#if !PORTABLE
             var validnamespace = Path.GetInvalidPathChars()
-                .Aggregate(input, (current, invalidChar) => 
-                    current.Replace(invalidChar.ToString(CultureInfo.InvariantCulture), string.Empty));
-            validnamespace = validnamespace.Replace(" ", string.Empty);
-            validnamespace = validnamespace.Replace(".", string.Empty);
-            return validnamespace;
-        }
+				.Aggregate(input, (current, invalidChar) => 
+					current.Replace(invalidChar.ToString(CultureInfo.InvariantCulture), string.Empty));
+#else
+            var validnamespace = Path.GetInvalidPathChars()
+                .Aggregate(input, (current, invalidChar) =>
+                    current.Replace(invalidChar.ToString(), string.Empty));
+#endif
+			validnamespace = validnamespace.Replace(" ", string.Empty);
+			validnamespace = validnamespace.Replace(".", string.Empty);
+			return validnamespace;
+		}
 
-        public static bool HasIndalidChars(string input)
-        {
-            return Path.GetInvalidPathChars().Any(input.Contains);
-        }
-        public static string GetMethodName(string input)
-        {
+		public static bool HasIndalidChars(string input)
+		{
+#if !PORTABLE
+			return Path.GetInvalidPathChars().Any(input.Contains);
+#else
+            return (input.IndexOfAny(Path.GetInvalidPathChars()) >= 0);
+#endif
+		}
+		public static string GetMethodName(string input)
+		{
             var name = ReplaceSpecialChars(input, "{mediaTypeExtension}");
             name = ReplaceSpecialChars(name, "-");
-            name = ReplaceSpecialChars(name, "\\");
-            name = ReplaceSpecialChars(name, "/");
-            name = ReplaceSpecialChars(name, "_");
+			name = ReplaceSpecialChars(name, "\\");
+			name = ReplaceSpecialChars(name, "/");
+			name = ReplaceSpecialChars(name, "_");
             name = ReplaceSpecialChars(name, "(");
             name = ReplaceSpecialChars(name, ")");
             name = ReplaceSpecialChars(name, "'");
-            name = ReplaceUriParameters(name);
-            name = name.Replace(":", string.Empty);
-            name = RemoveIndalidChars(name);
+            name = ReplaceSpecialChars(name, "`");
+			name = ReplaceUriParameters(name);
+			name = name.Replace(":", string.Empty);
+			name = RemoveIndalidChars(name);
 
-            if (StartsWithNumber(name))
-                name = "M" + name;
+			if (StartsWithNumber(name))
+				name = "M" + name;
 
-            return name;
-        }
+			return name;
+		}
 
-        private static bool StartsWithNumber(string name)
-        {
-            var startsWithNumber = new Regex("^[0-9]+");
-            var nameStartsWithNumber = startsWithNumber.IsMatch(name);
-            return nameStartsWithNumber;
-        }
+		private static bool StartsWithNumber(string name)
+		{
+			var startsWithNumber = new Regex("^[0-9]+");
+			var nameStartsWithNumber = startsWithNumber.IsMatch(name);
+			return nameStartsWithNumber;
+		}
 
-        private static string ReplaceUriParameters(string input )
-        {
-            if (!input.Contains("{"))
-                return input;
+		private static string ReplaceUriParameters(string input )
+		{
+			if (!input.Contains("{"))
+				return input;
 
-            input = input.Substring(0, input.IndexOf("{", StringComparison.InvariantCulture)) + "By" +
-                    input.Substring(input.IndexOf("{", StringComparison.InvariantCulture));
+#if !PORTABLE
+			input = input.Substring(0, input.IndexOf("{", StringComparison.InvariantCulture)) + "By" +
+			        input.Substring(input.IndexOf("{", StringComparison.InvariantCulture));
+#else
+            input = input.Substring(0, input.IndexOf("{", StringComparison.Ordinal)) + "By" +
+                    input.Substring(input.IndexOf("{", StringComparison.Ordinal));
+#endif
 
-            var name = String.Empty;
-            var words = input.Split(new[] { "{", "}" }, StringSplitOptions.RemoveEmptyEntries);
-            return words.Aggregate(name, (current, word) => current + Capitalize(word));
-        }
+			var name = String.Empty;
+			var words = input.Split(new[] { "{", "}" }, StringSplitOptions.RemoveEmptyEntries);
+			return words.Aggregate(name, (current, word) => current + Capitalize(word));
+		}
 
-        public static string GetPropertyName(string name)
-        {
-            var propName = name.Replace(":", string.Empty);
-            propName = propName.Replace("/", string.Empty);
-            propName = propName.Replace("-", string.Empty);
+		public static string GetPropertyName(string name)
+		{
+			var propName = name.Replace(":", string.Empty);
+			propName = propName.Replace("/", string.Empty);
+			propName = propName.Replace("-", string.Empty);
+            propName = propName.Replace("`", string.Empty);
             propName = propName.Replace("+", "Plus");
             propName = propName.Replace(".", "Dot");
-            propName = Capitalize(propName);
+			propName = Capitalize(propName);
 
-            if (StartsWithNumber(propName))
-                propName = "P" + propName;
+			if (StartsWithNumber(propName))
+				propName = "P" + propName;
 
-            return propName;
-        }
+			return propName;
+		}
 
-        public static string GetEnumValueName(string enumValue)
-        {
-            var value = enumValue
-                .Replace(":", string.Empty)
-                .Replace("/", string.Empty)
-                .Replace(" ", "_")
-                .Replace("-", "_")
+	    public static string GetEnumValueName(string enumValue)
+	    {
+	        var value = enumValue
+	            .Replace(":", string.Empty)
+	            .Replace("/", string.Empty)
+	            .Replace(" ", "_")
+	            .Replace("-", "_")
                 .Replace("+", string.Empty)
                 .Replace(".", string.Empty);
 
             if (StartsWithNumber(value))
                 value = "E" + value;
 
-            int number;
-            if (int.TryParse(enumValue, out number))
-                value = value + " = " + number;
+	        int number;
+	        if (int.TryParse(enumValue, out number))
+	            value = value + " = " + number;
 
             return value;
-        }
-    }
+	    }
+	}
 }

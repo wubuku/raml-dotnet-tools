@@ -30,7 +30,7 @@ namespace Raml.Tools.ClientGenerator
             this.responseHeadersObjects = responseHeadersObjects;
         }
 
-        public ICollection<ClientGeneratorMethod> GetMethods(Resource resource, string url, ClassObject parent, string objectName)
+        public ICollection<ClientGeneratorMethod> GetMethods(Resource resource, string url, ClassObject parent, string objectName, IDictionary<string, Parameter> parentUriParameters)
         {
             var methodsNames = new List<string>();
             if (parent != null)
@@ -42,27 +42,32 @@ namespace Raml.Tools.ClientGenerator
 
             foreach (var method in resource.Methods)
             {
-                AddGeneratedMethod(resource, url, objectName, method, methodsNames, generatorMethods);
+                AddGeneratedMethod(resource, url, objectName, method, methodsNames, generatorMethods, parentUriParameters);
             }
 
             return generatorMethods;
         }
 
         private void AddGeneratedMethod(Resource resource, string url, string objectName, Method method, ICollection<string> methodsNames, 
-            ICollection<ClientGeneratorMethod> generatorMethods)
+            ICollection<ClientGeneratorMethod> generatorMethods, IDictionary<string, Parameter> parentUriParameters)
         {
             var generatedMethod = BuildClassMethod(url, method, resource);
             if (generatedMethod.ReturnType != "string")
             {
                 var returnType = CollectionTypeHelper.GetBaseType(generatedMethod.ReturnType);
 
-                generatedMethod.ReturnTypeObject = schemaObjects.Values.Any(o => o.Name == returnType)
+                var returnTypeObject = schemaObjects.Values.Any(o => o.Name == returnType)
                     ? schemaObjects.Values.First(o => o.Name == returnType)
-                    : schemaResponseObjects.Values.First(o => o.Name == returnType);
+                    : schemaResponseObjects.Values.FirstOrDefault(o => o.Name == returnType);
 
-                generatedMethod.OkReturnType = GetOkReturnType(generatedMethod);
+                if (returnTypeObject != null)
+                {
+                    generatedMethod.ReturnTypeObject = returnTypeObject;
+                    generatedMethod.OkReturnType = GetOkReturnType(generatedMethod);
+                }
+
             }
-            uriParametersGenerator.Generate(resource, url, generatedMethod, uriParameterObjects);
+            uriParametersGenerator.Generate(resource, url, generatedMethod, uriParameterObjects, parentUriParameters);
 
             if (!IsVerbForMethod(method)) return;
 
@@ -94,11 +99,12 @@ namespace Raml.Tools.ClientGenerator
                 Parent = null,
                 UseSecurity =
                     raml.SecuredBy != null && raml.SecuredBy.Any() ||
-                    resource.Methods.Any(m => m.Verb == method.Verb && m.SecuredBy != null && m.SecuredBy.Any())
+                    resource.Methods.Any(m => m.Verb == method.Verb && m.SecuredBy != null && m.SecuredBy.Any()),
+                RequestContentTypes = method.Body.Keys.ToArray(),
+                ResponseContentTypes = method.Responses != null ? method.Responses.Where(r => r.Body != null).SelectMany(r => r.Body.Keys).ToArray() : new string[0]
             };
             return generatedMethod;
         }
-
 
         private static string GetOkReturnType(ClientGeneratorMethod generatedMethod)
         {

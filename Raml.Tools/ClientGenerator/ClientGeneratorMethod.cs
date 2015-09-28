@@ -19,6 +19,9 @@ namespace Raml.Tools.ClientGenerator
         public string RequestType { get; set; }
         public string ResponseType { get; set; }
 
+        public IEnumerable<string> RequestContentTypes { get; set; }
+        public IEnumerable<string> ResponseContentTypes { get; set; }
+
         public string XmlComment
         {
             get
@@ -84,6 +87,21 @@ namespace Raml.Tools.ClientGenerator
         public string Url { get; set; }
 
         public string Verb { get; set; }
+
+        public string NetHttpMethod
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(Verb))
+                    return "HttpMethod.Get";
+                
+                if(Verb == "Patch")
+                    return "new HttpMethod(\"Patch\")";
+
+                return "HttpMethod." + Verb;
+            }
+        }
+
         public IEnumerable<GeneratorParameter> UriParameters { get; set; }
 
         public ClientGeneratorMethod Parent { get; set; }
@@ -109,7 +127,16 @@ namespace Raml.Tools.ClientGenerator
 
         public string SimpleReturnTypeString
         {
-            get { return ReturnType == "string" ? "HttpContent" : ModelsNamespacePrefix + OkReturnType; }
+            get
+            {
+                if (ReturnType == "string") 
+                    return "HttpContent";
+
+                if (CollectionTypeHelper.IsCollection(ReturnType))
+                    return ReturnType;
+
+                return ModelsNamespacePrefix + OkReturnType;
+            }
         }
 
         public string SimpleParameterString
@@ -118,7 +145,9 @@ namespace Raml.Tools.ClientGenerator
             {
                 var paramsString = string.Empty;
                 if (HasInputParameter())
-                    paramsString += (Parameter.Type == "string" ? Parameter.Type : ModelsNamespacePrefix + Parameter.Type) + " " + Parameter.Name;
+                    paramsString += (Parameter.Type == "string" || CollectionTypeHelper.IsCollection(Parameter.Type)
+                        ? Parameter.Type 
+                        : ModelsNamespacePrefix + Parameter.Type) + " " + Parameter.Name;
 
                 if (!string.IsNullOrWhiteSpace(UriParametersString))
                 {
@@ -151,12 +180,23 @@ namespace Raml.Tools.ClientGenerator
             }
         }
 
+        public string QualifiedParameterType
+        {
+            get
+            {
+                if (Parameter.Type != "string" && !CollectionTypeHelper.IsCollection(Parameter.Type))
+                    return "Models." + Parameter.Type;
+
+                return Parameter.Type;
+            }
+        }
+
         public string ResponseHeaderType { get; set; }
         public string UriParametersType { get; set; }
 
         public bool HasInputParameter()
         {
-            return (Verb == "Post" || Verb == "Put") && Parameter != null;
+            return (Verb == "Post" || Verb == "Put" || Verb == "Patch") && Parameter != null;
         }
 
     }

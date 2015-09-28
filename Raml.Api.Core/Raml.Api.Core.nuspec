@@ -2,17 +2,17 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>$version$</version>
-    <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
-    <projectUrl>https://github.com/raml-org/raml-dotnet-tools</projectUrl>
+    <version>0.9.4</version>
+    <title>RAML.Api.Core (Portable)</title>
+    <authors>MuleSoft Inc</authors>
+    <owners>MuleSoft Inc</owners>
+    <projectUrl>https://github.com/mulesoft-labs/raml-dotnet-tools</projectUrl>
 	<licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
 	<iconUrl>http://raml.org/images/logo.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>$description$</description>
-    <copyright>$copyright$</copyright>
-    <tags>RAML REST</tags>
+    <description>Core API support classes for the RAML tools package</description>
+    <copyright>Copyright © 2015 MuleSoft</copyright>
+    <tags>RAML REST API SCHEMA MARKUP CLIENT SERVICE</tags>
 	<dependencies>
 	  <group targetFramework="net45">
 		<dependency id="Microsoft.AspNet.WebApi.Client" version="5.1.2" />

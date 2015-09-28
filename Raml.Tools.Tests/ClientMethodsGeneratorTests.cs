@@ -44,7 +44,7 @@ namespace Raml.Tools.Tests
                 uriParameterObjects, queryObjects, headerObjects, responseHeadersObjects, schemaRequestObjects, linkedKeyWithObjectNames,
                 schemaObjects);
 
-            var generatorMethods = generator.GetMethods(resource, "/", classObject, "Test");
+            var generatorMethods = generator.GetMethods(resource, "/", classObject, "Test", new Dictionary<string, Parameter>());
 
             Assert.AreEqual(2, generatorMethods.Count);
         }

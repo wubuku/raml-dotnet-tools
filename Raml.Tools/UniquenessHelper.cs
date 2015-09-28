@@ -104,10 +104,26 @@ namespace Raml.Tools
             if (obj == null)
                 throw new InvalidOperationException("Could not find object with key " + key);
 
+            if (!string.IsNullOrWhiteSpace(obj.GeneratedCode))
+            {
+                if(objects.Any(o => o.Value.GeneratedCode == obj.GeneratedCode) 
+                    || otherObjects.Any(o => o.Value.GeneratedCode == obj.GeneratedCode) 
+                    || schemaObjects.Any(o => o.Value.GeneratedCode == obj.GeneratedCode))
+                    return true;
+            }
+
             if (obj.Properties.Count != apiObject.Properties.Count)
                 return false;
 
             return apiObject.Properties.All(property => obj.Properties.Any(p => p.Name == property.Name && p.Type == property.Type));
+        }
+
+        // To use with XML Schema objects
+        public static bool HasSameProperties(ApiObject apiObject, IDictionary<string, ApiObject> objects, IDictionary<string, ApiObject> otherObjects, IDictionary<string, ApiObject> schemaObjects)
+        {
+            return objects.Any(o => o.Value.GeneratedCode == apiObject.GeneratedCode)
+                   || otherObjects.Any(o => o.Value.GeneratedCode == apiObject.GeneratedCode)
+                   || schemaObjects.Any(o => o.Value.GeneratedCode == apiObject.GeneratedCode);
         }
 
         private static ApiObject FindObject(IHasName apiObject, IDictionary<string, ApiObject> objects, string key)
