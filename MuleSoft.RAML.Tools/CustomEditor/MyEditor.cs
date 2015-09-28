@@ -45,8 +45,29 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             // TODO: detect drive ! also, any rights will work ?
             //var fileName = "file://127.0.0.1/c$" + Path.GetFileName(filePath);
             //var fileName = Path.GetFileName(filePath);
-            var content = File.ReadAllText(filePath);
-            webBrowser1.Document.InvokeScript("loadRaml", new object[] { content });
+            FilePath = filePath;
+            LoadFile(new object(), new EventArgs());
+        }
+
+        public string FilePath { get; set; }
+
+        private readonly Timer waitToLoadtimer = new Timer();
+
+        private void LoadFile(object sender, EventArgs e)
+        {
+            if (loadCompleted)
+            {
+                var content = File.ReadAllText(FilePath);
+                webBrowser1.Document.InvokeScript("loadRaml", new object[] { content });
+
+                waitToLoadtimer.Stop();
+            }
+            else
+            {
+                waitToLoadtimer.Interval = 500;
+                waitToLoadtimer.Tick += LoadFile;
+                waitToLoadtimer.Start();
+            }
         }
 
         private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
