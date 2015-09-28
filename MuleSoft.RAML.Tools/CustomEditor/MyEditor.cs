@@ -4,6 +4,9 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Windows;
 using System.Windows.Forms;
+using CefSharp;
+using CefSharp.WinForms;
+using CefSharp.WinForms.Internals;
 using EnvDTE;
 using tom;
 using Application = System.Windows.Forms.Application;
@@ -13,7 +16,7 @@ namespace MuleSoft.RAML.Tools.CustomEditor
     public partial class MyEditor : UserControl
     {
         private const int GetOleInterfaceCommandId = 1084;
-
+        private ChromiumWebBrowser browser;
         private string m_TextToRecord;
         private VSMacroRecorder m_Recorder;
 
@@ -26,16 +29,54 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             
             m_Recorder = new VSMacroRecorder(GuidList.guidMuleSoft_RAML_EditorFactory);
 
-            webBrowser1.Navigate(@"file:///C:\desarrollo\mulesoft\raml-dotnet-tools\MuleSoft.RAML.Tools\CustomEditor\html\index.html");
+            //webBrowser1.Navigate(@"file:///C:\desarrollo\mulesoft\raml-dotnet-tools\MuleSoft.RAML.Tools\CustomEditor\html\index.html");
+
+            Text = "CefSharp";
+
+            var bitness = Environment.Is64BitProcess ? "x64" : "x86";
+            var version = String.Format("Chromium: {0}, CEF: {1}, CefSharp: {2}, Environment: {3}", Cef.ChromiumVersion, Cef.CefVersion, Cef.CefSharpVersion, bitness);
+            DisplayOutput(version);
+
+
+            Load += OnLoad;
+
         }
+
+        private void OnLoad(object sender, EventArgs e)
+        {
+            CreateBrowser();
+        }
+
+        private void CreateBrowser()
+        {
+            browser = new ChromiumWebBrowser(@"file:///C:\desarrollo\mulesoft\raml-dotnet-tools\MuleSoft.RAML.Tools\CustomEditor\html\index.html");
+            this.Controls.Add(browser);
+
+            browser.LoadingStateChanged += OnBrowserLoadingStateChanged;
+            browser.ConsoleMessage += OnBrowserConsoleMessage;
+            browser.StatusMessage += OnBrowserStatusMessage;
+            browser.TitleChanged += OnBrowserTitleChanged;
+            browser.AddressChanged += OnBrowserAddressChanged;
+            browser.IsBrowserInitializedChanged += (sender, args) =>
+            {
+                IsBrowserInitialized = args.IsBrowserInitialized;
+            };
+            //browser.RegisterJsObject("bound", new BoundObject());
+        }
+
+        public bool IsBrowserInitialized { get; set; }
 
         private void WebBrowser1OnDocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs webBrowserDocumentCompletedEventArgs)
         {
             loadCompleted = true;
         }
 
+        private readonly System.Windows.Forms.Timer myTimer = new System.Windows.Forms.Timer();
+        private string file;
         public void LoadFile(string filePath)
         {
+            file = filePath;
+
             //while (!loadCompleted)
             //{
             //    // wait
@@ -46,8 +87,27 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             //var fileName = "file://127.0.0.1/c$" + Path.GetFileName(filePath);
             //var fileName = Path.GetFileName(filePath);
             var content = File.ReadAllText(filePath);
-            webBrowser1.Document.InvokeScript("loadRaml", new object[] { content });
+            //webBrowser1.Document.InvokeScript("loadRaml", new object[] { content });
+            
+            LoadFile(new object(), new EventArgs());
         }
+
+        private void LoadFile(object sender, EventArgs e)
+        {
+            var script = string.Format("loadRaml('abcdef')");
+            if (IsBrowserInitialized)
+            {
+                browser.ExecuteScriptAsync(script);
+                myTimer.Stop();
+            }
+            else
+            {
+                myTimer.Interval = 500;
+                myTimer.Tick += new EventHandler(LoadFile);
+                myTimer.Start();
+            }
+        }
+
 
         private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
@@ -327,6 +387,60 @@ namespace MuleSoft.RAML.Tools.CustomEditor
             loadCompleted = true;
         }
 
+        private void OnBrowserConsoleMessage(object sender, ConsoleMessageEventArgs args)
+        {
+            DisplayOutput(string.Format("Line: {0}, Source: {1}, Message: {2}", args.Line, args.Source, args.Message));
+        }
+
+        private void OnBrowserStatusMessage(object sender, StatusMessageEventArgs args)
+        {
+            //this.InvokeOnUiThreadIfRequired(() => statusLabel.Text = args.Value);
+        }
+
+        private void OnBrowserLoadingStateChanged(object sender, LoadingStateChangedEventArgs args)
+        {
+            SetCanGoBack(args.CanGoBack);
+            SetCanGoForward(args.CanGoForward);
+
+            this.InvokeOnUiThreadIfRequired(() => SetIsLoading(!args.CanReload));
+        }
+
+        private void OnBrowserTitleChanged(object sender, TitleChangedEventArgs args)
+        {
+            this.InvokeOnUiThreadIfRequired(() => Text = args.Title);
+        }
+
+        private void OnBrowserAddressChanged(object sender, AddressChangedEventArgs args)
+        {
+            //this.InvokeOnUiThreadIfRequired(() => urlTextBox.Text = args.Address);
+        }
+
+        private void SetCanGoBack(bool canGoBack)
+        {
+            //this.InvokeOnUiThreadIfRequired(() => backButton.Enabled = canGoBack);
+        }
+
+        private void SetCanGoForward(bool canGoForward)
+        {
+            //this.InvokeOnUiThreadIfRequired(() => forwardButton.Enabled = canGoForward);
+        }
+
+        private void SetIsLoading(bool isLoading)
+        {
+            //goButton.Text = isLoading ?
+            //    "Stop" :
+            //    "Go";
+            //goButton.Image = isLoading ?
+            //    Properties.Resources.nav_plain_red :
+            //    Properties.Resources.nav_plain_green;
+
+            //HandleToolStripLayout();
+        }
+
+        public void DisplayOutput(string output)
+        {
+            //this.InvokeOnUiThreadIfRequired(() => outputLabel.Text = output);
+        }
 
     }
 }
