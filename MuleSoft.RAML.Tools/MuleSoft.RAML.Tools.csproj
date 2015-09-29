@@ -798,10 +798,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RAML.Api.Core\RAML.Api.Core.csproj">
-      <Project>{38b9703d-6167-4aae-baed-0c896c24a762}</Project>
-      <Name>RAML.Api.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Raml.Common\Raml.Common.csproj">
       <Project>{05a60b40-e199-435d-99a4-0dd7637f5690}</Project>
       <Name>Raml.Common</Name>
