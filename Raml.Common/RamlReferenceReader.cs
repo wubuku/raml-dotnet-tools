@@ -44,7 +44,7 @@ namespace Raml.Common
             var contents = File.ReadAllText(referenceFilePath);
             var lines = contents.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
             if (lines.Count() <= 3)
-                return "Client";
+                return "ApiClient";
 
             var clientRootClassName = lines[3].Replace("client:", string.Empty).Trim();
             return clientRootClassName;
