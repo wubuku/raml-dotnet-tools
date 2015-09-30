@@ -174,7 +174,7 @@ PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
     <ZipPackageCompressionLevel Condition="'$(ZipPackageCompressionLevel)' == '' AND '_$(Configuration)' == '_Release'">Normal</ZipPackageCompressionLevel>
     <ZipPackageCompressionLevel Condition="'$(ZipPackageCompressionLevel)' == ''">NotCompressed</ZipPackageCompressionLevel>
 
-    <!--By default, only include items necessary for executing. 
+    <!--By default, only include items necessary for executing.
         Exclude debug symbols & documentation files.-->
     <IncludeAssemblyInVSIXContainer Condition="'$(IncludeAssemblyInVSIXContainer)'==''">true</IncludeAssemblyInVSIXContainer>
     <IncludeAddModulesInVSIXContainer Condition="'$(IncludeAddModulesInVSIXContainer)'==''">true</IncludeAddModulesInVSIXContainer>
@@ -278,8 +278,8 @@ PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 
     <!-- For any project references that are set to copy local ('Private' property != false), add the output groups for project references that are not set -->
     <ItemGroup>
-      <ProjectReferenceWithConfiguration Condition="'%(ProjectReferenceWithConfiguration.Private)' != 'false' AND 
-                                                    '%(ProjectReferenceWithConfiguration.IncludeOutputGroupsInVSIX)' == '' AND 
+      <ProjectReferenceWithConfiguration Condition="'%(ProjectReferenceWithConfiguration.Private)' != 'false' AND
+                                                    '%(ProjectReferenceWithConfiguration.IncludeOutputGroupsInVSIX)' == '' AND
                                                     '%(ProjectReferenceWithConfiguration.IncludeOutputGroupsInVSIXLocalOnly)' == ''">
         <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup;BuiltProjectOutputGroupDependencies;GetCopyToOutputDirectoryItems;SatelliteDllsProjectOutputGroup</IncludeOutputGroupsInVSIX>
         <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup;</IncludeOutputGroupsInVSIXLocalOnly>
@@ -290,10 +290,10 @@ PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 
          The IncludeOutputGroupsInVSIX values on items in the FilteredGroups list will only be BuiltProjectOutputGroupDependencies.
          The IncludeOutputGroupsInVSIX values on items in the UnfilteredGroups list will only be all other output groups.
-         
+
          This is done because we only want to filter out items in the CreateVsixSourceItemFromReferences task that were build dependencies to
          avoid unintentially excluding output groups explicitly requested in IncludeOutputGroupsInVSIX.
-         
+
          The task properly handles escaped values for IncludeOutputGroupsInVSIX (e.g. Target1%3bTarget2).
     -->
 
@@ -503,14 +503,14 @@ PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
     <EnableExtension
         VsixIdentifier="$(VsixID)"
         RootSuffix="$(VSSDKTargetPlatformRegRootSuffix)"
-        FailIfNotInstalled="true" />
+        FailIfNotInstalled="false" />
   </Target>
 
   <!--
     =======================================================================================================
                                          Copy Vsix Extension Files
 
-       Target to do a raw copy of extension files. Does not use Extension Manager API to 
+       Target to do a raw copy of extension files. Does not use Extension Manager API to
        enable/manage an extension. Typically only used for Isolated Shell solutions.
     =======================================================================================================
   -->
@@ -556,7 +556,7 @@ PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
   <!--
     ============================================================
              VSIXContainerProjectOutputGroup
-             
+
       Used for determining the VSIX Container that this project
       builds from other projects that reference it.
     ============================================================
@@ -836,7 +836,7 @@ PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 
   <!--
     =======================================================================================================
-    This target contains 2 tasks to copy the .pkgdef file only when necessary. 
+    This target contains 2 tasks to copy the .pkgdef file only when necessary.
     =======================================================================================================
   -->
 
@@ -850,7 +850,7 @@ PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 
     <!--
       =======================================================================================================
-      This task copies the .pkgdef file to the target directory when the .cto file has changed. 
+      This task copies the .pkgdef file to the target directory when the .cto file has changed.
       Even though the .pkgdef file contents might have not changed, the new timestamp on the .pkgdef file
       will cause Visual Studio to re-merge menus on next launch.
       =======================================================================================================
