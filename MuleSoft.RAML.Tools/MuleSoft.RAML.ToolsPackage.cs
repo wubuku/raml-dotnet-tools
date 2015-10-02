@@ -244,9 +244,40 @@ namespace MuleSoft.RAML.Tools
 
             var frm = new RamlPropertiesEditor();
             frm.Load(refFilePath, Settings.Default.ContractsFolderName, Settings.Default.ApiReferencesFolderName);
-            frm.ShowDialog();
+            var result = frm.ShowDialog();
+            if (result != null && result.Value)
+            {
+
+                if (IsServerSide(ramlFilePath))
+                {
+                    var ramlScaffoldUpdater = new RamlScaffoldService(new T4Service(ServiceProvider.GlobalProvider), ServiceProvider.GlobalProvider);
+                    ramlScaffoldUpdater.UpdateRaml(ramlFilePath);
+                }
+                else
+                {
+                    var templatesManager = new TemplatesManager();
+                    var ramlFolder = Path.GetDirectoryName(ramlFilePath).TrimEnd(Path.DirectorySeparatorChar);
+                    var generatedFolderPath = ramlFolder.Substring(0, ramlFolder.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                    if (!templatesManager.ConfirmWhenIncompatibleClientTemplate(generatedFolderPath))
+                        return;
+
+                    var dte = (DTE2)GetService(typeof(SDTE));
+                    dte.ExecuteCommand("Project.RunCustomTool");
+                }
+            }
 
             ChangeCommandStatus(editRamlPropertiesCmdId, true);
+        }
+
+        private bool IsServerSide(string ramlFilePath)
+        {
+            if(ramlFilePath.Contains(Settings.Default.ContractsFolderName) && !ramlFilePath.Contains(Settings.Default.ApiReferencesFolderName))
+                return true;
+
+            if(!ramlFilePath.Contains(Settings.Default.ContractsFolderName) && ramlFilePath.Contains(Settings.Default.ApiReferencesFolderName))
+                return false;
+
+            throw new InvalidOperationException("Cannot determine if the raml is used on the server or the client");
         }
 
 
