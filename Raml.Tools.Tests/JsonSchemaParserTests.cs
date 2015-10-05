@@ -668,5 +668,85 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(0, obj.Properties.Count);
         }
 
+        [Test]
+        public void should_parse_json_patch()
+        {
+            var schema = @"{
+	'title': 'JSON schema for JSONPatch files',
+	'$schema': 'http://json-schema.org/draft-04/schema#',
+
+	'type': 'array',
+
+	'items': {
+		'$ref': '#/definitions/operation'
+	},
+
+	'definitions': {
+		'operation': {
+			'type': 'object',
+			'required': [ 'op', 'path' ],
+			'allOf': [ { '$ref': '#/definitions/path' } ],
+			'oneOf': [
+				{
+					'required': [ 'value' ],
+					'properties': {
+						'op': {
+							'description': 'The operation to perform.',
+							'type': 'string',
+							'enum': [ 'add', 'replace', 'test' ]
+						},
+						'value': {
+							'description': 'The value to add, replace or test.'
+						}
+					}
+				},
+				{
+					'properties': {
+						'op': {
+							'description': 'The operation to perform.',
+							'type': 'string',
+							'enum': [ 'remove' ]
+						}
+					}
+				},
+				{
+					'required': [ 'from' ],
+					'properties': {
+						'op': {
+							'description': 'The operation to perform.',
+							'type': 'string',
+							'enum': [ 'move', 'copy' ]
+						},
+						'from': {
+							'description': 'A JSON Pointer path pointing to the locatoin to move/copy from.',
+							'type': 'string'
+						}
+					}
+				}
+			]
+		},
+		'path': {
+			'properties': {
+				'path': {
+					'description': 'A JSON Pointer path.',
+					'type': 'string'
+				}
+			}
+		}
+	}
+}";
+
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>(), new Dictionary<string, ApiObject>());
+
+            Assert.IsNotNull(obj);
+            Assert.AreEqual(10, obj.Properties.Count);
+            
+        }
+
     }
 }

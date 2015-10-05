@@ -67,7 +67,7 @@ namespace Raml.Tools.JSON
                     obj.IsArray = true;
                     if (v4Schema.Items != null && v4Schema.Items.Any())
                     {
-                        if (schema.Items.First().Properties != null)
+                        if (v4Schema.Items.First().Properties != null)
                         {
                             ParseProperties(objects, obj.Properties, v4Schema.Items.First(), enums);
                         }
