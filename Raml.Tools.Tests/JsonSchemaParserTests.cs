@@ -12,7 +12,7 @@ namespace Raml.Tools.Tests
         public void should_parse_v4_schema()
         {
            
-            var schema = @"{
+            const string schema = @"{
           'id': 'http://some.site.somewhere/entry-schema#',
           '$schema': 'http://json-schema.org/draft-04/schema#',
           'description': 'schema for an fstab entry',
@@ -226,48 +226,48 @@ namespace Raml.Tools.Tests
         [Test]
         public void should_parse_recursive_schemas()
         {
-            var schema = "      { \r\n" +
-                         "        \"$schema\": \"http://json-schema.org/draft-03/schema\",\r\n" +
-                         "        \"type\": \"object\",\r\n" +
-                         "        \"id\": \"Customer\",\r\n" +
-                         "        \"properties\": {\r\n" +
-                         "          \"Id\": { \"type\": \"integer\"},\r\n" +
-                         "          \"Company\": { \"type\": \"string\"},\r\n" +
-                         "          \"SupportRepresentant\":\r\n" +
-                         "            { \r\n" +
-                         "              \"type\": \"object\",\r\n" +
-                         "              \"id\": \"Employee\",\r\n" +
-                         "              \"properties\": {\r\n" +
-                         "                \"Id\": { \"type\": \"integer\"},\r\n" +
-                         "                \"Title\": { \"type\": \"string\"},\r\n" +
-                         "                \"BirthDate\": { \"type\": \"string\"},\r\n" +
-                         "                \"HireDate\": { \"type\": \"string\"},\r\n" +
-                         "                \"ReportsTo\":\r\n" +
-                         "                  { \"$ref\": \"Employee\" },\r\n" +
-                         "                \"FirstName\": { \"type\": \"string\"},\r\n" +
-                         "                \"LastName\": { \"type\": \"string\"},\r\n" +
-                         "                \"Address\": { \"type\": \"string\"},\r\n" +
-                         "                \"City\": { \"type\": \"string\"},\r\n" +
-                         "                \"State\": { \"type\": \"string\"},\r\n" +
-                         "                \"Country\": { \"type\": \"string\"},\r\n" +
-                         "                \"PostalCode\": { \"type\": \"string\"},\r\n" +
-                         "                \"Phone\": { \"type\": \"string\"},\r\n" +
-                         "                \"Fax\": { \"type\": \"string\"},\r\n" +
-                         "                \"Email\": { \"type\": \"string\"}\r\n" +
-                         "              }\r\n" +
-                         "            },\r\n" +
-                         "          \"FirstName\": { \"type\": \"string\"},\r\n" +
-                         "          \"LastName\": { \"type\": \"string\"},\r\n" +
-                         "          \"Address\": { \"type\": \"string\"},\r\n" +
-                         "          \"City\": { \"type\": \"string\"},\r\n" +
-                         "          \"State\": { \"type\": \"string\"},\r\n" +
-                         "          \"Country\": { \"type\": \"string\"},\r\n" +
-                         "          \"PostalCode\": { \"type\": \"string\"},\r\n" +
-                         "          \"Phone\": { \"type\": \"string\"},\r\n" +
-                         "          \"Fax\": { \"type\": \"string\"},\r\n" +
-                         "          \"Email\": { \"type\": \"string\"}\r\n" +
-                         "        }\r\n" +
-                         "      }";
+            const string schema = "      { \r\n" +
+                                  "        \"$schema\": \"http://json-schema.org/draft-03/schema\",\r\n" +
+                                  "        \"type\": \"object\",\r\n" +
+                                  "        \"id\": \"Customer\",\r\n" +
+                                  "        \"properties\": {\r\n" +
+                                  "          \"Id\": { \"type\": \"integer\"},\r\n" +
+                                  "          \"Company\": { \"type\": \"string\"},\r\n" +
+                                  "          \"SupportRepresentant\":\r\n" +
+                                  "            { \r\n" +
+                                  "              \"type\": \"object\",\r\n" +
+                                  "              \"id\": \"Employee\",\r\n" +
+                                  "              \"properties\": {\r\n" +
+                                  "                \"Id\": { \"type\": \"integer\"},\r\n" +
+                                  "                \"Title\": { \"type\": \"string\"},\r\n" +
+                                  "                \"BirthDate\": { \"type\": \"string\"},\r\n" +
+                                  "                \"HireDate\": { \"type\": \"string\"},\r\n" +
+                                  "                \"ReportsTo\":\r\n" +
+                                  "                  { \"$ref\": \"Employee\" },\r\n" +
+                                  "                \"FirstName\": { \"type\": \"string\"},\r\n" +
+                                  "                \"LastName\": { \"type\": \"string\"},\r\n" +
+                                  "                \"Address\": { \"type\": \"string\"},\r\n" +
+                                  "                \"City\": { \"type\": \"string\"},\r\n" +
+                                  "                \"State\": { \"type\": \"string\"},\r\n" +
+                                  "                \"Country\": { \"type\": \"string\"},\r\n" +
+                                  "                \"PostalCode\": { \"type\": \"string\"},\r\n" +
+                                  "                \"Phone\": { \"type\": \"string\"},\r\n" +
+                                  "                \"Fax\": { \"type\": \"string\"},\r\n" +
+                                  "                \"Email\": { \"type\": \"string\"}\r\n" +
+                                  "              }\r\n" +
+                                  "            },\r\n" +
+                                  "          \"FirstName\": { \"type\": \"string\"},\r\n" +
+                                  "          \"LastName\": { \"type\": \"string\"},\r\n" +
+                                  "          \"Address\": { \"type\": \"string\"},\r\n" +
+                                  "          \"City\": { \"type\": \"string\"},\r\n" +
+                                  "          \"State\": { \"type\": \"string\"},\r\n" +
+                                  "          \"Country\": { \"type\": \"string\"},\r\n" +
+                                  "          \"PostalCode\": { \"type\": \"string\"},\r\n" +
+                                  "          \"Phone\": { \"type\": \"string\"},\r\n" +
+                                  "          \"Fax\": { \"type\": \"string\"},\r\n" +
+                                  "          \"Email\": { \"type\": \"string\"}\r\n" +
+                                  "        }\r\n" +
+                                  "      }";
             
             var parser = new JsonSchemaParser();
             var warnings = new Dictionary<string, string>();
@@ -643,7 +643,7 @@ namespace Raml.Tools.Tests
         [Test]
         public void should_parse_primitive_arrays()
         {
-            var schema = @"
+            const string schema = @"
                 {
                   '$schema': 'http://json-schema.org/draft-04/schema#',
                   'id': 'IdList',
@@ -666,6 +666,74 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(true, obj.IsArray);
             Assert.AreEqual("int", obj.Type);
             Assert.AreEqual(0, obj.Properties.Count);
+        }
+
+        [Test]
+        public void should_parse_required_as_array_in_object_v4()
+        {
+            const string schema = @"
+                {
+                  '$schema': 'http://json-schema.org/draft-04/schema#',
+                  'type': 'object',
+                  'properties': {
+                    'id': { 'type': 'integer' },
+                    'name': { 'type': 'string' },
+                    'observations': { 'type': 'string' }
+                  },
+                  'required': ['id', 'name']
+                }";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>(), new Dictionary<string, ApiObject>());
+
+            Assert.AreEqual(3, obj.Properties.Count);
+            Assert.AreEqual(true, obj.Properties.First(c => c.Name == "Id").Required);
+            Assert.AreEqual(true, obj.Properties.First(c => c.Name == "Name").Required);
+            Assert.AreEqual(false, obj.Properties.First(c => c.Name == "Observations").Required);
+        }
+
+        [Test]
+        public void should_parse_required_as_array_inside_array_v4()
+        {
+            const string schema = @"
+                {
+                  '$schema': 'http://json-schema.org/draft-04/schema#',
+                  'title': 'test',
+                  'type': 'array',
+                  'items': {
+                      'type': 'object',
+                      'properties': {
+                        'id': { 
+                            'description': 'the id',
+                            'type': 'integer' 
+                        },
+                        'name': { 
+                            'description': 'the name',
+                            'type': 'string' 
+                        },
+                        'observations': {
+                            'description': 'the observations',
+                            'type': 'string' 
+                        }
+                      },
+                      'required': ['id', 'name']
+                  }
+                }";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>(), new Dictionary<string, ApiObject>());
+
+            Assert.AreEqual(true, obj.IsArray);
+            Assert.AreEqual(3, obj.Properties.Count);
+            Assert.AreEqual(true, obj.Properties.First(c => c.Name == "Id").Required);
+            Assert.AreEqual(true, obj.Properties.First(c => c.Name == "Name").Required);
+            Assert.AreEqual(false, obj.Properties.First(c => c.Name == "Observations").Required);
         }
 
     }

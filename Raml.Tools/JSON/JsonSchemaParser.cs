@@ -224,7 +224,8 @@ namespace Raml.Tools.JSON
                                Type = GetType(property, isEnum, enumName, schema.Required),
                                OriginalName = property.Key,
                                Description = property.Value.Description,
-                               IsEnum = isEnum
+                               IsEnum = isEnum,
+                               Required = schema.Required.Contains(property.Key)
                            };
 
 
