@@ -184,14 +184,7 @@ namespace Raml.Tools.JSON
                 if(type == null)
                     continue;
 
-                var prop = new Property
-                           {
-                               Name = NetNamingMapper.GetPropertyName(kv.Key),
-                               OriginalName = kv.Key,
-                               Type = type,
-                               Description = kv.Value.Description,
-                               IsEnum = isEnum
-                           };
+                var prop = CreateProperty(kv.Key, type, kv, isEnum);
 
                 ParseComplexTypes(objects, kv.Value, prop, kv, kv.Key, enums);
                 props.Add(prop);
@@ -218,23 +211,47 @@ namespace Raml.Tools.JSON
                     enumName = ParseEnum(property.Key, property.Value, enums, property.Value.Description);
                 }
 
-                var prop = new Property
-                           {
-                               Name = NetNamingMapper.GetPropertyName(property.Key),
-                               Type = GetType(property, isEnum, enumName, schema.Required),
-                               OriginalName = property.Key,
-                               Description = property.Value.Description,
-                               IsEnum = isEnum,
-                               Required = schema.Required.Contains(property.Key)
-                           };
-
-
+                var prop = CreateProperty(schema, property, isEnum, enumName);
 
                 ParseComplexTypes(objects, schema, property.Value, prop, property, enums);
                 props.Add(prop);
             }
 
             AdditionalProperties(props, schema);
+        }
+
+        private static Property CreateProperty(string key, string type, KeyValuePair<string, JsonSchema> property, bool isEnum)
+        {
+            return new Property
+            {
+                Name = NetNamingMapper.GetPropertyName(key),
+                OriginalName = key,
+                Type = type,
+                Description = property.Value.Description,
+                IsEnum = isEnum,
+                MaxLength = property.Value.MaximumLength,
+                MinLength = property.Value.MinimumLength,
+                Maximum = property.Value.Maximum,
+                Minimum = property.Value.Minimum,
+                Required = property.Value.Required != null && property.Value.Required.Value
+            };
+        }
+
+        private static Property CreateProperty(Newtonsoft.JsonV4.Schema.JsonSchema schema, KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property, bool isEnum, string enumName)
+        {
+            return new Property
+            {
+                Name = NetNamingMapper.GetPropertyName(property.Key),
+                Type = GetType(property, isEnum, enumName, schema.Required),
+                OriginalName = property.Key,
+                Description = property.Value.Description,
+                IsEnum = isEnum,
+                Required = schema.Required.Contains(property.Key),
+                MaxLength = property.Value.MaximumLength,
+                MinLength = property.Value.MinimumLength,
+                Maximum = property.Value.Maximum,
+                Minimum = property.Value.Minimum
+            };
         }
 
         private static void AdditionalProperties(ICollection<Property> props, JsonSchema schema)
@@ -376,7 +393,7 @@ namespace Raml.Tools.JSON
                     ids.Add(schema.Id);
 
                 var type = string.IsNullOrWhiteSpace(property.Value.Id) ? property.Key : property.Value.Id;
-                ParseObject(type, propertySchema.Properties, objects, enums);
+                ParseObject(type, propertySchema.Properties, objects, enums, propertySchema);
                 prop.Type = NetNamingMapper.GetObjectName(type);
             }
             else if (propertySchema.Type.HasValue
@@ -397,7 +414,7 @@ namespace Raml.Tools.JSON
                 foreach(var innerSchema in propertySchema.OneOf)
                 {
                     var definition = schema.Definitions.FirstOrDefault(k => k.Value == innerSchema);
-                    ParseObject(property.Key + definition.Key, innerSchema.Properties, objects, enums, baseTypeName);
+                    ParseObject(property.Key + definition.Key, innerSchema.Properties, objects, enums, innerSchema, baseTypeName);
                                        
                 }
 
@@ -410,12 +427,12 @@ namespace Raml.Tools.JSON
             
         }
 
-        private void ParseObject(string key, IDictionary<string, Newtonsoft.JsonV4.Schema.JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums, string baseClass = null)
+        private void ParseObject(string key, IDictionary<string, Newtonsoft.JsonV4.Schema.JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums, Newtonsoft.JsonV4.Schema.JsonSchema parentSchema, string baseClass = null)
         {
             var obj = new ApiObject
                       {
                           Name = NetNamingMapper.GetObjectName(key),
-                          Properties = ParseSchema(schema, objects, enums),
+                          Properties = ParseSchema(schema, objects, enums, parentSchema),
                           BaseClass = baseClass
                       };
 
@@ -435,7 +452,7 @@ namespace Raml.Tools.JSON
             objects.Add(key, obj);
         }
 
-        private IList<Property> ParseSchema(IDictionary<string, Newtonsoft.JsonV4.Schema.JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums)
+        private IList<Property> ParseSchema(IDictionary<string, Newtonsoft.JsonV4.Schema.JsonSchema> schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiEnum> enums, Newtonsoft.JsonV4.Schema.JsonSchema parentSchema)
         {
             var props = new List<Property>();
             foreach (var kv in schema)
@@ -448,15 +465,7 @@ namespace Raml.Tools.JSON
                     enumName = ParseEnum(kv.Key, kv.Value, enums, kv.Value.Description);
                 }
 
-                var prop = new Property
-                {
-                    Name = NetNamingMapper.GetPropertyName(kv.Key),
-                    OriginalName = kv.Key,
-                    Type = GetType(kv, isEnum, enumName, kv.Value.Required),
-                    Description = kv.Value.Description,
-                    IsEnum = isEnum
-                };
-
+                var prop = CreateProperty(parentSchema, kv, isEnum, enumName);
 
                 ParseComplexTypes(objects, null, kv.Value, prop, kv, enums);
                 props.Add(prop);
@@ -477,7 +486,7 @@ namespace Raml.Tools.JSON
                 prop.Type = CollectionTypeHelper.GetCollectionType(NetNamingMapper.GetObjectName(property.Key));
                 foreach (var item in schema.Items)
                 {
-                    ParseObject(property.Key, item.Properties, objects, enums);
+                    ParseObject(property.Key, item.Properties, objects, enums, item);
                 }
             }
         }
@@ -509,14 +518,7 @@ namespace Raml.Tools.JSON
                 if (type == null)
                     continue;
 
-                var prop = new Property
-                           {
-                               Name = NetNamingMapper.GetPropertyName(key),
-                               OriginalName = key,
-                               Type = type,
-                               Description = property.Value.Description,
-                               IsEnum = isEnum
-                           };
+                var prop = CreateProperty(key, type, property, isEnum);
 
 
                 ParseComplexTypes(objects, property.Value, prop, property, key, enums);
