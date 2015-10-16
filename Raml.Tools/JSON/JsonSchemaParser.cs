@@ -246,7 +246,7 @@ namespace Raml.Tools.JSON
                 OriginalName = property.Key,
                 Description = property.Value.Description,
                 IsEnum = isEnum,
-                Required = schema.Required.Contains(property.Key),
+                Required = schema.Required != null && schema.Required.Contains(property.Key),
                 MaxLength = property.Value.MaximumLength,
                 MinLength = property.Value.MinimumLength,
                 Maximum = property.Value.Maximum,
