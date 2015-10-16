@@ -51,30 +51,30 @@ namespace Raml.Tools
             {
                 var attributes = new Collection<string>();
 
-                const int indentation = 8;
+                var identation = "".PadLeft(8);
 
                 if (Required)
-                    attributes.Add("[Required]".PadLeft(indentation));
+                    attributes.Add("[Required]".Insert(0, identation));
 
                 if (MaxLength != null)
-                    attributes.Add(string.Format("[MaxLength({0})]", MaxLength).PadLeft(indentation));
+                    attributes.Add(string.Format("[MaxLength({0})]", MaxLength).Insert(0, identation));
 
                 if (MinLength != null)
-                    attributes.Add(string.Format("[MinLength({0})]", MinLength).PadLeft(indentation));
+                    attributes.Add(string.Format("[MinLength({0})]", MinLength).Insert(0, identation));
 
                 if (Minimum != null || Maximum != null)
-                    BuildRangeAttribute(attributes, indentation);
+                    BuildRangeAttribute(attributes, identation);
 
                 return string.Join(Environment.NewLine, attributes);
             }
         }
 
-        private void BuildRangeAttribute(Collection<string> attributes, int indentation)
+        private void BuildRangeAttribute(Collection<string> attributes, string identation)
         {
             if (Type == "int")
             {
                 attributes.Add(string.Format("[Range({0:F0},{1:F0})]", Minimum ?? int.MinValue, Maximum ?? int.MaxValue)
-                    .PadLeft(indentation));
+                    .Insert(0, identation));
             }
             else
             {
@@ -82,7 +82,7 @@ namespace Raml.Tools
                 var min = Minimum ?? double.MinValue;
                 var max = Maximum ?? double.MaxValue;
                 attributes.Add(string.Format("[Range({0},{1})]", min.ToString("F", culture), max.ToString("F", culture))
-                    .PadLeft(indentation));
+                    .Insert(0, identation));
             }
         }
 
