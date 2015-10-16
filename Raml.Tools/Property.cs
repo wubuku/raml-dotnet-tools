@@ -64,6 +64,9 @@ namespace Raml.Tools
 
                 if (Minimum != null || Maximum != null)
                     BuildRangeAttribute(attributes, identation);
+                
+                if (!attributes.Any())
+                    return string.Empty;
 
                 return string.Join(Environment.NewLine, attributes);
             }
@@ -73,16 +76,17 @@ namespace Raml.Tools
         {
             if (Type == "int")
             {
-                attributes.Add(string.Format("[Range({0:F0},{1:F0})]", Minimum ?? int.MinValue, Maximum ?? int.MaxValue)
-                    .Insert(0, identation));
+                var attr = string.Format("[Range({0},{1:F0})]",
+                    Minimum == null ? "int.MinValue" : Minimum.Value.ToString("F0"),
+                    Maximum == null ? "int.MaxValue" : Maximum.Value.ToString("F0"));
+                attributes.Add(attr.Insert(0, identation));
             }
             else
             {
-                var culture = new CultureInfo("en-US");
-                var min = Minimum ?? double.MinValue;
-                var max = Maximum ?? double.MaxValue;
-                attributes.Add(string.Format("[Range({0},{1})]", min.ToString("F", culture), max.ToString("F", culture))
-                    .Insert(0, identation));
+                var enUs = new CultureInfo("en-US");
+                var min = Minimum == null ? "double.MinValue" : Minimum.Value.ToString("F", enUs);
+                var max = Maximum == null ? "double.MaxValue" : Maximum.Value.ToString("F", enUs);
+                attributes.Add(string.Format("[Range({0},{1})]", min, max).Insert(0, identation));
             }
         }
 

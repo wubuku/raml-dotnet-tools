@@ -870,5 +870,47 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(true, obj.Properties.First(c => c.Name == "Name").Required);
         }
 
+        [Test]
+        public void should_build_custom_attributes_v4()
+        {
+            const string schema = @"
+                {
+                  '$schema': 'http://json-schema.org/draft-03/schema#',
+                  'type': 'object',
+                  'properties': {
+                    'age': {
+                        'type': 'integer',
+                        'minimum': 18
+                    },
+                    'name': { 
+                        'description': 'the name',
+                        'type': 'string',
+                        'minLength': 4
+                    },
+                    'observations': {
+                        'description': 'the observations',
+                        'type': 'string',
+                        'maxLength': 255
+                    },
+                    'weight': { 
+                        'type': 'number',
+                        'maximum': 100
+                    }
+                  },
+                  'required': ['name','age']
+                }";
+
+            var parser = new JsonSchemaParser();
+            var warnings = new Dictionary<string, string>();
+            var objects = new Dictionary<string, ApiObject>();
+            var enums = new Dictionary<string, ApiEnum>();
+            var obj = parser.Parse("name", schema, objects, warnings, enums, new Dictionary<string, ApiObject>(), new Dictionary<string, ApiObject>());
+
+            var us = new CultureInfo("en-US");
+            var minValue = double.MinValue;
+            Assert.AreEqual("        [Range(" + minValue.ToString("F", us) + ",100.00)]", obj.Properties.First(c => c.Name == "Weight").CustomAttributes);
+            Assert.AreEqual("        [Required]" + Environment.NewLine + "        [Range(18," + int.MaxValue + ")]", obj.Properties.First(c => c.Name == "Age").CustomAttributes);
+        }
+
     }
 }

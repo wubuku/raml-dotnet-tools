@@ -61,10 +61,11 @@ namespace $(namespace).Models
         /// <summary>
         /// <#= XmlCommentHelper.Escape(property.Description) #>
         /// </summary>
-<#= property.CustomAttributes #>
 <#
 	    }
-
+#>
+<#= property.CustomAttributes #>
+<#
         if(property.IsAdditionalProperties)
         {
 #>
