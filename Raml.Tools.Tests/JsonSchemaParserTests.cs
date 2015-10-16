@@ -822,8 +822,8 @@ namespace Raml.Tools.Tests
 
             var us = new CultureInfo("en-US");
             var minValue = double.MinValue;
-            Assert.AreEqual("        [Range(" + minValue.ToString("F", us) + ",100.00)]", obj.Properties.First(c => c.Name == "Weight").CustomAttributes);
-            Assert.AreEqual("        [Required]" + Environment.NewLine + "        [Range(18," + int.MaxValue + ")]", obj.Properties.First(c => c.Name == "Age").CustomAttributes);
+            Assert.AreEqual("        [Range(double.MinValue,100.00)]", obj.Properties.First(c => c.Name == "Weight").CustomAttributes);
+            Assert.AreEqual("        [Required]" + Environment.NewLine + "        [Range(18,int.MaxValue)]", obj.Properties.First(c => c.Name == "Age").CustomAttributes);
         }
 
         [Test]
@@ -908,8 +908,8 @@ namespace Raml.Tools.Tests
 
             var us = new CultureInfo("en-US");
             var minValue = double.MinValue;
-            Assert.AreEqual("        [Range(" + minValue.ToString("F", us) + ",100.00)]", obj.Properties.First(c => c.Name == "Weight").CustomAttributes);
-            Assert.AreEqual("        [Required]" + Environment.NewLine + "        [Range(18," + int.MaxValue + ")]", obj.Properties.First(c => c.Name == "Age").CustomAttributes);
+            Assert.AreEqual("        [Range(double.MinValue,100.00)]", obj.Properties.First(c => c.Name == "Weight").CustomAttributes);
+            Assert.AreEqual("        [Required]" + Environment.NewLine + "        [Range(18,int.MaxValue)]", obj.Properties.First(c => c.Name == "Age").CustomAttributes);
         }
 
     }
