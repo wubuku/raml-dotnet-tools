@@ -1,4 +1,17 @@
-﻿using EnvDTE;
+﻿//------------------------------------------------------------------------------
+// <copyright file="MuleSoft_RAML_ToolsPackage.cs" company="Company">
+//     Copyright (c) Company.  All rights reserved.
+// </copyright>
+//------------------------------------------------------------------------------
+
+
+using System.Diagnostics.CodeAnalysis;
+
+using Microsoft.VisualStudio.OLE.Interop;
+
+using Microsoft.Win32;
+
+using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
@@ -17,13 +30,36 @@ using System.Runtime.InteropServices;
 
 namespace MuleSoft.RAML.Tools
 {
+    /// <summary>
+    /// This is the class that implements the package exposed by this assembly.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The minimum requirement for a class to be considered a valid package for Visual Studio
+    /// is to implement the IVsPackage interface and register itself with the shell.
+    /// This package uses the helper classes defined inside the Managed Package Framework (MPF)
+    /// to do it: it derives from the Package class that provides the implementation of the
+    /// IVsPackage interface and uses the registration attributes defined in the framework to
+    /// register itself and its components with the shell. These attributes tell the pkgdef creation
+    /// utility what data to put into .pkgdef file.
+    /// </para>
+    /// <para>
+    /// To get loaded into VS, the package must be referred by &lt;Asset Type="Microsoft.VisualStudio.VsPackage" ...&gt; in .vsixmanifest file.
+    /// </para>
+    /// </remarks>
     [PackageRegistration(UseManagedResourcesOnly = true)]
-    [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
+    [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
+    [Guid(MuleSoft_RAML_ToolsPackage.PackageGuidString)]
+    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    [Guid(GuidList.guidMuleSoft_RAML_ToolsPackagePkgString)]
     [ProvideAutoLoad("f1536ef8-92ec-443c-9ed7-fdadf150da82")]
     public sealed class MuleSoft_RAML_ToolsPackage : Package, IVsThreadedWaitDialogCallback
     {
+        /// <summary>
+        /// MuleSoft_RAML_ToolsPackage GUID string.
+        /// </summary>
+        public const string PackageGuidString = "49d3aa6e-2e80-4568-92e9-4bcb3eb2b40d";
+
         private CommandID addReferenceInApiFolderCmdId;
         private CommandID updateReferenceCmdId;
         private CommandID updateRamlContractCommandId;
@@ -41,14 +77,14 @@ namespace MuleSoft.RAML.Tools
             Debug.WriteLine(message);
 
 #if DEBUG
-        ServicePointManager.ServerCertificateValidationCallback = (obj, certificate, chain, errors) => true;
+            ServicePointManager.ServerCertificateValidationCallback = (obj, certificate, chain, errors) => true;
 #endif
-      }
+        }
 
         protected override void Initialize()
         {
             var message = string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this);
-            Debug.WriteLine (message);
+            Debug.WriteLine(message);
             base.Initialize();
 
             // Add our command handlers for menu (commands must exist in the .vsct file)
@@ -57,8 +93,8 @@ namespace MuleSoft.RAML.Tools
 
             // Add RAML Reference command in References
             var addRamlRefCommandId = new CommandID(GuidList.guidMuleSoft_RAML_ReferencesNode, (int)PkgCmdIDList.cmdRAMLGenerator);
-            var addRamlRefCommand = new MenuCommand(AddRamlReferenceCallback, addRamlRefCommandId );
-            mcs.AddCommand( addRamlRefCommand );
+            var addRamlRefCommand = new MenuCommand(AddRamlReferenceCallback, addRamlRefCommandId);
+            mcs.AddCommand(addRamlRefCommand);
 
             // Add RAML Reference command in Api References Folder
             addReferenceInApiFolderCmdId = new CommandID(GuidList.guidMuleSoft_RAML_FolderNode, (int)PkgCmdIDList.cmdRAMLGenerator2);
@@ -119,6 +155,7 @@ namespace MuleSoft.RAML.Tools
             events = dte.Events;
             documentEvents = events.DocumentEvents;
             documentEvents.DocumentSaved += RamlScaffoldService.TriggerScaffoldOnRamlChanged;
+            //MuleSoft.RAML.Tools.Command1.Initialize(this);
         }
 
         private void AddRamlContractFolderCommandOnBeforeQueryStatus(object sender, EventArgs eventArgs)
@@ -210,7 +247,7 @@ namespace MuleSoft.RAML.Tools
             var templatesManager = new TemplatesManager();
             var ramlFolder = Path.GetDirectoryName(ramlFilePath).TrimEnd(Path.DirectorySeparatorChar);
             var generatedFolderPath = ramlFolder.Substring(0, ramlFolder.LastIndexOf(Path.DirectorySeparatorChar) + 1);
-            if(!templatesManager.ConfirmWhenIncompatibleClientTemplate(generatedFolderPath))
+            if (!templatesManager.ConfirmWhenIncompatibleClientTemplate(generatedFolderPath))
                 return;
 
             //if (Unauthorized(ramlFilePath))
@@ -222,8 +259,8 @@ namespace MuleSoft.RAML.Tools
             //}
             //else
             //{
-                var dte = (DTE2) GetService(typeof (SDTE));
-                dte.ExecuteCommand("Project.RunCustomTool");
+            var dte = (DTE2)GetService(typeof(SDTE));
+            dte.ExecuteCommand("Project.RunCustomTool");
             //}
 
             ChangeCommandStatus(updateReferenceCmdId, true);
@@ -271,10 +308,10 @@ namespace MuleSoft.RAML.Tools
 
         private bool IsServerSide(string ramlFilePath)
         {
-            if(ramlFilePath.Contains(Settings.Default.ContractsFolderName) && !ramlFilePath.Contains(Settings.Default.ApiReferencesFolderName))
+            if (ramlFilePath.Contains(Settings.Default.ContractsFolderName) && !ramlFilePath.Contains(Settings.Default.ApiReferencesFolderName))
                 return true;
 
-            if(!ramlFilePath.Contains(Settings.Default.ContractsFolderName) && ramlFilePath.Contains(Settings.Default.ApiReferencesFolderName))
+            if (!ramlFilePath.Contains(Settings.Default.ContractsFolderName) && ramlFilePath.Contains(Settings.Default.ApiReferencesFolderName))
                 return false;
 
             throw new InvalidOperationException("Cannot determine if the raml is used on the server or the client");
@@ -378,9 +415,9 @@ namespace MuleSoft.RAML.Tools
 
         private static bool IsWebApiCoreInstalled()
         {
-            var dte = ServiceProvider.GlobalProvider.GetService(typeof (SDTE)) as DTE;
+            var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
             var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
-            var componentModel = (IComponentModel) ServiceProvider.GlobalProvider.GetService(typeof (SComponentModel));
+            var componentModel = (IComponentModel)ServiceProvider.GlobalProvider.GetService(typeof(SComponentModel));
             var installerServices = componentModel.GetService<IVsPackageInstallerServices>();
             var isWebApiCoreInstalled = installerServices.IsPackageInstalled(proj, "Microsoft.AspNet.WebApi.Core");
             return isWebApiCoreInstalled;
@@ -424,7 +461,7 @@ namespace MuleSoft.RAML.Tools
             if (!IsSingleProjectItemSelection(out hierarchy, out itemid)) return;
             // Get the file path
             string itemFullPath;
-            ((IVsProject) hierarchy).GetMkDocument(itemid, out itemFullPath);
+            ((IVsProject)hierarchy).GetMkDocument(itemid, out itemFullPath);
 
             var folder = Path.GetDirectoryName(itemFullPath);
             if (!folder.EndsWith(folderName))
@@ -452,13 +489,13 @@ namespace MuleSoft.RAML.Tools
             var transformFileInfo = new FileInfo(itemFullPath);
 
             var endsWithExtension = transformFileInfo.Name.EndsWith(".raml");
-            
+
             // if not leave the menu hidden
             if (!endsWithExtension) return;
 
-            if(!itemFullPath.Contains(containingFolderName))
+            if (!itemFullPath.Contains(containingFolderName))
                 return;
-            
+
             var folder = Path.GetDirectoryName(itemFullPath);
             if (folder.EndsWith(InstallerServices.IncludesFolderName))
                 return;
@@ -480,7 +517,7 @@ namespace MuleSoft.RAML.Tools
             if (!IsSingleProjectItemSelection(out hierarchy, out itemid)) return;
             // Get the file path
             string itemFullPath;
-            ((IVsProject) hierarchy).GetMkDocument(itemid, out itemFullPath);
+            ((IVsProject)hierarchy).GetMkDocument(itemid, out itemFullPath);
             var transformFileInfo = new FileInfo(itemFullPath);
 
             var endsWithExtension = transformFileInfo.Name.EndsWith(".raml");
@@ -524,7 +561,7 @@ namespace MuleSoft.RAML.Tools
             if (!endsWithExtension) return;
 
             var refFile = InstallerServices.GetRefFilePath(itemFullPath);
-            if(!File.Exists(refFile))
+            if (!File.Exists(refFile))
                 return;
 
             ShowAndEnableCommand(menuCommand, true);
@@ -638,7 +675,7 @@ namespace MuleSoft.RAML.Tools
 
         private void StopProgressBar()
         {
-            if (attachingDialog == null) 
+            if (attachingDialog == null)
                 return;
 
             int canceled;
