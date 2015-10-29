@@ -486,7 +486,16 @@ namespace MuleSoft.RAML.Tools
             // Get the file path
             string itemFullPath;
             ((IVsProject)hierarchy).GetMkDocument(itemid, out itemFullPath);
-            var transformFileInfo = new FileInfo(itemFullPath);
+
+            FileInfo transformFileInfo;
+            try
+            {
+                transformFileInfo = new FileInfo(itemFullPath);
+            }
+            catch (Exception)
+            {
+                return;
+            }
 
             var endsWithExtension = transformFileInfo.Name.EndsWith(".raml");
 
@@ -518,7 +527,17 @@ namespace MuleSoft.RAML.Tools
             // Get the file path
             string itemFullPath;
             ((IVsProject)hierarchy).GetMkDocument(itemid, out itemFullPath);
-            var transformFileInfo = new FileInfo(itemFullPath);
+
+            FileInfo transformFileInfo;
+            try
+            {
+                transformFileInfo = new FileInfo(itemFullPath);
+            }
+            catch (Exception)
+            {
+                return;
+            }
+
 
             var endsWithExtension = transformFileInfo.Name.EndsWith(".raml");
 
@@ -553,7 +572,16 @@ namespace MuleSoft.RAML.Tools
             // Get the file path
             string itemFullPath;
             ((IVsProject)hierarchy).GetMkDocument(itemid, out itemFullPath);
-            var transformFileInfo = new FileInfo(itemFullPath);
+
+            FileInfo transformFileInfo;
+            try
+            {
+                transformFileInfo = new FileInfo(itemFullPath);
+            }
+            catch (Exception)
+            {
+                return;
+            }
 
             var endsWithExtension = transformFileInfo.Name.EndsWith(".raml");
 
