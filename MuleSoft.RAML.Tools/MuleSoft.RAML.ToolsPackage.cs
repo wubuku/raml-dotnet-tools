@@ -51,7 +51,6 @@ namespace MuleSoft.RAML.Tools
     [PackageRegistration(UseManagedResourcesOnly = true)]
 
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
-    [Guid(MuleSoft_RAML_ToolsPackage.PackageGuidString)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideEditorExtension(typeof(EditorFactory), ".raml", 50,
@@ -157,10 +156,10 @@ namespace MuleSoft.RAML.Tools
             mcs.AddCommand(editRamlPropertiesCommand);
 
             //// Extract RAML (RAML WebApiExplorer) command
-            extractRAMLCommandId = new CommandID(GuidList.guidMuleSoft_RAML_ExtractRAML, (int)PkgCmdIDList.cmdExtractRAML);
-            var extractRAMLCommand = new OleMenuCommand(ExtractRAMLCallback, extractRAMLCommandId);
-            extractRAMLCommand.BeforeQueryStatus += ExtractRAMLCommandOnBeforeQueryStatus;
-            mcs.AddCommand(extractRAMLCommand);
+            //extractRAMLCommandId = new CommandID(GuidList.guidMuleSoft_RAML_ExtractRAML, (int)PkgCmdIDList.cmdExtractRAML);
+            //var extractRAMLCommand = new OleMenuCommand(ExtractRAMLCallback, extractRAMLCommandId);
+            //extractRAMLCommand.BeforeQueryStatus += ExtractRAMLCommandOnBeforeQueryStatus;
+            //mcs.AddCommand(extractRAMLCommand);
 
             // trigger scaffold when RAML document gets saved
             var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
