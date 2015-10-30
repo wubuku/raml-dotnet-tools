@@ -10,6 +10,7 @@
     <VsSDKIncludes>$(VsSDKInstall)\inc</VsSDKIncludes>
     <VsSDKToolsPath>$(VsSDKInstall)\bin</VsSDKToolsPath>
     <VsixSchemaPath>$(VsSDKInstall)\schemas\VSIXManifestSchema.xsd</VsixSchemaPath>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -24,7 +25,8 @@
     <AssemblyName>MuleSoft.RAML.Tools</AssemblyName>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -59,6 +61,7 @@
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.OLE.Interop" />
+    <Reference Include="Microsoft.VisualStudio.Shell.12.0, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.8.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.9.0" />
@@ -70,9 +73,6 @@
       <EmbedInteropTypes>true</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.TextManager.Interop" />
-    <Reference Include="Microsoft.VisualStudio.Shell.12.0">
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.10.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.11.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.12.0" />
@@ -91,9 +91,9 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Raml.Parser, Version=0.8.101.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Raml.Parser.0.8.101\lib\net45\Raml.Parser.dll</HintPath>
+    <Reference Include="Raml.Parser, Version=0.8.103.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Raml.Parser.0.8.103\lib\net45\Raml.Parser.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -105,9 +105,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.0\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="VSLangProj, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
@@ -180,6 +185,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeGeneratorRegistrationAttribute.cs" />
+    <Compile Include="NugetInstallerHelper.cs" />
     <Compile Include="CustomEditor\EditorFactory.cs" />
     <Compile Include="CustomEditor\EditorPane.cs" />
     <Compile Include="CustomEditor\EditorTextBox.cs">
@@ -197,8 +203,7 @@
     </Compile>
     <Compile Include="CustomEditor\NativeMethods.cs" />
     <Compile Include="CustomEditor\VSMacroRecorder.cs" />
-    <Compile Include="RamlPropertiesExtender\RamlPropertiesExtenderProvider.cs" />
-    <Compile Include="RamlPropertiesExtender\RamlProperties.cs" />
+
     <Compile Include="RamlReferenceService.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -241,7 +246,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <Content Include="edge\x64\edge.node">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -728,10 +732,6 @@
     <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\test-request-protocols.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Templates\RAMLWebApi2Scaffolder\ApiEnum.t4">
-      <LastGenOutput>Objects.cs.cs</LastGenOutput>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Resource Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\testdata.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -780,6 +780,7 @@
     <Content Include="node_modules\raml-parser\test\specs\validator.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+
     <Content Include="Resources\MuleSoft-Logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -828,10 +829,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RAML.Api.Core\RAML.Api.Core.csproj">
-      <Project>{38b9703d-6167-4aae-baed-0c896c24a762}</Project>
-      <Name>RAML.Api.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Raml.Common\Raml.Common.csproj">
       <Project>{05a60b40-e199-435d-99a4-0dd7637f5690}</Project>
       <Name>Raml.Common</Name>

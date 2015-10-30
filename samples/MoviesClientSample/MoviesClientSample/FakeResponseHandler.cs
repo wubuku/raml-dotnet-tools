@@ -19,13 +19,13 @@ namespace MoviesClientSample
 				content = JsonConvert.SerializeObject(Repositories.Movies);
 
 			if (localPath.EndsWith("/available"))
-				content = JsonConvert.SerializeObject(Repositories.Movies.Where(m => !m.Rented));
+				content = JsonConvert.SerializeObject(Repositories.Movies.Where(m => !m.Rented.HasValue || !m.Rented.Value));
 
 			if (localPath.EndsWith("/wishlist"))
 				content = JsonConvert.SerializeObject(Repositories.Wishlist);
 
 			if (localPath.EndsWith("/rented"))
-				content = JsonConvert.SerializeObject(Repositories.Movies.Where(m => m.Rented));
+				content = JsonConvert.SerializeObject(Repositories.Movies.Where(m => m.Rented.HasValue && m.Rented.Value));
 
 			if (localPath.EndsWith("/rent"))
 			{

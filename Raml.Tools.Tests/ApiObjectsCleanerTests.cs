@@ -52,7 +52,7 @@ namespace Raml.Tools.Tests
             schemaRequestObjects.Add("obj3", o3);
 
             var schemaResponseObjects = new Dictionary<string, ApiObject>();
-            var cleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects);
+            var cleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects, new Dictionary<string, ApiObject>());
             var classObjects = new List<ClassObject>();
 
             var methods = new Collection<ClientGeneratorMethod>
@@ -123,7 +123,7 @@ namespace Raml.Tools.Tests
             schemaResponseObjects.Add("obj3", o3);
 
             var schemaRequestObjects = new Dictionary<string, ApiObject>();
-            var cleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects);
+            var cleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects, new Dictionary<string, ApiObject>());
             var classObjects = new List<ClassObject>();
 
             var methods = new Collection<ClientGeneratorMethod>
@@ -190,7 +190,7 @@ namespace Raml.Tools.Tests
             schemaRequestObjects.Add("obj3", o3);
 
             var schemaResponseObjects = new Dictionary<string, ApiObject>();
-            var cleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects);
+            var cleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects, new Dictionary<string, ApiObject>());
             var classObjects = new List<ControllerObject>();
 
             var methods = new Collection<ControllerMethod>
@@ -261,7 +261,7 @@ namespace Raml.Tools.Tests
             schemaResponseObjects.Add("obj3", o3);
 
             var schemaRequestObjects = new Dictionary<string, ApiObject>();
-            var cleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects);
+            var cleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects, new Dictionary<string, ApiObject>());
             var classObjects = new List<ControllerObject>();
 
             var methods = new Collection<ControllerMethod>

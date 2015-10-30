@@ -1,16 +1,21 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="$(binDir)RAML.Parser.dll" #>
+<#@ assembly name="$(binDir)EdgeJs.dll" #>
 <#@ assembly name="$(binDir)Raml.Tools.dll" #>
 <#@ assembly name="$(binDir)RAML.Api.Core.dll" #>
+<#@ assembly name="System.Runtime" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="Raml.Common" #>
 <#@ import namespace="Raml.Tools" #>
 <#@ import namespace="Raml.Tools.ClientGenerator" #>
 <#@ import namespace="System.Linq" #>
+<#@ import namespace="System" #>
 <#@ parameter name="model" type="Raml.Tools.ClientGenerator.ClientGeneratorModel" #>
 <#@ output extension=".cs" #>
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -19,6 +24,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using RAML.Api.Core;
@@ -50,6 +56,7 @@ namespace $(namespace)
 		foreach (var property in classObject.Properties)
 		{
 #>
+
         public virtual <#= property.Name #> <#= property.Name #>
         {
             get { return new <#= property.Name #>(proxy); }
@@ -63,6 +70,7 @@ namespace $(namespace)
 		{
         // Simple method ----------------------------------------------------------------------------------------
 #>
+
         <#= method.XmlSimpleComment #>
         public virtual async Task<<#= method.ResponseType #>> <#= method.Name #>(<#= method.SimpleParameterString #>)
         {
@@ -105,7 +113,7 @@ namespace $(namespace)
 <#
 	            }
 #>
-            var req = new HttpRequestMessage(HttpMethod.<#= string.IsNullOrWhiteSpace(method.Verb) ? "Get" : method.Verb #>, url);
+            var req = new HttpRequestMessage(<#= method.NetHttpMethod #>, url);
 <#
 
 		        if (method.UseSecurity && model.Security != null && !string.IsNullOrWhiteSpace(model.Security.AccessTokenUri))
@@ -135,14 +143,23 @@ namespace $(namespace)
 	                if (method.Parameter == null || method.Parameter.Type == "string")
 	                {
 #>
-            req.Content = new StringContent(json);
+            req.Content = new StringContent(content);
 <#
 	                }
 	                else
 	                {
+                        if(method.RequestContentTypes.Any(c => c.Contains("xml")) && !method.RequestContentTypes.Any(c => c.Contains("json"))){
 #>
-            req.Content = new ObjectContent(typeof(Models.<#= method.Parameter.Type #>), <#= method.Parameter.Name #>, new JsonMediaTypeFormatter());
+
+            var stringWriter = new StringWriter();
+        	new XmlSerializer(typeof (Models.<#= method.Parameter.Type #>)).Serialize(stringWriter, <#= method.Parameter.Name #>);
+            req.Content = new  StringContent(stringWriter.GetStringBuilder().ToString(), Encoding.UTF8, "application/xml");     
 <#
+                        } else {
+#>
+            req.Content = new ObjectContent(typeof(<#= method.QualifiedParameterType #>), <#= method.Parameter.Name #>, new JsonMediaTypeFormatter());                           
+<#                        
+                        }
         	        }
                 }
 #>
@@ -262,7 +279,7 @@ namespace $(namespace)
 <#
 	            }
 #>
-            var req = new HttpRequestMessage(HttpMethod.<#= string.IsNullOrWhiteSpace(method.Verb) ? "Get" : method.Verb #>, url);
+            var req = new HttpRequestMessage(<#= method.NetHttpMethod #>, url);
 
 <#
 		        if (method.UseSecurity && model.Security != null && !string.IsNullOrWhiteSpace(model.Security.AccessTokenUri))
@@ -322,12 +339,18 @@ namespace $(namespace)
 	                }
 	                else
 	                {
+                        if(method.RequestContentTypes.Any(c => c.Contains("xml")) && !method.RequestContentTypes.Any(c => c.Contains("json"))){
+#>
+            var stringWriter = new StringWriter();
+        	new XmlSerializer(typeof (Models.<#= method.Parameter.Type #>)).Serialize(stringWriter, request.Content);
+            req.Content = new  StringContent(stringWriter.GetStringBuilder().ToString(), Encoding.UTF8, "application/xml");     
+<#
+                        } else {
 #>
             if(request.Formatter == null)
                 request.Formatter = new JsonMediaTypeFormatter();
-
-            req.Content = new ObjectContent(typeof(Models.<#= method.Parameter.Type #>), request.Content, request.Formatter);
 <#
+                        }
 	                }
                 }
 #>
@@ -468,6 +491,7 @@ namespace $(namespace)
 	foreach (var property in model.Root.Properties)
 	{
 #>
+
         public virtual <#= property.Name #> <#= property.Name #>
         {
             get { return new <#= property.Name #>(this); }
@@ -495,13 +519,35 @@ namespace $(namespace)
 
 
 
+<#
+var hasXmlSchemas = false;
+foreach (var apiObject in model.Objects.Where(o => !string.IsNullOrWhiteSpace(o.GeneratedCode)))
+{
+    hasXmlSchemas = true;
+#>
+
+<#= apiObject.GeneratedCode #>
+
+<#
+}
+#>
+
+
+
+
 
 
 namespace $(namespace).Models
 {
 <#
-foreach (var apiObject in model.Objects.Values)
+foreach (var apiObject in model.Objects.Where(o => string.IsNullOrWhiteSpace(o.GeneratedCode)))
 {
+    if(hasXmlSchemas && !apiObject.Properties.Any())
+        continue;
+
+    if(apiObject.IsArray && apiObject.Type != null)
+        continue;
+
 	if (!string.IsNullOrWhiteSpace(apiObject.Description))
 	{
 #>
@@ -563,6 +609,10 @@ foreach (var apiObject in model.Objects.Values)
 
 	foreach (var property in apiObject.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 	{
+    // this if a whitespace line to separate properties, do not delete !
+#>
+
+<#
 	    if (!string.IsNullOrWhiteSpace(property.Description))
 	    {
 #>
@@ -571,6 +621,12 @@ foreach (var apiObject in model.Objects.Values)
         /// </summary>
 <#
     	}
+        if(property.IsAdditionalProperties)
+        {
+#>
+        [JsonExtensionData]
+<#
+        }
 		if(!string.IsNullOrWhiteSpace(property.OriginalName) && property.OriginalName != property.Name)
 		{
 #>
@@ -611,6 +667,11 @@ foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any())
 <#
 	foreach (var property in header.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 	{
+    // this if a whitespace line to separate properties, do not delete !
+#>
+
+<#
+
 	    if (!string.IsNullOrWhiteSpace(property.Description))
 	    {
 #>
@@ -619,7 +680,12 @@ foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any())
         /// </summary>
 <#
 		}
-
+        if(property.IsAdditionalProperties)
+        {
+#>
+        [JsonExtensionData]
+<#
+        }
 		if(!string.IsNullOrWhiteSpace(property.OriginalName) && property.OriginalName != property.Name)
 		{
 #>
@@ -698,6 +764,10 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
 
 	foreach (var property in respHeader.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 	{
+    // this if a whitespace line to separate properties, do not delete !
+#>
+
+<#
 	    if (!string.IsNullOrWhiteSpace(property.Description))
 	    {
 #>
@@ -706,7 +776,12 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Prope
         /// </summary>
 <#
 	    }
-
+        if(property.IsAdditionalProperties)
+        {
+#>
+        [JsonExtensionData]
+<#
+        }
 		if(!string.IsNullOrWhiteSpace(property.OriginalName) && property.OriginalName != property.Name)
 		{
 #>
@@ -757,6 +832,10 @@ foreach (var apiObject in model.ApiRequestObjects)
 <#
 	foreach (var property in apiObject.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 	{
+    // this if a whitespace line to separate properties, do not delete !
+#>
+
+<#
 	    if (!string.IsNullOrWhiteSpace(property.Description))
 	    {
 #>
@@ -794,9 +873,12 @@ foreach (var apiObject in model.ApiResponseObjects)
     {
 
 <#
-
 	foreach (var property in apiObject.Properties.Where(p => p != null && p.Type != null && p.Name != null && p.Name != "Content").ToArray())
 	{
+    // this if a whitespace line to separate properties, do not delete !
+#>
+
+<#
 	    if (!string.IsNullOrWhiteSpace(property.Description))
 	    {
 #>
@@ -828,12 +910,30 @@ foreach (var apiObject in model.ApiResponseObjects)
 					return typedContent;
 
 		        typedContent = new <#= body.Type #>();
-		        var task = Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode), Formatters).ConfigureAwait(false)
-                            : RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode)).ConfigureAwait(false);
+
+                IEnumerable<string> values = new List<string>();
+                if (RawContent != null && RawContent.Headers != null)
+                    RawContent.Headers.TryGetValues("Content-Type", out values);
+
+                if (values.Any(hv => hv.ToLowerInvariant().Contains("xml")) &&
+                    !values.Any(hv => hv.ToLowerInvariant().Contains("json")))
+                {
+                    var task = RawContent.ReadAsStreamAsync();
+
+                    var xmlStream = task.GetAwaiter().GetResult();
+                    var content = new XmlSerializer(typedContent.GetTypeByStatusCode(StatusCode)).Deserialize(xmlStream);
+                    typedContent.SetPropertyByStatusCode(StatusCode, content);
+                }
+                else
+                {
+		            var task = Formatters != null && Formatters.Any() 
+                                ? RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode), Formatters).ConfigureAwait(false)
+                                : RawContent.ReadAsAsync(typedContent.GetTypeByStatusCode(StatusCode)).ConfigureAwait(false);
 		        
-		        var content = task.GetAwaiter().GetResult();
-		        typedContent.SetPropertyByStatusCode(StatusCode, content);
+		            var content = task.GetAwaiter().GetResult();
+                    typedContent.SetPropertyByStatusCode(StatusCode, content);
+                }
+
 		        return typedContent;
 	        }
     	}  
@@ -859,11 +959,27 @@ foreach (var apiObject in model.ApiResponseObjects)
 		        if (typedContent != null)
 			        return typedContent;
 
-		        var task =  Formatters != null && Formatters.Any() 
-                            ? RawContent.ReadAsAsync<<#= body.Type #>>(Formatters).ConfigureAwait(false)
-                            : RawContent.ReadAsAsync<<#= body.Type #>>().ConfigureAwait(false);
+                IEnumerable<string> values = new List<string>();
+                if (RawContent != null && RawContent.Headers != null)
+                    RawContent.Headers.TryGetValues("Content-Type", out values);
+
+                if (values.Any(hv => hv.ToLowerInvariant().Contains("xml")) &&
+                    !values.Any(hv => hv.ToLowerInvariant().Contains("json")))
+                {
+                    var task = RawContent.ReadAsStreamAsync();
+
+                    var xmlStream = task.GetAwaiter().GetResult();
+                    typedContent = (<#= body.Type #>)new XmlSerializer(typeof(<#= body.Type #>)).Deserialize(xmlStream);
+                }
+                else
+                {
+                    var task =  Formatters != null && Formatters.Any() 
+                                ? RawContent.ReadAsAsync<<#= body.Type #>>(Formatters).ConfigureAwait(false)
+                                : RawContent.ReadAsAsync<<#= body.Type #>>().ConfigureAwait(false);
 		        
-		        typedContent = task.GetAwaiter().GetResult();
+		            typedContent = task.GetAwaiter().GetResult();
+                }
+
 		        return typedContent;
 	        }
 	    }
