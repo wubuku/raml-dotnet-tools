@@ -258,6 +258,14 @@ namespace Raml.Tools.Tests
             Assert.IsTrue(model.Objects.Any(o => o.Properties.Any(p => p.IsAdditionalProperties)));
         }
 
+        [Test]
+        public async Task ShouldParseTratisWith2Responses()
+        {
+            var model = await GetIssue37GeneratedModel();
+            Assert.AreEqual(3, model.Objects.Count());
+        }
+
+
         private static string GetXml(string comment)
         {
             if (string.IsNullOrWhiteSpace(comment))
@@ -407,5 +415,12 @@ namespace Raml.Tools.Tests
             return model;
         }
 
+        private static async Task<WebApiGeneratorModel> GetIssue37GeneratedModel()
+        {
+            var raml = await new RamlParser().LoadAsync("files/issue37.raml");
+            var model = new WebApiGeneratorService(raml, "TargetNamespace").BuildModel();
+
+            return model;
+        }
     }
 }

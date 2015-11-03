@@ -64,6 +64,7 @@ namespace MuleSoft.RAML.Tools
             var packs = installerServices.GetInstalledPackages(proj).ToArray();
             NugetInstallerHelper.InstallPackageIfNeeded(proj, packs, installer, newtonsoftJsonPackageId, newtonsoftJsonPackageVersion);
             NugetInstallerHelper.InstallPackageIfNeeded(proj, packs, installer, microsoftNetHttpPackageId, microsoftNetHttpPackageVersion);
+            
             NugetInstallerHelper.InstallPackageIfNeeded(proj, packs, installer, webApiCorePackageId, webApiCorePackageVersion);
 
             // RAML.Api.Core

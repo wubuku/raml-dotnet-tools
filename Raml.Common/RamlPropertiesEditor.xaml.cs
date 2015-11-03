@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using Microsoft.Internal.VisualStudio.PlatformUI;
 using Raml.Common.Annotations;
 
 namespace Raml.Common
@@ -102,11 +103,13 @@ namespace Raml.Common
             };
             
             RamlPropertiesManager.Save(ramlProperties, ramlPath);
+            DialogResult = true;
             Close();
         }
 
         private void CancelButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
+            DialogResult = false;
             Close();
         }
 

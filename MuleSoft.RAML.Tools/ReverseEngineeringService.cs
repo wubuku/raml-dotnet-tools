@@ -20,6 +20,8 @@ namespace MuleSoft.RAML.Tools
         private readonly string ramlWebApiExplorerPackageVersion = Settings.Default.RAMLWebApiExplorerPackageVersion;
         private readonly string ramlParserPackageId = Settings.Default.RAMLParserPackageId;
         private readonly string ramlParserPackageVersion = Settings.Default.RAMLParserPackageVersion;
+        private readonly string ramlApiCorePackageId = Settings.Default.RAMLApiCorePackageId;
+        private readonly string ramlApiCorePackageVersion = Settings.Default.RAMLApiCorePackageVersion;
 
 
         private readonly IServiceProvider serviceProvider;
@@ -127,6 +129,13 @@ namespace MuleSoft.RAML.Tools
             if (!installerServices.IsPackageInstalled(proj, ramlParserPackageId))
             {
                 installer.InstallPackage(nugetPackagesSource, proj, ramlParserPackageId, ramlParserPackageVersion, false);
+            }
+
+            // RAML.Api.Core
+            if (!installerServices.IsPackageInstalled(proj, ramlApiCorePackageId))
+            {
+                //installer.InstallPackage(nugetPackagesSource, proj, ramlApiCorePackageId, ramlApiCorePackageVersion, false);
+                installer.InstallPackage(nugetPackagesSource, proj, ramlApiCorePackageId, ramlApiCorePackageVersion, false);
             }
 
             // RAML.WebApiExplorer
