@@ -1,0 +1,23 @@
+#%RAML 1.0
+title: Simple API
+mediaType: application/json
+schemas:
+  - animals: !include schemas/animals.json
+annotationTypes:
+  - searchable:
+  - sortable:
+  - list:
+       allowedTargets: Method
+/animals:
+ get:
+   (list):
+   queryParameters:
+     kind:
+       (sortable):
+       (searchable):
+   responses:
+     200:
+       body:
+         application/json:
+           schema: animals
+           example: !include ./examples/animals.json

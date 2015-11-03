@@ -1,0 +1,8 @@
+{
+	"patternProperties" : {
+		"[a-zA-Z0-9_]+" : {
+			"type" : [ "array", "boolean", "integer", "number", "null", "object", "string" ]
+		}
+	} ,
+	"additionalProperties" : false
+}

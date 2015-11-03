@@ -1,0 +1,12 @@
+#%RAML 1.0 Library
+title: Annotations
+annotationTypes:
+  - paging:
+      allowedTargets: method
+      parameters:
+        pageSize:
+          type: pointer
+          target: *.DataElement
+        offset:
+          type: pointer
+          target: *.DataElement

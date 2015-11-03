@@ -1,0 +1,11 @@
+#%RAML 1.0
+title: My Api
+annotationTypes:
+ - paged:
+    description: This annotation takes one parameter of type number
+    parameters:
+      value:
+        type: boolean
+        required: true
+/list:
+  (paged): true

@@ -1,0 +1,103 @@
+{
+	"type" : "object" ,
+	"$schema" : "http://json-schema.org/draft-03/schema" ,
+	"required" : true ,
+	"properties" : {
+		"results" : {
+			"type" : "array" ,
+			"required" : true ,
+			"items" : {
+				"type" : "object" ,
+				"required" : false ,
+				"properties" : {
+					"name" : {
+						"type" : "string" ,
+						"required" : true
+					} ,
+					"ACL" : {
+						"type" : "object" ,
+						"required" : true ,
+						"properties" : {
+							"*" : {
+								"type" : "object" ,
+								"required" : true ,
+								"properties" : {
+									"read" : {
+										"type" : "boolean" ,
+										"required" : false
+									} ,
+									"write" : {
+										"type" : "boolean" ,
+										"required" : false
+									}
+								}
+							}
+						} ,
+						"patternProperties" : {
+							"[a-zA-Z0-9_]+" : {
+								"type" : "object" ,
+								"properties" : {
+									"read" : {
+										"type" : "boolean" ,
+										"required" : false
+									} ,
+									"write" : {
+										"type" : "boolean" ,
+										"required" : false
+									}
+								}
+							}
+						} ,
+						"additionalProperties" : false
+					},
+					"objectId" : {
+						"type" : "string" ,
+						"required" : true
+					} ,
+					"createdAt" : {
+						"type" : "string" ,
+						"required" : true
+					} ,		
+					"updatedAt" : {
+						"type" : "string" ,
+						"required" : true
+					} ,
+					"users" : {
+						"type" : "object" ,
+						"required" : true,
+						"properties" : {
+							"__type" : {
+								"type" : "string" ,
+								"required" : true
+							} ,
+								"className" : {
+								"type" : "string",
+								"required" : true
+							}
+						}
+					} ,
+					"roles" : {
+						"type" : "object" ,
+						"required" : true,
+						"properties" : {
+							"__type" : {
+								"type" : "string" ,
+								"required" : true
+							} ,
+			      			"className" : {
+			      				"type" : "string" ,
+								"required" : true
+			      			}
+						}
+					}
+				},
+				"patternProperties" : {
+					"[a-zA-Z0-9_]+" : {
+						"type" : [ "array", "boolean", "integer", "number", "null", "object", "string" ]
+					}
+				}
+			}
+		}
+	} ,
+	"additionalProperties" : false
+}

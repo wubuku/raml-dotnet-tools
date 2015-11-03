@@ -1,0 +1,9 @@
+#%RAML 1.0 Library
+title: This is my library
+traits:
+  - cacheable:
+      queryParameters:
+        cache:
+          type: boolean
+schemas:
+  x: !include bucket-acl.xsd

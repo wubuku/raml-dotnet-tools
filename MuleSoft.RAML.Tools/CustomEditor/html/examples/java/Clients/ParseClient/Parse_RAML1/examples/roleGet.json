@@ -1,0 +1,24 @@
+
+{
+	"createdAt" : "2012-04-28T17:41:09.106Z" ,
+	"objectId" : "mrmBZvsErB" ,
+	"updatedAt" : "2012-04-28T17:41:09.106Z" ,
+	"ACL" : {
+		"*" : {
+			"read" : true
+		} ,
+		"role:Administrators" : {
+			"write" : true
+		}
+	} ,
+	"name" : "Moderators",
+    "roles": {
+      "__type": "Relation",
+      "className": "_Role"
+    },
+    "users": {
+      "__type": "Relation",
+      "className": "_User"
+    }
+	
+}

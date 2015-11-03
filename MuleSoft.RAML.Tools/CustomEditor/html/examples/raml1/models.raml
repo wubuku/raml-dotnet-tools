@@ -1,0 +1,35 @@
+#%RAML 1.0
+title: API with models
+types:
+  - vehicle:
+      type: object
+      properties:
+        kind:
+          type: string
+          required: true
+          example: "car"
+        model: string
+        maximumSpeed:
+          type: number
+          minimum: 0
+        range:
+          type: number
+          minimum: 0
+        hitPoints:
+          type: number
+          minimum: 0
+      discriminator: kind
+  - aircraft:
+       type: vehicle
+       properties:
+         ceiling: number
+         landingSpeed: number
+  - militaryAircraft:
+        type:  aircraft
+        properties:
+          weapons: weapon[]
+  - weapon:
+        type: object
+        properties:
+          name: string
+          damage: number

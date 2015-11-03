@@ -1,0 +1,10 @@
+#%RAML 1.0
+title: Apply Signature
+types:
+  Person:
+    properties:
+      id: string
+      name: string
+      age: number
+/hello:
+  get: (query.personId:number)=>{201:Person}

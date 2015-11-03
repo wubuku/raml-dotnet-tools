@@ -25,7 +25,6 @@
     <AssemblyName>MuleSoft.RAML.Tools</AssemblyName>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
-
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -203,7 +202,6 @@
     </Compile>
     <Compile Include="CustomEditor\NativeMethods.cs" />
     <Compile Include="CustomEditor\VSMacroRecorder.cs" />
-
     <Compile Include="RamlReferenceService.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -732,6 +730,9 @@
     <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\test-request-protocols.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Templates\RAMLWebApi2Scaffolder\ApiEnum.t4">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Resource Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\testdata.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -780,7 +781,6 @@
     <Content Include="node_modules\raml-parser\test\specs\validator.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-
     <Content Include="Resources\MuleSoft-Logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

@@ -1,0 +1,34 @@
+#%RAML 1.0 Library
+types:
+  expression:
+    type: string
+    (validatorProvider): "script to validate expressions in ide"
+    (completionProvider): "script to complete in expressions in ide"
+  script:
+    type: string
+annotationTypes:
+  requiredWhen:
+    allowedTargets: DataElement
+    parameters:
+      value: expression
+  validWhen:
+    allowedTargets: DataElement
+    parameters:
+      value: expression
+  condition:
+    allowedTargets: ExampleSpec
+    parameters:
+      value: expression
+  depricated:
+  validatorProvider:
+    parameters:
+      value: script
+  completionProvider:
+    parameters:
+      value: script
+  location:
+    parameters:
+      value:
+        properties:
+          x: number
+          y: number

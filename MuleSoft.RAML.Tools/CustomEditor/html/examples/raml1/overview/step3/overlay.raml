@@ -1,0 +1,15 @@
+#%RAML 1.0 Overlay
+masterRef: ./api.raml
+title: Products
+uses:
+  types: !include types.raml
+annotationTypes:
+  Tag:
+    parameters:
+      value: string
+/products:
+  get:
+    #using annotations
+    (Tag): "Demo"
+    description: |
+      This method can be used to get a list of products

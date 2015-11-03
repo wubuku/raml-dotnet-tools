@@ -1,0 +1,48 @@
+title: API
+mediaType: application/json
+schemas:
+  - someSchema: !include schemas/someSchema.json
+resourceTypes:
+  - myType:
+      get:
+        description: |
+          Retrieve resource
+        is: myTrait
+      put:
+        description: |
+          Update an existing resource
+        body:
+          application/json:
+        responses:
+          '204':
+            description: |
+              Succesfully updated the resource
+      post:
+        description: |
+          Create a new resource
+        body:
+          application/json:
+        responses:
+          '201':
+            description: |
+              Succesfully created a new resource
+            headers:
+              Location:
+                description: |
+                  Location of the newly created resource
+                type: string
+                required: 'false'
+traits:
+  - myTrait:
+      responses:
+        '200':
+          description: |
+            Succesfully retrieved resource
+/hello:
+  type: myType
+/hello2:
+  put:
+    body:
+      application/json:
+        schema: someSchema
+        example: !include ./examples/someSchema.json

@@ -1,0 +1,12 @@
+#%RAML 1.0
+title: My API
+uses:
+  - lib: !include library.raml
+/person:
+  get:
+    is: lib.cacheable
+    responses:
+      200:
+        body:
+          application/xml:
+            schema: lib.x

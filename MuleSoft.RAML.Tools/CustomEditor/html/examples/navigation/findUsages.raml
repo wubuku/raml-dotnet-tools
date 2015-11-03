@@ -1,0 +1,65 @@
+#%RAML 1.0
+title: API
+mediaType: application/json
+types:
+  - someType:
+        properties:
+          firstProperty: string
+          secondProperty: string
+        example:
+          firstProperty: hello12
+          secondProperty: 3
+annotationTypes:
+  myAnnotation:
+    parameters:
+      name: string
+      data: someType
+resourceTypes:
+  - myType:
+      annotations:
+        myAnnotation:
+          name: hello
+          data:
+            firstProperty: 4
+            secondProperty: 33
+      get:
+        description: |
+          Retrieve resource
+        is: myTrait
+      put:
+        description: |
+          Update an existing resource
+        body:
+          application/json:
+        responses:
+          '204':
+            description: |
+              Succesfully updated the resource
+      post:
+        description: |
+          Create a new resource
+        body:
+          application/json:
+        responses:
+          '201':
+            description: |
+              Succesfully created a new resource
+            headers:
+              Location:
+                description: |
+                  Location of the newly created resource
+                type: string
+                required: 'false'
+traits:
+  - myTrait:
+      responses:
+        '200':
+          description: |
+            Succesfully retrieved resource
+/hello:
+  type: myType
+/hello2:
+  put:
+    body:
+      application/json:
+        schema: someType

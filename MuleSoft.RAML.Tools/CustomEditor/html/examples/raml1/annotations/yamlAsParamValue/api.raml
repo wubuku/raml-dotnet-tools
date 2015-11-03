@@ -1,0 +1,27 @@
+#%RAML 1.0
+title: API
+types:
+  point:
+    type: object
+    properties:
+      x: number
+      y: number
+  figure:
+    type: object
+    properties:
+      points: point[]
+      name?: string
+annotationTypes:
+  annotationWithObject:
+    parameters:
+      value: point
+(annotationWithObject):
+  value:
+    x: 2
+    y: 5
+/locals:
+  get:
+    responses:
+      200:
+        body:
+          point

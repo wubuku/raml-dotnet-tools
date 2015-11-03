@@ -1,0 +1,24 @@
+{
+
+    "apiPath" : "C:/GIT-repos/raml-labs/automation/input/staging/AmazonS3_1/amazonS3Bucket.raml",
+
+    "rootPackage":"com.onpositive.ramlscript.amazon",
+
+    "dstWorkspacePath":"C:/work/ClientGen",
+
+    "projectName":"AmazonClient",
+
+    "jsRoot":"string",
+
+    "pretty":true,
+	
+	"mavenGroupId":"ramlscript-test-client",
+
+    "mavenArtifactId":"amazon-client",
+
+    "mavenArtifactVersion":"v1",
+
+    "forceDelete":true,
+	
+	"javascriptTemporaryFolder": "C:/work/ClientGen/tmp"
+}

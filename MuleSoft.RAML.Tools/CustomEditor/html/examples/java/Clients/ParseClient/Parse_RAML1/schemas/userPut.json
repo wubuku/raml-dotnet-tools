@@ -1,0 +1,11 @@
+{
+	"type" : "object" ,
+	"$schema" : "http://json-schema.org/draft-03/schema" ,
+	"required" : false ,
+	"patternProperties" : {
+		"[a-zA-Z0-9_]+" : {
+			"type" : [ "array", "boolean", "integer", "number", "null", "object", "string" ]
+		}
+	} ,
+	"additionalProperties" : false	
+}

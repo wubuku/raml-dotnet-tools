@@ -1,0 +1,21 @@
+title: Traits sample
+resourceTypes:
+  - item:
+     get:
+       responses:
+         200:
+           body:
+             application/json:
+               schema: <<schema>>
+               example: <<example>>
+     delete:
+
+     put:
+        body:
+           application/json:
+             schema: <<schema>>
+             example: <<example>>
+/cars/{id}:
+  type: { item: {schema : editCar , example : "{}" }}
+
+ 

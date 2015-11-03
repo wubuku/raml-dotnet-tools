@@ -1,0 +1,29 @@
+#%RAML 1.0
+title: Overloading Example
+/actions:
+  get:
+    queryParameters:
+      action:
+        required: true
+        type: string
+        enum: listPages
+/actions:
+  get:
+    queryParameters:
+      action:
+        required: true
+        type: string
+        enum: mergePage
+/actions:
+  get:
+    queryParameters:
+      action:
+        required: true
+        type: string
+        enum: deletePages
+  get:
+    queryParameters:
+      action:
+        required: true
+        type: string
+        enum: createPage

@@ -1,0 +1,14 @@
+#%RAML 1.0
+title: Products
+uses:
+  types: !include types.raml
+/products.get: (query.detailed?:boolean)=>types.Vehicle[]
+/store:
+  get:
+    signature: ()=>types.Product[]
+  post: (body:types.Vehicle)=>{201:types.Vehicle}
+  /{id}:
+    uriParameters:
+      id: number
+    delete:
+      

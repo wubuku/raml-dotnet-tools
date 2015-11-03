@@ -1,0 +1,465 @@
+@font-face {
+    font-family: 'Octicons Regular';
+    src: url(octicons.woff) format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: symbol-icons;
+    src: url(symbol-icons.woff) format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    display: flex;
+    display: -webkit-flex;
+
+    flex-direction: column;
+    -webkit-flex-direction: column;
+}
+
+.fill-parent {
+    display: block;
+    position: absolute;
+
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+}
+
+.flex-fill {
+    flex: 1;
+    -webkit-flex: 1;
+
+    position: relative;
+}
+
+.flex-row-initial {
+    display: flex;
+    display: -webkit-flex;
+
+    flex: initial;
+    -webkit-flex: initial;
+
+    flex-direction: row;
+    -webkit-flex-direction: row;
+
+    position: relative;
+}
+
+.flex-row-fill {
+    display: flex;
+    display: -webkit-flex;
+
+    flex: 1;
+    -webkit-flex: 1;
+
+    flex-direction: row;
+    -webkit-flex-direction: row;
+
+    position: relative;
+}
+
+.flex-column-initial {
+    display: flex;
+    display: -webkit-flex;
+
+    flex: initial;
+    -webkit-flex: initial;
+
+    flex-direction: column;
+    -webkit-flex-direction: column;
+
+    position: relative;
+}
+
+.flex-column-fill {
+    display: flex;
+    display: -webkit-flex;
+
+    flex: 1;
+    -webkit-flex: 1;
+
+    flex-direction: column;
+    -webkit-flex-direction: column;
+
+    position: relative;
+}
+
+.panel-group {
+    display: flex;
+    display: -webkit-flex;
+
+    flex: 1;
+    -webkit-flex: 1;
+
+    flex-direction: column;
+    -webkit-flex-direction: column;
+}
+
+.panel-group .spec-menu-shown {
+    display: flex;
+    display: -webkit-flex;
+
+    flex-direction: column;
+    -webkit-flex-direction: column;
+
+    flex: 1;
+    -webkit-flex: 1;
+}
+
+.panel-group .spec-menu-hidden {
+    display: flex;
+    display: -webkit-flex;
+
+    flex-direction: column;
+    -webkit-flex-direction: column;
+
+    flex: initial;
+    -webkit-flex: initial;
+}
+
+.menu-tree .list-group,
+.menu-tree .list-group .list-group-item {
+    border: none;
+    padding: 0px;
+    margin: 0px;
+    position: static;
+    background-color: transparent;
+}
+.menu-tree .list-group,
+.menu-tree .list-tree {
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+    cursor: default;
+}
+.menu-tree .list-group li:not (.list-nested-item ),
+.menu-tree .list-tree li:not (.list-nested-item
+	),
+.menu-tree .list-group li.list-nested-item>.list-item,
+.menu-tree .list-tree li.list-nested-item>.list-item {
+    line-height: 25px;
+    white-space: nowrap;
+}
+.menu-tree .list-group .selected::before,
+.menu-tree .list-tree .selected::before {
+
+}
+
+.menu-tree .list-group .selected>*,
+.menu-tree .list-tree .selected>* {
+    position: relative;
+}
+.menu-tree .list-group .icon::before,
+.menu-tree .list-tree .icon::before {
+    margin-right: 5px;
+    position: relative;
+    top: 1px;
+}
+.menu-tree .list-group .no-icon,
+.menu-tree .list-tree .no-icon {
+    padding-left: 21px;
+}
+.menu-tree .list-tree .list-nested-item>.list-tree>li,
+.menu-tree .list-tree .list-nested-item>.list-group>li {
+    padding-left: 21px;
+}
+.menu-tree .list-tree.has-collapsable-children li.list-item {
+    margin-left: 17px;
+}
+.menu-tree .list-tree.has-collapsable-children .list-nested-item.collapsed>.list-group,
+.menu-tree .list-tree.has-collapsable-children .list-nested-item.collapsed>.list-tree {
+    display: none;
+}
+.menu-tree .list-tree.has-collapsable-children .list-nested-item>.list-item::before {
+    font-family: 'Octicons Regular';
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    text-decoration: none;
+    font-size: 12px;
+    width: 12px;
+    height: 12px;
+    content: '\f0a3';
+}
+.menu-tree .list-tree.has-collapsable-children .list-nested-item>.list-item::before {
+    position: relative;
+    top: -1px;
+    margin-right: 5px;
+}
+.menu-tree .list-tree.has-collapsable-children .list-nested-item.collapsed>.list-item::before {
+    font-family: 'Octicons Regular';
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    text-decoration: none;
+    font-size: 12px;
+    width: 12px;
+    height: 12px;
+    content: '\f078';
+}
+.menu-tree .list-tree.has-collapsable-children .list-nested-item.collapsed>.list-item::before {
+    left: 1px;
+}
+.menu-tree .list-tree.has-collapsable-children .list-nested-item>.list-tree>li,
+.menu-tree .list-tree.has-collapsable-children .list-nested-item>.list-group>li {
+    padding-left: 17px;
+}
+.menu-tree .list-tree.has-collapsable-children .has-flat-children li.list-item,
+.menu-tree .list-tree.has-collapsable-children.has-flat-children li.list-item {
+    margin-left: 0px;
+}
+.menu-tree .select-list.popover-list {
+    width: 200px;
+    min-width: 200px;
+    margin-left: 0px;
+    position: relative;
+}
+.menu-tree .select-list.popover-list ol.list-group {
+    position: relative;
+    overflow-y: scroll;
+    max-height: 200px;
+}
+.menu-tree .list-tree li.list-nested-item.text-subtle>.list-item {
+    font-weight: normal;
+    color: rgba(157,165,180,0.6);
+}
+.menu-tree .list-group li:not (.list-nested-item ).text-info,
+.menu-tree .list-tree li:not (.list-nested-item
+	).text-info,
+.menu-tree .list-group li.list-nested-item.text-info>.list-item,
+.menu-tree .list-tree li.list-nested-item.text-info>.list-item {
+    color: #6494ed;
+}
+.menu-tree .list-group li:not (.list-nested-item ).text-success,
+.menu-tree .list-tree li:not
+	(.list-nested-item ).text-success,
+.menu-tree .list-group li.list-nested-item.text-success>.list-item,
+.menu-tree .list-tree li.list-nested-item.text-success>.list-item {
+    color: #73c990;
+}
+.menu-tree .list-group li:not (.list-nested-item ).text-warning,
+.menu-tree .list-tree li:not
+	(.list-nested-item ).text-warning,
+.menu-tree .list-group li.list-nested-item.text-warning>.list-item,
+.menu-tree .list-tree li.list-nested-item.text-warning>.list-item {
+    color: #e2c08d;
+}
+.menu-tree .list-group li:not (.list-nested-item ).text-error,
+.menu-tree .list-tree li:not (.list-nested-item
+	).text-error,
+.menu-tree .list-group li.list-nested-item.text-error>.list-item,
+.menu-tree .list-tree li.list-nested-item.text-error>.list-item {
+    color: #ff6347;
+}
+.menu-tree .list-group li:not (.list-nested-item ).text-selected,
+.menu-tree .list-tree li:not
+	(.list-nested-item ).text-selected,
+.menu-tree .list-group li.list-nested-item.text-selected>.list-item,
+.menu-tree .list-tree li.list-nested-item.text-selected>.list-item {
+    font-weight: normal;
+    color: #d7dae0;
+}
+.menu-tree .list-group li:not (.list-nested-item ).status-added,
+.menu-tree .list-tree li:not
+	(.list-nested-item ).status-added,
+.menu-tree .list-group li.list-nested-item.status-added>.list-item,
+.menu-tree .list-tree li.list-nested-item.status-added>.list-item {
+    color: #73c990;
+}
+.menu-tree .list-group li:not (.list-nested-item ).selected.status-added,
+.menu-tree .list-tree li:not (.list-nested-item ).selected.status-added,
+.menu-tree .list-group li.list-nested-item.selected.status-added>.list-item,
+.menu-tree .list-tree li.list-nested-item.selected.status-added>.list-item {
+    color: #73c990;
+}
+.menu-tree .list-group li:not (.list-nested-item ).status-ignored,
+.menu-tree .list-tree li:not
+	(.list-nested-item ).status-ignored,
+.menu-tree .list-group li.list-nested-item.status-ignored>.list-item,
+.menu-tree .list-tree li.list-nested-item.status-ignored>.list-item {
+    color: rgba(157,165,180,0.6);
+}
+.menu-tree .list-group li:not (.list-nested-item ).selected.status-ignored,
+.menu-tree .list-tree li:not (.list-nested-item ).selected.status-ignored,
+.menu-tree .list-group li.list-nested-item.selected.status-ignored>.list-item,
+.menu-tree .list-tree li.list-nested-item.selected.status-ignored>.list-item {
+    color: rgba(157,165,180,0.6);
+}
+.menu-tree .list-group li:not (.list-nested-item ).status-modified,
+.menu-tree .list-tree li:not
+	(.list-nested-item ).status-modified,
+.menu-tree .list-group li.list-nested-item.status-modified>.list-item,
+.menu-tree .list-tree li.list-nested-item.status-modified>.list-item {
+    color: #e2c08d;
+}
+.menu-tree .list-group li:not (.list-nested-item ).selected.status-modified,
+.menu-tree .list-tree li:not (.list-nested-item ).selected.status-modified,
+.menu-tree .list-group li.list-nested-item.selected.status-modified>.list-item,
+.menu-tree .list-tree li.list-nested-item.selected.status-modified>.list-item {
+    color: #e2c08d;
+}
+.menu-tree .list-group li:not (.list-nested-item ).status-removed,
+.menu-tree .list-tree li:not
+	(.list-nested-item ).status-removed,
+.menu-tree .list-group li.list-nested-item.status-removed>.list-item,
+.menu-tree .list-tree li.list-nested-item.status-removed>.list-item {
+    color: #ff6347;
+}
+.menu-tree .list-group li:not (.list-nested-item ).selected.status-removed,
+.menu-tree .list-tree li:not (.list-nested-item ).selected.status-removed,
+.menu-tree .list-group li.list-nested-item.selected.status-removed>.list-item,
+.menu-tree .list-tree li.list-nested-item.selected.status-removed>.list-item {
+    color: #ff6347;
+}
+.menu-tree .list-group li:not (.list-nested-item ).status-renamed,
+.menu-tree .list-tree li:not
+	(.list-nested-item ).status-renamed,
+.menu-tree .list-group li.list-nested-item.status-renamed>.list-item,
+.menu-tree .list-tree li.list-nested-item.status-renamed>.list-item {
+    color: #6494ed;
+}
+.menu-tree .list-group li:not (.list-nested-item ).selected.status-renamed,
+.menu-tree .list-tree li:not (.list-nested-item ).selected.status-renamed,
+.menu-tree .list-group li.list-nested-item.selected.status-renamed>.list-item,
+.menu-tree .list-tree li.list-nested-item.selected.status-renamed>.list-item {
+    color: #6494ed;
+}
+.menu-tree .list-group li:not (.list-nested-item ).selected,
+.menu-tree .list-tree li:not (.list-nested-item
+	).selected,
+.menu-tree .list-group li.list-nested-item.selected>.list-item,
+.menu-tree .list-tree li.list-nested-item.selected>.list-item {
+    font-weight: normal;
+    color: #d7dae0;
+}
+.menu-tree .list-group .no-icon,
+.menu-tree .list-tree .no-icon {
+    padding-left: calc(16.45454545em);
+}
+.menu-tree .list-tree.has-collapsable-children .list-nested-item>.list-item::before {
+    text-align: center;
+}
+.menu-tree .select-list ol.list-group li.two-lines .secondary-line,
+.menu-tree .select-list ol.list-group li.two-lines .secondary-line {
+    color: rgba(157,165,180,0.6);
+}
+.menu-tree .select-list ol.list-group li.two-lines.selected .secondary-line,
+.menu-tree .select-list ol.list-group li.two-lines.selected .secondary-line {
+    color: rgba(215,218,224,0.498039);
+    text-shadow: none;
+}
+.menu-tree .select-list ol.list-group li.selected,
+.menu-tree .select-list ol.list-group li.selected {
+    background-color: #3a3f4b;
+}
+.menu-tree .select-list ol.list-group li.selected::before,
+.menu-tree .select-list ol.list-group li.selected::before {
+    display: none;
+}
+.menu-tree .select-list ol.list-group.mark-active li::before,
+.menu-tree .select-list ol.list-group.mark-active li::before {
+    content: '';
+    position: static;
+    display: inline-block;
+    left: auto;
+    right: auto;
+    height: 14px;
+    width: 14px;
+    background-color: transparent;
+}
+.menu-tree .select-list ol.list-group.mark-active>li:not (.active )::before,
+.menu-tree .select-list ol.list-group.mark-active>li:not (.active )::before {
+    margin-right: 0.45454545em;
+}
+.menu-tree .select-list ol.list-group.mark-active li.active::before,
+.menu-tree .select-list ol.list-group.mark-active li.active::before {
+    font-family: 'Octicons Regular';
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    text-decoration: none;
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    content: '\f03a';
+}
+.menu-tree .select-list ol.list-group.mark-active li.active::before,
+.menu-tree .select-list ol.list-group.mark-active li.active::before {
+    margin-right: 0.45454545em;
+    color: #73c990;
+}
+.menu-tree .select-list.popover-list {
+    box-shadow: rgba(0,0,0,0.298039) 0px 2px 8px 1px;
+    padding: 0.375em;
+    border-radius: 3px;
+    background-color: #282c34;
+}
+.menu-tree .select-list.popover-list atom-text-editor[mini] {
+    margin-bottom: 0.375em;
+}
+.menu-tree .select-list.popover-list ol.list-group {
+    margin-top: 0.375em;
+}
+.menu-tree .select-list.popover-list .list-group li {
+    padding-left: 0.375em;
+}
+.menu-tree .ui-sortable li {
+    line-height: 2.5;
+}
+.menu-tree .ui-sortable li.ui-sortable-placeholder {
+    visibility: visible !important;
+    background-color: #121417;
+}
+.menu-tree li.ui-draggable-dragging,
+.menu-tree li.ui-sortable-helper {
+    line-height: 2em;
+    height: 2em;
+    border: 0px;
+    border-radius: 0px;
+    list-style: none;
+    padding: 0px 1.5em;
+    box-shadow: #181a1f 0px 0px 1px;
+    background: #31363f;
+}
+.menu-tree ul.background-message {
+    font-weight: bold;
+    color: rgba(157,165,180,0.2);
+}
+.menu-tree .nav-tabs {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #181a1f;
+}
+.menu-tree .nav-tabs li a,
+.menu-tree .nav-tabs li.active a {
+    border: none;
+    margin-right: 0px;
+    margin-bottom: 1px;
+}
+.menu-tree .nav-tabs li a:hover,
+.menu-tree .nav-tabs li.active a,
+.menu-tree .nav-tabs li.active a:hover {
+    border: none;
+    color: #ffffff;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    background-color: #31363f;
+}
+.menu-tree .nav-tabs li.active a {
+    background-color: #282c34;
+}
+
+.menu-tree ul {
+    outline: none !important;
+}

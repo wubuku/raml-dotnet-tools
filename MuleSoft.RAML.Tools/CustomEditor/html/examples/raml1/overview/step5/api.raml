@@ -1,0 +1,45 @@
+#%RAML 1.0
+title: Products
+uses:
+  types: !include types.raml
+  common: !include common.raml
+annotationTypes:
+  Tag:
+    parameters:
+      value: string
+/products:
+  get:
+    #using annotations
+    (Tag): "Demo"
+    queryParameters:
+      defailed: boolean
+    responses:
+      200:
+        body:
+          application/json:
+            #using type from library
+            type: types.Vehicle[]
+            examples:
+              simpleVehicle:
+                (common.condition): detailed==false
+                strict: true
+                content: |
+                  [
+                  {
+                    "name":"Ford"
+                  },
+                  {
+                    "name": "Toyota"
+                  }
+                  ]
+              complexVehicles:
+                (common.condition): detailed==true
+                strict: false
+                content: |
+                  [
+                    {
+                      "name": "Ford"
+                      "ownedBy": "Mike"
+                      "price": 3000
+                    }
+                  ]

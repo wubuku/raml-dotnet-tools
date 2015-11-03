@@ -1,0 +1,16 @@
+#%RAML 1.0
+title: test
+mediaType: application/json
+/testResource:
+  displayName: dd
+  get:
+    responses:
+      200:
+        body:
+          application/xml:
+            schema: bodyddxml
+            example: !include ./examples/bodydd.xml
+
+          application/json:
+            schema: bodydd
+            example: !include ./examples/bodydd.json

@@ -1,0 +1,17 @@
+#%RAML 0.8
+title: Drone Control
+version: v1
+baseUri: http://samplehost.com
+/helloWorld:
+  get:
+    responses:
+      201:
+        
+
+      200:
+         body:
+           application/json:
+             example: |
+               {
+                   "message":"hello world"
+               }

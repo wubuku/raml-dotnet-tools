@@ -1,0 +1,34 @@
+#%RAML 1.0
+traits:
+resourceTypes:
+
+  zzz:
+    get:
+      displayName: <<ddd>>
+      responses:
+
+        200:
+          body:
+            application/json:
+              type: <<ddd>>
+title: A
+annotationTypes:
+  deede:
+    parameters:
+      ffff: number
+/hello:
+  (deede):
+    ffff: 3
+  post:
+    headers:
+      Content-Encoding:
+  patch:
+    headers:
+    responses:
+      200:
+/dd:
+  type: [zzz:{ddd: integer }]
+/zzz:
+  type:
+    zzz:
+      ddd: integer

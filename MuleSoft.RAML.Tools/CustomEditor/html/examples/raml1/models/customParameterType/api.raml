@@ -1,0 +1,16 @@
+#%RAML 1.0
+title: API
+types:
+  colour:
+    type: string
+    description: Colour of the item
+    enum:
+      - red
+      - green
+      - black
+      - yellow
+/q:
+  get:
+    queryParameters:
+      color:
+        type: colour

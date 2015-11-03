@@ -1,0 +1,13 @@
+#%RAML 1.0 Library
+types:
+  expression:
+    type: value
+    (workbenchModel): { value: "ramlexpressionModel"}
+annotationTypes:
+  workbenchModel:
+    parameters:
+      value: string
+  condition:
+    parameters:
+      value: expression
+    allowedTargets: ExampleSpec

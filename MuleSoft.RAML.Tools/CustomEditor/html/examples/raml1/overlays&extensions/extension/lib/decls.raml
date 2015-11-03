@@ -1,0 +1,25 @@
+#%RAML 1.0 Library
+title: My Library
+annotationTypes:
+  important:
+types:
+  - Url:
+      type: string
+      pattern:  |
+        dd
+  - Entity:
+      properties:
+        type: object
+        name: string
+        id: number
+        kind: string
+        icon_url:
+          type: Url[]
+        createdAt: date
+        modifiedAt: date
+        createdBy: User
+  - User:
+      type: Entity
+      properties:
+        createdItems:
+          type: Entity[]

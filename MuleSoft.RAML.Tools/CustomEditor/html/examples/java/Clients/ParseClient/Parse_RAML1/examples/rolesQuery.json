@@ -1,0 +1,22 @@
+{
+	"results": [{
+		"ACL": {
+			"*": {
+				"read": true,
+				"write": true
+			}
+		},
+		"createdAt": "2015-05-22T01:10:36.824Z",
+		"name": "Programmer",
+		"objectId": "dKtyiMwOnn",
+		"roles": {
+			"__type": "Relation",
+			"className": "_Role"
+		},
+		"updatedAt": "2015-05-22T01:10:38.224Z",
+		"users": {
+			"__type": "Relation",
+			"className": "_User"
+		}
+	}]
+}

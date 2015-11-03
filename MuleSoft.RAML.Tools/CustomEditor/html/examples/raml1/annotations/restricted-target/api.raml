@@ -1,0 +1,13 @@
+#%RAML 1.0
+title: My Api
+annotationTypes:
+  - paged:
+      description: This annotation can only be applied to a Method element
+      allowedTargets: Method
+      parameters:
+        sizeOfPage:
+          type: number
+/list:
+  get:
+    (paged):
+      sizeOfPage: 8

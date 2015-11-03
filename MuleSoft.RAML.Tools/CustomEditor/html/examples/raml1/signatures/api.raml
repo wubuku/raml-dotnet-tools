@@ -1,0 +1,38 @@
+#%RAML 1.0
+title: New API
+version: v1
+mediaType: application/json
+baseUri: http://api.samplehost.com
+types:
+  Person:
+    type: object
+    properties:
+      name: string
+      [pets]: Pet
+  Dog:
+    type: object
+  Lizard:
+  Pet:
+    type: Dog| Lizard
+  Foo:
+    type: object
+
+/friends.get: (query.body:number)=>Person[]
+/friends:
+  get:
+    is:
+    signature: (query.body:number)=>Person[]
+    description: some description
+/rpc:
+  get: (query.limit:number)
+  /getAllFoos.get:   (query.limit:Pet ) => void
+  /getAllBars.get:   (query.limit:number ) => Foo[]
+  /getAllBlabas.get: (query.limit:number ) => Foo[]
+  /getAllNacs.get:   (query.limit:number ) => Foo[]
+/dd:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            schema: Person[]
