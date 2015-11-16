@@ -51,8 +51,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EdgeJs, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Edge.js.0.9.2\lib\EdgeJs.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.ComponentModelHost, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
@@ -90,8 +90,8 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Raml.Parser, Version=0.8.103.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Raml.Parser.0.8.103\lib\net45\Raml.Parser.dll</HintPath>
+    <Reference Include="Raml.Parser, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Raml.Parser.0.9.9\lib\net45\Raml.Parser.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -213,202 +213,210 @@
       <SubType>Designer</SubType>
     </None>
     <Content Include="edge\x64\edge.node">
-      <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="edge\x86\edge.node">
-      <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\bower.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="node_modules\raml-parser\legal\apache_license.pdf">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\inflection\bower.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\inflection\component.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <None Include="node_modules\raml-parser\node_modules\inflection\History.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Content Include="node_modules\raml-parser\node_modules\inflection\package.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <None Include="node_modules\raml-parser\node_modules\inflection\Readme.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Content Include="node_modules\raml-parser\node_modules\json-lint\package.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <None Include="node_modules\raml-parser\node_modules\json-lint\README.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\node_modules\json-lint\test\src\files\clean\comments.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\node_modules\json-lint\test\src\files\clean\multi-comment.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\node_modules\json-lint\test\src\files\clean\nested.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\node_modules\json-lint\test\src\files\clean\Numeric.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\node_modules\json-lint\test\src\files\clean\pit.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\node_modules\json-lint\test\src\files\clean\strings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\node_modules\json-lint\test\src\files\invalid\empty.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\node_modules\json-lint\test\src\files\invalid\endofarray.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\node_modules\json-lint\test\src\files\invalid\multi-object.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\node_modules\json-lint\test\src\files\invalid\nocomments.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\node_modules\json-lint\test\src\files\invalid\nomulticomment.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\node_modules\json-lint\test\src\files\invalid\string.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\node_modules\q\CONTRIBUTING.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Content Include="node_modules\raml-parser\node_modules\q\package.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <None Include="node_modules\raml-parser\node_modules\q\README.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\own-testcases.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\package.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <None Include="node_modules\raml-parser\node_modules\uritemplate\README.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\node_modules\xmlhttprequest\autotest.watchr">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\package.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <None Include="node_modules\raml-parser\node_modules\xmlhttprequest\README.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Content Include="node_modules\raml-parser\package.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\README.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\composer.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\construct.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\errors.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\events.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\joiner.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\loader.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\nodes.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\parser.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\protocols.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\raml.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\reader.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\resolver.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\resourceTypes.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\scanner.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\schemas.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\securitySchemes.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\tokens.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\traits.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\transformations.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\util.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\src\validator.coffee">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <None Include="node_modules\raml-parser\test\raml-files\customtrait.yml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\test\raml-files\external.yaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\test\raml-files\external.yml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\test\raml-files\gettingstarted.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\test\raml-files\large-raml.yml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\test\raml-files\local.yml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\test\raml-files\regression.yml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\test\raml-files\root.yml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\test\raml-files\RT-261.raml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="node_modules\raml-parser\test\raml-files\traitsAtResourceLevel.yml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\inherits\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\inherits\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\doc\stream.markdown"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\doc\wg-meetings\2015-01-30.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\core-util-is\float.patch"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\core-util-is\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\core-util-is\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\isarray\component.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\isarray\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\isarray\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\process-nextick-args\license.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\process-nextick-args\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\process-nextick-args\readme.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\string_decoder\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\string_decoder\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\util-deprecate\History.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\util-deprecate\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\util-deprecate\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\typedarray\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\typedarray\readme.markdown"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\concat-stream\readme.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\esprima\LICENSE.BSD"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\esprima\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\esprima\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\http-response-object\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\http-response-object\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\json-schema-compatibility\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\json-schema-compatibility\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\node_modules\jsonify\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\node_modules\jsonify\README.markdown"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\readme.markdown"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\CONTRIBUTING.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\emacs\http-headers.el"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\emacs\http-methods.el"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\emacs\http-relations.el"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\emacs\http-status-codes.el"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\emacs\know-your-http-well.el"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\headers.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\json\headers.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\json\methods.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\json\relations.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\json\status-codes.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\methods.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\node_modules\amdefine\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\node_modules\amdefine\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\relations.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\specs.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\status-codes.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\loophole\LICENSE.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\loophole\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\loophole\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\lrucache\bower.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\lrucache\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\lrucache\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\media-typer\HISTORY.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\media-typer\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\media-typer\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\appveyor.yml"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\lib\json-buffer\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\node_modules\os-shim\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\node_modules\os-shim\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\then-request\dist\request.js.map"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\then-request\dist\request.min.js.map"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\caseless\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\caseless\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\http-basic\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\http-basic\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\promise\node_modules\asap\LICENSE.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\promise\node_modules\asap\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\promise\node_modules\asap\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\promise\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\promise\Readme.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\qs\CHANGELOG.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\qs\CONTRIBUTING.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\qs\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\qs\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\then-request\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\then-request\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\typescript\AUTHORS.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\typescript\CONTRIBUTING.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\typescript\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\typescript\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\typescript\tslint.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\underscore\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\underscore\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\underscore\underscore-min.map"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\xmldom\component.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\xmldom\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\xmldom\readme.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\dist\ZSchema-browser-min.js.map"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\commander\History.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\commander\node_modules\graceful-readlink\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\commander\node_modules\graceful-readlink\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\commander\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\commander\Readme.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\lodash.get\node_modules\lodash._baseget\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\lodash.get\node_modules\lodash._baseget\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\lodash.get\node_modules\lodash._topath\node_modules\lodash.isarray\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\lodash.get\node_modules\lodash._topath\node_modules\lodash.isarray\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\lodash.get\node_modules\lodash._topath\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\lodash.get\node_modules\lodash._topath\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\lodash.get\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\lodash.get\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\CHANGELOG.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\CONTRIBUTING.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\aws-sign2\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\aws-sign2\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\bl\LICENSE.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\bl\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\bl\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\caseless\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\caseless\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\combined-stream\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\combined-stream\Readme.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\extend\CHANGELOG.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\extend\component.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\extend\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\extend\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\forever-agent\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\forever-agent\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\form-data\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\form-data\Readme.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\schemas\cache.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\schemas\cacheEntry.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\schemas\content.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\schemas\cookie.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\schemas\creator.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\schemas\entry.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\schemas\har.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\schemas\log.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\schemas\page.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\schemas\pageTimings.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\schemas\postData.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\schemas\record.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\schemas\request.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\schemas\response.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\schemas\timings.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\bower.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\component.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\http-signature\http_signing.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\http-signature\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\http-signature\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\isstream\LICENSE.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\isstream\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\isstream\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\json-stringify-safe\CHANGELOG.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\json-stringify-safe\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\json-stringify-safe\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\json-stringify-safe\test\mocha.opts"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\mime-types\HISTORY.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\mime-types\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\mime-types\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\node-uuid\benchmark\bench.gnu"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\node-uuid\benchmark\bench.sh"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\node-uuid\benchmark\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\node-uuid\bower.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\node-uuid\component.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\node-uuid\LICENSE.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\node-uuid\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\node-uuid\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\oauth-sign\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\oauth-sign\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\qs\bower.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\qs\CHANGELOG.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\qs\component.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\qs\CONTRIBUTING.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\qs\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\qs\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\stringstream\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\stringstream\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\tough-cookie\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\tough-cookie\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\tunnel-agent\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\tunnel-agent\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\validator\bower.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\validator\CHANGELOG.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\validator\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\validator\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\src\schemas\hyper-schema.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\src\schemas\schema.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -417,333 +425,254 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <Content Include="edge\double_edge.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="edge\edge.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="edge\x64\node.dll">
-      <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="edge\x86\node.dll">
-      <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\src\pre.txt">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\src\post.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\dist\raml-parser.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\dist\raml-parser.min.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\Gruntfile.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\composer.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\construct.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\errors.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\events.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\joiner.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\loader.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\nodes.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\parser.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\protocols.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\raml.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\reader.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\resolver.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\resourceTypes.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\scanner.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\schemas.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\securitySchemes.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\tokens.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\traits.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\transformations.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\util.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\lib\validator.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\inflection\inflection.min.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\inflection\lib\inflection.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\json-lint\demo\index.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\json-lint\demo\jquery-1.4.2.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\json-lint\demo\jquery-linedtextarea.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\json-lint\demo\jquery-linedtextarea.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\json-lint\demo\js.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\json-lint\demo\styles.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\json-lint\jsonlint.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\json-lint\test\single.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\json-lint\test\src\clean.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\json-lint\test\src\color.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\json-lint\test\src\core.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\json-lint\test\src\files\spec.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\json-lint\test\src\invalid.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\json-lint\test\start.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\q\benchmark\compare-with-callbacks.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\q\benchmark\scenarios.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\q\q.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\q\queue.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\bin\uritemplate-min.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\bin\uritemplate.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\build\fileConcatter.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\build\hinter.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\demo.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\demo_AMD.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\Jakefile.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\require.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\src\charHelper.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\src\encodingHelper.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\src\isDefined.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\src\LiteralExpression.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\src\objectHelper.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\src\operators.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\src\parse.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\src\pctEncoder.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\src\rfcCharHelper.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\src\UriTemplateError.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\src\UriTemplate_.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\src\VariableExpression.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\test\integration\simpleTest.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\test\integration\testExport.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\test\integration\testRfcSamples.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\test\unit\testEncodingHelper.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\test\unit\testIsDefined.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\test\unit\testLiteralExpression.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\test\unit\testObjectHelper.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\test\unit\testPctEncoder.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\test\unit\testUriTemplate.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\test\unit\testUriTemplateError.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\uritemplate\test\unit\testVariableExpression.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\example\demo.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\lib\XMLHttpRequest.js">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\test-constants.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\test-events.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\test-exceptions.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\test-headers.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\test-redirect-302.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\test-redirect-303.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\test-redirect-307.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\test-request-methods.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\test-request-protocols.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\testdata.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Content Include="node_modules\raml-parser\test\specs\duplicateKeysValidations.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\test\specs\errors.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\test\specs\includeResolution.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\test\specs\local.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\test\specs\optionals.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\test\specs\parser.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\test\specs\parser.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\test\specs\protocols.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\test\specs\raml.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\test\specs\regressions.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\test\specs\resourceTypes.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\test\specs\resourceTypesValidations.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\test\specs\traits.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\test\specs\transformations.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="node_modules\raml-parser\test\specs\validator.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\stringstream\LICENSE.txt"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\images\logo.png"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\images\hawk.png"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\lodash.get\node_modules\lodash._baseget\LICENSE.txt"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\lodash.get\LICENSE.txt"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\typescript\ThirdPartyNoticeText.txt"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\typescript\LICENSE.txt"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="node_modules\raml-1-0-parser\node_modules\typescript\CopyrightNotice.txt"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\inherits\inherits.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\inherits\inherits_browser.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\inherits\test.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\duplex.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\lib\_stream_duplex.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\lib\_stream_passthrough.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\lib\_stream_readable.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\lib\_stream_transform.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\lib\_stream_writable.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\core-util-is\lib\util.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\core-util-is\util.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\isarray\build\build.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\isarray\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\process-nextick-args\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\process-nextick-args\test.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\string_decoder\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\util-deprecate\browser.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\node_modules\util-deprecate\node.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\passthrough.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\readable.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\transform.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\writable.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\typedarray\example\tarray.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\typedarray\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\typedarray\test\server\undef_globals.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\typedarray\test\tarray.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\esprima\bin\esparse.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\esprima\bin\esvalidate.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\esprima\esprima.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\http-response-object\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\http-response-object\test\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-schema-compatibility\Gruntfile.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-schema-compatibility\main.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-schema-compatibility\test\01 - Keyword fixes\01 - Required.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-schema-compatibility\test\01 - Keyword fixes\02 - type.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-schema-compatibility\test\01 - Keyword fixes\03 - string dependencies.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-schema-compatibility\test\01 - Keyword fixes\04 - divisibleBy.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-schema-compatibility\test\01 - Keyword fixes\05 - disallow.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-schema-compatibility\test\01 - Keyword fixes\06 - extends.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-schema-compatibility\test\02 - Recursion\01 - recurse into properties.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\example\key_cmp.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\example\nested.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\example\str.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\example\value_cmp.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\node_modules\jsonify\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\node_modules\jsonify\lib\parse.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\node_modules\jsonify\lib\stringify.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\node_modules\jsonify\test\parse.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\node_modules\jsonify\test\stringify.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\test\cmp.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\test\nested.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\test\replacer.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\test\space.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\test\str.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\json-stable-stringify\test\to-json.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\js\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\know-your-http-well\node_modules\amdefine\amdefine.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\loophole\lib\loophole.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\lrucache\gulpfile.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\lrucache\lrucache.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\lrucache\test\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\media-typer\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\lib\json-buffer\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\lib\spawn-sync.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\lib\worker.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\node_modules\os-shim\lib\os.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\node_modules\os-shim\test\osSpec.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\postinstall.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\test\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\test\test-empty.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\test\test-spawn-fail.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\test\test-spawn-timeout.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\test\test-spawn.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\browser.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\dist\request.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\dist\request.min.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\lib\handle-qs.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\caseless\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\caseless\test.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\http-basic\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\http-basic\lib\cache-utils.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\http-basic\lib\file-cache.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\http-basic\lib\memory-cache.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\http-basic\test\gzip.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\http-basic\test\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\promise\core.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\promise\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\promise\lib\core.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\promise\lib\done.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\promise\lib\es6-extensions.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\promise\lib\node-extensions.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\promise\node_modules\asap\asap.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\promise\polyfill-done.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\promise\polyfill.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\qs\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\qs\lib\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\qs\lib\parse.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\qs\lib\stringify.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\qs\lib\utils.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\qs\test\parse.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\qs\test\stringify.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\test\browser.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\test\get-mock-response.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\test\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\test\server.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\Jakefile.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\lib\tsc.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\lib\tsserver.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\lib\typescript.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\lib\typescriptServices.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\underscore\underscore-min.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\underscore\underscore.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\xmldom\dom-parser.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\xmldom\dom.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\xmldom\sax.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\xmldom\__package__.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\dist\ZSchema-browser-min.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\dist\ZSchema-browser-test.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\dist\ZSchema-browser.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\commander\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\commander\node_modules\graceful-readlink\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\lodash.get\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\lodash.get\node_modules\lodash._baseget\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\lodash.get\node_modules\lodash._topath\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\lodash.get\node_modules\lodash._topath\node_modules\lodash.isarray\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\lib\auth.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\lib\cookies.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\lib\getProxyFromURI.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\lib\har.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\lib\helpers.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\lib\multipart.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\lib\oauth.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\lib\querystring.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\lib\redirect.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\lib\tunnel.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\aws-sign2\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\bl\bl.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\bl\test\basic-test.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\bl\test\sauce.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\bl\test\test.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\caseless\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\caseless\test.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\combined-stream\lib\combined_stream.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\extend\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\forever-agent\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\form-data\lib\browser.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\form-data\lib\form_data.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\async.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\error.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\runner.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\har-validator\lib\schemas\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\example\usage.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\lib\browser.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\lib\client.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\lib\crypto.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\lib\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\lib\server.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\lib\utils.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\test\browser.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\test\client.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\test\crypto.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\test\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\test\readme.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\test\server.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\test\uri.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\test\utils.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\http-signature\lib\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\http-signature\lib\parser.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\http-signature\lib\signer.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\http-signature\lib\util.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\http-signature\lib\verify.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\isstream\isstream.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\isstream\test.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\json-stringify-safe\stringify.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\json-stringify-safe\test\stringify_test.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\mime-types\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\node-uuid\benchmark\benchmark-native.c"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\node-uuid\benchmark\benchmark.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\node-uuid\test\compare_v1.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\node-uuid\test\test.html"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\node-uuid\test\test.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\node-uuid\uuid.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\oauth-sign\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\oauth-sign\test.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\qs\dist\qs.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\qs\lib\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\qs\lib\parse.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\qs\lib\stringify.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\qs\lib\utils.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\qs\test\parse.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\qs\test\stringify.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\qs\test\utils.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\stringstream\example.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\stringstream\stringstream.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\tough-cookie\lib\cookie.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\tough-cookie\lib\memstore.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\tough-cookie\lib\pathMatch.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\tough-cookie\lib\permuteDomain.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\tough-cookie\lib\pubsuffix.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\tough-cookie\lib\store.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\tunnel-agent\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\request.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\validator\test\client-side.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\validator\test\exports.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\validator\test\sanitizers.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\validator\test\validators.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\validator\validator.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\validator\validator.min.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\src\Errors.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\src\FormatValidators.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\src\JsonValidation.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\src\Polyfills.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\src\Report.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\src\SchemaCache.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\src\SchemaCompilation.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\src\SchemaValidation.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\src\Utils.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\src\ZSchema.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+    <Content Include="node_modules\raml-1-0-parser\src\bundle.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
     <Content Include="Templates\RAMLWebApi2Scaffolder\ApiEnum.t4">
       <LastGenOutput>Objects.cs.cs</LastGenOutput>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -805,7 +734,6 @@
       <Name>Raml.Tools</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>
