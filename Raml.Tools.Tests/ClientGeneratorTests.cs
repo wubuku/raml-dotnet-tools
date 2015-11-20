@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.IO;
+using NUnit.Framework;
 using Raml.Parser;
 using Raml.Tools.ClientGenerator;
 using System.Linq;
@@ -527,7 +528,8 @@ namespace Raml.Tools.Tests
 
         private static async Task<ClientGeneratorModel> GetTestGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/test.raml");
+            var fi = new FileInfo("files/test.raml");
+            var raml = await new RamlParser().LoadAsync(fi.FullName);
             var model = new ClientGeneratorService(raml, "test", "TargetNamespace").BuildModel();
             
             return model;
@@ -535,7 +537,8 @@ namespace Raml.Tools.Tests
 
         private static async Task<ClientGeneratorModel> GetBoxGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/box.raml");
+            var fi = new FileInfo("files/box.raml");
+            var raml = await new RamlParser().LoadAsync(fi.FullName);
             var model = new ClientGeneratorService(raml, "test", "TargetNamespace").BuildModel();
             
             return model;
@@ -544,7 +547,8 @@ namespace Raml.Tools.Tests
 
         private async Task<ClientGeneratorModel> GetLargeGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/large.raml");
+            var fi = new FileInfo("files/large.raml");
+            var raml = await new RamlParser().LoadAsync(fi.FullName);
 
             var model = new ClientGeneratorService(raml, "test", "TargetNamespace").BuildModel();
             return model;
@@ -552,7 +556,8 @@ namespace Raml.Tools.Tests
 
         private async Task<ClientGeneratorModel> GetRegressionGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/regression.raml");
+            var fi = new FileInfo("files/regression.raml");
+            var raml = await new RamlParser().LoadAsync(fi.FullName);
 
             var model = new ClientGeneratorService(raml, "test", "TargetNamespace").BuildModel();
             return model;
@@ -560,42 +565,48 @@ namespace Raml.Tools.Tests
 
         private async Task<ClientGeneratorModel> GetCongoGeneratedModel()
         {
+            var fi = new FileInfo("files/congo-drones-5-f.raml");
             var parser = new RamlParser();
-            var raml = await parser.LoadAsync("files/congo-drones-5-f.raml");
+            var raml = await parser.LoadAsync(fi.FullName);
             return new ClientGeneratorService(raml, "test", "TargetNamespace").BuildModel();
         }
 
         private async Task<ClientGeneratorModel> GetInstagramGeneratedModel()
         {
+            var fi = new FileInfo("files/instagram.raml");
             var parser = new RamlParser();
-            var raml = await parser.LoadAsync("files/instagram.raml");
+            var raml = await parser.LoadAsync(fi.FullName);
             return new ClientGeneratorService(raml, "test", "TargetNamespace").BuildModel();
         }
 
         private async Task<ClientGeneratorModel> GetTwitterGeneratedModel()
         {
+            var fi = new FileInfo("files/twitter.raml");
             var parser = new RamlParser();
-            var raml = await parser.LoadAsync("files/twitter.raml");
+            var raml = await parser.LoadAsync(fi.FullName);
             return new ClientGeneratorService(raml, "test", "TargetNamespace").BuildModel();
         }
 
         private async Task<ClientGeneratorModel> GetGitHubGeneratedModel()
         {
+            var fi = new FileInfo("files/github.raml");
             var parser = new RamlParser();
-            var raml = await parser.LoadAsync("files/github.raml");
+            var raml = await parser.LoadAsync(fi.FullName);
             return new ClientGeneratorService(raml, "test", "TargetNamespace").BuildModel();
         }
 
         private async Task<ClientGeneratorModel> GetContactsGeneratedModel()
         {
+            var fi = new FileInfo("files/contacts.raml");
             var parser = new RamlParser();
-            var raml = await parser.LoadAsync("files/contacts.raml");
+            var raml = await parser.LoadAsync(fi.FullName);
             return new ClientGeneratorService(raml, "test", "TargetNamespace").BuildModel();
         }
 
         private static async Task<ClientGeneratorModel> GetMoviesGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/movies.raml");
+            var fi = new FileInfo("files/movies.raml");
+            var raml = await new RamlParser().LoadAsync(fi.FullName);
             var model = new ClientGeneratorService(raml, "MoviesApi", "TargetNamespace").BuildModel();
 
             return model;
@@ -603,7 +614,8 @@ namespace Raml.Tools.Tests
 
         private static async Task<ClientGeneratorModel> GetFstabGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/fstab.raml");
+            var fi = new FileInfo("files/fstab.raml");
+            var raml = await new RamlParser().LoadAsync(fi.FullName);
             var model = new ClientGeneratorService(raml, "FstabApi", "NsTest").BuildModel();
 
             return model;
@@ -611,7 +623,8 @@ namespace Raml.Tools.Tests
 
         private static async Task<ClientGeneratorModel> GetDarsGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/dars.raml");
+            var fi = new FileInfo("files/dars.raml");
+            var raml = await new RamlParser().LoadAsync(fi.FullName);
             var model = new ClientGeneratorService(raml, "DarsApi", "TargetNamespace").BuildModel();
 
             return model;
@@ -619,7 +632,9 @@ namespace Raml.Tools.Tests
 
         private static async Task<ClientGeneratorModel> GetDarsWithParamsGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/darsparam.raml");
+            var fi = new FileInfo("files/darsparam.raml");
+
+            var raml = await new RamlParser().LoadAsync(fi.FullName);
             var model = new ClientGeneratorService(raml, "DarsApi", "TargetNamespace").BuildModel();
 
             return model;
@@ -627,7 +642,9 @@ namespace Raml.Tools.Tests
 
         private static async Task<ClientGeneratorModel> GetEpiGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/epi.raml");
+            var fi = new FileInfo("files/epi.raml");
+
+            var raml = await new RamlParser().LoadAsync(fi.FullName);
             var model = new ClientGeneratorService(raml, "DarsApi", "TargetNamespace").BuildModel();
 
             return model;
@@ -635,7 +652,9 @@ namespace Raml.Tools.Tests
 
         private static async Task<ClientGeneratorModel> GetFooGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/foo.raml");
+            var fi = new FileInfo("files/foo.raml");
+
+            var raml = await new RamlParser().LoadAsync(fi.FullName);
             var model = new ClientGeneratorService(raml, "FooApi", "TargetNamespace").BuildModel();
 
             return model;
@@ -643,7 +662,9 @@ namespace Raml.Tools.Tests
 
         private static async Task<ClientGeneratorModel> GetSchemaTestsGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/schematests.raml");
+            var fi = new FileInfo("files/schematests.raml");
+
+            var raml = await new RamlParser().LoadAsync(fi.FullName);
             var model = new ClientGeneratorService(raml, "SchemaTest", "NsTest").BuildModel();
 
             return model;
@@ -652,7 +673,9 @@ namespace Raml.Tools.Tests
 
         private static async Task<ClientGeneratorModel> GetExternalRefsGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/external-refs.raml");
+            var fi = new FileInfo("files/external-refs.raml");
+
+            var raml = await new RamlParser().LoadAsync(fi.FullName);
             var model = new ClientGeneratorService(raml, "ExternalRefs", "TargetNamespace").BuildModel();
 
             return model;
@@ -660,7 +683,9 @@ namespace Raml.Tools.Tests
 
         private static async Task<ClientGeneratorModel> GetSameNameGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/same-name-dif-obj.raml");
+            var fi = new FileInfo("files/same-name-dif-obj.raml");
+
+            var raml = await new RamlParser().LoadAsync(fi.FullName);
             var model = new ClientGeneratorService(raml, "SameName", "TargetNamespace").BuildModel();
 
             return model;
@@ -668,7 +693,9 @@ namespace Raml.Tools.Tests
 
         private static async Task<ClientGeneratorModel> GetIssue17GeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/issue17.raml");
+            var fi = new FileInfo("files/issue17.raml");
+
+            var raml = await new RamlParser().LoadAsync(fi.FullName);
             var model = new ClientGeneratorService(raml, "Issue17", "TargetNamespace").BuildModel();
 
             return model;
@@ -676,7 +703,9 @@ namespace Raml.Tools.Tests
 
         private static async Task<ClientGeneratorModel> GetDuplicationGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/duplication.raml");
+            var fi = new FileInfo("files/duplication.raml");
+
+            var raml = await new RamlParser().LoadAsync(fi.FullName);
             var model = new ClientGeneratorService(raml, "Duplication", "TargetNamespace").BuildModel();
 
             return model;
@@ -684,7 +713,9 @@ namespace Raml.Tools.Tests
 
         private static async Task<ClientGeneratorModel> GetPatchGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/patch.raml");
+            var fi = new FileInfo("files/patch.raml");
+
+            var raml = await new RamlParser().LoadAsync(fi.FullName);
             var model = new ClientGeneratorService(raml, "Patch", "TargetNamespace").BuildModel();
 
             return model;
