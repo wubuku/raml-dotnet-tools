@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.IO;
+using NUnit.Framework;
 using Raml.Parser;
 using Raml.Tools.WebApiGenerator;
 using System.Linq;
@@ -276,151 +277,107 @@ namespace Raml.Tools.Tests
 
 		private static async Task<WebApiGeneratorModel> GetTestGeneratedModel()
 		{
-			var raml = await new RamlParser().LoadAsync("files/test.raml");
-            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
-
-            return model;
+            return await BuildModel("files/test.raml");
         }
 
 		private static async Task<WebApiGeneratorModel> GetBoxGeneratedModel()
 		{
-			var raml = await new RamlParser().LoadAsync("files/box.raml");
-            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
-
-            return model;
+            return await BuildModel("files/box.raml");
         }
 
 
         private async Task<WebApiGeneratorModel> GetLargeGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/large.raml");
-
-            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
-			return model;
+            return await BuildModel("files/large.raml");
 		}
 
         private async Task<WebApiGeneratorModel> GetRegressionGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/regression.raml");
-
-            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
-			return model;
+            return await BuildModel("files/regression.raml");
 		}
 
 		private async Task<WebApiGeneratorModel> GetCongoGeneratedModel()
 		{
-			var parser = new RamlParser();
-			var raml = await parser.LoadAsync("files/congo-drones-5-f.raml");
-            return new WebApiGeneratorService(raml, "TestNs").BuildModel();
+		    return await BuildModel("files/congo-drones-5-f.raml");
 		}
 
-		private async Task<WebApiGeneratorModel> GetInstagramGeneratedModel()
+        private async Task<WebApiGeneratorModel> GetInstagramGeneratedModel()
 		{
-			var parser = new RamlParser();
-			var raml = await parser.LoadAsync("files/instagram.raml");
-            return new WebApiGeneratorService(raml, "TestNs").BuildModel();
+            return await BuildModel("files/instagram.raml");
 		}
 
 		private async Task<WebApiGeneratorModel> GetTwitterGeneratedModel()
 		{
-			var parser = new RamlParser();
-			var raml = await parser.LoadAsync("files/twitter.raml");
-            return new WebApiGeneratorService(raml, "TestNs").BuildModel();
+            return await BuildModel("files/twitter.raml");
 		}
 
 		private async Task<WebApiGeneratorModel> GetGitHubGeneratedModel()
 		{
-			var parser = new RamlParser();
-			var raml = await parser.LoadAsync("files/github.raml");
-            return new WebApiGeneratorService(raml, "TestNs").BuildModel();
+            return await BuildModel("files/github.raml");
 		}
 
 		private async Task<WebApiGeneratorModel> GetContactsGeneratedModel()
 		{
-			var parser = new RamlParser();
-			var raml = await parser.LoadAsync("files/contacts.raml");
-            return new WebApiGeneratorService(raml, "TestNs").BuildModel();
+            return await BuildModel("files/contacts.raml");
 		}
 
 		private static async Task<WebApiGeneratorModel> GetMoviesGeneratedModel()
 		{
-			var raml = await new RamlParser().LoadAsync("files/movies.raml");
-            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
-
-            return model;
+            return await BuildModel("files/movies.raml");
         }
 
 		private static async Task<WebApiGeneratorModel> GetDarsGeneratedModel()
 		{
-			var raml = await new RamlParser().LoadAsync("files/dars.raml");
-            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
-
-            return model;
+			return await BuildModel("files/dars.raml");
         }
 
 		private static async Task<WebApiGeneratorModel> GetSchemaTestsGeneratedModel()
 		{
-			var raml = await new RamlParser().LoadAsync("files/schematests.raml");
-            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
-
-            return model;
+			return await BuildModel("files/schematests.raml");
         }
 
 
         private static async Task<WebApiGeneratorModel> GetOrdersXmlGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/ordersXml.raml");
-            var model = new WebApiGeneratorService(raml, "OrdersXml").BuildModel();
-
-            return model;
+            return await BuildModel("files/ordersXml.raml");
         }
 	
         private static async Task<WebApiGeneratorModel> GetIssue17GeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/issue17.raml");
-            var model = new WebApiGeneratorService(raml, "TargetNamespace").BuildModel();
-
-            return model;
+            return await BuildModel("files/issue17.raml");
         }
 
         private static async Task<WebApiGeneratorModel> GetIssue13GeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/issue13.raml");
-            var model = new WebApiGeneratorService(raml, "TargetNamespace").BuildModel();
-
-            return model;
+            return await BuildModel("files/issue13.raml");
         }
 
         private static async Task<WebApiGeneratorModel> GetIssue25GeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/issue25.raml");
-            var model = new WebApiGeneratorService(raml, "TargetNamespace").BuildModel();
-
-            return model;
+            return await BuildModel("files/issue25.raml");
         }
 
         private static async Task<WebApiGeneratorModel> GetIssue23GeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/issue23.raml");
-            var model = new WebApiGeneratorService(raml, "TargetNamespace").BuildModel();
-
-            return model;
+            return await BuildModel("files/issue23.raml");
         }
 
         private static async Task<WebApiGeneratorModel> GetAdditionalPropertiesGeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/additionalprops.raml");
-            var model = new WebApiGeneratorService(raml, "TargetNamespace").BuildModel();
-
-            return model;
+            return await BuildModel("files/additionalprops.raml");
         }
 
         private static async Task<WebApiGeneratorModel> GetIssue37GeneratedModel()
         {
-            var raml = await new RamlParser().LoadAsync("files/issue37.raml");
-            var model = new WebApiGeneratorService(raml, "TargetNamespace").BuildModel();
-
-            return model;
+            return await BuildModel("files/issue37.raml");
         }
+
+        private static async Task<WebApiGeneratorModel> BuildModel(string ramlFile)
+        {
+            var fi = new FileInfo(ramlFile);
+            var raml = await new RamlParser().LoadAsync(fi.FullName);
+            return new WebApiGeneratorService(raml, "TestNs").BuildModel();
+        }
+
     }
 }
