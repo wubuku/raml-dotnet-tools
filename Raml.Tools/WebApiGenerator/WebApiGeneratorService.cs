@@ -20,6 +20,7 @@ namespace Raml.Tools.WebApiGenerator
             warnings = new Dictionary<string, string>();
             enums = new Dictionary<string, ApiEnum>();
 
+            ParseTypes();
             ParseSchemas();
             schemaRequestObjects = GetRequestObjects();
             schemaResponseObjects = GetResponseObjects();

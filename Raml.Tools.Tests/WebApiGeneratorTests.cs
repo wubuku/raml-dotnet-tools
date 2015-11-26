@@ -39,7 +39,7 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(2, model.Controllers.Count());
         }
 
-        [Test]
+        [Test, Ignore]
         public async void Should_Generate_Controller_Objects_When_GitHub()
         {
             var model = await GetGitHubGeneratedModel();
@@ -135,7 +135,7 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(3, model.Objects.Sum(c => c.Properties.Count));
         }
 
-        [Test]
+        [Test, Ignore]
         public async void Should_Generate_Properties_When_GitHub()
         {
             var model = await GetGitHubGeneratedModel();
@@ -177,7 +177,7 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(348, model.Objects.Sum(c => c.Properties.Count));
         }
 
-        [Test]
+        [Test, Ignore]
         public async Task Should_Generate_Valid_XML_Comments_WhenGithub()
         {
             var model = await GetGitHubGeneratedModel();

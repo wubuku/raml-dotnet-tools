@@ -96,6 +96,8 @@
     <Compile Include="ApiObjectsCleanerTests.cs" />
     <Compile Include="ApiRequestObjectsGeneratorTests.cs" />
     <Compile Include="ApiResponseObjectsGeneratorTests.cs" />
+    <Compile Include="WebApiGeneratorRaml1Tests.cs" />
+    <Compile Include="ClientGeneratorRaml1Tests.cs" />
     <Compile Include="ClientMethodsGeneratorTests.cs" />
     <Compile Include="ClientGeneratorTests.cs" />
     <Compile Include="HeadersParserTests.cs" />
@@ -172,6 +174,27 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="files\duplication.raml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="files\raml1\annotations-targets.raml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="files\raml1\annotations.raml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="files\raml1\customscalar.raml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="files\raml1\movies-v1.raml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="files\raml1\movietype.raml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="files\raml1\parameters.raml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="files\raml1\typeexpressions.raml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="files\same-name-dif-obj.raml">
