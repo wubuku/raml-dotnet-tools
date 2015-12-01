@@ -44,63 +44,6 @@ namespace Raml.Tools
 		    apiObjectsCleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects, schemaObjects);
 		}
 
-        protected void ParseTypes()
-        {
-            foreach (var ramlType in raml.Types)
-            {
-                schemaObjects.Add(ramlType.Name, new ApiObject
-                {
-                    Type = ramlType.Name,
-                    Name = ramlType.Name,
-                    BaseClass = ramlType.Type != "object" ? ramlType.Type : string.Empty,
-                    Description = ramlType.Description,
-                    Example = GetExampe(ramlType.Example, ramlType.Examples),
-                    Properties = GetProperties(ramlType.Properties)
-                });
-            }
-        }
-
-        private IList<Property> GetProperties(IDictionary<string, Parameter> properties)
-        {
-            var props = new List<Property>();
-            foreach (var kv in properties)
-            {
-                var prop = kv.Value;
-                props.Add(new Property
-                {
-                    Minimum = ToDouble(prop.Minimum),
-                    Maximum = ToDouble(prop.Maximum),
-                    Type = NetTypeMapper.Map(prop.Type),
-                    MaxLength = prop.MaxLength,
-                    MinLength = prop.MinLength,
-                    Name = NetNamingMapper.GetObjectName(kv.Key),
-                    Required = prop.Required,
-                    Example = prop.Example,
-                    Description = prop.Description,
-                    IsEnum = prop.Enum != null && prop.Enum.Any(),
-                    OriginalName = kv.Key
-                });
-            }
-            return props;
-        }
-
-        private double? ToDouble(decimal? value)
-        {
-            if (value == null)
-                return null;
-
-            return (double) value.Value;
-        }
-
-        private string GetExampe(string example, IEnumerable<string> examples)
-        {
-            var result = string.IsNullOrWhiteSpace(example) ? example + "\r\n" : string.Empty;
-            if(examples != null)
-                result += string.Join("\r\n", examples);
-
-            return result;
-        }
-
         protected string GetUrl(string url, string relativeUrl)
         {
             var res = !string.IsNullOrWhiteSpace(url) ? url.Substring(1) : string.Empty;

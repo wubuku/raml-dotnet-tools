@@ -50,6 +50,17 @@ namespace Raml.Tools.Tests
         }
 
         [Test]
+        public async Task ShouldBuildMapTypes()
+        {
+            var model = await GetMapModel();
+            Assert.IsTrue(model.Objects.Any(o => o.Name == "Person"));
+            Assert.IsTrue(model.Objects.Any(o => o.Name == "MapOfPerson"));
+            Assert.IsTrue(model.Objects.Any(o => o.Name == "MapOfInt"));
+            Assert.IsTrue(model.Objects.Any(o => o.Name == "MapOfObject"));
+        }
+
+
+        [Test]
         public async Task ShouldBuild_WhenParameters()
         {
             var model = await GetParametersModel();
@@ -60,6 +71,8 @@ namespace Raml.Tools.Tests
         public async Task ShouldBuild_WhenTypeExpressions()
         {
             var model = await GetTypeExpressionsModel();
+            // TODO: check union and array types in generated methods !
+            
             Assert.IsNotNull(model);
         }
 
@@ -99,6 +112,10 @@ namespace Raml.Tools.Tests
             return await BuildModel("files/raml1/typeexpressions.raml");
         }
 
+        private async Task<ClientGeneratorModel> GetMapModel()
+        {
+            return await BuildModel("files/raml1/maps.raml");
+        }
 
         private static async Task<ClientGeneratorModel> BuildModel(string ramlFile)
         {

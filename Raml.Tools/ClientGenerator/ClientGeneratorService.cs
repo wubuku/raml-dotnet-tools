@@ -41,7 +41,7 @@ namespace Raml.Tools.ClientGenerator
             uriParameterObjects = new Dictionary<string, ApiObject>();
             enums = new Dictionary<string, ApiEnum>();
 
-            ParseTypes();
+            RamlTypeParser.Parse(raml.Types, schemaObjects);
 
             ParseSchemas();
             schemaRequestObjects = GetRequestObjects();

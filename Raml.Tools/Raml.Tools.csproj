@@ -83,6 +83,7 @@
     <Compile Include="ApiEnum.cs" />
     <Compile Include="ApiObject.cs" />
     <Compile Include="ApiObjectsCleaner.cs" />
+    <Compile Include="RamlTypeParser.cs" />
     <Compile Include="XML\ArraysToCollectionsExtension.cs" />
     <Compile Include="ClientGenerator\ApiRequestObjectsGenerator.cs" />
     <Compile Include="ClientGenerator\ApiResponseObjectsGenerator.cs" />
