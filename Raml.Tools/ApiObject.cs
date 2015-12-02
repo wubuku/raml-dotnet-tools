@@ -49,5 +49,6 @@ namespace Raml.Tools
         }
 
         public string Type { get; set; }
+        public bool IsScalar { get; set; }
     }
 }

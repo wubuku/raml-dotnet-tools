@@ -41,7 +41,8 @@ namespace Raml.Tools.ClientGenerator
             uriParameterObjects = new Dictionary<string, ApiObject>();
             enums = new Dictionary<string, ApiEnum>();
 
-            RamlTypeParser.Parse(raml.Types, schemaObjects);
+            var ns = NetNamingMapper.GetNamespace(raml.Title);
+            new RamlTypeParser(schemaObjects, ns).Parse(raml.Types);
 
             ParseSchemas();
             schemaRequestObjects = GetRequestObjects();
@@ -69,9 +70,10 @@ namespace Raml.Tools.ClientGenerator
             CleanNotUsedObjects(classObjects);
 
 
+            
             return new ClientGeneratorModel
                    {
-                       Namespace = NetNamingMapper.GetNamespace(raml.Title),
+                       Namespace = ns,
                        SchemaObjects = schemaObjects,
                        RequestObjects = schemaRequestObjects,
                        ResponseObjects = schemaResponseObjects,
