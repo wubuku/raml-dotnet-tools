@@ -346,6 +346,9 @@
     <Content Include="Templates\RAMLWebApi2Scaffolder\ApiModel.t4">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="Templates\AspNet5\ApiControllerBase.t4" />
+    <Content Include="Templates\AspNet5\ApiControllerImplementation.t4" />
+    <Content Include="Templates\AspNet5\ApiControllerInterface.t4" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="edge\double_edge.js">
