@@ -349,7 +349,7 @@ namespace MuleSoft.RAML.Tools
 
             ShowAndEnableCommand(menuCommand, false);
 
-            if (!IsWebApiCoreInstalled())
+            if (!IsVisualStudio2015OrWebApiCoreInstalled())
                 return;
 
             ShowAndEnableCommand(menuCommand, true);
@@ -362,7 +362,7 @@ namespace MuleSoft.RAML.Tools
 
             ShowAndEnableCommand(menuCommand, false);
 
-            if (!IsWebApiCoreInstalled())
+            if (!IsVisualStudio2015OrWebApiCoreInstalled())
                 return;
 
             if (IsWebApiExplorerInstalled())
@@ -392,7 +392,7 @@ namespace MuleSoft.RAML.Tools
 
             ShowAndEnableCommand(menuCommand, false);
 
-            if (!IsWebApiCoreInstalled())
+            if (!IsVisualStudio2015OrWebApiCoreInstalled())
                 return;
 
             ShowAndEnableCommand(menuCommand, true);
@@ -413,10 +413,14 @@ namespace MuleSoft.RAML.Tools
             return isWebApiCoreInstalled;
         }
 
-        private static bool IsWebApiCoreInstalled()
+        private static bool IsVisualStudio2015OrWebApiCoreInstalled()
         {
             var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
             var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+
+            if (proj.FileName.EndsWith("xproj"))
+                return true;
+
             var componentModel = (IComponentModel)ServiceProvider.GlobalProvider.GetService(typeof(SComponentModel));
             var installerServices = componentModel.GetService<IVsPackageInstallerServices>();
             var isWebApiCoreInstalled = installerServices.IsPackageInstalled(proj, "Microsoft.AspNet.WebApi.Core");
@@ -551,7 +555,7 @@ namespace MuleSoft.RAML.Tools
             if (folder.EndsWith(InstallerServices.IncludesFolderName))
                 return;
 
-            if (!IsWebApiCoreInstalled())
+            if (!IsVisualStudio2015OrWebApiCoreInstalled())
                 return;
 
             ShowAndEnableCommand(menuCommand, true);
@@ -624,7 +628,7 @@ namespace MuleSoft.RAML.Tools
         //    if (folder.EndsWith(InstallerServices.IncludesFolderName))
         //        return;
 
-        //    if (!IsWebApiCoreInstalled())
+        //    if (!IsVisualStudio2015OrWebApiCoreInstalled())
         //        return;
 
         //    ShowAndEnableCommand(menuCommand, true);
