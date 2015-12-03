@@ -50,11 +50,25 @@ namespace Raml.Tools.Tests
         }
 
         [Test]
+        public async Task ShouldBuildArrayTypes()
+        {
+            var model = await GetArraysModel();
+            Assert.AreEqual(5, model.Objects.Count());
+            Assert.IsTrue(model.Objects.Any(o => o.Name == "ArrayOfObjectItem"));
+            Assert.IsTrue(model.Objects.Any(o => o.Name == "ArrayOfPerson"));
+            Assert.AreEqual(CollectionTypeHelper.GetCollectionType("Person"), model.Objects.First(o => o.Name == "ArrayOfPerson").Type);
+            Assert.IsTrue(model.Objects.Any(o => o.Name == "ArrayOfInt"));
+            Assert.AreEqual(CollectionTypeHelper.GetCollectionType("integer"), model.Objects.First(o => o.Name == "ArrayOfInt").Type);
+            Assert.IsTrue(model.Objects.Any(o => o.Name == "ArrayOfObject"));
+            Assert.AreEqual(CollectionTypeHelper.GetCollectionType("ArrayOfObjectItem"), model.Objects.First(o => o.Name == "ArrayOfObject").Type);
+        }
+
+        [Test]
         public async Task ShouldBuildMapTypes()
         {
-            var model = await GetMapModel();
+            var model = await GetMapsModel();
             Assert.AreEqual(5, model.Objects.Count());
-            Assert.IsTrue(model.Objects.Any(o => o.Name == "Person"));
+            Assert.IsTrue(model.Objects.Any(o => o.Name == "MapOfObjectItem"));
             Assert.IsTrue(model.Objects.Any(o => o.Name == "MapOfPerson"));
             Assert.AreEqual("IDictionary<string,Person>", model.Objects.First(o => o.Name == "MapOfPerson").Type);
             Assert.IsTrue(model.Objects.Any(o => o.Name == "MapOfInt"));
@@ -116,9 +130,14 @@ namespace Raml.Tools.Tests
             return await BuildModel("files/raml1/typeexpressions.raml");
         }
 
-        private async Task<ClientGeneratorModel> GetMapModel()
+        private async Task<ClientGeneratorModel> GetMapsModel()
         {
             return await BuildModel("files/raml1/maps.raml");
+        }
+
+        private async Task<ClientGeneratorModel> GetArraysModel()
+        {
+            return await BuildModel("files/raml1/arrays.raml");
         }
 
         private static async Task<ClientGeneratorModel> BuildModel(string ramlFile)

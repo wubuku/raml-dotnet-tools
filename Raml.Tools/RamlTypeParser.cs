@@ -60,17 +60,17 @@ namespace Raml.Tools
 
         private ApiObject ParseArray(KeyValuePair<string, RamlType> ramlType)
         {
-            return GetApiObjectFromArray(ramlType);
-        }
-
-        private ApiObject GetApiObjectFromArray(KeyValuePair<string, RamlType> ramlType)
-        {
             var typeOfArray = GetTypeOfArray(ramlType);
 
-            if (!NetTypeMapper.IsPrimitiveType(CollectionTypeHelper.GetBaseType(typeOfArray)) &&
-                ramlType.Value.Array.Items != null)
+            var baseType = CollectionTypeHelper.GetBaseType(typeOfArray);
+            if (!NetTypeMapper.IsPrimitiveType(baseType) &&
+                ramlType.Value.Array.Items != null && ramlType.Value.Array.Items.Type == "object")
             {
-                var itemType = ParseNestedType(ramlType.Value.Array.Items, CollectionTypeHelper.GetBaseType(typeOfArray));
+                if (baseType == typeOfArray)
+                    baseType = typeOfArray + "Item";
+
+                var itemType = ParseNestedType(ramlType.Value.Array.Items, baseType);
+                schemaObjects.Add(baseType, itemType);
             }
 
             return new ApiObject
@@ -88,7 +88,8 @@ namespace Raml.Tools
             if (!string.IsNullOrWhiteSpace(ramlType.Value.Type))
             {
                 var pureType = ramlType.Value.Type.EndsWith("[]") ? ramlType.Value.Type.Substring(0, ramlType.Value.Type.Length - 2) : ramlType.Value.Type;
-                if (pureType != "object")
+
+                if (pureType != "array" && pureType != "object")
                     return CollectionTypeHelper.GetCollectionType(pureType);
                 
             }
@@ -101,7 +102,7 @@ namespace Raml.Tools
             if(!string.IsNullOrWhiteSpace(ramlType.Value.Array.Items.Name))
                 return CollectionTypeHelper.GetCollectionType(ramlType.Value.Array.Items.Name);
 
-            throw new InvalidOperationException("Cannot determine array type of " + ramlType.Key);
+            return ramlType.Key;
         }
 
         private ApiObject ParseScalar(KeyValuePair<string, RamlType> ramlType)
