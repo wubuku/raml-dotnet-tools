@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Mvc;
 <# if(hasModels){ #>
 using $(namespace).Models;
 <# } #>
@@ -27,9 +28,9 @@ namespace $(namespace)
 #>
 		<#= method.XmlComment ?? string.Empty #>
 <# if(useAsyncMethods) { #>
-        public async Task<IActionResult> <#= method.Name #>(<#= method.ParametersString #>)
+        public async Task<IActionResult> <#= method.Name #>(<#= method.ParametersStringForAspNet5 #>)
 <# } else { #>
-        public IActionResult <#= method.Name #>(<#= method.ParametersString #>)
+        public IActionResult <#= method.Name #>(<#= method.ParametersStringForAspNet5 #>)
 <# } #>
         {
             // TODO: implement <#= method.Name #> - route: <#= controllerObject.PrefixUri + "/" + method.Url #>
@@ -38,11 +39,11 @@ namespace $(namespace)
     {
 #>
 			// var result = new <#= method.ReturnType #>();
-			// return ObjectResult(result);
+			// return new ObjectResult(result);
 <#
 	}
 #>
-			return ObjectResult();
+			return new ObjectResult("");
         }
 
 <#

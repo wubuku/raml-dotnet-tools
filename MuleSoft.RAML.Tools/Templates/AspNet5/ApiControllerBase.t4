@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Mvc;
 <# if(hasModels){ #>
 using $(namespace).Models;
 <# } #>
@@ -33,9 +34,9 @@ namespace $(namespace)
         [Http<#= method.Verb #>]
         [Route("<#= method.Url #>")]
 <# if(useAsyncMethods) { #>
-        public virtual async Task<IActionResult> <#= method.Name #>Base(<#= method.ParametersString #>)
+        public virtual async Task<IActionResult> <#= method.Name #>Base(<#= method.ParametersStringForAspNet5 #>)
 <# } else { #>
-        public virtual IActionResult <#= method.Name #>Base(<#= method.ParametersString #>)
+        public virtual IActionResult <#= method.Name #>Base(<#= method.ParametersStringForAspNet5 #>)
 <# } #>
         {
             // Do not modify this code

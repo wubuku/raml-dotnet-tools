@@ -38,6 +38,7 @@ namespace MuleSoft.RAML.Tools
         private readonly string newtonsoftJsonPackageVersion = Settings.Default.NewtonsoftJsonPackageVersion;
         private readonly string microsoftNetHttpPackageId = Settings.Default.MicrosoftNetHttpPackageId;
         private readonly string microsoftNetHttpPackageVersion = Settings.Default.MicrosoftNetHttpPackageVersion;
+        private string templateSubFolder;
 
         public RamlScaffoldService(IT4Service t4Service, IServiceProvider serviceProvider)
         {
@@ -52,6 +53,11 @@ namespace MuleSoft.RAML.Tools
 
             InstallNugetDependencies(proj);
             AddXmlFormatterInWebApiConfig(proj);
+
+            if (VisualStudioAutomationHelper.IsAVisualStudio2015Project(proj))
+                templateSubFolder = "AspNet5";
+            else
+                templateSubFolder = "RAMLWebApi2Scaffolder";
 
             var folderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, ContractsFolderName);
             var generatedFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + ContractsFolderName + Path.DirectorySeparatorChar;
@@ -79,6 +85,11 @@ namespace MuleSoft.RAML.Tools
 
             var dte = serviceProvider.GetService(typeof(SDTE)) as DTE;
             var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+
+            if (VisualStudioAutomationHelper.IsAVisualStudio2015Project(proj))
+                templateSubFolder = "AspNet5";
+            else
+                templateSubFolder = "RAMLWebApi2Scaffolder";
 
             var folderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, ContractsFolderName);
             var ramlItem = folderItem.ProjectItems.Cast<ProjectItem>().First(i => i.Name.ToLowerInvariant() == ramlFileName.ToLowerInvariant());
@@ -144,6 +155,29 @@ namespace MuleSoft.RAML.Tools
             InsertLine(lines);
 
             File.WriteAllText(path, string.Join(Environment.NewLine, lines));
+        }
+
+        private static void InsertInStartup(List<string> lines)
+        {
+            var line = FindLineWith(lines, "Register(HttpConfiguration config)");
+            var inserted = false;
+
+            if (line != -1)
+            {
+                if (lines[line + 1].Contains("{"))
+                {
+                    InsertLines(lines, line + 2);
+                    inserted = true;
+                }
+            }
+
+            if (inserted) return;
+
+            line = FindLineWith(lines, ".MapHttpAttributeRoutes();");
+            if (line != -1)
+            {
+                InsertLines(lines, line + 1);
+            }
         }
 
         private static void InsertLine(List<string> lines)
@@ -259,7 +293,7 @@ namespace MuleSoft.RAML.Tools
             WebApiGeneratorModel model, ProjectItem folderItem, string extensionPath, bool useAsyncMethods)
         {
             templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ControllerImplementationTemplateName,
-                Settings.Default.ControllerImplementationTemplateTitle);
+                Settings.Default.ControllerImplementationTemplateTitle, templateSubFolder);
             var controllersFolderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, "Controllers");
             var controllersFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + "Controllers" +
                                         Path.DirectorySeparatorChar;
@@ -279,7 +313,7 @@ namespace MuleSoft.RAML.Tools
             WebApiGeneratorModel model, ProjectItem folderItem, string extensionPath, bool useAsyncMethods)
         {
             templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ControllerInterfaceTemplateName,
-                Settings.Default.ControllerInterfaceTemplateTitle);
+                Settings.Default.ControllerInterfaceTemplateTitle, templateSubFolder);
             var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
             var controllerInterfaceParams =
                 new TemplateParams<ControllerObject>(Path.Combine(templatesFolder, ControllerInterfaceTemplateName),
@@ -296,7 +330,7 @@ namespace MuleSoft.RAML.Tools
             WebApiGeneratorModel model, ProjectItem folderItem, string extensionPath, bool useAsyncMethods)
         {
             templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ControllerBaseTemplateName,
-                Settings.Default.BaseControllerTemplateTitle);
+                Settings.Default.BaseControllerTemplateTitle, templateSubFolder);
             var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
             var controllerBaseTemplateParams =
                 new TemplateParams<ControllerObject>(Path.Combine(templatesFolder, ControllerBaseTemplateName),
@@ -313,7 +347,7 @@ namespace MuleSoft.RAML.Tools
             WebApiGeneratorModel model, ProjectItem folderItem, string extensionPath)
         {
             templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ModelTemplateName,
-                Settings.Default.ModelsTemplateTitle);
+                Settings.Default.ModelsTemplateTitle, templateSubFolder);
             var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
             
             var models = model.Objects;
@@ -334,7 +368,7 @@ namespace MuleSoft.RAML.Tools
             WebApiGeneratorModel model, ProjectItem folderItem, string extensionPath)
         {
             templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, EnumTemplateName,
-                Settings.Default.EnumsTemplateTitle);
+                Settings.Default.EnumsTemplateTitle, templateSubFolder);
             var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
             var apiEnumTemplateParams = new TemplateParams<ApiEnum>(
                 Path.Combine(templatesFolder, EnumTemplateName), ramlItem, "apiEnum", model.Enums,

@@ -57,6 +57,38 @@ namespace Raml.Tools.WebApiGenerator
             }
         }
 
+        public string ParametersStringForAspNet5
+        {
+            get
+            {
+                var parameters = new Dictionary<string, MethodParameter>();
+
+                if (HasInputParameter())
+                    parameters.Add(Parameter.Name, new MethodParameter(false, (Parameter.Type == "string" || CollectionTypeHelper.IsCollection(Parameter.Type) ? "[FromBody] " + Parameter.Type : "Models." + Parameter.Type) + " " + Parameter.Name));
+
+                if (UriParameters != null && UriParameters.Any())
+                    foreach (var parameter in UriParameters.Where(parameter => !parameters.ContainsKey(parameter.Name)))
+                        parameters.Add(parameter.Name, new MethodParameter(false, parameter.Type + " " + parameter.Name));
+
+
+                if (UseSecurity && SecurityParameters != null && SecurityParameters.Any())
+                    foreach (var prop in SecurityParameters.Where(parameter => !parameters.ContainsKey(parameter.Name.ToLowerInvariant())))
+                        parameters.Add(prop.Name.ToLowerInvariant(),
+                            new MethodParameter(!prop.Required,
+                                prop.Type + " " + prop.Name.ToLowerInvariant() + (!prop.Required ? " = null" : string.Empty)));
+
+                if (QueryParameters != null && QueryParameters.Any())
+                    foreach (var prop in QueryParameters.Where(parameter => !parameters.ContainsKey(parameter.Name.ToLowerInvariant())))
+                        parameters.Add(prop.Name.ToLowerInvariant(),
+                            new MethodParameter(!prop.Required,
+                                prop.Type + " " + prop.Name.ToLowerInvariant() + (!prop.Required ? " = null" : string.Empty)));
+
+                var methodParameters = parameters.Values.OrderBy(p => p.IsOptional).ToList();
+                var parametersString = string.Join(",", methodParameters.Select(p => p.ParameterDeclaration));
+                return parametersString;
+            }
+        }
+
         public string ParametersCallString
         {
             get

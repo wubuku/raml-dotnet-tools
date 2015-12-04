@@ -20,11 +20,11 @@ namespace MuleSoft.RAML.Tools
         private readonly string ServerTemplatesVersion = Settings.Default.ServerTemplatesVersion;
         private readonly string ClientTemplatesVersion = Settings.Default.ClientTemplatesVersion;
 
-        public void CopyServerTemplateToProjectFolder(string generatedFolderPath, string templateName, string title)
+        public void CopyServerTemplateToProjectFolder(string generatedFolderPath, string templateName, string title, string templateSubFolder)
         {
             var extensionPath = Path.GetDirectoryName(GetType().Assembly.Location) + Path.DirectorySeparatorChar;
             var sourceTemplateFolder = Path.Combine(extensionPath,
-                "Templates" + Path.DirectorySeparatorChar + "RAMLWebApi2Scaffolder" + Path.DirectorySeparatorChar);
+                "Templates" + Path.DirectorySeparatorChar + templateSubFolder + Path.DirectorySeparatorChar);
 
             CopyTemplateToProjectFolder(generatedFolderPath, templateName, sourceTemplateFolder, ServerTemplatesVersion, title);
         }

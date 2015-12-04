@@ -27,7 +27,9 @@ namespace Raml.Common
         {
             var dte = serviceProvider.GetService(typeof(SDTE)) as DTE;
             var project = GetActiveProject(dte);
-            return project.Properties.Item("DefaultNamespace").Value.ToString();
+
+            var namespaceProperty = VisualStudioAutomationHelper.IsAVisualStudio2015Project(project) ?  "RootNamespace" : "DefaultNamespace";
+            return project.Properties.Item(namespaceProperty).Value.ToString();
         }
 
         public static string GetExceptionInfo(Exception ex)
@@ -68,6 +70,14 @@ namespace Raml.Common
 
             return projectItem;
         }
+
+        public static bool IsAVisualStudio2015Project(Project proj)
+        {
+            if (proj.FileName.EndsWith("xproj"))
+                return true;
+            return false;
+        }
+
 
     }
 }

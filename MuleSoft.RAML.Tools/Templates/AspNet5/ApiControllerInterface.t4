@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Mvc;
 <# if(hasModels){ #>
 using $(namespace).Models;
 <# } #>
@@ -28,13 +29,13 @@ namespace $(namespace)
             if(useAsyncMethods)
             {
 #>
-        Task<IActionResult> <#= method.Name #>(<#= method.ParametersString #>);
+        Task<IActionResult> <#= method.Name #>(<#= method.ParametersStringForAspNet5 #>);
 <#          
             } 
             else 
             { 
 #>
-        IActionResult <#= method.Name #>(<#= method.ParametersString #>);
+        IActionResult <#= method.Name #>(<#= method.ParametersStringForAspNet5 #>);
 <#
             }
 		}

@@ -418,14 +418,20 @@ namespace MuleSoft.RAML.Tools
             var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
             var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
 
-            if (proj.FileName.EndsWith("xproj"))
+            if (VisualStudioAutomationHelper.IsAVisualStudio2015Project(proj))
                 return true;
 
-            var componentModel = (IComponentModel)ServiceProvider.GlobalProvider.GetService(typeof(SComponentModel));
+            return IsWebApiCoreInstalled(proj);
+        }
+
+        private static bool IsWebApiCoreInstalled(Project proj)
+        {
+            var componentModel = (IComponentModel) ServiceProvider.GlobalProvider.GetService(typeof (SComponentModel));
             var installerServices = componentModel.GetService<IVsPackageInstallerServices>();
             var isWebApiCoreInstalled = installerServices.IsPackageInstalled(proj, "Microsoft.AspNet.WebApi.Core");
             return isWebApiCoreInstalled;
         }
+
 
         private void UpdateRamlRefCommand_BeforeQueryStatus(object sender, EventArgs e)
         {
