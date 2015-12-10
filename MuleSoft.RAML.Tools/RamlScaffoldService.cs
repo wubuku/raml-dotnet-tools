@@ -625,6 +625,9 @@ namespace MuleSoft.RAML.Tools
 
         private static bool IsAlreadyIncludedInProject(string folderPath, ProjectItem folderItem, string generatedFileName, ProjectItem fileItem)
         {
+            if (VisualStudioAutomationHelper.IsAVisualStudio2015Project(fileItem.ContainingProject))
+                return File.Exists(Path.Combine(folderPath, generatedFileName));
+
             var otherRamlFiles = GetOtherRamlFilesInProject(folderPath, fileItem);
             var alreadyIncludedInProj = false;
             foreach (var ramlFile in otherRamlFiles)
