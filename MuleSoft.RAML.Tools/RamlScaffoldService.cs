@@ -401,7 +401,8 @@ namespace MuleSoft.RAML.Tools
 
             foreach (var file in result.IncludedFiles)
             {
-                includesFolderItem.ProjectItems.AddFromFile(file);
+                if(!VisualStudioAutomationHelper.IsAVisualStudio2015Project(folderItem.ContainingProject) || !File.Exists(file))
+                    includesFolderItem.ProjectItems.AddFromFile(file);
             }
 
             //var existingIncludeItems = includesFolderItem.ProjectItems.Cast<ProjectItem>();
