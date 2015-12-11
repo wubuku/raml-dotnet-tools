@@ -54,13 +54,12 @@ namespace MuleSoft.RAML.Tools
             InstallNugetDependencies(proj);
             AddXmlFormatterInWebApiConfig(proj);
 
-            if (VisualStudioAutomationHelper.IsAVisualStudio2015Project(proj))
-                templateSubFolder = "AspNet5";
-            else
-                templateSubFolder = "RAMLWebApi2Scaffolder";
-
             var folderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, ContractsFolderName);
             var generatedFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + ContractsFolderName + Path.DirectorySeparatorChar;
+
+            var targetFolderPath = GetTargetFolderPath(generatedFolderPath, parameters.TargetFileName, proj);
+            if (!Directory.Exists(targetFolderPath))
+                Directory.CreateDirectory(targetFolderPath);
 
             if (string.IsNullOrWhiteSpace(parameters.RamlSource) && !string.IsNullOrWhiteSpace(parameters.RamlTitle))
             {
@@ -86,14 +85,14 @@ namespace MuleSoft.RAML.Tools
             var dte = serviceProvider.GetService(typeof(SDTE)) as DTE;
             var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
 
+            var folderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, ContractsFolderName);
+            var ramlItem = folderItem.ProjectItems.Cast<ProjectItem>().First(i => i.Name.ToLowerInvariant() == ramlFileName.ToLowerInvariant());
+            var generatedFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + ContractsFolderName + Path.DirectorySeparatorChar;
+
             if (VisualStudioAutomationHelper.IsAVisualStudio2015Project(proj))
                 templateSubFolder = "AspNet5";
             else
                 templateSubFolder = "RAMLWebApi2Scaffolder";
-
-            var folderItem = VisualStudioAutomationHelper.AddFolderIfNotExists(proj, ContractsFolderName);
-            var ramlItem = folderItem.ProjectItems.Cast<ProjectItem>().First(i => i.Name.ToLowerInvariant() == ramlFileName.ToLowerInvariant());
-            var generatedFolderPath = Path.GetDirectoryName(proj.FullName) + Path.DirectorySeparatorChar + ContractsFolderName + Path.DirectorySeparatorChar;
 
             if (!templatesManager.ConfirmWhenIncompatibleServerTemplate(generatedFolderPath,
                 new[] { ControllerBaseTemplateName, ControllerInterfaceTemplateName, ControllerImplementationTemplateName, ModelTemplateName, EnumTemplateName }))
@@ -158,29 +157,6 @@ namespace MuleSoft.RAML.Tools
             InsertLine(lines);
 
             File.WriteAllText(path, string.Join(Environment.NewLine, lines));
-        }
-
-        private static void InsertInStartup(List<string> lines)
-        {
-            var line = FindLineWith(lines, "Register(HttpConfiguration config)");
-            var inserted = false;
-
-            if (line != -1)
-            {
-                if (lines[line + 1].Contains("{"))
-                {
-                    InsertLines(lines, line + 2);
-                    inserted = true;
-                }
-            }
-
-            if (inserted) return;
-
-            line = FindLineWith(lines, ".MapHttpAttributeRoutes();");
-            if (line != -1)
-            {
-                InsertLines(lines, line + 1);
-            }
         }
 
         private static void InsertLine(List<string> lines)
@@ -318,9 +294,12 @@ namespace MuleSoft.RAML.Tools
             templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ControllerInterfaceTemplateName,
                 Settings.Default.ControllerInterfaceTemplateTitle, templateSubFolder);
             var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
+
+            var targetFolderPath = GetTargetFolderPath(generatedFolderPath, ramlItem.FileNames[0], folderItem.ContainingProject);
+
             var controllerInterfaceParams =
                 new TemplateParams<ControllerObject>(Path.Combine(templatesFolder, ControllerInterfaceTemplateName),
-                    ramlItem, "controllerObject", model.Controllers, generatedFolderPath, folderItem, extensionPath,
+                    ramlItem, "controllerObject", model.Controllers, targetFolderPath, folderItem, extensionPath,
                     targetNamespace, "Controller", true, "I");
             controllerInterfaceParams.Title = Settings.Default.ControllerInterfaceTemplateTitle;
             controllerInterfaceParams.IncludeHasModels = true;
@@ -335,9 +314,12 @@ namespace MuleSoft.RAML.Tools
             templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, ControllerBaseTemplateName,
                 Settings.Default.BaseControllerTemplateTitle, templateSubFolder);
             var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
+
+            var targetFolderPath = GetTargetFolderPath(generatedFolderPath, ramlItem.FileNames[0], folderItem.ContainingProject);
+
             var controllerBaseTemplateParams =
                 new TemplateParams<ControllerObject>(Path.Combine(templatesFolder, ControllerBaseTemplateName),
-                    ramlItem, "controllerObject", model.Controllers, generatedFolderPath, folderItem, extensionPath,
+                    ramlItem, "controllerObject", model.Controllers, targetFolderPath, folderItem, extensionPath,
                     targetNamespace, "Controller");
             controllerBaseTemplateParams.Title = Settings.Default.BaseControllerTemplateTitle;
             controllerBaseTemplateParams.IncludeHasModels = true;
@@ -360,9 +342,11 @@ namespace MuleSoft.RAML.Tools
 
             models = models.Where(o => !o.IsArray || o.Type == null); // skip array of primitives
 
+            var targetFolderPath = GetTargetFolderPath(generatedFolderPath, ramlItem.FileNames[0], folderItem.ContainingProject);
+
             var apiObjectTemplateParams = new TemplateParams<ApiObject>(
                 Path.Combine(templatesFolder, ModelTemplateName), ramlItem, "apiObject", models,
-                generatedFolderPath, folderItem, extensionPath, targetNamespace);
+                targetFolderPath, folderItem, extensionPath, targetNamespace);
             apiObjectTemplateParams.Title = Settings.Default.ModelsTemplateTitle;
             GenerateCodeFromTemplate(apiObjectTemplateParams);
         }
@@ -373,9 +357,12 @@ namespace MuleSoft.RAML.Tools
             templatesManager.CopyServerTemplateToProjectFolder(generatedFolderPath, EnumTemplateName,
                 Settings.Default.EnumsTemplateTitle, templateSubFolder);
             var templatesFolder = Path.Combine(generatedFolderPath, "Templates");
+
+            var targetFolderPath = GetTargetFolderPath(generatedFolderPath, ramlItem.FileNames[0], folderItem.ContainingProject);
+
             var apiEnumTemplateParams = new TemplateParams<ApiEnum>(
                 Path.Combine(templatesFolder, EnumTemplateName), ramlItem, "apiEnum", model.Enums,
-                generatedFolderPath, folderItem, extensionPath, targetNamespace);
+                targetFolderPath, folderItem, extensionPath, targetNamespace);
             apiEnumTemplateParams.Title = Settings.Default.ModelsTemplateTitle;
             GenerateCodeFromTemplate(apiEnumTemplateParams);
         }
@@ -424,7 +411,9 @@ namespace MuleSoft.RAML.Tools
             var ramlProjItem = AddOrUpdateRamlFile(result.ModifiedContents, folderItem, folderPath, targetFilename);
             InstallerServices.RemoveSubItemsAndAssociatedFiles(ramlProjItem);
 
-            var refFilePath = InstallerServices.AddRefFile(ramlFilePath, targetNamespace, ramlSource, folderPath, targetFilename, useAsyncMethod);
+            var targetFolderPath = GetTargetFolderPath(folderPath, targetFilename, folderItem.ContainingProject);
+
+            var refFilePath = InstallerServices.AddRefFile(ramlFilePath, targetNamespace, ramlSource, targetFolderPath, targetFilename, useAsyncMethod);
             ramlProjItem.ProjectItems.AddFromFile(refFilePath);
 
             Scaffold(ramlProjItem.FileNames[0], targetNamespace, targetFilename, useAsyncMethod);
@@ -487,8 +476,19 @@ namespace MuleSoft.RAML.Tools
                 ramlProjItem = folderItem.ProjectItems.AddFromFile(newContractFile);
             }
 
-            var refFilePath = InstallerServices.AddRefFile(newContractFile, targetNamespace, newContractFile, folderPath, targetFilename, useAsyncMethods);
+            var targetFolderPath = GetTargetFolderPath(folderPath, targetFilename, folderItem.ContainingProject);
+
+            var refFilePath = InstallerServices.AddRefFile(newContractFile, targetNamespace, newContractFile, targetFolderPath, targetFilename, useAsyncMethods);
             ramlProjItem.ProjectItems.AddFromFile(refFilePath);
+        }
+
+        private static string GetTargetFolderPath(string folderPath, string targetFilename, Project proj)
+        {
+            var targetFolderPath = folderPath;
+            if (VisualStudioAutomationHelper.IsAVisualStudio2015Project(proj))
+                targetFolderPath += Path.GetFileNameWithoutExtension(targetFilename) + Path.DirectorySeparatorChar;
+
+            return targetFolderPath;
         }
 
         private static string CreateNewRamlContents(string title)
