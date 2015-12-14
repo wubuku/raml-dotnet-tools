@@ -349,7 +349,7 @@ namespace MuleSoft.RAML.Tools
 
             ShowAndEnableCommand(menuCommand, false);
 
-            if (!IsWebApiCoreInstalled())
+            if (!IsVisualStudio2015OrWebApiCoreInstalled())
                 return;
 
             ShowAndEnableCommand(menuCommand, true);
@@ -362,7 +362,7 @@ namespace MuleSoft.RAML.Tools
 
             ShowAndEnableCommand(menuCommand, false);
 
-            if (!IsWebApiCoreInstalled())
+            if (!IsVisualStudio2015OrWebApiCoreInstalled())
                 return;
 
             if (IsWebApiExplorerInstalled())
@@ -392,7 +392,7 @@ namespace MuleSoft.RAML.Tools
 
             ShowAndEnableCommand(menuCommand, false);
 
-            if (!IsWebApiCoreInstalled())
+            if (!IsVisualStudio2015OrWebApiCoreInstalled())
                 return;
 
             ShowAndEnableCommand(menuCommand, true);
@@ -413,15 +413,25 @@ namespace MuleSoft.RAML.Tools
             return isWebApiCoreInstalled;
         }
 
-        private static bool IsWebApiCoreInstalled()
+        private static bool IsVisualStudio2015OrWebApiCoreInstalled()
         {
             var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
             var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
-            var componentModel = (IComponentModel)ServiceProvider.GlobalProvider.GetService(typeof(SComponentModel));
+
+            if (VisualStudioAutomationHelper.IsAVisualStudio2015Project(proj))
+                return true;
+
+            return IsWebApiCoreInstalled(proj);
+        }
+
+        private static bool IsWebApiCoreInstalled(Project proj)
+        {
+            var componentModel = (IComponentModel) ServiceProvider.GlobalProvider.GetService(typeof (SComponentModel));
             var installerServices = componentModel.GetService<IVsPackageInstallerServices>();
             var isWebApiCoreInstalled = installerServices.IsPackageInstalled(proj, "Microsoft.AspNet.WebApi.Core");
             return isWebApiCoreInstalled;
         }
+
 
         private void UpdateRamlRefCommand_BeforeQueryStatus(object sender, EventArgs e)
         {
@@ -551,7 +561,7 @@ namespace MuleSoft.RAML.Tools
             if (folder.EndsWith(InstallerServices.IncludesFolderName))
                 return;
 
-            if (!IsWebApiCoreInstalled())
+            if (!IsVisualStudio2015OrWebApiCoreInstalled())
                 return;
 
             ShowAndEnableCommand(menuCommand, true);
@@ -624,7 +634,7 @@ namespace MuleSoft.RAML.Tools
         //    if (folder.EndsWith(InstallerServices.IncludesFolderName))
         //        return;
 
-        //    if (!IsWebApiCoreInstalled())
+        //    if (!IsVisualStudio2015OrWebApiCoreInstalled())
         //        return;
 
         //    ShowAndEnableCommand(menuCommand, true);

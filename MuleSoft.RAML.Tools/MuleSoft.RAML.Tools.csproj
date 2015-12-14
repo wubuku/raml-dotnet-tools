@@ -696,6 +696,21 @@
     <Content Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\test-request-protocols.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Templates\AspNet5\ApiControllerBase.t4">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\AspNet5\ApiControllerImplementation.t4">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\AspNet5\ApiControllerInterface.t4">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\AspNet5\ApiEnum.t4">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\AspNet5\ApiModel.t4">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Resource Include="node_modules\raml-parser\node_modules\xmlhttprequest\tests\testdata.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
