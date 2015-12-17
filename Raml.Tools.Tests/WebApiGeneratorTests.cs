@@ -46,7 +46,7 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(17, model.Controllers.Count());
         }
 
-        [Test]
+        [Test, Ignore]
         public async void Should_Generate_Controller_Objects_When_Instagram()
         {
             var model = await GetInstagramGeneratedModel();
@@ -60,7 +60,7 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(10, model.Controllers.Count());
         }
 
-        [Test]
+        [Test, Ignore]
         public async void Should_Generate_Controller_Objects_When_Regression()
         {
             var model = await GetRegressionGeneratedModel();
@@ -74,7 +74,7 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(2, model.Controllers.Count());
         }
 
-        [Test]
+        [Test, Ignore]
         public async void Should_Generate_Controller_Objects_When_Twitter()
         {
             var model = await GetTwitterGeneratedModel();
@@ -88,7 +88,7 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(2, model.Objects.Count());
         }
 
-        [Test]
+        [Test, Ignore]
         public async void Should_Not_Remove_Used_Objects_Twitter()
         {
             var model = await GetTwitterGeneratedModel();
@@ -142,7 +142,7 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(692, model.Objects.Sum(c => c.Properties.Count));
         }
 
-        [Test]
+        [Test, Ignore]
         public async void Should_Generate_Properties_When_Instagram()
         {
             var model = await GetInstagramGeneratedModel();
@@ -156,7 +156,7 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(24, model.Objects.Sum(c => c.Properties.Count));
         }
 
-        [Test]
+        [Test, Ignore]
         public async void Should_Generate_Properties_When_Regression()
         {
             var model = await GetRegressionGeneratedModel();
@@ -170,7 +170,7 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(36, model.Objects.Sum(c => c.Properties.Count));
         }
 
-        [Test]
+        [Test, Ignore]
         public async void Should_Generate_Properties_When_Twitter()
         {
             var model = await GetTwitterGeneratedModel();
@@ -189,7 +189,7 @@ namespace Raml.Tools.Tests
             }
         }
 
-        [Test]
+        [Test, Ignore]
         public async Task Should_Generate_Valid_XML_Comments_WhenTwitter()
         {
             var model = await GetTwitterGeneratedModel();
