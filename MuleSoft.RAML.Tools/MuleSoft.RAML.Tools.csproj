@@ -51,7 +51,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EdgeJs, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Edge.js.0.9.2\lib\EdgeJs.dll</HintPath>
+      <HintPath>..\packages\Edge.js.4.0.0\lib\EdgeJs.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
@@ -90,8 +90,8 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Raml.Parser, Version=0.9.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Raml.Parser.0.9.2\lib\net45\Raml.Parser.dll</HintPath>
+    <Reference Include="Raml.Parser, Version=0.9.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Raml.Parser.0.9.3.0\lib\net45\Raml.Parser.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -100,17 +100,9 @@
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Extensions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Net.Http.Formatting, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.0\lib\net45\System.Net.Http.Formatting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Primitives, Version=4.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Primitives.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Runtime">
@@ -221,14 +213,12 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="edge\x64\edge.node">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="edge\x86\edge.node">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Content Include="edge\double_edge.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="edge\edge.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="edge\x64\node.dll"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="edge\x86\node.dll"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="edge\x64\edge.node"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="edge\x86\edge.node"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\inherits\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\inherits\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\readable-stream\doc\stream.markdown"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
@@ -292,12 +282,8 @@
     <Content Include="node_modules\raml-1-0-parser\node_modules\media-typer\HISTORY.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\media-typer\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\media-typer\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\appveyor.yml"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\lib\json-buffer\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\node_modules\os-shim\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\node_modules\os-shim\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\pluralize\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\pluralize\Readme.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\dist\request.js.map"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\dist\request.min.js.map"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\caseless\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
@@ -315,17 +301,14 @@
     <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\node_modules\qs\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\AUTHORS.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\CONTRIBUTING.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\tslint.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\underscore\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\underscore\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\underscore\underscore-min.map"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\xmldom\component.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\xmldom\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\xmldom\readme.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\xmlhttprequest\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\xmlhttprequest\README.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\dist\ZSchema-browser-min.js.map"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\commander\History.md"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\commander\node_modules\graceful-readlink\package.json"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
@@ -433,30 +416,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Content Include="edge\double_edge.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="edge\edge.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="edge\x64\node.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="edge\x86\node.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\stringstream\LICENSE.txt"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\images\logo.png"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\request\node_modules\hawk\images\hawk.png"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\lodash.get\node_modules\lodash._baseget\LICENSE.txt"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\node_modules\lodash.get\LICENSE.txt"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\ThirdPartyNoticeText.txt"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\LICENSE.txt"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\CopyrightNotice.txt"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\inherits\inherits.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\concat-stream\node_modules\inherits\inherits_browser.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
@@ -521,18 +480,7 @@
     <Content Include="node_modules\raml-1-0-parser\node_modules\lrucache\lrucache.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\lrucache\test\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\media-typer\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\lib\json-buffer\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\lib\spawn-sync.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\lib\worker.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\node_modules\os-shim\lib\os.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\node_modules\os-shim\test\osSpec.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\postinstall.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\test\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\test\test-empty.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\test\test-spawn-fail.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\test\test-spawn-timeout.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\spawn-sync\test\test-spawn.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\pluralize\pluralize.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\browser.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\dist\request.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\dist\request.min.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
@@ -566,17 +514,13 @@
     <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\test\get-mock-response.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\test\index.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\then-request\test\server.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\Jakefile.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\lib\tsc.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\lib\tsserver.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\lib\typescript.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
-    <Content Include="node_modules\raml-1-0-parser\node_modules\typescript\lib\typescriptServices.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\underscore\underscore-min.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\underscore\underscore.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\xmldom\dom-parser.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\xmldom\dom.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\xmldom\sax.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\xmldom\__package__.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="node_modules\raml-1-0-parser\node_modules\xmlhttprequest\lib\XMLHttpRequest.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\dist\ZSchema-browser-min.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\dist\ZSchema-browser-test.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\dist\ZSchema-browser.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
@@ -682,6 +626,13 @@
     <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\src\Utils.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\node_modules\z-schema\src\ZSchema.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="node_modules\raml-1-0-parser\src\bundle.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="node_modules\raml-1-0-parser\src\raml1Parser.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="node_modules\raml-1-0-parser\test\test01.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="node_modules\raml-1-0-parser\test\test02.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="node_modules\raml-1-0-parser\test\testAsync01.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="node_modules\raml-1-0-parser\test\testAsync02.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="node_modules\raml-1-0-parser\test\testAsync03.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
+    <Content Include="node_modules\raml-1-0-parser\test\testTwitter.js"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><IncludeInVSIX>true</IncludeInVSIX></Content>
     <Content Include="Templates\RAMLWebApi2Scaffolder\ApiEnum.t4">
       <LastGenOutput>Objects.cs.cs</LastGenOutput>
       <IncludeInVSIX>true</IncludeInVSIX>
