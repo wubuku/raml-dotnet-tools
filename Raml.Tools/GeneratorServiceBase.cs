@@ -42,7 +42,27 @@ namespace Raml.Tools
 			this.raml = raml;
 		    this.targetNamespace = targetNamespace;
 		    apiObjectsCleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects, schemaObjects);
+
+		    ApplyResourceTypesAndTraits(raml.Resources);
 		}
+
+        private void ApplyResourceTypesAndTraits(ICollection<Resource> resources)
+        {
+            foreach (var resource in resources)
+            {
+                var methods = resource.Methods.ToList();
+
+                ResourceTypeApplier.Apply(raml.ResourceTypes, GetResourceType(resource.Type), methods, raml.Traits, resource,
+                    raml.MediaType);
+
+                foreach (var method in methods.Where(method => method.Is != null))
+                {
+                    TraitsApplier.ApplyTraitsToMethods(methods, raml.Traits, method.Is);
+                }
+                resource.Methods = methods;
+                ApplyResourceTypesAndTraits(resource.Resources);
+            }
+        }
 
         protected string GetUrl(string url, string relativeUrl)
         {
@@ -155,6 +175,10 @@ namespace Raml.Tools
             }
         }
 
+        private string GetResourceType(IDictionary<string, IDictionary<string, string>> type)
+        {
+            return type != null && type.Any() ? type.First().Key : string.Empty;
+        }
 
 
         private void ParseResourceRequestsRecursively(IEnumerable<Resource> resources, string fullUrl)
@@ -163,9 +187,11 @@ namespace Raml.Tools
             {
                 if (resource.Methods != null)
                 {
-                    foreach (var method in resource.Methods.Where(m => m.Body != null && m.Body.Any()))
+                    var methods = resource.Methods.Where(m => m.Body != null && m.Body.Any()).ToList();
+
+                    foreach (var method in methods)
                     {
-                        foreach (var kv in method.Body.Where(b => b.Value.Schema != null))
+                        foreach (var kv in method.Body.Where(b => b.Value != null && b.Value.Schema != null))
                         {
                             var key = GeneratorServiceHelper.GetKeyForResource(method, resource, fullUrl) + RequestContentSuffix;
                             if (schemaRequestObjects.ContainsKey(key)) 

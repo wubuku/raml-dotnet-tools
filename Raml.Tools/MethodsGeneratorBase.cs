@@ -168,8 +168,8 @@ namespace Raml.Tools
 
         protected Verb GetResourceTypeVerb(Method method, Resource resource)
         {
-            var resourceTypes = raml.ResourceTypes.First(rt => rt.ContainsKey(resource.GetResourceType()));
-            var resourceType = resourceTypes[resource.GetResourceType()];
+            var resourceTypes = raml.ResourceTypes.First(rt => rt.ContainsKey(resource.GetSingleType()));
+            var resourceType = resourceTypes[resource.GetSingleType()];
             Verb verb;
             switch (method.Verb)
             {
@@ -201,7 +201,7 @@ namespace Raml.Tools
         {
             var returnType = string.Empty;
             if (resource.Type == null || !resource.Type.Any() ||
-                !raml.ResourceTypes.Any(rt => rt.ContainsKey(resource.GetResourceType())))
+                !raml.ResourceTypes.Any(rt => rt.ContainsKey(resource.GetSingleType())))
                 return returnType;
 
             var verb = GetResourceTypeVerb(method, resource);
@@ -333,7 +333,7 @@ namespace Raml.Tools
                     return generatorParameter;
             }
 
-            if (resource.Type != null && resource.Type.Any() && raml.ResourceTypes.Any(rt => rt.ContainsKey(resource.GetResourceType())))
+            if (resource.Type != null && resource.Type.Any() && raml.ResourceTypes.Any(rt => rt.ContainsKey(resource.GetSingleType())))
             {
                 var verb = GetResourceTypeVerb(method, resource);
                 if (verb != null && verb.Body != null && !string.IsNullOrWhiteSpace(verb.Body.Schema))
@@ -421,12 +421,22 @@ namespace Raml.Tools
         {
             GeneratorParameter generatorParameter = null;
             var type = schemaParameterParser.Parse(schema, resource, method, fullUrl);
+            if (schemaObjects.Any(o => o.Key.ToLower() == type.ToLowerInvariant()))
+            {
+                var apiObject = schemaObjects.First(o => o.Key.ToLower() == type.ToLowerInvariant()).Value;
+                generatorParameter = CreateGeneratorParameter(apiObject);
+            }
             if (schemaObjects.Values.Any(o => o.Name.ToLower() == type.ToLowerInvariant()))
             {
                 var apiObject = schemaObjects.Values.First(o => o.Name.ToLower() == type.ToLowerInvariant());
                 generatorParameter = CreateGeneratorParameter(apiObject);
             }
 
+            if (schemaRequestObjects.Any(o => o.Key.ToLower() == type.ToLowerInvariant()))
+            {
+                var apiObject = schemaRequestObjects.First(o => o.Key.ToLower() == type.ToLowerInvariant()).Value;
+                generatorParameter = CreateGeneratorParameter(apiObject);
+            }
             if (schemaRequestObjects.Values.Any(o => o.Name.ToLower() == type.ToLowerInvariant()))
             {
                 var apiObject = schemaRequestObjects.Values.First(o => o.Name.ToLower() == type.ToLowerInvariant());
@@ -446,21 +456,21 @@ namespace Raml.Tools
             return generatorParameter;
         }
 
-        private string GetJsonSchemaOrDefault(IDictionary<string, MimeType> body)
+        public string GetJsonSchemaOrDefault(IDictionary<string, MimeType> body)
         {
-            if (body.Any(b => b.Key.ToLowerInvariant().Contains("json") && !string.IsNullOrWhiteSpace(b.Value.Schema)))
-                return body.First(b => b.Key.ToLowerInvariant().Contains("json") && !string.IsNullOrWhiteSpace(b.Value.Schema)).Value.Schema;
+            if (body.Any(b => b.Key.ToLowerInvariant().Contains("json") && b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Schema)))
+                return body.First(b => b.Key.ToLowerInvariant().Contains("json") && b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Schema)).Value.Schema;
 
             var isDefaultMediaTypeDefined = !string.IsNullOrWhiteSpace(raml.MediaType);
             var hasSchemaWithDefaultMediaType = raml.MediaType != null &&
                                                 body.Any(b => b.Key.ToLowerInvariant() == raml.MediaType.ToLowerInvariant()
-                                                              && !string.IsNullOrWhiteSpace(b.Value.Schema));
+                                                              && b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Schema));
 
             if (isDefaultMediaTypeDefined && hasSchemaWithDefaultMediaType)
-                return body.First(b => b.Key.ToLowerInvariant() == raml.MediaType.ToLowerInvariant() && !string.IsNullOrWhiteSpace(b.Value.Schema)).Value.Schema;
+                return body.First(b => b.Key.ToLowerInvariant() == raml.MediaType.ToLowerInvariant() && b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Schema)).Value.Schema;
 
-            if (body.Any(b => !string.IsNullOrWhiteSpace(b.Value.Schema)))
-                return body.First(b => !string.IsNullOrWhiteSpace(b.Value.Schema)).Value.Schema;
+            if (body.Any(b => b.Value != null && b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Schema)))
+                return body.First(b => b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Schema)).Value.Schema;
 
             return null;
         }

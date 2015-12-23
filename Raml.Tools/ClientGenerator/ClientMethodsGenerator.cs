@@ -84,6 +84,11 @@ namespace Raml.Tools.ClientGenerator
             methodsNames.Add(generatedMethod.Name);
         }
 
+        private string GetResourceType(IDictionary<string, IDictionary<string, string>> type)
+        {
+            return type != null && type.Any() ? type.First().Key : string.Empty;
+        }
+
         private ClientGeneratorMethod BuildClassMethod(string url, Method method, Resource resource)
         {
             var parentUrl = UrlGeneratorHelper.GetParentUri(url, resource.RelativeUri);
@@ -103,6 +108,11 @@ namespace Raml.Tools.ClientGenerator
                 RequestContentTypes = method.Body.Keys.ToArray(),
                 ResponseContentTypes = method.Responses != null ? method.Responses.Where(r => r.Body != null).SelectMany(r => r.Body.Keys).ToArray() : new string[0]
             };
+
+            // look in traits 
+            
+            // look in resource types
+
             return generatedMethod;
         }
 

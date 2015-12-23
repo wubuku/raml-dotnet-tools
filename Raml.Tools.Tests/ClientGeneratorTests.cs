@@ -149,10 +149,10 @@ namespace Raml.Tools.Tests
         }
 
         [Test]
-        public async Task ShouldBuildRequestObjects_FromTest()
+        public async Task ShouldGetRequestObjectsFromResourceTypes_FromTest()
         {
             var model = await GetTestGeneratedModel();
-            Assert.AreEqual(1, model.RequestObjects.Count);
+            Assert.IsNotNull(model.Classes.First(c => c.Name == "Sales").Methods.First(m => m.Verb == "Post").Parameter);
         }
 
         [Test]

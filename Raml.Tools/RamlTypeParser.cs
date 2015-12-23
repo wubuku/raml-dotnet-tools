@@ -71,6 +71,7 @@ namespace Raml.Tools
 
                 var itemType = ParseNestedType(ramlType.Value.Array.Items, baseType);
                 schemaObjects.Add(baseType, itemType);
+                typeOfArray = CollectionTypeHelper.GetCollectionType(baseType);
             }
 
             return new ApiObject
