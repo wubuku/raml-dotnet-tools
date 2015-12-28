@@ -111,10 +111,12 @@ namespace Raml.Tools
                         if (string.IsNullOrWhiteSpace(resp.Description))
                             resp.Description = verb.Description;
                     }
-
-                    var responses = method.Responses.ToList();
-                    responses.Add(response);
-                    method.Responses = responses;
+                    else
+                    {
+                        var responses = method.Responses.ToList();
+                        responses.Add(response);
+                        method.Responses = responses;                        
+                    }
                 }
             }
 
