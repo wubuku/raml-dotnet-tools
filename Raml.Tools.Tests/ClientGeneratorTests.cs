@@ -516,7 +516,19 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(2, model.Objects.Count(o => o.Name.Contains("Patch")));
         }
 
+        [Test]
+        public async Task ShouldAcceptDigestSecurity()
+        {
+            var model = await BuildModel("files/raml1/digest.raml");
+            Assert.IsNotNull(model.Security);
+        }
 
+        [Test]
+        public async Task ShouldAcceptWithoutBaseUri()
+        {
+            var model = await BuildModel("files/raml1/baseUri.raml");
+            Assert.IsEmpty(model.BaseUri);
+        }
 
         private static string GetXml(string comment)
         {

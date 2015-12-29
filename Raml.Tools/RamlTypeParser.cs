@@ -208,10 +208,10 @@ namespace Raml.Tools
                 }
                 if (prop.Object != null)
                 {
-                    var name = NetNamingMapper.GetObjectName(kv.Key);
+                    var name = NetNamingMapper.GetPropertyName(kv.Key);
                     var newApiObject =  GetApiObjectFromObject(prop, name);
                     schemaObjects.Add(name, newApiObject);
-                    props.Add(new Property { Name = name, Type = name, Required = prop.Required });
+                    props.Add(new Property { Name = name, Type = name, Required = prop.Required, OriginalName = kv.Key.TrimEnd('?')});
                     continue;
                 }
             }
@@ -224,15 +224,15 @@ namespace Raml.Tools
             {
                 Minimum = ToDouble(prop.Scalar.Minimum),
                 Maximum = ToDouble(prop.Scalar.Maximum),
-                Type = prop.Type == "object" ? NetNamingMapper.GetObjectName(kv.Key) : NetTypeMapper.Map(prop.Scalar.Type),
+                Type = prop.Type == "object" ? NetNamingMapper.GetPropertyName(kv.Key) : NetTypeMapper.Map(prop.Scalar.Type),
                 MaxLength = prop.Scalar.MaxLength,
                 MinLength = prop.Scalar.MinLength,
-                Name = NetNamingMapper.GetObjectName(kv.Key),
+                Name = NetNamingMapper.GetPropertyName(kv.Key),
                 Required = prop.Required,
                 Example = prop.Example,
                 Description = prop.Description,
                 IsEnum = prop.Scalar.Enum != null && prop.Scalar.Enum.Any(),
-                OriginalName = kv.Key
+                OriginalName = kv.Key.TrimEnd('?')
             };
         }
 
