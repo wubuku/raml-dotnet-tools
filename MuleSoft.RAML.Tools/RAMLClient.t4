@@ -113,6 +113,9 @@ namespace $(namespace)
 <#
 	            }
 #>
+
+            url = url.Replace("?&", "?");
+
             var req = new HttpRequestMessage(<#= method.NetHttpMethod #>, url);
 <#
 
@@ -133,7 +136,7 @@ namespace $(namespace)
 			        else
 			        {
 #>
-            req.RequestUri = new Uri(url + (url.Contains("?") ? "&" : "?") + "access_token=" + proxy.OAuthAccessToken, UriKind.Relative);
+            req.RequestUri = new Uri(url + (url.EndsWith("?") || url.EndsWith("&") ? "" : (url.Contains("?") ? "&" : "?")) + "access_token=" + proxy.OAuthAccessToken, UriKind.Relative);
 <#
 			        }
 		        }
@@ -279,6 +282,9 @@ namespace $(namespace)
 <#
 	            }
 #>
+
+            url = url.Replace("?&", "?");
+
             var req = new HttpRequestMessage(<#= method.NetHttpMethod #>, url);
 
 <#
@@ -299,7 +305,7 @@ namespace $(namespace)
 			        else
 			        {
 #>
-            req.RequestUri = new Uri(url + (url.Contains("?") ? "&" : "?") + "access_token=" + proxy.OAuthAccessToken, UriKind.Relative);
+            req.RequestUri = new Uri(url + (url.EndsWith("?") || url.EndsWith("&") ? "" : (url.Contains("?") ? "&" : "?")) + "access_token=" + proxy.OAuthAccessToken, UriKind.Relative);
 <#
 			        }
 		        }
