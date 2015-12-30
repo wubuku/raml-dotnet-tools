@@ -107,7 +107,7 @@ namespace Raml.Tools
                 return "IDictionary<string, object>";
             }
 
-            return "string";
+            return type;
         }
 
         private ApiObject GetRequestApiObjectByKey(string key)

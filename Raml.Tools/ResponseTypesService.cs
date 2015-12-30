@@ -86,7 +86,7 @@ namespace Raml.Tools
                 return "IDictionary<string, object>";
             }
 
-            return "string";
+            return type;
         }
 
 
