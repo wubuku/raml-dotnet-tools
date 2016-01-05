@@ -12,7 +12,8 @@ namespace Raml.Tools
     public abstract class GeneratorServiceBase
     {
         private readonly ObjectParser objectParser = new ObjectParser();
-        
+        private RamlTypeParser raml1TypesParser;
+
         protected readonly string[] suffixes = { "A", "B", "C", "D", "E", "F", "G" };
 
         protected readonly UriParametersGenerator uriParametersGenerator = new UriParametersGenerator();
@@ -30,7 +31,8 @@ namespace Raml.Tools
 	    private readonly string targetNamespace;
 	    protected ICollection<string> classesNames;
 		protected IDictionary<string, ApiObject> uriParameterObjects;
-		public const string RequestContentSuffix = "RequestContent";
+        
+        public const string RequestContentSuffix = "RequestContent";
 		public const string ResponseContentSuffix = "ResponseContent";
 
         public RamlDocument ParsedContent { get { return raml; } }
@@ -42,8 +44,8 @@ namespace Raml.Tools
 			this.raml = raml;
 		    this.targetNamespace = targetNamespace;
 		    apiObjectsCleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects, schemaObjects);
-
 		    ApplyResourceTypesAndTraits(raml.Resources);
+            raml1TypesParser = new RamlTypeParser(schemaObjects, targetNamespace);
 		}
 
         private void ApplyResourceTypesAndTraits(ICollection<Resource> resources)
@@ -201,6 +203,17 @@ namespace Raml.Tools
 
                             AddObjectToObjectCollectionOrLink(obj, key, schemaRequestObjects, schemaObjects);                                
                         }
+                        foreach (var kv in method.Body.Where(b => b.Value != null && b.Value.InlineType != null))
+                        {
+                            var key = GeneratorServiceHelper.GetKeyForResource(method, resource, fullUrl) + RequestContentSuffix;
+                            if (schemaRequestObjects.ContainsKey(key))
+                                continue;
+
+                            raml1TypesParser = new RamlTypeParser(schemaObjects, targetNamespace);
+                            var obj = raml1TypesParser.ParseInline(key, kv.Value.InlineType, schemaRequestObjects);
+
+                            AddObjectToObjectCollectionOrLink(obj, key, schemaRequestObjects, schemaObjects);
+                        }
                     }
                 }
                 if (resource.Resources != null)
@@ -257,6 +270,17 @@ namespace Raml.Tools
 
                                 AddObjectToObjectCollectionOrLink(obj, key, schemaResponseObjects, schemaObjects);
                             }
+
+                            foreach (var kv in response.Body.Where(b => b.Value.InlineType != null))
+                            {
+                                var key = GeneratorServiceHelper.GetKeyForResource(method, resource, fullUrl) + ParserHelpers.GetStatusCode(response.Code) + ResponseContentSuffix;
+                                if (schemaResponseObjects.ContainsKey(key)) continue;
+
+                                var obj = raml1TypesParser.ParseInline(key, kv.Value.InlineType, schemaResponseObjects);
+
+                                AddObjectToObjectCollectionOrLink(obj, key, schemaResponseObjects, schemaObjects);
+                            }
+
                         }
                     }
                 }

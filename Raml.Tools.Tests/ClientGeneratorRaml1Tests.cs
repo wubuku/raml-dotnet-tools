@@ -86,13 +86,23 @@ namespace Raml.Tools.Tests
         }
 
         [Test]
-        public async Task ShouldBuild_WhenTypeExpressions()
+        public async Task ShouldHandleTypeExpressions()
         {
             var model = await GetTypeExpressionsModel();
-            // TODO: check union and array types in generated methods !
-            
-            Assert.IsNotNull(model);
+            Assert.AreEqual(CollectionTypeHelper.GetCollectionType("Movie"), model.Classes.First().Methods.First(m => m.Verb == "Get").OkReturnType);
+            Assert.AreEqual("string", model.Classes.First().Methods.First(m => m.Verb == "Post").Parameter.Type);
+            Assert.AreEqual("string", model.Classes.First().Methods.First(m => m.Verb == "Put").Parameter.Type);
         }
+
+        [Test]
+        public async Task ShouldHandleInlinedTypes()
+        {
+            var model = await BuildModel("files/raml1/inlinetype.raml");
+            Assert.AreEqual(2, model.Objects.Count());
+            Assert.AreEqual("UsersGetOKResponseContent", model.Classes.First().Methods.First(m => m.Verb == "Get").OkReturnType);
+            Assert.AreEqual("UsersPostRequestContent", model.Classes.First().Methods.First(m => m.Verb == "Post").Parameter.Type);
+        }
+
 
         private static async Task<ClientGeneratorModel> GetAnnotationTargetsModel()
         {

@@ -30,6 +30,14 @@ namespace Raml.Tools
             }
         }
 
+        public ApiObject ParseInline(string key, RamlType inline, IDictionary<string, ApiObject> objects)
+        {
+            var obj = ParseRamlType(new KeyValuePair<string, RamlType>(key, inline));
+            //obj.Name = NetNamingMapper.GetObjectName(key);
+            //obj.Type = NetNamingMapper.GetObjectName(key);
+            return obj;
+        }
+
         private ApiObject ParseRamlType(KeyValuePair<string, RamlType> ramlType)
         {
             if (ramlType.Value.External != null)
@@ -185,7 +193,7 @@ namespace Raml.Tools
 
             return new ApiObject
             {
-                Type = name,
+                Type = NetNamingMapper.GetObjectName(name),
                 Name = NetNamingMapper.GetObjectName(name),
                 BaseClass = ramlType.Type != "object" ? ramlType.Type : string.Empty,
                 Description = ramlType.Description,

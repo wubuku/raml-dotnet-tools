@@ -24,15 +24,19 @@ namespace Raml.Tools
 
         public string GetResponseType(Method method, Resource resource, MimeType mimeType, string key, string responseCode, string fullUrl)
         {
-            var returnType = GetNamedReturnType(method, resource, mimeType, fullUrl);
+            string returnType = null;
+            if (mimeType.InlineType == null)
+            {
+                returnType = GetNamedReturnType(method, resource, mimeType, fullUrl);
 
-            if (!string.IsNullOrWhiteSpace(returnType))
-                return returnType;
+                if (!string.IsNullOrWhiteSpace(returnType))
+                    return returnType;
 
-            returnType = GetReturnTypeFromResourceType(method, resource, key, responseCode, fullUrl);
+                returnType = GetReturnTypeFromResourceType(method, resource, key, responseCode, fullUrl);
 
-            if (!string.IsNullOrWhiteSpace(returnType))
-                return returnType;
+                if (!string.IsNullOrWhiteSpace(returnType))
+                    return returnType;
+            }
 
             if (ResponseHasKey(key))
                 return GetReturnTypeFromResponseByKey(key);
@@ -152,14 +156,17 @@ namespace Raml.Tools
         //TODO: can a type have parameters or only a schema ?
         private string GetNamedReturnType(Method method, Resource resource, MimeType mimeType, string fullUrl)
         {
-            if (mimeType.Schema.Contains("<<") && mimeType.Schema.Contains(">>"))
+            if (mimeType.Schema != null && mimeType.Schema.Contains("<<") && mimeType.Schema.Contains(">>"))
                 return GetReturnTypeFromParameter(method, resource, mimeType, fullUrl);
 
-            if (!mimeType.Schema.Contains("<") && !mimeType.Schema.Contains("{"))
+            if (mimeType.Schema != null && !mimeType.Schema.Contains("<") && !mimeType.Schema.Contains("{"))
                 return GetReturnTypeFromName(mimeType.Schema);
 
             if (!string.IsNullOrWhiteSpace(mimeType.Type))
-                return GetReturnTypeFromName(mimeType.Type);
+            {
+                return DecodeResponseRaml1Type(mimeType.Type);
+                //return GetReturnTypeFromName(type);
+            }
 
             return string.Empty;
         }
