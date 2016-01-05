@@ -13,29 +13,30 @@ namespace Raml.Tools
         private readonly IDictionary<string, ApiObject> schemaObjects;
         private readonly string targetNamespace;
 
-        private readonly IDictionary<string, string> warnings = new Dictionary<string, string>();
-        private readonly IDictionary<string, ApiEnum> enums = new Dictionary<string, ApiEnum>();
+        private readonly IDictionary<string, string> warnings;
+        private readonly IDictionary<string, ApiEnum> enums;
 
-        public RamlTypeParser(IDictionary<string, ApiObject> schemaObjects, string targetNamespace)
+        public RamlTypeParser(IDictionary<string, ApiObject> schemaObjects, string targetNamespace, IDictionary<string, ApiEnum> enums, IDictionary<string, string> warnings)
         {
             this.schemaObjects = schemaObjects;
             this.targetNamespace = targetNamespace;
+            this.enums = enums;
+            this.warnings = warnings;
         }
 
         public void Parse(IDictionary<string, RamlType> ramlTypes)
         {
             foreach (var ramlType in ramlTypes)
             {
-                schemaObjects.Add(ramlType.Key, ParseRamlType(ramlType));
+                var apiObject = ParseRamlType(ramlType);
+                if(apiObject != null)
+                    schemaObjects.Add(ramlType.Key, apiObject);
             }
         }
 
         public ApiObject ParseInline(string key, RamlType inline, IDictionary<string, ApiObject> objects)
         {
-            var obj = ParseRamlType(new KeyValuePair<string, RamlType>(key, inline));
-            //obj.Name = NetNamingMapper.GetObjectName(key);
-            //obj.Type = NetNamingMapper.GetObjectName(key);
-            return obj;
+            return ParseRamlType(new KeyValuePair<string, RamlType>(key, inline));
         }
 
         private ApiObject ParseRamlType(KeyValuePair<string, RamlType> ramlType)
@@ -117,9 +118,23 @@ namespace Raml.Tools
         private ApiObject ParseScalar(KeyValuePair<string, RamlType> ramlType)
         {
             // TODO: check, should not really be an object, but is needed to map to primitive type...
+            if (ramlType.Value.Scalar.Enum != null && ramlType.Value.Scalar.Enum.Any())
+            {
+                if (enums.ContainsKey(ramlType.Key))
+                    return null;
+
+                enums.Add(ramlType.Key, new ApiEnum
+                {
+                    Name = NetNamingMapper.GetObjectName(ramlType.Key),
+                    Description = ramlType.Value.Description,
+                    Values = ramlType.Value.Scalar.Enum.ToList()
+                });
+                return null;
+            }
+            
             return new ApiObject
             {
-                Type = ramlType.Value.Scalar.Type,
+                Type = NetTypeMapper.Map(ramlType.Value.Scalar.Type),
                 Name = NetNamingMapper.GetObjectName(ramlType.Key),
                 Example = ramlType.Value.Example,
                 Description = ramlType.Value.Description,
@@ -228,11 +243,25 @@ namespace Raml.Tools
 
         private Property GetPropertyFromScalar(RamlType prop, KeyValuePair<string, RamlType> kv)
         {
+            if (prop.Scalar.Enum != null && prop.Scalar.Enum.Any())
+            {
+                if (!enums.ContainsKey(kv.Key))
+                {
+                    var apiEnum = new ApiEnum
+                    {
+                        Name = NetNamingMapper.GetPropertyName(kv.Key),
+                        Description = kv.Value.Description,
+                        Values = kv.Value.Scalar.Enum.ToList()
+                    };
+                    enums.Add(kv.Key, apiEnum);
+                }
+            }
+
             return new Property
             {
                 Minimum = ToDouble(prop.Scalar.Minimum),
                 Maximum = ToDouble(prop.Scalar.Maximum),
-                Type = prop.Type == "object" ? NetNamingMapper.GetPropertyName(kv.Key) : NetTypeMapper.Map(prop.Scalar.Type),
+                Type = GetPropertyType(prop, kv),
                 MaxLength = prop.Scalar.MaxLength,
                 MinLength = prop.Scalar.MinLength,
                 Name = NetNamingMapper.GetPropertyName(kv.Key),
@@ -242,6 +271,16 @@ namespace Raml.Tools
                 IsEnum = prop.Scalar.Enum != null && prop.Scalar.Enum.Any(),
                 OriginalName = kv.Key.TrimEnd('?')
             };
+        }
+
+        private static string GetPropertyType(RamlType prop, KeyValuePair<string, RamlType> kv)
+        {
+            if (string.IsNullOrWhiteSpace(prop.Type))
+                return "string";
+
+            return prop.Type == "object" || (prop.Scalar.Enum != null && prop.Scalar.Enum.Any()) 
+                ? NetNamingMapper.GetPropertyName(kv.Key) 
+                : NetTypeMapper.Map(prop.Scalar.Type);
         }
 
         private double? ToDouble(decimal? value)

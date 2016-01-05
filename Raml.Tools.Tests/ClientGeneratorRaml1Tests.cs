@@ -103,6 +103,20 @@ namespace Raml.Tools.Tests
             Assert.AreEqual("UsersPostRequestContent", model.Classes.First().Methods.First(m => m.Verb == "Post").Parameter.Type);
         }
 
+        [Test]
+        public async Task ShouldHandleEnums()
+        {
+            var model = await BuildModel("files/raml1/enums.raml");
+            Assert.AreEqual(2, model.Enums.Count());
+        }
+
+        [Test]
+        public async Task ShouldHandleShortcutsSyntacticSugar()
+        {
+            var model = await BuildModel("files/raml1/shortcuts.raml");
+            Assert.AreEqual(2, model.Objects.Count());
+            Assert.AreEqual(3, model.Objects.First(o => o.Name == "Person").Properties.Count);
+        }
 
         private static async Task<ClientGeneratorModel> GetAnnotationTargetsModel()
         {

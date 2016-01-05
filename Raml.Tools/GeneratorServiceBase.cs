@@ -45,7 +45,7 @@ namespace Raml.Tools
 		    this.targetNamespace = targetNamespace;
 		    apiObjectsCleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects, schemaObjects);
 		    ApplyResourceTypesAndTraits(raml.Resources);
-            raml1TypesParser = new RamlTypeParser(schemaObjects, targetNamespace);
+            raml1TypesParser = new RamlTypeParser(schemaObjects, targetNamespace, enums, warnings);
 		}
 
         private void ApplyResourceTypesAndTraits(ICollection<Resource> resources)
@@ -209,7 +209,7 @@ namespace Raml.Tools
                             if (schemaRequestObjects.ContainsKey(key))
                                 continue;
 
-                            raml1TypesParser = new RamlTypeParser(schemaObjects, targetNamespace);
+                            raml1TypesParser = new RamlTypeParser(schemaObjects, targetNamespace, enums, warnings);
                             var obj = raml1TypesParser.ParseInline(key, kv.Value.InlineType, schemaRequestObjects);
 
                             AddObjectToObjectCollectionOrLink(obj, key, schemaRequestObjects, schemaObjects);

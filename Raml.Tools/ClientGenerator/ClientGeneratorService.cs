@@ -42,7 +42,7 @@ namespace Raml.Tools.ClientGenerator
             enums = new Dictionary<string, ApiEnum>();
 
             var ns = NetNamingMapper.GetNamespace(raml.Title);
-            new RamlTypeParser(schemaObjects, ns).Parse(raml.Types);
+            new RamlTypeParser(schemaObjects, ns, enums, warnings).Parse(raml.Types);
 
             ParseSchemas();
             schemaRequestObjects = GetRequestObjects();
