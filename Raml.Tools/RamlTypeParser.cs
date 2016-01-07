@@ -232,9 +232,31 @@ namespace Raml.Tools
                 if (prop.Object != null)
                 {
                     var name = NetNamingMapper.GetPropertyName(kv.Key);
-                    var newApiObject =  GetApiObjectFromObject(prop, name);
-                    schemaObjects.Add(name, newApiObject);
+                    if (!schemaObjects.ContainsKey(name))
+                    {
+                        var newApiObject = GetApiObjectFromObject(prop, name);
+                        schemaObjects.Add(name, newApiObject);
+                    }
                     props.Add(new Property { Name = name, Type = name, Required = prop.Required, OriginalName = kv.Key.TrimEnd('?')});
+                    continue;
+                }
+                if (prop.Array != null)
+                {
+                    var name = NetNamingMapper.GetPropertyName(kv.Key);
+                    var type = kv.Value.Type;
+                    if (kv.Value.Array.Items != null)
+                    {
+                        var obj = ParseArray(kv);
+                        type = CollectionTypeHelper.GetCollectionType(obj.Type);
+                    }
+                    if (type.EndsWith("[]"))
+                    {
+                        type = type.Substring(0, type.Length - 2);
+                        type = CollectionTypeHelper.GetCollectionType(type);
+                    }
+
+                    props.Add(new Property { Name = name, Type = type, Required = prop.Required, OriginalName = kv.Key.TrimEnd('?') });
+
                     continue;
                 }
             }

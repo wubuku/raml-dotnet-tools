@@ -36,7 +36,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using RAML.Api.Core;
 using Raml.Common;
-
+using <#= model.Namespace #>.Models;
 
 namespace <#= model.Namespace #>
 {

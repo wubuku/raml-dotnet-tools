@@ -119,23 +119,10 @@ namespace Raml.Tools
 
         protected GeneratorParameter GetParameter(string key, Method method, Resource resource, string fullUrl)
         {
-            var apiObject = requestTypesService.GetRequestApiObject(key, method, resource, fullUrl, raml.MediaType);
-            if (apiObject != null) 
-                return CreateGeneratorParameter(apiObject);
-
-            return new GeneratorParameter {Name = "content", Type = "string"};
+            return requestTypesService.GetRequestParameter(key, method, resource, fullUrl, raml.MediaType);
 		}
 
-        private GeneratorParameter CreateGeneratorParameter(ApiObject apiObject)
-        {
-            var generatorParameter = new GeneratorParameter
-            {
-                Name = apiObject.Name.ToLower(),
-                Type = requestTypesService.DecodeRequestRaml1Type(RamlTypesHelper.GetTypeFromApiObject(apiObject)),
-                Description = apiObject.Description
-            };
-            return generatorParameter;
-        }
+
 
 
         protected bool IsVerbForMethod(Method method)

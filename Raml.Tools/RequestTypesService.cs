@@ -23,14 +23,21 @@ namespace Raml.Tools
             this.resourceTypes = resourceTypes;
         }
 
-        public ApiObject GetRequestApiObject(string key, Method method, Resource resource, string fullUrl, string defaultMediaType)
+        public GeneratorParameter GetRequestParameter(string key, Method method, Resource resource, string fullUrl, string defaultMediaType)
         {
-            var schema = GetJsonSchemaOrDefault(method.Body, defaultMediaType);
-            if (schema != null)
+            var mimeType = GetMimeType(method.Body, defaultMediaType);
+            if (mimeType != null)
             {
-                var apiObject = GetRequestApiObjectWhenNamed(method, resource, schema, fullUrl);
-                if (apiObject != null)
-                    return apiObject;
+                if (!string.IsNullOrWhiteSpace(mimeType.Type))
+                {
+                    return new GeneratorParameter { Name = "content", Type = DecodeRequestRaml1Type(mimeType.Type) };
+                }
+                if (!string.IsNullOrWhiteSpace(mimeType.Schema))
+                {
+                    var apiObject = GetRequestApiObjectWhenNamed(method, resource, mimeType.Schema, fullUrl);
+                    if (apiObject != null)
+                        return CreateGeneratorParameter(apiObject);                    
+                }
             }
 
             if (resource.Type != null && resource.Type.Any() &&
@@ -41,33 +48,31 @@ namespace Raml.Tools
                 {
                     var apiObject = GetRequestApiObjectWhenNamed(method, resource, verb.Body.Schema, fullUrl);
                     if (apiObject != null)
-                        return apiObject;
+                        return CreateGeneratorParameter(apiObject);
                 }
 
                 if (verb != null && verb.Body != null && !string.IsNullOrWhiteSpace(verb.Body.Type))
                 {
-                    var apiObject = GetRequestApiObjectWhenNamed(method, resource, verb.Body.Type, fullUrl);
-                    if (apiObject != null)
-                        return apiObject;
+                    return new GeneratorParameter { Name = "content", Type = DecodeRequestRaml1Type(verb.Body.Type) };
                 }
             }
 
             var apiObjectByKey = GetRequestApiObjectByKey(key);
             if (apiObjectByKey != null)
-                return apiObjectByKey;
+                return CreateGeneratorParameter(apiObjectByKey);
 
 
             var requestKey = key + GeneratorServiceBase.RequestContentSuffix;
             apiObjectByKey = GetRequestApiObjectByKey(requestKey);
             if (apiObjectByKey != null)
-                return apiObjectByKey;
+                return CreateGeneratorParameter(apiObjectByKey);
 
             if (linkKeysWithObjectNames.ContainsKey(key))
             {
                 var linkedKey = linkKeysWithObjectNames[key];
                 apiObjectByKey = GetRequestApiObjectByKey(linkedKey);
                 if (apiObjectByKey != null)
-                    return apiObjectByKey;
+                    return CreateGeneratorParameter(apiObjectByKey);
             }
 
             if (linkKeysWithObjectNames.ContainsKey(requestKey))
@@ -75,13 +80,24 @@ namespace Raml.Tools
                 var linkedKey = linkKeysWithObjectNames[requestKey];
                 apiObjectByKey = GetRequestApiObjectByKey(linkedKey);
                 if (apiObjectByKey != null)
-                    return apiObjectByKey;
+                    return CreateGeneratorParameter(apiObjectByKey);
             }
 
-            return null;
+            return new GeneratorParameter { Name = "content", Type = "string" };
         }
 
-        public string DecodeRequestRaml1Type(string type)
+        private GeneratorParameter CreateGeneratorParameter(ApiObject apiObject)
+        {
+            var generatorParameter = new GeneratorParameter
+            {
+                Name = apiObject.Name.ToLower(),
+                Type = RamlTypesHelper.GetTypeFromApiObject(apiObject),
+                Description = apiObject.Description
+            };
+            return generatorParameter;
+        }
+
+        private string DecodeRequestRaml1Type(string type)
         {
             // TODO: can I handle this better ?
             if (type.Contains("(") || type.Contains("|"))
@@ -166,16 +182,16 @@ namespace Raml.Tools
             return null;
         }
 
-        private string GetJsonSchemaOrDefault(IDictionary<string, MimeType> body, string defaultMediaType)
+        private MimeType GetMimeType(IDictionary<string, MimeType> body, string defaultMediaType)
         {
             if (body.Any(b => b.Key.ToLowerInvariant().Contains("json") && b.Value != null
                               && (!string.IsNullOrWhiteSpace(b.Value.Schema)
                                   || !string.IsNullOrWhiteSpace(b.Value.Type))))
             {
                 if (body.Any(b => b.Key.ToLowerInvariant().Contains("json") && b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Schema)))
-                    return body.First(b => b.Key.ToLowerInvariant().Contains("json") && b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Schema)).Value.Schema;
+                    return body.First(b => b.Key.ToLowerInvariant().Contains("json") && b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Schema)).Value;
 
-                return body.First(b => b.Key.ToLowerInvariant().Contains("json") && b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Type)).Value.Type;
+                return body.First(b => b.Key.ToLowerInvariant().Contains("json") && b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Type)).Value;
             }
 
             var mediaType = defaultMediaType != null ? defaultMediaType.ToLowerInvariant() : string.Empty;
@@ -192,18 +208,18 @@ namespace Raml.Tools
                                   && b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Schema)))
                 {
                     return body.First(b => b.Key.ToLowerInvariant() == mediaType
-                                           && b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Schema)).Value.Schema;
+                                           && b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Schema)).Value;
                 }
 
                 return body.First(b => b.Key.ToLowerInvariant() == mediaType
-                                       && b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Type)).Value.Type;
+                                       && b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Type)).Value;
             }
 
             if (body.Any(b => b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Schema)))
-                return body.First(b => b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Schema)).Value.Schema;
+                return body.First(b => b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Schema)).Value;
 
             if (body.Any(b => b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Type)))
-                return body.First(b => b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Schema)).Value.Type;
+                return body.First(b => b.Value != null && !string.IsNullOrWhiteSpace(b.Value.Schema)).Value;
 
             return null;
         }

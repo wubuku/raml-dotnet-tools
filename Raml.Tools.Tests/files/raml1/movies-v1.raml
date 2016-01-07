@@ -61,7 +61,7 @@ types:
     responses:
       200:
         body:
-          schema: Movie[]
+          type: Movie[]
           example: |
             [
               {
@@ -97,7 +97,7 @@ types:
     securedBy: [ oauth_2_0 ]
     body:
       application/json:
-        schema: Movie
+        type: Movie[]
   /{id}:
     get:
       description: get the info of a movie
@@ -145,7 +145,7 @@ types:
       responses:
         200:
           body:
-            schema: Movie[]
+            type: Movie[]
             example: |
               [
                 {
@@ -180,7 +180,7 @@ types:
       responses:
         200:
           body:
-            schema: Movie[]
+            type: Movie[]
             example: |
               [
                 {
@@ -199,7 +199,7 @@ types:
       responses:
         200:
           body:
-            schema: Movie[]
+            type: Movie[]
             example: |
               [
                 {
@@ -243,7 +243,7 @@ types:
     responses:
       200:
         body:
-          schema: Movie[]
+          type: Movie[]
           example: |
             [
               {
