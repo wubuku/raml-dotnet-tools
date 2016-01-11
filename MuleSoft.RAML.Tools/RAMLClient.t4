@@ -29,6 +29,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using RAML.Api.Core;
 using Raml.Common;
+using $(namespace).Models;
 
 namespace $(namespace)
 {
