@@ -89,6 +89,10 @@ namespace Raml.Tools.Tests
             Assert.AreEqual("Track", model.Controllers.First(c => c.Name == "Tracks").Methods.First(m => m.Name == "GetById").ReturnType);
 
             Assert.AreEqual(CollectionTypeHelper.GetCollectionType("InvoiceLine"), model.Objects.First(c => c.Name == "Invoice").Properties.First(p => p.Name == "Lines").Type);
+
+            Assert.AreEqual("IDictionary<string,Artist>", model.Objects.First(c => c.Name == "ArtistByTrack").Type);
+            Assert.AreEqual("IDictionary<string," + CollectionTypeHelper.GetCollectionType("Track") + ">", model.Objects.First(c => c.Name == "TracksByArtist").Type);
+            
         }
 
         private static async Task<WebApiGeneratorModel> GetAnnotationTargetsModel()

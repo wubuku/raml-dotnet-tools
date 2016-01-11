@@ -187,7 +187,9 @@ namespace Raml.Tools
                 type = nestedObject.Name;
                 schemaObjects.Add(itemName, nestedObject);
             }
-            
+
+            type = RamlTypesHelper.DecodeRaml1Type(type);
+
             return new ApiObject
             {
                 Type = "IDictionary<string," + type + ">",

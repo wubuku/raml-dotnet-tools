@@ -7,6 +7,31 @@ namespace Raml.Tools
 {
     public class RamlTypesHelper
     {
+        public static string DecodeRaml1Type(string type)
+        {
+            // TODO: can I handle this better ?
+            if (type.Contains("(") || type.Contains("|"))
+                return "object";
+
+            if (type.EndsWith("[][]")) // array of arrays
+                return CollectionTypeHelper.GetCollectionType(CollectionTypeHelper.GetCollectionType(type.Substring(0, type.Length - 4)));
+
+            if (type.EndsWith("[]")) // array
+                return CollectionTypeHelper.GetCollectionType(type.Substring(0, type.Length - 2));
+
+            if (type.EndsWith("{}")) // Map
+            {
+                var subtype = type.Substring(0, type.Length - 2);
+                var netType = NetTypeMapper.Map(subtype);
+                if (!string.IsNullOrWhiteSpace(netType))
+                    return "IDictionary<string, " + netType + ">";
+
+               return "IDictionary<string, " + subtype + ">";
+            }
+
+            return type;
+        }
+
         public static string GetTypeFromApiObject(ApiObject apiObject)
         {
             if (!apiObject.IsArray)

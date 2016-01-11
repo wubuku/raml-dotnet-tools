@@ -67,7 +67,7 @@ namespace Raml.Tools.Tests
         public async Task ShouldBuildMapTypes()
         {
             var model = await GetMapsModel();
-            Assert.AreEqual(5, model.Objects.Count());
+            Assert.AreEqual(6, model.Objects.Count());
             Assert.IsTrue(model.Objects.Any(o => o.Name == "MapOfObjectItem"));
             Assert.IsTrue(model.Objects.Any(o => o.Name == "MapOfPerson"));
             Assert.AreEqual("IDictionary<string,Person>", model.Objects.First(o => o.Name == "MapOfPerson").Type);
@@ -75,6 +75,8 @@ namespace Raml.Tools.Tests
             Assert.AreEqual("IDictionary<string,integer>", model.Objects.First(o => o.Name == "MapOfInt").Type);
             Assert.IsTrue(model.Objects.Any(o => o.Name == "MapOfObject"));
             Assert.AreEqual("IDictionary<string,MapOfObjectItem>", model.Objects.First(o => o.Name == "MapOfObject").Type);
+
+            Assert.AreEqual("IDictionary<string," + CollectionTypeHelper.GetCollectionType("Person") + ">", model.Objects.First(c => c.Name == "MapOfPersonArray").Type);
         }
 
 
