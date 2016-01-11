@@ -28,7 +28,7 @@ namespace Raml.Tools
             var mimeType = GetMimeType(method.Body, defaultMediaType);
             if (mimeType != null)
             {
-                if (!string.IsNullOrWhiteSpace(mimeType.Type))
+                if (mimeType.Type != "object" && !string.IsNullOrWhiteSpace(mimeType.Type))
                 {
                     return new GeneratorParameter { Name = "content", Type = DecodeRequestRaml1Type(mimeType.Type) };
                 }
