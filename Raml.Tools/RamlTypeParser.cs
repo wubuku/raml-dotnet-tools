@@ -197,7 +197,8 @@ namespace Raml.Tools
                 BaseClass = string.Empty,
                 Description = ramlType.Description,
                 Example = GetExampe(ramlType.Example, ramlType.Examples),
-                Properties = new Property[0]
+                Properties = new Property[0],
+                IsMap = true
             };
         }
 

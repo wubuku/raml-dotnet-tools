@@ -153,7 +153,6 @@ namespace Raml.Tools
             return returnType;
         }
 
-        //TODO: can a type have parameters or only a schema ?
         private string GetNamedReturnType(Method method, Resource resource, MimeType mimeType, string fullUrl)
         {
             if (mimeType.Schema != null && mimeType.Schema.Contains("<<") && mimeType.Schema.Contains(">>"))
@@ -164,8 +163,11 @@ namespace Raml.Tools
 
             if (!string.IsNullOrWhiteSpace(mimeType.Type))
             {
+                var type = GetReturnTypeFromName(mimeType.Type);
+                if (!string.IsNullOrWhiteSpace(type))
+                    return type;
+
                 return DecodeResponseRaml1Type(mimeType.Type);
-                //return GetReturnTypeFromName(type);
             }
 
             return string.Empty;

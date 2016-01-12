@@ -92,6 +92,9 @@ namespace Raml.Tools.Tests
 
             Assert.AreEqual("IDictionary<string,Artist>", model.Objects.First(c => c.Name == "ArtistByTrack").Type);
             Assert.AreEqual("IDictionary<string," + CollectionTypeHelper.GetCollectionType("Track") + ">", model.Objects.First(c => c.Name == "TracksByArtist").Type);
+
+            Assert.AreEqual("IDictionary<string,Artist>", model.Controllers.First(c => c.Name == "Artists").Methods.First(m => m.Url == "bytrack/{id}").ReturnType);
+            Assert.AreEqual("IDictionary<string," + CollectionTypeHelper.GetCollectionType("Track") + ">", model.Controllers.First(c => c.Name == "Tracks").Methods.First(m => m.Url == "byartist/{id}").ReturnType);
             
         }
 

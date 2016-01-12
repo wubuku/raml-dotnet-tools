@@ -19,6 +19,7 @@ namespace Raml.Tools
         public string Example { get; set; }
         public IList<Property> Properties { get; set; }
         public bool IsArray { get; set; }
+        public bool IsMap { get; set; }
         public bool IsMultiple { get; set; }
         public string JSONSchema { get; set; }
 

@@ -77,6 +77,7 @@ namespace Raml.Tools.Tests
             Assert.AreEqual("IDictionary<string,MapOfObjectItem>", model.Objects.First(o => o.Name == "MapOfObject").Type);
 
             Assert.AreEqual("IDictionary<string," + CollectionTypeHelper.GetCollectionType("Person") + ">", model.Objects.First(c => c.Name == "MapOfPersonArray").Type);
+            Assert.AreEqual("IDictionary<string," + CollectionTypeHelper.GetCollectionType("Person") + ">", model.Classes.First(c => c.Name == "Map").Methods.First().ReturnType);
         }
 
 
