@@ -1,6 +1,5 @@
 #%RAML 1.0
 title: Chinook RAML 1 Api
-baseUri: /
 types:
   Person:
     properties:
@@ -32,10 +31,17 @@ types:
         properties:
           Company:
   Artist:
-        properties:
+    properties:
           Id: 
             type: integer
           Name:
+    examples:
+      - content:
+          Id: 1
+          Name: Dave Mathews Band
+      - content:
+          Id: 2
+          Name: Pearl Jam
   Album:
     properties:
         Artist:

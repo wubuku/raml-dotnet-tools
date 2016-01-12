@@ -34,13 +34,18 @@ namespace Raml.Tools
 
         public static string GetTypeFromApiObject(ApiObject apiObject)
         {
-            if (!apiObject.IsArray)
-                return apiObject.Name;
+            if (apiObject.IsArray)
+            {
+                if (string.IsNullOrWhiteSpace(apiObject.Type))
+                    return CollectionTypeHelper.GetCollectionType(apiObject.Name);
 
-            if (apiObject.Type == null)
-                return CollectionTypeHelper.GetCollectionType(apiObject.Name);
+                return CollectionTypeHelper.GetCollectionType(apiObject.Type);
+            }
 
-            return CollectionTypeHelper.GetCollectionType(apiObject.Type);
+            if (!string.IsNullOrWhiteSpace(apiObject.Type) && apiObject.Type != apiObject.Name)
+                return apiObject.Type;
+
+            return apiObject.Name;
         }
 
         public static Verb GetResourceTypeVerb(Method method, Resource resource, IEnumerable<IDictionary<string, ResourceType>> rootResourceTypes)

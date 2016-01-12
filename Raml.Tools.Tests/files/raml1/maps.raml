@@ -71,9 +71,15 @@ types:
     responses:
       200:
         body:
-          schema: MapOfPerson
+          type: MapOfPerson
+  /map:
+    get:
+      responses:
+        200:
+          body:
+            type: MapOfPersonArray
   post:
     description: adds a movie to the catalogue
     body:
       application/json:
-        schema: MapOfInt
+        type: MapOfInt
