@@ -93,7 +93,8 @@ namespace MuleSoft.RAML.Tools
 
             // Add RAML Reference command in References
             var addRamlRefCommandId = new CommandID(GuidList.guidMuleSoft_RAML_ReferencesNode, (int)PkgCmdIDList.cmdRAMLGenerator);
-            var addRamlRefCommand = new MenuCommand(AddRamlReferenceCallback, addRamlRefCommandId);
+            var addRamlRefCommand = new OleMenuCommand(AddRamlReferenceCallback, addRamlRefCommandId);
+            addRamlRefCommand.BeforeQueryStatus += AddRamlRefCommandOnBeforeQueryStatus;
             mcs.AddCommand(addRamlRefCommand);
 
             // Add RAML Reference command in Api References Folder
@@ -156,6 +157,22 @@ namespace MuleSoft.RAML.Tools
             documentEvents = events.DocumentEvents;
             documentEvents.DocumentSaved += RamlScaffoldService.TriggerScaffoldOnRamlChanged;
             //MuleSoft.RAML.Tools.Command1.Initialize(this);
+        }
+
+        private void AddRamlRefCommandOnBeforeQueryStatus(object sender, EventArgs eventArgs)
+        {
+            var menuCommand = sender as OleMenuCommand;
+            if (menuCommand == null) return;
+
+            ShowAndEnableCommand(menuCommand, false);
+
+            var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
+            var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+
+            if (VisualStudioAutomationHelper.IsAVisualStudio2015Project(proj))
+                return;
+
+            ShowAndEnableCommand(menuCommand, true);
         }
 
         private void AddRamlContractFolderCommandOnBeforeQueryStatus(object sender, EventArgs eventArgs)
@@ -349,7 +366,13 @@ namespace MuleSoft.RAML.Tools
 
             ShowAndEnableCommand(menuCommand, false);
 
-            if (!IsVisualStudio2015OrWebApiCoreInstalled())
+            var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
+            var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+
+            if (VisualStudioAutomationHelper.IsAVisualStudio2015Project(proj))
+                return;
+
+            if (!IsWebApiCoreInstalled(proj))
                 return;
 
             ShowAndEnableCommand(menuCommand, true);
@@ -362,7 +385,13 @@ namespace MuleSoft.RAML.Tools
 
             ShowAndEnableCommand(menuCommand, false);
 
-            if (!IsVisualStudio2015OrWebApiCoreInstalled())
+            var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
+            var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+
+            if (VisualStudioAutomationHelper.IsAVisualStudio2015Project(proj))
+                return;
+
+            if (!IsWebApiCoreInstalled(proj))
                 return;
 
             if (IsWebApiExplorerInstalled())
@@ -378,6 +407,12 @@ namespace MuleSoft.RAML.Tools
 
             ShowAndEnableCommand(menuCommand, false);
 
+            var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
+            var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+
+            if (VisualStudioAutomationHelper.IsAVisualStudio2015Project(proj))
+                return;
+
             if (!IsWebApiExplorerInstalled())
                 return;
 
@@ -392,7 +427,7 @@ namespace MuleSoft.RAML.Tools
 
             ShowAndEnableCommand(menuCommand, false);
 
-            if (!IsVisualStudio2015OrWebApiCoreInstalled())
+            if (!IsAspNet5OrWebApiCoreInstalled())
                 return;
 
             ShowAndEnableCommand(menuCommand, true);
@@ -413,13 +448,13 @@ namespace MuleSoft.RAML.Tools
             return isWebApiCoreInstalled;
         }
 
-        private static bool IsVisualStudio2015OrWebApiCoreInstalled()
+        private static bool IsAspNet5OrWebApiCoreInstalled()
         {
             var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
             var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
 
             if (VisualStudioAutomationHelper.IsAVisualStudio2015Project(proj))
-                return true;
+                return IsAspNet5MvcInstalled(proj);
 
             return IsWebApiCoreInstalled(proj);
         }
@@ -431,6 +466,14 @@ namespace MuleSoft.RAML.Tools
             var isWebApiCoreInstalled = installerServices.IsPackageInstalled(proj, "Microsoft.AspNet.WebApi.Core");
             return isWebApiCoreInstalled;
         }
+
+        private static bool IsAspNet5MvcInstalled(Project proj)
+        {
+            var componentModel = (IComponentModel)ServiceProvider.GlobalProvider.GetService(typeof(SComponentModel));
+            var installerServices = componentModel.GetService<IVsPackageInstallerServices>();
+            return installerServices.IsPackageInstalled(proj, "Microsoft.AspNet.Mvc");
+        }
+
 
 
         private void UpdateRamlRefCommand_BeforeQueryStatus(object sender, EventArgs e)
@@ -449,7 +492,44 @@ namespace MuleSoft.RAML.Tools
 
         private static void ShowOrHideCommandAddRefApiFolder(object sender)
         {
-            ShowOrHideCommandForFolder(sender, Settings.Default.ApiReferencesFolderName);
+            var folderName = Settings.Default.ApiReferencesFolderName;
+
+            ShowOrHideForFolderIfNotVs2015(sender, folderName);
+        }
+
+        private static void ShowOrHideForFolderIfNotVs2015(object sender, string folderName)
+        {
+            var menuCommand = sender as OleMenuCommand;
+            if (menuCommand == null) return;
+
+            ShowAndEnableCommand(menuCommand, false);
+
+            var dte = ServiceProvider.GlobalProvider.GetService(typeof (SDTE)) as DTE;
+            var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+
+            if (VisualStudioAutomationHelper.IsAVisualStudio2015Project(proj))
+                return;
+
+            if (IsInFolder(folderName)) return;
+
+            ShowAndEnableCommand(menuCommand, true);
+        }
+
+        private static bool IsInFolder(string folderName)
+        {
+            IVsHierarchy hierarchy;
+            uint itemid;
+
+            if (!IsSingleProjectItemSelection(out hierarchy, out itemid)) return true;
+            // Get the file path
+            string itemFullPath;
+            ((IVsProject) hierarchy).GetMkDocument(itemid, out itemFullPath);
+
+            var folder = Path.GetDirectoryName(itemFullPath);
+
+            if (!folder.EndsWith(folderName))
+                return true;
+            return false;
         }
 
         private static void ShowOrHideCommandAddContractFolder(object sender)
@@ -465,16 +545,12 @@ namespace MuleSoft.RAML.Tools
 
             ShowAndEnableCommand(menuCommand, false);
 
-            IVsHierarchy hierarchy;
-            uint itemid;
+            if (IsInFolder(folderName)) return;
 
-            if (!IsSingleProjectItemSelection(out hierarchy, out itemid)) return;
-            // Get the file path
-            string itemFullPath;
-            ((IVsProject)hierarchy).GetMkDocument(itemid, out itemFullPath);
+            var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
+            var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
 
-            var folder = Path.GetDirectoryName(itemFullPath);
-            if (!folder.EndsWith(folderName))
+            if (VisualStudioAutomationHelper.IsAVisualStudio2015Project(proj) && !IsAspNet5MvcInstalled(proj))
                 return;
 
             ShowAndEnableCommand(menuCommand, true);
@@ -488,6 +564,12 @@ namespace MuleSoft.RAML.Tools
             if (menuCommand == null) return;
 
             ShowAndEnableCommand(menuCommand, false);
+
+            var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE;
+            var proj = VisualStudioAutomationHelper.GetActiveProject(dte);
+
+            if (VisualStudioAutomationHelper.IsAVisualStudio2015Project(proj))
+                return;
 
             IVsHierarchy hierarchy;
             uint itemid;
@@ -561,7 +643,7 @@ namespace MuleSoft.RAML.Tools
             if (folder.EndsWith(InstallerServices.IncludesFolderName))
                 return;
 
-            if (!IsVisualStudio2015OrWebApiCoreInstalled())
+            if (!IsAspNet5OrWebApiCoreInstalled())
                 return;
 
             ShowAndEnableCommand(menuCommand, true);
@@ -634,7 +716,7 @@ namespace MuleSoft.RAML.Tools
         //    if (folder.EndsWith(InstallerServices.IncludesFolderName))
         //        return;
 
-        //    if (!IsVisualStudio2015OrWebApiCoreInstalled())
+        //    if (!IsAspNet5OrWebApiCoreInstalled())
         //        return;
 
         //    ShowAndEnableCommand(menuCommand, true);
