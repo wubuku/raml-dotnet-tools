@@ -549,6 +549,9 @@ foreach (var apiObject in model.Objects.Where(o => string.IsNullOrWhiteSpace(o.G
     if(apiObject.IsArray && apiObject.Type != null)
         continue;
 
+    if(apiObject.IsMap)
+        continue;
+
 	if (!string.IsNullOrWhiteSpace(apiObject.Description))
 	{
 #>
