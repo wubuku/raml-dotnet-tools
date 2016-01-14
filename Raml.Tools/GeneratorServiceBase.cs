@@ -393,7 +393,11 @@ namespace Raml.Tools
             }
             else
             {
-                objectName = NetNamingMapper.GetObjectName(resource.RelativeUri);
+                if (resource.RelativeUri == "/")
+                    objectName = "RootUrl";
+                else
+                    objectName = NetNamingMapper.GetObjectName(resource.RelativeUri);
+
                 if (classesNames.Contains(objectName))
                     objectName = NetNamingMapper.Capitalize(GetObjectNameForParameter(resource));
             }

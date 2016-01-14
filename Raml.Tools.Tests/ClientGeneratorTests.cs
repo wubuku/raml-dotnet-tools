@@ -522,6 +522,13 @@ namespace Raml.Tools.Tests
             var model = await BuildModel("files/raml1/digest.raml");
             Assert.IsNotNull(model.Security);
         }
+        [Test]
+        public async Task ShouldGenerateRootResource()
+        {
+            var model = await GetRootGeneratedModel();
+            Assert.IsTrue(model.Classes.Any(c => c.Name == "RootUrl"));
+            Assert.AreEqual(3, model.Classes.First(c => c.Name == "RootUrl").Methods.Count);
+        }
 
         [Test]
         public async Task ShouldAcceptWithoutBaseUri()
@@ -653,5 +660,14 @@ namespace Raml.Tools.Tests
 
             return model;
         }
+
+        private static async Task<ClientGeneratorModel> GetRootGeneratedModel()
+        {
+            var raml = await new RamlParser().LoadAsync("files/root.raml");
+            var model = new ClientGeneratorService(raml, "Root", "TargetNamespace").BuildModel();
+
+            return model;
+    }
+
     }
 }
