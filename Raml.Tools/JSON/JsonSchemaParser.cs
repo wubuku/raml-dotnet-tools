@@ -144,9 +144,6 @@ namespace Raml.Tools.JSON
                 Properties = ParseSchema(schema, objects, enums)
             };
 
-            if (obj == null)
-                return null;
-
             if(!obj.Properties.Any())
                 return null;
 
@@ -193,7 +190,7 @@ namespace Raml.Tools.JSON
         }
 
 
-        private void ParseProperties(IDictionary<string, ApiObject> objects, IList<Property> props, Newtonsoft.JsonV4.Schema.JsonSchema schema, IDictionary<string, ApiEnum> enums)
+        private void ParseProperties(IDictionary<string, ApiObject> objects, ICollection<Property> props, Newtonsoft.JsonV4.Schema.JsonSchema schema, IDictionary<string, ApiEnum> enums)
         {
             var properties = schema.Properties;
 
@@ -386,17 +383,17 @@ namespace Raml.Tools.JSON
                 && (propertySchema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Object || propertySchema.Type.Value.ToString().Contains("Object")) 
                 && propertySchema.Properties != null)
             {
-                if (!string.IsNullOrWhiteSpace(schema.Id) && ids.Contains(schema.Id))
+                if (schema != null && !string.IsNullOrWhiteSpace(schema.Id) && ids.Contains(schema.Id))
                     return;
 
-                if (!string.IsNullOrWhiteSpace(schema.Id))
+                if (schema != null && !string.IsNullOrWhiteSpace(schema.Id))
                     ids.Add(schema.Id);
 
                 var type = string.IsNullOrWhiteSpace(property.Value.Id) ? property.Key : property.Value.Id;
                 ParseObject(type, propertySchema.Properties, objects, enums, propertySchema);
                 prop.Type = NetNamingMapper.GetObjectName(type);
             }
-            else if (propertySchema.Type.HasValue
+            else if (propertySchema.Type.HasValue && schema != null
                 && propertySchema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Object && propertySchema.OneOf != null && propertySchema.OneOf.Count > 0 && schema.Definitions != null && schema.Definitions.Count > 0)
             {
                 string baseTypeName = NetNamingMapper.GetObjectName(property.Key);

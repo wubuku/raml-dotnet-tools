@@ -273,6 +273,29 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(3, model.Controllers.First(c => c.Name == "RootUrl").Methods.Count);
         }
 
+        [Test]
+        public async Task ShouldAccept3LevelNestingSchema()
+        {
+            var raml = await new RamlParser().LoadAsync("files/level3nest.raml");
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
+            Assert.AreEqual(4, model.Objects.Count());
+        }
+
+        [Test]
+        public async Task ShouldAccept3LevelNestingSchemaWithArray()
+        {
+            var raml = await new RamlParser().LoadAsync("files/level3nest-array.raml");
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
+            Assert.AreEqual(4, model.Objects.Count());
+        }
+
+        [Test]
+        public async Task ShouldAccept3LevelNestingVersion3Schema_()
+        {
+            var raml = await new RamlParser().LoadAsync("files/level3nest-v3.raml");
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
+            Assert.AreEqual(4, model.Objects.Count());
+        }
 
         private static string GetXml(string comment)
         {
