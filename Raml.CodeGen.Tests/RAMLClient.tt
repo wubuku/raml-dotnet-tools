@@ -119,6 +119,9 @@ namespace <#= model.Namespace #>
 <#
 	            }
 #>
+
+            url = url.Replace("?&", "?");
+
             var req = new HttpRequestMessage(HttpMethod.<#= string.IsNullOrWhiteSpace(method.Verb) ? "Get" : method.Verb #>, url);
 <#
 
@@ -139,7 +142,7 @@ namespace <#= model.Namespace #>
 			        else
 			        {
 #>
-            req.RequestUri = new Uri(url + (url.Contains("?") ? "&" : "?") + "access_token=" + proxy.OAuthAccessToken, UriKind.Relative);
+            req.RequestUri = new Uri(url + (url.EndsWith("?") || url.EndsWith("&") ? "" : (url.Contains("?") ? "&" : "?")) + "access_token=" + proxy.OAuthAccessToken, UriKind.Relative);
 <#
 			        }
 		        }
@@ -285,6 +288,9 @@ namespace <#= model.Namespace #>
 <#
 	            }
 #>
+
+            url = url.Replace("?&", "?");
+
             var req = new HttpRequestMessage(HttpMethod.<#= string.IsNullOrWhiteSpace(method.Verb) ? "Get" : method.Verb #>, url);
 
 <#
@@ -305,7 +311,7 @@ namespace <#= model.Namespace #>
 			        else
 			        {
 #>
-            req.RequestUri = new Uri(url + (url.Contains("?") ? "&" : "?") + "access_token=" + proxy.OAuthAccessToken, UriKind.Relative);
+            req.RequestUri = new Uri(url + (url.EndsWith("?") || url.EndsWith("&") ? "" : (url.Contains("?") ? "&" : "?")) + "access_token=" + proxy.OAuthAccessToken, UriKind.Relative);
 <#
 			        }
 		        }

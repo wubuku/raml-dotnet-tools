@@ -32,9 +32,16 @@ namespace Raml.Common
             var containingFolder = Path.GetDirectoryName(ramlFilePath);
             if (containingFolder == null) throw new InvalidOperationException("Could not get folder of RAML file " + ramlFilePath);
 
-            var refFileName = Path.GetFileNameWithoutExtension(ramlFilePath) + ".ref";
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(ramlFilePath);
+            var refFileName = fileNameWithoutExtension + ".ref";
 
             var refFilePath = Path.Combine(containingFolder, refFileName);
+
+            if (File.Exists(refFilePath))
+                return refFilePath;
+
+            refFilePath = Path.Combine(Path.Combine(containingFolder, fileNameWithoutExtension), refFileName);
+
             return refFilePath;
         }
 

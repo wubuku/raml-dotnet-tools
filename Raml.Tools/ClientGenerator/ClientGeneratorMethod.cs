@@ -96,7 +96,7 @@ namespace Raml.Tools.ClientGenerator
                     return "HttpMethod.Get";
                 
                 if(Verb == "Patch")
-                    return "new HttpMethod(\"Patch\")";
+                    return "new HttpMethod(\"PATCH\")";
 
                 return "HttpMethod." + Verb;
             }

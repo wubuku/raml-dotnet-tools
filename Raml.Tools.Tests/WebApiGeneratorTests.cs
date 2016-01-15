@@ -265,6 +265,37 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(3, model.Objects.Count());
         }
 
+        [Test]
+        public async Task ShouldGenerateRootResource()
+        {
+            var model = await GetRootGeneratedModel();
+            Assert.IsTrue(model.Controllers.Any(c => c.Name == "RootUrl"));
+            Assert.AreEqual(3, model.Controllers.First(c => c.Name == "RootUrl").Methods.Count);
+        }
+
+        [Test]
+        public async Task ShouldAccept3LevelNestingSchema()
+        {
+            var raml = await new RamlParser().LoadAsync("files/level3nest.raml");
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
+            Assert.AreEqual(4, model.Objects.Count());
+        }
+
+        [Test]
+        public async Task ShouldAccept3LevelNestingSchemaWithArray()
+        {
+            var raml = await new RamlParser().LoadAsync("files/level3nest-array.raml");
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
+            Assert.AreEqual(4, model.Objects.Count());
+        }
+
+        [Test]
+        public async Task ShouldAccept3LevelNestingVersion3Schema_()
+        {
+            var raml = await new RamlParser().LoadAsync("files/level3nest-v3.raml");
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
+            Assert.AreEqual(4, model.Objects.Count());
+        }
 
         private static string GetXml(string comment)
         {
@@ -418,6 +449,14 @@ namespace Raml.Tools.Tests
         private static async Task<WebApiGeneratorModel> GetIssue37GeneratedModel()
         {
             var raml = await new RamlParser().LoadAsync("files/issue37.raml");
+            var model = new WebApiGeneratorService(raml, "TargetNamespace").BuildModel();
+
+            return model;
+        }
+
+        private static async Task<WebApiGeneratorModel> GetRootGeneratedModel()
+        {
+            var raml = await new RamlParser().LoadAsync("files/root.raml");
             var model = new WebApiGeneratorService(raml, "TargetNamespace").BuildModel();
 
             return model;
