@@ -297,6 +297,14 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(4, model.Objects.Count());
         }
 
+        [Test]
+        public async Task ShouldAcceptReferenceToRAMLSchemaKey()
+        {
+            var raml = await new RamlParser().LoadAsync("files/issue59.raml");
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
+            Assert.AreEqual(5, model.Objects.Count());
+        }
+
         private static string GetXml(string comment)
         {
             if (string.IsNullOrWhiteSpace(comment))

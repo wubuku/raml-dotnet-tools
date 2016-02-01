@@ -33,7 +33,7 @@ namespace Raml.Tools.JSON
             }
             else
             {
-                schema = ParseV3OrV4Schema(key, jsonSchema, warnings, ref v4Schema, objects);
+                schema = ParseV3OrV4Schema(key, jsonSchema, warnings, ref v4Schema, objects, schemaObjects);
             }
 
             if (schema == null && v4Schema == null)
@@ -89,12 +89,12 @@ namespace Raml.Tools.JSON
         }
 
         private static JsonSchema ParseV3OrV4Schema(string key, string jsonSchema, IDictionary<string, string> warnings, 
-            ref Newtonsoft.JsonV4.Schema.JsonSchema v4Schema, IDictionary<string, ApiObject> objects)
+            ref Newtonsoft.JsonV4.Schema.JsonSchema v4Schema, IDictionary<string, ApiObject> objects, IDictionary<string, ApiObject> schemaObjects)
         {
             JsonSchema schema = null;
             try
             {
-                schema = JsonSchema.Parse(jsonSchema, new JsonSchemaCustomResolver(objects));
+                schema = JsonSchema.Parse(jsonSchema, new JsonSchemaCustomResolver(objects, schemaObjects));
             }
             catch (Exception exv3) // NewtonJson does not support Json Schema v4
             {
