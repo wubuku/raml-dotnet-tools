@@ -482,7 +482,7 @@ namespace Raml.Tools.Tests
         public async Task ShouldGenerateModels_WhenExternalRefs()
         {
             var model = await GetExternalRefsGeneratedModel();
-            Assert.AreEqual(5, model.Objects.Count());
+            Assert.AreEqual(7, model.Objects.Count());
         }
 
         [Test]
