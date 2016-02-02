@@ -11,7 +11,7 @@ namespace ChinookAspNet5Sample.ChinookV1
     public partial class CustomersController : ICustomersController
     {
 
-				/// <returns>IList&lt;Customer&gt;</returns>
+		/// <returns>IList&lt;Customer&gt;</returns>
         public IActionResult Get()
         {
             // TODO: implement Get - route: customers/
@@ -20,14 +20,14 @@ namespace ChinookAspNet5Sample.ChinookV1
 			return new ObjectResult("");
         }
 
-				/// <param name="content"></param>
+		/// <param name="content"></param>
         public IActionResult Post([FromBody] Models.Customer content)
         {
             // TODO: implement Post - route: customers/
 			return new ObjectResult("");
         }
 
-				/// <param name="id"></param>
+		/// <param name="id"></param>
 		/// <returns>Customer</returns>
         public IActionResult GetById(string id)
         {
@@ -37,7 +37,7 @@ namespace ChinookAspNet5Sample.ChinookV1
 			return new ObjectResult("");
         }
 
-				/// <param name="content"></param>
+		/// <param name="content"></param>
 		/// <param name="id"></param>
         public IActionResult Put([FromBody] Models.Customer content,string id)
         {
@@ -45,7 +45,7 @@ namespace ChinookAspNet5Sample.ChinookV1
 			return new ObjectResult("");
         }
 
-				/// <param name="id"></param>
+		/// <param name="id"></param>
         public IActionResult Delete(string id)
         {
             // TODO: implement Delete - route: customers/{id}

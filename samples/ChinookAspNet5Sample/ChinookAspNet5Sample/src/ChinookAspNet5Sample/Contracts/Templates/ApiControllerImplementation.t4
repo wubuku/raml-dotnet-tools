@@ -1,6 +1,6 @@
 <#
 // title: Controller Implementation
-// hash: fe32f599976bbbd1f1a9da615989caac
+// hash: 084cb186b3f90d86d764dc56f476618f
 // version: 3.0
 #>
 <#@ template debug="false" hostspecific="false" language="C#" #>
@@ -31,7 +31,7 @@ namespace $(namespace)
 		foreach (var method in controllerObject.Methods)
 		{
 #>
-		<#= method.XmlComment ?? string.Empty #>
+<#= method.XmlComment ?? string.Empty #>
 <# if(useAsyncMethods) { #>
         public async Task<IActionResult> <#= method.Name #>(<#= method.ParametersStringForAspNet5 #>)
 <# } else { #>

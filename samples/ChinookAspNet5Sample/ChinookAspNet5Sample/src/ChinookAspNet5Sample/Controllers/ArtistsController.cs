@@ -11,7 +11,7 @@ namespace ChinookAspNet5Sample.ChinookV1
     public partial class ArtistsController : IArtistsController
     {
 
-				/// <returns>IList&lt;Artist&gt;</returns>
+		/// <returns>IList&lt;Artist&gt;</returns>
         public IActionResult Get()
         {
             // TODO: implement Get - route: artists/
@@ -20,14 +20,14 @@ namespace ChinookAspNet5Sample.ChinookV1
 			return new ObjectResult("");
         }
 
-				/// <param name="content"></param>
+		/// <param name="content"></param>
         public IActionResult Post([FromBody] Models.Artist content)
         {
             // TODO: implement Post - route: artists/
 			return new ObjectResult("");
         }
 
-				/// <param name="id"></param>
+		/// <param name="id"></param>
 		/// <returns>Artist</returns>
         public IActionResult GetById(string id)
         {
@@ -37,7 +37,7 @@ namespace ChinookAspNet5Sample.ChinookV1
 			return new ObjectResult("");
         }
 
-				/// <param name="content"></param>
+		/// <param name="content"></param>
 		/// <param name="id"></param>
         public IActionResult Put([FromBody] Models.Artist content,string id)
         {
@@ -45,14 +45,14 @@ namespace ChinookAspNet5Sample.ChinookV1
 			return new ObjectResult("");
         }
 
-				/// <param name="id"></param>
+		/// <param name="id"></param>
         public IActionResult Delete(string id)
         {
             // TODO: implement Delete - route: artists/{id}
 			return new ObjectResult("");
         }
 
-				/// <param name="id"></param>
+		/// <param name="id"></param>
 		/// <returns>IDictionary&lt;string,Artist&gt;</returns>
         public IActionResult GetA(string id)
         {

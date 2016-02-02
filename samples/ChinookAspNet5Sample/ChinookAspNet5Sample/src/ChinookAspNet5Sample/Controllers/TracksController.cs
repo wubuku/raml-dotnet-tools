@@ -11,7 +11,7 @@ namespace ChinookAspNet5Sample.ChinookV1
     public partial class TracksController : ITracksController
     {
 
-				/// <returns>IList&lt;Track&gt;</returns>
+		/// <returns>IList&lt;Track&gt;</returns>
         public IActionResult Get()
         {
             // TODO: implement Get - route: tracks/
@@ -20,14 +20,14 @@ namespace ChinookAspNet5Sample.ChinookV1
 			return new ObjectResult("");
         }
 
-				/// <param name="content"></param>
+		/// <param name="content"></param>
         public IActionResult Post([FromBody] Models.Track content)
         {
             // TODO: implement Post - route: tracks/
 			return new ObjectResult("");
         }
 
-				/// <param name="id"></param>
+		/// <param name="id"></param>
 		/// <returns>Track</returns>
         public IActionResult GetById(string id)
         {
@@ -37,7 +37,7 @@ namespace ChinookAspNet5Sample.ChinookV1
 			return new ObjectResult("");
         }
 
-				/// <param name="content"></param>
+		/// <param name="content"></param>
 		/// <param name="id"></param>
         public IActionResult Put([FromBody] Models.Track content,string id)
         {
@@ -45,14 +45,14 @@ namespace ChinookAspNet5Sample.ChinookV1
 			return new ObjectResult("");
         }
 
-				/// <param name="id"></param>
+		/// <param name="id"></param>
         public IActionResult Delete(string id)
         {
             // TODO: implement Delete - route: tracks/{id}
 			return new ObjectResult("");
         }
 
-				/// <param name="id"></param>
+		/// <param name="id"></param>
 		/// <returns>IDictionary&lt;string,IList&lt;Track&gt;&gt;</returns>
         public IActionResult GetA(string id)
         {

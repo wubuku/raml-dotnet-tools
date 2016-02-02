@@ -15,7 +15,7 @@ namespace ChinookAspNet5Sample.ChinookV1
     {
 
 
-        		/// <returns>IList&lt;Customer&gt;</returns>
+		/// <returns>IList&lt;Customer&gt;</returns>
         [HttpGet]
         [Route("")]
         public virtual IActionResult GetBase()
@@ -24,7 +24,7 @@ namespace ChinookAspNet5Sample.ChinookV1
             return  ((ICustomersController)this).Get();
         }
 
-        		/// <param name="content"></param>
+		/// <param name="content"></param>
         [HttpPost]
         [Route("")]
         public virtual IActionResult PostBase([FromBody] Models.Customer content)
@@ -33,7 +33,7 @@ namespace ChinookAspNet5Sample.ChinookV1
             return  ((ICustomersController)this).Post(content);
         }
 
-        		/// <param name="id"></param>
+		/// <param name="id"></param>
 		/// <returns>Customer</returns>
         [HttpGet]
         [Route("{id}")]
@@ -43,7 +43,7 @@ namespace ChinookAspNet5Sample.ChinookV1
             return  ((ICustomersController)this).GetById(id);
         }
 
-        		/// <param name="content"></param>
+		/// <param name="content"></param>
 		/// <param name="id"></param>
         [HttpPut]
         [Route("{id}")]
@@ -53,7 +53,7 @@ namespace ChinookAspNet5Sample.ChinookV1
             return  ((ICustomersController)this).Put(content,id);
         }
 
-        		/// <param name="id"></param>
+		/// <param name="id"></param>
         [HttpDelete]
         [Route("{id}")]
         public virtual IActionResult DeleteBase(string id)

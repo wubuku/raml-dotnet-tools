@@ -15,7 +15,7 @@ namespace ChinookAspNet5Sample.ChinookV1
     {
 
 
-        		/// <returns>IList&lt;Album&gt;</returns>
+		/// <returns>IList&lt;Album&gt;</returns>
         [HttpGet]
         [Route("")]
         public virtual IActionResult GetBase()
@@ -24,7 +24,7 @@ namespace ChinookAspNet5Sample.ChinookV1
             return  ((IAlbumsController)this).Get();
         }
 
-        		/// <param name="content"></param>
+		/// <param name="content"></param>
         [HttpPost]
         [Route("")]
         public virtual IActionResult PostBase([FromBody] Models.Album content)
@@ -33,7 +33,7 @@ namespace ChinookAspNet5Sample.ChinookV1
             return  ((IAlbumsController)this).Post(content);
         }
 
-        		/// <param name="id"></param>
+		/// <param name="id"></param>
 		/// <returns>Album</returns>
         [HttpGet]
         [Route("{id}")]
@@ -43,7 +43,7 @@ namespace ChinookAspNet5Sample.ChinookV1
             return  ((IAlbumsController)this).GetById(id);
         }
 
-        		/// <param name="content"></param>
+		/// <param name="content"></param>
 		/// <param name="id"></param>
         [HttpPut]
         [Route("{id}")]
@@ -53,7 +53,7 @@ namespace ChinookAspNet5Sample.ChinookV1
             return  ((IAlbumsController)this).Put(content,id);
         }
 
-        		/// <param name="id"></param>
+		/// <param name="id"></param>
         [HttpDelete]
         [Route("{id}")]
         public virtual IActionResult DeleteBase(string id)

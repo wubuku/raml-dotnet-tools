@@ -1,6 +1,6 @@
 <#
 // title: Base Controller
-// hash: 0a49080d1cd45503738e7dcd06d0367b
+// hash: d5e62c87685e6cdcdc96310232869d6a
 // version: 3.0
 #>
 <#@ template debug="false" hostspecific="false" language="C#" #>
@@ -35,7 +35,7 @@ namespace $(namespace)
 		{
 #>
 
-        <#= method.XmlComment ?? string.Empty #>
+<#= method.XmlComment ?? string.Empty #>
         [Http<#= method.Verb #>]
         [Route("<#= method.Url #>")]
 <# if(useAsyncMethods) { #>
