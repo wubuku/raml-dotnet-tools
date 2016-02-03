@@ -15,7 +15,7 @@ baseUri: http://example.com/
                 "properties": {
                   "test": {
                     "type": "object",
-                    "additionalProperties": true,
+                    "additionalProperties": { "type": "string" },
                     "required": ["test"]
                   }
                 }

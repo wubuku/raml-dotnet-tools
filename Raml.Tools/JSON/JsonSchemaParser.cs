@@ -258,14 +258,14 @@ namespace Raml.Tools.JSON
 
         private static void AdditionalProperties(ICollection<Property> props, JsonSchema schema)
         {
-            if ((schema.AdditionalProperties == null || !schema.AdditionalProperties.AllowAdditionalProperties) && schema.AllowAdditionalProperties == false) return;
+            if (schema.AdditionalProperties == null || !schema.AdditionalProperties.AllowAdditionalProperties) return;
 
             AddAdditionalPropertiesProperty(props);
         }
 
         private static void AdditionalProperties(ICollection<Property> props, Newtonsoft.JsonV4.Schema.JsonSchema schema)
         {
-            if ((schema.AdditionalProperties == null || !schema.AdditionalProperties.AllowAdditionalProperties) && schema.AllowAdditionalProperties == false) return;
+            if (schema.AdditionalProperties == null || !schema.AdditionalProperties.AllowAdditionalProperties) return;
 
             AddAdditionalPropertiesProperty(props);
         }
@@ -385,7 +385,8 @@ namespace Raml.Tools.JSON
         private void ParseComplexTypes(IDictionary<string, ApiObject> objects, Newtonsoft.JsonV4.Schema.JsonSchema schema, Newtonsoft.JsonV4.Schema.JsonSchema propertySchema, Property prop, KeyValuePair<string, Newtonsoft.JsonV4.Schema.JsonSchema> property, IDictionary<string, ApiEnum> enums)
         {
             if (propertySchema.Type.HasValue
-                && (propertySchema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Object || propertySchema.Type.Value.ToString().Contains("Object")))
+                && (propertySchema.Type == Newtonsoft.JsonV4.Schema.JsonSchemaType.Object || propertySchema.Type.Value.ToString().Contains("Object")) 
+                && (propertySchema.OneOf == null || propertySchema.OneOf.Count == 0 || schema.Definitions == null || schema.Definitions.Count == 0))
             {
                 if (schema != null && !string.IsNullOrWhiteSpace(schema.Id) && ids.Contains(schema.Id))
                     return;
@@ -441,11 +442,13 @@ namespace Raml.Tools.JSON
 
             AdditionalProperties(obj.Properties, schema);
 
+            if (!obj.Properties.Any())
+                return null;
+
             // Avoid duplicated keys and names
             if (objects.ContainsKey(key) || objects.Any(o => o.Value.Name == obj.Name)
                 || otherObjects.ContainsKey(key) || otherObjects.Any(o => o.Value.Name == obj.Name)
-                || schemaObjects.ContainsKey(key) || schemaObjects.Any(o => o.Value.Name == obj.Name) 
-                || !obj.Properties.Any())
+                || schemaObjects.ContainsKey(key) || schemaObjects.Any(o => o.Value.Name == obj.Name))
             {
                 if (UniquenessHelper.HasSameProperties(obj, objects, key, otherObjects, schemaObjects))
                     return key;
@@ -613,7 +616,8 @@ namespace Raml.Tools.JSON
 
                 var type = string.IsNullOrWhiteSpace(property.Value.Id) ? key : property.Value.Id;
                 type = ParseObject(type, schema, objects, enums);
-                prop.Type = NetNamingMapper.GetObjectName(type);
+                if(type != null)
+                    prop.Type = NetNamingMapper.GetObjectName(type);
 
                 return;
             }
