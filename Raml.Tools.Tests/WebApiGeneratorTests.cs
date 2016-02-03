@@ -259,6 +259,22 @@ namespace Raml.Tools.Tests
         }
 
         [Test]
+        public async Task NestedAdditionalProperties()
+        {
+            var raml = await new RamlParser().LoadAsync("files/additionalprops-nested.raml");
+            var model = new WebApiGeneratorService(raml, "TargetNamespace").BuildModel();
+            Assert.AreEqual(2, model.Objects.Count());
+        }
+
+        [Test]
+        public async Task NestedAdditionalProperties_v4Schema()
+        {
+            var raml = await new RamlParser().LoadAsync("files/additionalprops-nested-v4.raml");
+            var model = new WebApiGeneratorService(raml, "TargetNamespace").BuildModel();
+            Assert.AreEqual(2, model.Objects.Count());
+        }
+
+        [Test]
         public async Task ShouldParseTratisWith2Responses()
         {
             var model = await GetIssue37GeneratedModel();
@@ -304,6 +320,8 @@ namespace Raml.Tools.Tests
             var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
             Assert.AreEqual(5, model.Objects.Count());
         }
+
+
 
         private static string GetXml(string comment)
         {

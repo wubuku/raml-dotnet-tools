@@ -91,7 +91,8 @@ namespace Raml.Tools
             throw new InvalidOperationException("Could not find a unique name for enum: " + name);
         }
 
-        public static bool HasSameProperties(ApiObject apiObject, IDictionary<string, ApiObject> objects, string key, IDictionary<string, ApiObject> otherObjects, IDictionary<string, ApiObject> schemaObjects)
+        public static ApiObject FindObjectWithSameProperties(ApiObject apiObject, string key, IDictionary<string, ApiObject> objects,
+             IDictionary<string, ApiObject> otherObjects, IDictionary<string, ApiObject> schemaObjects)
         {
             var obj = FindObject(apiObject, schemaObjects, key);
 
@@ -100,6 +101,14 @@ namespace Raml.Tools
 
             if (obj == null)
                 obj = FindObject(apiObject, otherObjects, key);
+
+            return obj;
+        }
+
+        public static bool HasSameProperties(ApiObject apiObject, IDictionary<string, ApiObject> objects, string key, IDictionary<string, ApiObject> otherObjects, 
+            IDictionary<string, ApiObject> schemaObjects)
+        {
+            var obj = FindObjectWithSameProperties(apiObject, key, objects, otherObjects, schemaObjects);
 
             if (obj == null)
                 throw new InvalidOperationException("Could not find object with key " + key);
