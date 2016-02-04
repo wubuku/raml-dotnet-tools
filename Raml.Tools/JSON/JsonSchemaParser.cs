@@ -498,7 +498,9 @@ namespace Raml.Tools.JSON
                 prop.Type = CollectionTypeHelper.GetCollectionType(NetNamingMapper.GetObjectName(property.Key));
                 foreach (var item in schema.Items)
                 {
-                    ParseObject(property.Key, item, objects, enums, item);
+                    var key = ParseObject(property.Key, item, objects, enums, item);
+                    if(key != null)
+                        prop.Type = CollectionTypeHelper.GetCollectionType(NetNamingMapper.GetObjectName(key));
                 }
             }
         }
@@ -643,7 +645,9 @@ namespace Raml.Tools.JSON
                 prop.Type = CollectionTypeHelper.GetCollectionType(NetNamingMapper.GetObjectName(property.Key));
                 foreach (var item in schema.Items)
                 {
-                    ParseObject(property.Key, item, objects, enums);
+                    var modifiedKey = ParseObject(property.Key, item, objects, enums);
+                    if (modifiedKey != null)
+                        prop.Type = CollectionTypeHelper.GetCollectionType(NetNamingMapper.GetObjectName(modifiedKey));
                 }
             }
         }

@@ -233,7 +233,7 @@ namespace Raml.Tools.Tests
         public async Task ShouldParseSchemas_Issue13()
         {
             var model = await GetIssue13GeneratedModel();
-            Assert.AreEqual(20, model.Objects.Count());
+            Assert.AreEqual(23, model.Objects.Count());
         }
 
         [Test]
@@ -318,7 +318,7 @@ namespace Raml.Tools.Tests
         {
             var raml = await new RamlParser().LoadAsync("files/issue59.raml");
             var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
-            Assert.AreEqual(5, model.Objects.Count());
+            Assert.AreEqual(20, model.Objects.Count());
         }
 
 
