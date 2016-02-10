@@ -134,10 +134,21 @@ namespace Raml.Tools
             
             return new ApiObject
             {
-                Type = NetTypeMapper.Map(ramlType.Value.Scalar.Type),
+                Type = NetNamingMapper.GetObjectName(ramlType.Key),
                 Name = NetNamingMapper.GetObjectName(ramlType.Key),
                 Example = ramlType.Value.Example,
                 Description = ramlType.Value.Description,
+                Properties = new List<Property> { new Property
+                                                        {
+                                                            Name = "Value",
+                                                            Type = NetTypeMapper.Map(ramlType.Value.Scalar.Type),
+                                                            Minimum = (double?)ramlType.Value.Scalar.Minimum,
+                                                            Maximum = (double?)ramlType.Value.Scalar.Maximum,
+                                                            MinLength = ramlType.Value.Scalar.MinLength,
+                                                            MaxLength = ramlType.Value.Scalar.MaxLength,
+                                                            OriginalName = ramlType.Key
+                                                        } 
+                },
                 IsScalar = true,
             };
         }

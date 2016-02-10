@@ -35,6 +35,19 @@ namespace Raml.Tools.Tests
         }
 
         [Test]
+        public async Task ShouldMapAttributes_WhenCustomScalarInObject()
+        {
+            var model = await BuildModel("files/raml1/customscalar-in-object.raml");
+            Assert.AreEqual(3, model.Objects.Count());
+            Assert.AreEqual(1, model.Objects.First(o => o.Name == "CustomInt").Properties.Count);
+            Assert.AreEqual(1, model.Objects.First(o => o.Name == "CustomString").Properties.Count);
+            Assert.AreEqual(0, model.Objects.First(o => o.Name == "CustomInt").Properties.First().Minimum);
+            Assert.AreEqual(100, model.Objects.First(o => o.Name == "CustomInt").Properties.First().Maximum);
+            Assert.AreEqual(5, model.Objects.First(o => o.Name == "CustomString").Properties.First().MinLength);
+            Assert.AreEqual(255, model.Objects.First(o => o.Name == "CustomString").Properties.First().MaxLength);
+        }
+
+        [Test]
         public async Task ShouldBuild_WhenMovieType()
         {
             var model = await GetMovieTypeModel();
