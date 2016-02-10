@@ -20,10 +20,10 @@ namespace ChinookAspNet5Sample.ChinookV1.Models
 
         public Track Track { get; set; }
 
-
+        [Range(0.00,double.MaxValue)]
         public decimal UnitPrice { get; set; }
 
-
+        [Range(1,int.MaxValue)]
         public int Quantity { get; set; }
     } // end class
 

@@ -41,10 +41,11 @@ namespace ChinookAspNet5Sample.ChinookV1.Models
 
         public string Country { get; set; }
 
-
+        [MaxLength(14)]
+        [MinLength(4)]
         public string PostalCode { get; set; }
 
-
+        [MinLength(8)]
         public string Phone { get; set; }
 
 
@@ -52,6 +53,9 @@ namespace ChinookAspNet5Sample.ChinookV1.Models
 
 
         public string Email { get; set; }
+
+
+        public byte[] Picture { get; set; }
     } // end class
 
 } // end Models namespace

@@ -14,9 +14,16 @@ types:
         State?:
         Country?:
         PostalCode?:
+            type: string
+            minLength: 4
+            maxLength: 14
         Phone?:
+            type: string
+            minLength: 8
         Fax?:
         Email?:
+        Picture?:
+            type: file
   Employee:
     type: Person
     properties:
@@ -81,8 +88,10 @@ types:
             type: Track
         UnitPrice: 
             type: number
+            minimum: 0
         Quantity: 
-            type: integer     
+            type: integer
+            minimum: 1  
   Invoice:
         properties:
           Customer:
