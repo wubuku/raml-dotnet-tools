@@ -57,7 +57,33 @@ namespace Raml.Tools
             {
                 return ParseArray(ramlType);
             }
+            if (ramlType.Value.Type.Contains("|")) // Union type
+            {
+                return ParseUnion(ramlType);
+            }
             throw new InvalidOperationException("Cannot parse type of " + ramlType.Key);
+        }
+
+        private ApiObject ParseUnion(KeyValuePair<string, RamlType> ramlType)
+        {
+            var apiObject = new ApiObject
+            {
+                Name = NetNamingMapper.GetObjectName(ramlType.Key),
+                Description = ramlType.Value.Description,
+                Example = GetExample(ramlType.Value.Example, ramlType.Value.Examples),
+                Type = NetNamingMapper.GetObjectName(ramlType.Key)
+            };
+
+            var types = ramlType.Value.Type.Split(new []{"|"}, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var type in types)
+            {
+              apiObject.Properties.Add(new Property
+              {
+                  Name = type.Trim(),
+                  Type = type.Trim(),
+              });  
+            }
+            return apiObject;
         }
 
         private ApiObject ParseNestedType(RamlType ramlType, string keyOrTypeName)
@@ -203,11 +229,11 @@ namespace Raml.Tools
 
             return new ApiObject
             {
-                Type = "IDictionary<string," + type + ">",
+                Type = name,
                 Name = name,
-                BaseClass = string.Empty,
+                BaseClass = "Dictionary<string," + type + ">",
                 Description = ramlType.Description,
-                Example = GetExampe(ramlType.Example, ramlType.Examples),
+                Example = GetExample(ramlType.Example, ramlType.Examples),
                 Properties = new Property[0],
                 IsMap = true
             };
@@ -226,7 +252,7 @@ namespace Raml.Tools
                 Name = NetNamingMapper.GetObjectName(name),
                 BaseClass = ramlType.Type != "object" ? ramlType.Type : string.Empty,
                 Description = ramlType.Description,
-                Example = GetExampe(ramlType.Example, ramlType.Examples),
+                Example = GetExample(ramlType.Example, ramlType.Examples),
                 Properties = GetProperties(ramlType.Object.Properties)
             };
         }
@@ -327,7 +353,7 @@ namespace Raml.Tools
             return (double)value.Value;
         }
 
-        private string GetExampe(string example, IEnumerable<string> examples)
+        private string GetExample(string example, IEnumerable<string> examples)
         {
             var result = string.IsNullOrWhiteSpace(example) ? example + "\r\n" : string.Empty;
             if (examples != null)

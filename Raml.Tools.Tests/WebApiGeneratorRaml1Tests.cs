@@ -111,6 +111,18 @@ namespace Raml.Tools.Tests
             
         }
 
+        [Test]
+        public async Task ShouldHandleUnionTypes()
+        {
+            var model = await BuildModel("files/raml1/uniontypes.raml");
+
+            Assert.AreEqual(3, model.Objects.Count());
+            Assert.AreEqual(2, model.Objects.First(c => c.Name == "Customer").Properties.Count);
+            Assert.AreEqual("Person", model.Objects.First(c => c.Name == "Customer").Properties.First(c => c.Name == "Person").Type);
+            Assert.AreEqual("Company", model.Objects.First(c => c.Name == "Customer").Properties.First(c => c.Name == "Company").Type);
+
+        }
+
         private static async Task<WebApiGeneratorModel> GetAnnotationTargetsModel()
         {
             return await BuildModel("files/raml1/annotations-targets.raml");
