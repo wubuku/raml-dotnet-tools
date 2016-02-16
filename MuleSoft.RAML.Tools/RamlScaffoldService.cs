@@ -340,7 +340,7 @@ namespace MuleSoft.RAML.Tools
             if (model.Objects.Any(o => !string.IsNullOrWhiteSpace(o.GeneratedCode)))
                 models = model.Objects.Where(o => o.Properties.Any() || !string.IsNullOrWhiteSpace(o.GeneratedCode));
 
-            models = models.Where(o => !o.IsMap && (!o.IsArray || o.Type == null)); // skip maps and array of primitives
+            models = models.Where(o => !o.IsArray || o.Type == null); // skip array of primitives
 
             var targetFolderPath = GetTargetFolderPath(generatedFolderPath, ramlItem.FileNames[0], folderItem.ContainingProject);
 

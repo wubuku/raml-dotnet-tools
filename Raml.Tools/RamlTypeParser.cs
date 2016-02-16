@@ -41,6 +41,10 @@ namespace Raml.Tools
 
         private ApiObject ParseRamlType(KeyValuePair<string, RamlType> ramlType)
         {
+            if (ramlType.Value.Type.Contains("|")) // Union type
+            {
+                return ParseUnion(ramlType);
+            }
             if (ramlType.Value.External != null)
             {
                 return ParseExternal(ramlType);
@@ -57,10 +61,6 @@ namespace Raml.Tools
             {
                 return ParseArray(ramlType);
             }
-            if (ramlType.Value.Type.Contains("|")) // Union type
-            {
-                return ParseUnion(ramlType);
-            }
             throw new InvalidOperationException("Cannot parse type of " + ramlType.Key);
         }
 
@@ -74,13 +74,22 @@ namespace Raml.Tools
                 Type = NetNamingMapper.GetObjectName(ramlType.Key)
             };
 
-            var types = ramlType.Value.Type.Split(new []{"|"}, StringSplitOptions.RemoveEmptyEntries);
+            var originalType = ramlType.Value.Type;
+
+            if (originalType.StartsWith("(") && originalType.EndsWith(")[]"))
+            {
+                apiObject.IsArray = true;
+                originalType = originalType.Substring(0, originalType.Length - 2);
+            }
+            originalType = originalType.Replace("(", string.Empty).Replace(")", string.Empty);
+
+            var types = originalType.Split(new []{"|"}, StringSplitOptions.RemoveEmptyEntries);
             foreach (var type in types)
             {
               apiObject.Properties.Add(new Property
               {
-                  Name = type.Trim(),
-                  Type = type.Trim(),
+                  Name = NetNamingMapper.GetPropertyName(type.Trim()),
+                  Type = RamlTypesHelper.DecodeRaml1Type(type.Trim()),
               });  
             }
             return apiObject;
@@ -157,7 +166,9 @@ namespace Raml.Tools
                 });
                 return null;
             }
-            
+
+            var type = NetTypeMapper.Map(ramlType.Value.Scalar.Type);
+
             return new ApiObject
             {
                 Type = NetNamingMapper.GetObjectName(ramlType.Key),
@@ -167,7 +178,7 @@ namespace Raml.Tools
                 Properties = new List<Property> { new Property
                                                         {
                                                             Name = "Value",
-                                                            Type = NetTypeMapper.Map(ramlType.Value.Scalar.Type),
+                                                            Type = !string.IsNullOrWhiteSpace(type) ? type : NetNamingMapper.GetObjectName(ramlType.Value.Scalar.Type),
                                                             Minimum = (double?)ramlType.Value.Scalar.Minimum,
                                                             Maximum = (double?)ramlType.Value.Scalar.Maximum,
                                                             MinLength = ramlType.Value.Scalar.MinLength,

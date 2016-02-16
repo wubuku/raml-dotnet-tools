@@ -103,11 +103,11 @@ namespace Raml.Tools.Tests
 
             Assert.AreEqual(CollectionTypeHelper.GetCollectionType("InvoiceLine"), model.Objects.First(c => c.Name == "Invoice").Properties.First(p => p.Name == "Lines").Type);
 
-            Assert.AreEqual("IDictionary<string,Artist>", model.Objects.First(c => c.Name == "ArtistByTrack").Type);
-            Assert.AreEqual("IDictionary<string," + CollectionTypeHelper.GetCollectionType("Track") + ">", model.Objects.First(c => c.Name == "TracksByArtist").Type);
+            Assert.AreEqual("ArtistByTrack", model.Objects.First(c => c.Name == "ArtistByTrack").Type);
+            Assert.AreEqual("TracksByArtist", model.Objects.First(c => c.Name == "TracksByArtist").Type);
 
-            Assert.AreEqual("IDictionary<string,Artist>", model.Controllers.First(c => c.Name == "Artists").Methods.First(m => m.Url == "bytrack/{id}").ReturnType);
-            Assert.AreEqual("IDictionary<string," + CollectionTypeHelper.GetCollectionType("Track") + ">", model.Controllers.First(c => c.Name == "Tracks").Methods.First(m => m.Url == "byartist/{id}").ReturnType);
+            Assert.AreEqual("ArtistByTrack", model.Controllers.First(c => c.Name == "Artists").Methods.First(m => m.Url == "bytrack/{id}").ReturnType);
+            Assert.AreEqual("TracksByArtist", model.Controllers.First(c => c.Name == "Tracks").Methods.First(m => m.Url == "byartist/{id}").ReturnType);
             
         }
 
@@ -116,11 +116,19 @@ namespace Raml.Tools.Tests
         {
             var model = await BuildModel("files/raml1/uniontypes.raml");
 
-            Assert.AreEqual(3, model.Objects.Count());
+            Assert.AreEqual(5, model.Objects.Count());
+
             Assert.AreEqual(2, model.Objects.First(c => c.Name == "Customer").Properties.Count);
             Assert.AreEqual("Person", model.Objects.First(c => c.Name == "Customer").Properties.First(c => c.Name == "Person").Type);
             Assert.AreEqual("Company", model.Objects.First(c => c.Name == "Customer").Properties.First(c => c.Name == "Company").Type);
 
+            Assert.AreEqual(true, model.Objects.First(c => c.Name == "Customers").IsArray);
+            Assert.AreEqual("Person", model.Objects.First(c => c.Name == "Customers").Properties.First(c => c.Name == "Person").Type);
+            Assert.AreEqual("Company", model.Objects.First(c => c.Name == "Customers").Properties.First(c => c.Name == "Company").Type);
+
+            Assert.AreEqual(false, model.Objects.First(c => c.Name == "Group").IsArray);
+            Assert.AreEqual(CollectionTypeHelper.GetCollectionType("Person"), model.Objects.First(c => c.Name == "Group").Properties.First(c => c.Name == "Person").Type);
+            Assert.AreEqual("Company", model.Objects.First(c => c.Name == "Group").Properties.First(c => c.Name == "Company").Type);
         }
 
         private static async Task<WebApiGeneratorModel> GetAnnotationTargetsModel()

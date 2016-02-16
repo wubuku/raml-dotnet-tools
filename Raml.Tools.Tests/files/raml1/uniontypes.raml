@@ -13,14 +13,17 @@ types:
             name:
             address:
     Customer:
-        type: Person | Company
-
+        type: Person|Company
+    Customers:
+        type: (Person | Company)[]
+    Group:
+        type: Person[] | Company
 /customers:
   get:
     responses:
       200:
         body:
-          type: Customer[]
+          type: Customers
   post:
     body:
       application/json:
