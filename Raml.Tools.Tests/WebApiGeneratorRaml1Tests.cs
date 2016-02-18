@@ -122,9 +122,8 @@ namespace Raml.Tools.Tests
             Assert.AreEqual("Person", model.Objects.First(c => c.Name == "Customer").Properties.First(c => c.Name == "Person").Type);
             Assert.AreEqual("Company", model.Objects.First(c => c.Name == "Customer").Properties.First(c => c.Name == "Company").Type);
 
-            Assert.AreEqual(true, model.Objects.First(c => c.Name == "Customers").IsArray);
-            Assert.AreEqual("Person", model.Objects.First(c => c.Name == "Customers").Properties.First(c => c.Name == "Person").Type);
-            Assert.AreEqual("Company", model.Objects.First(c => c.Name == "Customers").Properties.First(c => c.Name == "Company").Type);
+            Assert.AreEqual(CollectionTypeHelper.GetCollectionType("Person"), model.Objects.First(c => c.Name == "Customers").Properties.First(c => c.Name == "Person").Type);
+            Assert.AreEqual(CollectionTypeHelper.GetCollectionType("Company"), model.Objects.First(c => c.Name == "Customers").Properties.First(c => c.Name == "Company").Type);
 
             Assert.AreEqual(false, model.Objects.First(c => c.Name == "Group").IsArray);
             Assert.AreEqual(CollectionTypeHelper.GetCollectionType("Person"), model.Objects.First(c => c.Name == "Group").Properties.First(c => c.Name == "Person").Type);

@@ -68,6 +68,7 @@ namespace Raml.Tools
         {
             var apiObject = new ApiObject
             {
+                IsUnionType = true,
                 Name = NetNamingMapper.GetObjectName(ramlType.Key),
                 Description = ramlType.Value.Description,
                 Example = GetExample(ramlType.Value.Example, ramlType.Value.Examples),
@@ -76,9 +77,10 @@ namespace Raml.Tools
 
             var originalType = ramlType.Value.Type;
 
+            var isArray = false;
             if (originalType.StartsWith("(") && originalType.EndsWith(")[]"))
             {
-                apiObject.IsArray = true;
+                isArray = true;
                 originalType = originalType.Substring(0, originalType.Length - 2);
             }
             originalType = originalType.Replace("(", string.Empty).Replace(")", string.Empty);
@@ -89,8 +91,8 @@ namespace Raml.Tools
               apiObject.Properties.Add(new Property
               {
                   Name = NetNamingMapper.GetPropertyName(type.Trim()),
-                  Type = RamlTypesHelper.DecodeRaml1Type(type.Trim()),
-              });  
+                  Type = isArray ? CollectionTypeHelper.GetCollectionType(RamlTypesHelper.DecodeRaml1Type(type.Trim())) : RamlTypesHelper.DecodeRaml1Type(type.Trim())
+              });
             }
             return apiObject;
         }

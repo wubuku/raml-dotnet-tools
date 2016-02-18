@@ -190,6 +190,7 @@ namespace $(namespace)
 				}
 					
 			}
+
 <#
 			}
 #>
@@ -555,9 +556,6 @@ foreach (var apiObject in model.Objects.Where(o => string.IsNullOrWhiteSpace(o.G
     if(apiObject.IsArray && apiObject.Type != null)
         continue;
 
-    if(apiObject.IsMap)
-        continue;
-
 	if (!string.IsNullOrWhiteSpace(apiObject.Description))
 	{
 #>
@@ -616,6 +614,8 @@ foreach (var apiObject in model.Objects.Where(o => string.IsNullOrWhiteSpace(o.G
         }
 <#
 	}
+
+
 
 	foreach (var property in apiObject.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 	{
@@ -983,13 +983,62 @@ foreach (var apiObject in model.ApiResponseObjects)
                 }
                 else
                 {
+<#
+        if(apiObject.IsUnionType)
+        {
+#>
+                    typedContent = new <#= body.Type.StartsWith("IList") ? body.Type.Substring(1) : body.Type #>();
+
+                    try
+                    {
+                        var task = Formatters != null && Formatters.Any()
+                                    ? RawContent.ReadAsAsync<<#= body.Type.StartsWith("IList") ? body.Type.Substring(1) : body.Type #>>(Formatters).ConfigureAwait(false)
+                                    : RawContent.ReadAsAsync<<#= body.Type.StartsWith("IList") ? body.Type.Substring(1) : body.Type #>>().ConfigureAwait(false);
+
+                        typedContent = task.GetAwaiter().GetResult();
+                        return typedContent;
+                    }
+                    catch (JsonSerializationException) { }
+
+                    var type = typedContent.GetType().IsGenericType
+                        ? typedContent.GetType().GetGenericArguments()[0]
+                        : typedContent.GetType();
+
+                    foreach (var prop in type.GetProperties())
+                    {
+                        try
+                        {
+                            var propertyType = prop.PropertyType;
+                            if (propertyType.IsInterface) // get List concrete type instead of interface
+                            {
+                                var typeName = "System.Collections.Generic.List`1[[" + propertyType.GetGenericArguments()[0] + "," + this.GetType().Assembly.FullName + "]]";
+                                propertyType = Type.GetType(typeName);
+                            }
+                            var task = Formatters != null && Formatters.Any()
+                                        ? RawContent.ReadAsAsync(propertyType, Formatters).ConfigureAwait(false)
+                                        : RawContent.ReadAsAsync(propertyType).ConfigureAwait(false);
+
+                            var content = task.GetAwaiter().GetResult();
+                            if(content == null)
+                                continue;
+
+                            prop.SetValue(typedContent, content);
+                            return typedContent;
+                        }
+                        catch (JsonSerializationException) { }
+                    }
+<#
+        } else {
+#>
                     var task =  Formatters != null && Formatters.Any() 
                                 ? RawContent.ReadAsAsync<<#= body.Type #>>(Formatters).ConfigureAwait(false)
                                 : RawContent.ReadAsAsync<<#= body.Type #>>().ConfigureAwait(false);
 		        
 		            typedContent = task.GetAwaiter().GetResult();
+<#      
+        } 
+#>
                 }
-
 		        return typedContent;
 	        }
 	    }

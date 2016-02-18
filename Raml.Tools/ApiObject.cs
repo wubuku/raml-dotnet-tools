@@ -21,6 +21,9 @@ namespace Raml.Tools
         public bool IsArray { get; set; }
         public bool IsMap { get; set; }
         public bool IsMultiple { get; set; }
+
+        public bool IsUnionType { get; set; }
+
         public string JSONSchema { get; set; }
 
 	    public string GeneratedCode { get; set; }
@@ -51,5 +54,18 @@ namespace Raml.Tools
 
         public string Type { get; set; }
         public bool IsScalar { get; set; }
+
+        //public void SetUnionType(object content)
+        //{
+        //    if (!IsUnionType)
+        //        throw new InvalidOperationException("GetUnionRuntimeType can only be used with Union Types");
+
+        //    var properties = GetType().GetProperties();
+        //    foreach (var property in properties)
+        //    {
+        //        if (content.GetType() == property.PropertyType)
+        //            property.SetValue(this, content);
+        //    }
+        //}
     }
 }
