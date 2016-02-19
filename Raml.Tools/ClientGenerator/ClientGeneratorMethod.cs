@@ -37,7 +37,7 @@ namespace Raml.Tools.ClientGenerator
 
                 xmlComment += "\t\t/// <param name=\"request\">" + XmlCommentHelper.Escape(RequestType) + "</param>\r\n";
                 if (ReturnType != "string" && ReturnType != "HttpContent")
-                    xmlComment += "\t\t/// <param name=\"responseFormatters\">response formmaters</param>\r\n";
+                    xmlComment += "\t\t/// <param name=\"responseFormatters\">response formatters</param>\r\n";
 
                 if (!string.IsNullOrWhiteSpace(xmlComment))
                     xmlComment = xmlComment.Substring(0, xmlComment.Length - 2); // remove last new line
