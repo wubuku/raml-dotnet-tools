@@ -515,6 +515,16 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(2, model.Objects.Count(o => o.Name.Contains("Patch")));
         }
 
+        [Test, Ignore] // JSON.NET issue
+        public async Task ShouldHandleJsonSchemaRecursiveTree()
+        {
+            var raml = await new RamlParser().LoadAsync("files/tree-issue63.raml");
+            var model = new ClientGeneratorService(raml, "test", "TargetNamespace").BuildModel();
+
+            Assert.IsNotNull(model);
+            Assert.AreEqual(1, model.Objects.Count());
+        }
+
         [Test]
         public async Task ShouldGenerateRootResource()
         {
@@ -522,7 +532,6 @@ namespace Raml.Tools.Tests
             Assert.IsTrue(model.Classes.Any(c => c.Name == "RootUrl"));
             Assert.AreEqual(3, model.Classes.First(c => c.Name == "RootUrl").Methods.Count);
         }
-
         private static string GetXml(string comment)
         {
             if (string.IsNullOrWhiteSpace(comment))
