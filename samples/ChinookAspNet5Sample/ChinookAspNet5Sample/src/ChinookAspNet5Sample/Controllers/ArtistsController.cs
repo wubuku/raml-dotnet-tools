@@ -15,9 +15,21 @@ namespace ChinookAspNet5Sample.ChinookV1
         public IActionResult Get()
         {
             // TODO: implement Get - route: artists/
-			// var result = new IList<Artist>();
-			// return new ObjectResult(result);
-			return new ObjectResult("");
+			var result = new List<Artist>()
+			{
+			    new Artist
+			    {
+			        Id = 1,
+                    Name = "Dave Mathwes Band"
+			    },
+                new Artist
+                {
+                    Id = 2,
+                    Name = "Led Zeppelin"
+                }
+			};
+			return new ObjectResult(result);
+			
         }
 
 		/// <param name="content"></param>
