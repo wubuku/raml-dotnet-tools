@@ -537,6 +537,16 @@ namespace Raml.Tools.Tests
             Assert.IsEmpty(model.BaseUri);
         }
 
+        [Test, Ignore] // JSON.NET issue
+        public async Task ShouldHandleJsonSchemaRecursiveTree()
+        {
+            var raml = await new RamlParser().LoadAsync("files/tree-issue63.raml");
+            var model = new ClientGeneratorService(raml, "test", "TargetNamespace").BuildModel();
+
+            Assert.IsNotNull(model);
+            Assert.AreEqual(1, model.Objects.Count());
+        }
+
         private static string GetXml(string comment)
         {
             if (string.IsNullOrWhiteSpace(comment))
