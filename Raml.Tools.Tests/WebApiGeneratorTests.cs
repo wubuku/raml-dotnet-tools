@@ -319,7 +319,7 @@ namespace Raml.Tools.Tests
         {
             var raml = await new RamlParser().LoadAsync("files/issue59.raml");
             var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
-            Assert.AreEqual(20, model.Objects.Count());
+            Assert.AreEqual(17, model.Objects.Count());
         }
 
 
