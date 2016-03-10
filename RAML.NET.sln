@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C5478D
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MuleSoft.RAML.Tools.CLI", "MuleSoft.RAML.Tools.CLI\MuleSoft.RAML.Tools.CLI.csproj", "{E7ED4D4D-B911-4CE5-AE72-0CD0E3D4A27D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{05A60B40-E199-435D-99A4-0DD7637F5690}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05A60B40-E199-435D-99A4-0DD7637F5690}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05A60B40-E199-435D-99A4-0DD7637F5690}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7ED4D4D-B911-4CE5-AE72-0CD0E3D4A27D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7ED4D4D-B911-4CE5-AE72-0CD0E3D4A27D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7ED4D4D-B911-4CE5-AE72-0CD0E3D4A27D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7ED4D4D-B911-4CE5-AE72-0CD0E3D4A27D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
