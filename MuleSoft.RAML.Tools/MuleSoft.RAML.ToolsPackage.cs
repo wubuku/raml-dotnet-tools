@@ -245,7 +245,7 @@ namespace MuleSoft.RAML.Tools
 
         private void AddRamlReferenceCallback(object sender, EventArgs e)
         {
-            var generationServices = new RamlReferenceService(ServiceProvider.GlobalProvider);
+            var generationServices = new RamlReferenceService(ServiceProvider.GlobalProvider, new ActivityLogger());
             var ramlChooser = new RamlChooser(this, generationServices.AddRamlReference, "Add RAML Reference", false, Settings.Default.RAMLExchangeUrl);
             ramlChooser.ShowDialog();
         }
