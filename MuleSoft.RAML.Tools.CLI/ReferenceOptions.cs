@@ -3,7 +3,7 @@
 namespace MuleSoft.RAML.Tools.CLI
 {
     [Verb("reference", HelpText = "Add/Update RAML reference (client proxy).")]
-    class ReferenceOptions 
+    public class ReferenceOptions 
     {
         [Option('s', "source", Required = true, HelpText = "RAML source URL or file.")]
         public string Source { get; set; }

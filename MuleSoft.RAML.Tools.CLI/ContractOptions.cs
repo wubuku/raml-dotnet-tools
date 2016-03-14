@@ -3,7 +3,7 @@
 namespace MuleSoft.RAML.Tools.CLI
 {
     [Verb("contract", HelpText = "Add/Update RAML contract (WebApi 2 or Mvc 6 scaffold).")]
-    class ContractOptions 
+    public class ContractOptions 
     {
         [Option('s', "source", Required = true, HelpText = "RAML source URL or file.")]
         public string Source { get; set; }
