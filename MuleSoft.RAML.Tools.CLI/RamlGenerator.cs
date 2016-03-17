@@ -1,57 +1,78 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.Shell;
 using Raml.Common;
 using Raml.Parser;
-using Raml.Tools.ClientGenerator;
+using Raml.Parser.Expressions;
+using Raml.Tools;
+using Raml.Tools.WebApiGenerator;
 using Task = System.Threading.Tasks.Task;
 
 namespace MuleSoft.RAML.Tools.CLI
 {
     public class RamlGenerator
     {
-        private static string ClientT4TemplateName;
-
-        public async Task HandleReference(ReferenceOptions opts)
+        public async Task HandleReference(Options opts)
         {
-            var ramlFilePath = Path.GetTempPath();
-            var ramlTitle = string.IsNullOrWhiteSpace(opts.Title) ? Path.GetFileName(opts.Source) : opts.Title;
-            var templatesPath = Assembly.GetAssembly(typeof(Program)).Location;
-            var targetFileName = string.IsNullOrWhiteSpace(opts.File)
-                ? Path.GetFileNameWithoutExtension(ramlFilePath)
-                : opts.File;
+            string destinationFolder;
+            string templatesFolder;
+            string targetFileName;
+            string targetNamespace;
+            HandleParameters(opts, out destinationFolder, out templatesFolder, out targetFileName, out targetNamespace);
 
-            if (opts.Add)
-            {
-            }
+            var ramlDoc = await GetRamlDocument(opts, destinationFolder, targetFileName);
+
+            var generator = new RamlClientGenerator();
+            generator.Generate(ramlDoc, targetFileName, targetNamespace, templatesFolder, destinationFolder);
+        }
+
+
+        private static async Task<RamlDocument> GetRamlDocument(Options opts, string destinationFolder, string targetFileName)
+        {
+            var result = new RamlIncludesManager().Manage(opts.Source, destinationFolder, targetFileName, opts.Overwrite);
+
+            var parser = new RamlParser();
+            var ramlDoc = await parser.LoadRamlAsync(result.ModifiedContents, destinationFolder);
+            return ramlDoc;
+        }
+
+        private void HandleParameters(Options opts, out string destinationFolder, out string templatesFolder,
+            out string targetFileName, out string targetNamespace)
+        {
+            destinationFolder = opts.DestinationFolder ?? "generated";
+            templatesFolder = string.IsNullOrWhiteSpace(opts.TemplatesFolder)
+                ? Path.GetDirectoryName(Assembly.GetAssembly(typeof (Program)).Location)
+                : opts.TemplatesFolder;
+
+            targetFileName = Path.GetFileName(opts.Source);
+            if (string.IsNullOrWhiteSpace(targetFileName))
+                targetFileName = "root.raml";
+
+            if (!targetFileName.EndsWith(".raml"))
+                targetFileName += ".raml";
+
+            targetNamespace = string.IsNullOrWhiteSpace(opts.Namespace)
+                ? NetNamingMapper.GetNamespace(Path.GetFileNameWithoutExtension(targetFileName))
+                : opts.Namespace;
         }
 
         public async Task HandleContract(ContractOptions opts)
         {
-            var ramlFilePath = Path.GetTempPath();
-            var ramlTitle = string.IsNullOrWhiteSpace(opts.Title) ? Path.GetFileName(opts.Source) : opts.Title;
-            var templatesPath = Assembly.GetAssembly(typeof(Program)).Location;
-            var targetFileName = string.IsNullOrWhiteSpace(opts.File)
-                ? Path.GetFileNameWithoutExtension(ramlFilePath)
-                : opts.File;
-            var targetNamespace = opts.Namespace;
+            string destinationFolder;
+            string templatesFolder;
+            string targetFileName;
+            string targetNamespace;
+            HandleParameters(opts, out destinationFolder, out templatesFolder, out targetFileName, out targetNamespace);
 
-            if (opts.Add)
-            {
-                var parser = new RamlParser();
-                bool overwrite = false;
-                string destinationFolder = templatesPath;
-                var result = new RamlIncludesManager().Manage(opts.Source, destinationFolder, targetFileName, overwrite);
-                var ramlDoc = await parser.LoadRamlAsync(result.ModifiedContents, destinationFolder);
-                var model = new ClientGeneratorService(ramlDoc, "clientRootClassName", targetNamespace).BuildModel();
-                var templateFolder = templatesPath;
-                var templateFilePath = Path.Combine(templateFolder, ClientT4TemplateName);
-                var extensionPath = Path.GetDirectoryName(GetType().Assembly.Location) + Path.DirectorySeparatorChar;
-                var t4Service = new T4Service(ServiceProvider.GlobalProvider);
-                var res = t4Service.TransformText(templateFilePath, model, extensionPath, opts.Source, targetNamespace);
-            }
+            var ramlDoc = await GetRamlDocument(opts, destinationFolder, targetFileName);
+
+            var generator = new RamlWebApiGenerator(ramlDoc, targetNamespace, templatesFolder, targetFileName, destinationFolder, opts.UseAsyncMethods);
+            generator.Generate();
         }
 
-         
+
     }
 }

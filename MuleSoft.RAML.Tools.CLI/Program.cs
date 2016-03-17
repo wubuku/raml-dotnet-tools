@@ -28,8 +28,12 @@ namespace MuleSoft.RAML.Tools.CLI
             foreach (var error in errors)
             {
                 Console.WriteLine(Enum.GetName(typeof(ErrorType), error.Tag));
-                Console.WriteLine(((NamedError)(error)).NameInfo.LongName);
-                Console.WriteLine(((NamedError)(error)).NameInfo.NameText);
+                var namedError = error as NamedError;
+                if (namedError != null)
+                {
+                    Console.WriteLine(namedError.NameInfo.LongName);
+                    Console.WriteLine(namedError.NameInfo.NameText);
+                }
             }
             return 0;
         }
@@ -38,7 +42,7 @@ namespace MuleSoft.RAML.Tools.CLI
         private static int RunContractAndReturnExitCode(ContractOptions opts)
         {
             var generator = new RamlGenerator();
-            generator.HandleContract(opts);
+            generator.HandleContract(opts).ConfigureAwait(false).GetAwaiter().GetResult();
             return 0;
         }
 
@@ -46,7 +50,7 @@ namespace MuleSoft.RAML.Tools.CLI
         private static int RunReferenceAndReturnExitCode(ReferenceOptions opts)
         {
             var generator = new RamlGenerator();
-            generator.HandleReference(opts);
+            generator.HandleReference(opts).ConfigureAwait(false).GetAwaiter().GetResult(); ;
             return 0;
         }
 
