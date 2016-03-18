@@ -321,6 +321,13 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(20, model.Objects.Count());
         }
 
+        [Test]
+        public async Task ShouldAcceptReferenceToRAMLSchemaKey_issue64()
+        {
+            var raml = await new RamlParser().LoadAsync("files/issue64.raml");
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
+            Assert.AreEqual(4, model.Objects.Count());
+        }
 
 
         private static string GetXml(string comment)
