@@ -3,7 +3,6 @@
 <#@ assembly name="System.Core" #>
 <#@ import namespace="Raml.Tools" #>
 <#@ import namespace="Raml.Tools.WebApiGenerator" #>
-<#@ import namespace="System.Linq" #>
 <#@ parameter name="controllerObject" type="Raml.Tools.WebApiGenerator.ControllerObject" #>
 <#@ parameter name="hasModels" type="System.Boolean" #>
 <#@ parameter name="useAsyncMethods" type="System.Boolean" #>

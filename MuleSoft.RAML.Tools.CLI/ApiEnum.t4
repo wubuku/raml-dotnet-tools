@@ -3,7 +3,6 @@
 <#@ assembly name="System.Core" #>
 <#@ import namespace="Raml.Tools" #>
 <#@ import namespace="Raml.Tools.WebApiGenerator" #>
-<#@ import namespace="System.Linq" #>
 <#@ parameter name="apiEnum" type="Raml.Tools.ApiEnum" #>
 <#@ output extension=".cs" #>
 

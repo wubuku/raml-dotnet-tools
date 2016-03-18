@@ -63,7 +63,14 @@ namespace MuleSoft.RAML.Tools.CLI
 
         private void GenerateImplementationControllers(IEnumerable<ControllerObject> controllers)
         {
-            GenerateModels(controllers, "controllerObject", implementationControllerT4Template);
+            var extraParams = new Dictionary<string, bool>
+            {
+                {"useAsyncMethods", useAsyncMethods},
+                {"hasModels", hasModels}
+            };
+            var destFolder = Path.Combine(destinationFolder, "Controllers").Replace("\\\\","\\") + Path.DirectorySeparatorChar;
+            GenerateModels(controllers, "controllerObject", implementationControllerT4Template,
+                o => o.Name + "Controller.cs", extraParams, destFolder);
         }
 
         private void GenerateBaseControllers(IEnumerable<ControllerObject> controllers)
@@ -73,37 +80,49 @@ namespace MuleSoft.RAML.Tools.CLI
                 {"useAsyncMethods", useAsyncMethods},
                 {"hasModels", hasModels}
             };
-            GenerateModels(controllers, "controllerObject", baseControllerT4Template, extraParams);
+            GenerateModels(controllers, "controllerObject", baseControllerT4Template, o => o.Name + "Controller.cs", extraParams);
         }
 
         private void GenerateInterfaceControllers(IEnumerable<ControllerObject> controllers)
         {
-            GenerateModels(controllers, "controllerObject", interfaceControllerT4Template);
+            var extraParams = new Dictionary<string, bool>
+            {
+                {"useAsyncMethods", useAsyncMethods},
+                {"hasModels", hasModels}
+            };
+            GenerateModels(controllers, "controllerObject", interfaceControllerT4Template, o => "I" + o.Name + "Controller.cs", extraParams);
         }
 
         private void GenerateEnums(IEnumerable<ApiEnum> enums)
         {
-            GenerateModels(enums, "apiEnum", enumT4Template);
+            GenerateModels(enums, "apiEnum", enumT4Template, o => o.Name + ".cs");
         }
 
         private void GenerateModels(IEnumerable<ApiObject> models)
         {
-            GenerateModels(models,"apiObject", modelT4Template);
+            GenerateModels(models,"apiObject", modelT4Template, o => o.Name + ".cs");
         }
 
-        private void GenerateModels<T>(IEnumerable<T> models, string parameterKey, string t4TemplateName, IDictionary<string, bool> extraParams = null) where T : IHasName
+        private void GenerateModels<T>(IEnumerable<T> models, string parameterKey, string t4TemplateName, 
+            Func<T, string> getName, IDictionary<string, bool> extraParams = null, string destFolder = null) where T : IHasName
         {
             foreach (var parameter in models)
             {
-                var result = GenerateModel(parameter, t4TemplateName, parameterKey, extraParams);
+                var result = GenerateModel(parameter, parameterKey, t4TemplateName, extraParams);
 
                 foreach (CompilerError error in result.Errors)
                 {
                     Console.WriteLine(error.ToString());
                 }
 
+                if (destFolder == null)
+                    destFolder = destinationFolder;
+
+                if (!Directory.Exists(destFolder))
+                    Directory.CreateDirectory(destFolder);
+
                 if (result.Errors.Count == 0)
-                    File.WriteAllText(Path.Combine(destinationFolder, parameter.Name + ".cs"), result.Content, result.Encoding);
+                    File.WriteAllText(Path.Combine(destFolder, getName(parameter)), result.Content, result.Encoding);
             }
         }
 
