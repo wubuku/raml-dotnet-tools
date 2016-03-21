@@ -24,58 +24,58 @@ namespace Raml.Tools
             this.warnings = warnings;
         }
 
-        public void Parse(IDictionary<string, RamlType> ramlTypes)
+        public void Parse(RamlTypesOrderedDictionary ramlTypes)
         {
-            foreach (var ramlType in ramlTypes)
+            foreach (var key in ramlTypes.Keys)
             {
-                var apiObject = ParseRamlType(ramlType);
-                if(apiObject != null)
-                    schemaObjects.Add(ramlType.Key, apiObject);
+                var apiObject = ParseRamlType(key, ramlTypes.GetByKey(key));
+                if(apiObject != null && !schemaObjects.ContainsKey(key))
+                    schemaObjects.Add(key, apiObject);
             }
         }
 
         public ApiObject ParseInline(string key, RamlType inline, IDictionary<string, ApiObject> objects)
         {
-            return ParseRamlType(new KeyValuePair<string, RamlType>(key, inline));
+            return ParseRamlType(key, inline);
         }
 
-        private ApiObject ParseRamlType(KeyValuePair<string, RamlType> ramlType)
+        private ApiObject ParseRamlType(string key, RamlType ramlType)
         {
-            if (ramlType.Value.Type.Contains("|")) // Union type
+            if (ramlType.External != null)
             {
-                return ParseUnion(ramlType);
+                return ParseExternal(key, ramlType);
             }
-            if (ramlType.Value.External != null)
+            if (ramlType.Type.Contains("|")) // Union type
             {
-                return ParseExternal(ramlType);
+                return ParseUnion(key, ramlType);
             }
-            if (ramlType.Value.Scalar != null)
+            if (ramlType.Scalar != null)
             {
-                return ParseScalar(ramlType);
+                return ParseScalar(key, ramlType);
             }
-            if (ramlType.Value.Object != null)
+            if (ramlType.Object != null)
             {
-                return ParseObject(ramlType);
+                return ParseObject(key, ramlType);
             }
-            if (ramlType.Value.Array != null)
+            if (ramlType.Array != null)
             {
-                return ParseArray(ramlType);
+                return ParseArray(key, ramlType);
             }
-            throw new InvalidOperationException("Cannot parse type of " + ramlType.Key);
+            throw new InvalidOperationException("Cannot parse type of " + key);
         }
 
-        private ApiObject ParseUnion(KeyValuePair<string, RamlType> ramlType)
+        private ApiObject ParseUnion(string key, RamlType ramlType)
         {
             var apiObject = new ApiObject
             {
                 IsUnionType = true,
-                Name = NetNamingMapper.GetObjectName(ramlType.Key),
-                Description = ramlType.Value.Description,
-                Example = GetExample(ramlType.Value.Example, ramlType.Value.Examples),
-                Type = NetNamingMapper.GetObjectName(ramlType.Key)
+                Name = NetNamingMapper.GetObjectName(key),
+                Description = ramlType.Description,
+                Example = GetExample(ramlType.Example, ramlType.Examples),
+                Type = NetNamingMapper.GetObjectName(key)
             };
 
-            var originalType = ramlType.Value.Type;
+            var originalType = ramlType.Type;
 
             var isArray = false;
             if (originalType.StartsWith("(") && originalType.EndsWith(")[]"))
@@ -99,23 +99,22 @@ namespace Raml.Tools
 
         private ApiObject ParseNestedType(RamlType ramlType, string keyOrTypeName)
         {
-            var pair = new KeyValuePair<string, RamlType>(keyOrTypeName, ramlType);
-            return ParseRamlType(pair);
+            return ParseRamlType(keyOrTypeName, ramlType);
         }
 
 
-        private ApiObject ParseArray(KeyValuePair<string, RamlType> ramlType)
+        private ApiObject ParseArray(string key, RamlType ramlType)
         {
-            var typeOfArray = GetTypeOfArray(ramlType);
+            var typeOfArray = GetTypeOfArray(key, ramlType);
 
             var baseType = CollectionTypeHelper.GetBaseType(typeOfArray);
             if (!NetTypeMapper.IsPrimitiveType(baseType) &&
-                ramlType.Value.Array.Items != null && ramlType.Value.Array.Items.Type == "object")
+                ramlType.Array.Items != null && ramlType.Array.Items.Type == "object")
             {
                 if (baseType == typeOfArray)
                     baseType = typeOfArray + "Item";
 
-                var itemType = ParseNestedType(ramlType.Value.Array.Items, baseType);
+                var itemType = ParseNestedType(ramlType.Array.Items, baseType);
                 schemaObjects.Add(baseType, itemType);
                 typeOfArray = CollectionTypeHelper.GetCollectionType(baseType);
             }
@@ -123,18 +122,18 @@ namespace Raml.Tools
             return new ApiObject
             {
                 IsArray = true,
-                Name = NetNamingMapper.GetObjectName(ramlType.Key),
-                Description = ramlType.Value.Description,
-                Example = ramlType.Value.Example,
+                Name = NetNamingMapper.GetObjectName(key),
+                Description = ramlType.Description,
+                Example = ramlType.Example,
                 Type = typeOfArray
             };
         }
 
-        private static string GetTypeOfArray(KeyValuePair<string, RamlType> ramlType)
+        private static string GetTypeOfArray(string key, RamlType ramlType)
         {
-            if (!string.IsNullOrWhiteSpace(ramlType.Value.Type))
+            if (!string.IsNullOrWhiteSpace(ramlType.Type))
             {
-                var pureType = ramlType.Value.Type.EndsWith("[]") ? ramlType.Value.Type.Substring(0, ramlType.Value.Type.Length - 2) : ramlType.Value.Type;
+                var pureType = ramlType.Type.EndsWith("[]") ? ramlType.Type.Substring(0, ramlType.Type.Length - 2) : ramlType.Type;
 
                 if (pureType != "array" && pureType != "object")
                 {
@@ -144,11 +143,11 @@ namespace Raml.Tools
                     return CollectionTypeHelper.GetCollectionType(pureType);
                 }
             }
-            if (!string.IsNullOrWhiteSpace(ramlType.Value.Array.Items.Type))
+            if (!string.IsNullOrWhiteSpace(ramlType.Array.Items.Type))
             {
-                if (ramlType.Value.Array.Items.Type != "object")
+                if (ramlType.Array.Items.Type != "object")
                 {
-                    var netType = ramlType.Value.Array.Items.Type;
+                    var netType = ramlType.Array.Items.Type;
                     if (NetTypeMapper.Map(netType) != null)
                         netType = NetTypeMapper.Map(netType);
 
@@ -156,37 +155,37 @@ namespace Raml.Tools
                 }
             }
 
-            if(!string.IsNullOrWhiteSpace(ramlType.Value.Array.Items.Name))
-                return CollectionTypeHelper.GetCollectionType(ramlType.Value.Array.Items.Name);
+            if(!string.IsNullOrWhiteSpace(ramlType.Array.Items.Name))
+                return CollectionTypeHelper.GetCollectionType(ramlType.Array.Items.Name);
 
-            return ramlType.Key;
+            return key;
         }
 
-        private ApiObject ParseScalar(KeyValuePair<string, RamlType> ramlType)
+        private ApiObject ParseScalar(string key, RamlType ramlType)
         {
             // TODO: check, should not really be an object, but is needed to map to primitive type...
-            if (ramlType.Value.Scalar.Enum != null && ramlType.Value.Scalar.Enum.Any())
+            if (ramlType.Scalar.Enum != null && ramlType.Scalar.Enum.Any())
             {
-                if (enums.ContainsKey(ramlType.Key))
+                if (enums.ContainsKey(key))
                     return null;
 
-                enums.Add(ramlType.Key, new ApiEnum
+                enums.Add(key, new ApiEnum
                 {
-                    Name = NetNamingMapper.GetObjectName(ramlType.Key),
-                    Description = ramlType.Value.Description,
-                    Values = GetEnumValues(ramlType.Value.Scalar)
+                    Name = NetNamingMapper.GetObjectName(key),
+                    Description = ramlType.Description,
+                    Values = GetEnumValues(ramlType.Scalar)
                 });
                 return null;
             }
 
-            var type = NetTypeMapper.Map(ramlType.Value.Scalar.Type);
+            var type = NetTypeMapper.Map(ramlType.Scalar.Type);
 
             return new ApiObject
             {
-                Type = NetNamingMapper.GetObjectName(ramlType.Key),
-                Name = NetNamingMapper.GetObjectName(ramlType.Key),
-                Example = ramlType.Value.Example,
-                Description = ramlType.Value.Description,
+                Type = NetNamingMapper.GetObjectName(key),
+                Name = NetNamingMapper.GetObjectName(key),
+                Example = ramlType.Example,
+                Description = ramlType.Description,
                 Properties = new List<Property>
                 {
                     new Property
@@ -195,12 +194,12 @@ namespace Raml.Tools
                         Type =
                             !string.IsNullOrWhiteSpace(type)
                                 ? type
-                                : NetNamingMapper.GetObjectName(ramlType.Value.Scalar.Type),
-                        Minimum = (double?) ramlType.Value.Scalar.Minimum,
-                        Maximum = (double?) ramlType.Value.Scalar.Maximum,
-                        MinLength = ramlType.Value.Scalar.MinLength,
-                        MaxLength = ramlType.Value.Scalar.MaxLength,
-                        OriginalName = ramlType.Key
+                                : NetNamingMapper.GetObjectName(ramlType.Scalar.Type),
+                        Minimum = (double?) ramlType.Scalar.Minimum,
+                        Maximum = (double?) ramlType.Scalar.Maximum,
+                        MinLength = ramlType.Scalar.MinLength,
+                        MaxLength = ramlType.Scalar.MaxLength,
+                        OriginalName = key
                     }
                 },
                 IsScalar = true,
@@ -223,35 +222,35 @@ namespace Raml.Tools
             return int.TryParse(v.Substring(0, 1), out num);
         }
 
-        private ApiObject ParseExternal(KeyValuePair<string,RamlType> ramlType)
+        private ApiObject ParseExternal(string key, RamlType ramlType)
         {
-            if (!string.IsNullOrWhiteSpace(ramlType.Value.External.Schema))
+            if (!string.IsNullOrWhiteSpace(ramlType.External.Schema))
             {
                 return
-                    new JsonSchemaParser().Parse(ramlType.Key, ramlType.Value.External.Schema, schemaObjects, warnings,
+                    new JsonSchemaParser().Parse(key, ramlType.External.Schema, schemaObjects, warnings,
                         enums, new Dictionary<string, ApiObject>(), new Dictionary<string, ApiObject>());
             }
 
-            if (!string.IsNullOrWhiteSpace(ramlType.Value.External.Xml))
+            if (!string.IsNullOrWhiteSpace(ramlType.External.Xml))
             {
-                return new XmlSchemaParser().Parse(ramlType.Key, ramlType.Value.External.Xml, schemaObjects, targetNamespace);
+                return new XmlSchemaParser().Parse(key, ramlType.External.Xml, schemaObjects, targetNamespace);
             }
 
-            throw new InvalidOperationException("Cannot parse external type of " + ramlType.Key);
+            throw new InvalidOperationException("Cannot parse external type of " + key);
         }
 
-        private ApiObject ParseObject(KeyValuePair<string, RamlType> ramlType)
+        private ApiObject ParseObject(string key, RamlType ramlType)
         {
-            if (ramlType.Value.Object.Properties.Count == 1 &&
-                ramlType.Value.Object.Properties.First().Key.StartsWith("[") &&
-                ramlType.Value.Object.Properties.First().Key.EndsWith("]"))
+            if (ramlType.Object.Properties.Count == 1 &&
+                ramlType.Object.Properties.First().Key.StartsWith("[") &&
+                ramlType.Object.Properties.First().Key.EndsWith("]"))
             {
-                return ParseMap(ramlType.Value, ramlType.Key);
+                return ParseMap(ramlType, key);
             }
             else
             {
 
-                return GetApiObjectFromObject(ramlType.Value, ramlType.Key);
+                return GetApiObjectFromObject(ramlType, key);
             }
         }
 
@@ -263,8 +262,7 @@ namespace Raml.Tools
             if (ramlType.Object.Properties.First().Value.Object != null && ramlType.Object.Properties.First().Value.Type == "object")
             {
                 var itemName = name + "Item";
-                var pair = new KeyValuePair<string, RamlType>(itemName, ramlType.Object.Properties.First().Value);
-                var nestedObject = ParseObject(pair);
+                var nestedObject = ParseObject(itemName, ramlType.Object.Properties.First().Value);
                 type = nestedObject.Name;
                 schemaObjects.Add(itemName, nestedObject);
             }
@@ -333,7 +331,7 @@ namespace Raml.Tools
                     var type = kv.Value.Type;
                     if (kv.Value.Array.Items != null)
                     {
-                        var obj = ParseArray(kv);
+                        var obj = ParseArray(kv.Key, kv.Value);
                         type = CollectionTypeHelper.GetCollectionType(obj.Type);
                     }
                     if (type.EndsWith("[]"))

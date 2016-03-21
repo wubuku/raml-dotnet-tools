@@ -1,10 +1,8 @@
 ﻿using System.IO;
 using NUnit.Framework;
 using Raml.Parser;
-using Raml.Tools.ClientGenerator;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml;
 using Raml.Tools.WebApiGenerator;
 
 namespace Raml.Tools.Tests
@@ -128,6 +126,17 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(false, model.Objects.First(c => c.Name == "Group").IsArray);
             Assert.AreEqual(CollectionTypeHelper.GetCollectionType("Person"), model.Objects.First(c => c.Name == "Group").Properties.First(c => c.Name == "Person").Type);
             Assert.AreEqual("Company", model.Objects.First(c => c.Name == "Group").Properties.First(c => c.Name == "Company").Type);
+        }
+
+        [Test]
+        public async Task ShouldHandleXml()
+        {
+            var model = await BuildModel("files/raml1/ordersXml-v1.raml");
+
+            Assert.AreEqual("PurchaseOrderType", model.Controllers.First().Methods.First(m => m.Verb == "Get").ReturnType);
+            Assert.AreEqual("PurchaseOrderType", model.Controllers.First().Methods.First(m => m.Verb == "Post").Parameter.Type);
+
+            Assert.AreEqual(11, model.Objects.Count());
         }
 
         private static async Task<WebApiGeneratorModel> GetAnnotationTargetsModel()
