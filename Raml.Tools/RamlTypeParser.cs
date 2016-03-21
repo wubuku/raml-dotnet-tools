@@ -137,13 +137,23 @@ namespace Raml.Tools
                 var pureType = ramlType.Value.Type.EndsWith("[]") ? ramlType.Value.Type.Substring(0, ramlType.Value.Type.Length - 2) : ramlType.Value.Type;
 
                 if (pureType != "array" && pureType != "object")
+                {
+                    if (NetTypeMapper.Map(pureType) != null)
+                        pureType = NetTypeMapper.Map(pureType);
+
                     return CollectionTypeHelper.GetCollectionType(pureType);
-                
+                }
             }
             if (!string.IsNullOrWhiteSpace(ramlType.Value.Array.Items.Type))
             {
                 if (ramlType.Value.Array.Items.Type != "object")
-                    return CollectionTypeHelper.GetCollectionType(ramlType.Value.Array.Items.Type);
+                {
+                    var netType = ramlType.Value.Array.Items.Type;
+                    if (NetTypeMapper.Map(netType) != null)
+                        netType = NetTypeMapper.Map(netType);
+
+                    return CollectionTypeHelper.GetCollectionType(netType);
+                }
             }
 
             if(!string.IsNullOrWhiteSpace(ramlType.Value.Array.Items.Name))
@@ -164,7 +174,7 @@ namespace Raml.Tools
                 {
                     Name = NetNamingMapper.GetObjectName(ramlType.Key),
                     Description = ramlType.Value.Description,
-                    Values = ramlType.Value.Scalar.Enum.ToList()
+                    Values = GetEnumValues(ramlType.Value.Scalar)
                 });
                 return null;
             }
@@ -177,19 +187,40 @@ namespace Raml.Tools
                 Name = NetNamingMapper.GetObjectName(ramlType.Key),
                 Example = ramlType.Value.Example,
                 Description = ramlType.Value.Description,
-                Properties = new List<Property> { new Property
-                                                        {
-                                                            Name = "Value",
-                                                            Type = !string.IsNullOrWhiteSpace(type) ? type : NetNamingMapper.GetObjectName(ramlType.Value.Scalar.Type),
-                                                            Minimum = (double?)ramlType.Value.Scalar.Minimum,
-                                                            Maximum = (double?)ramlType.Value.Scalar.Maximum,
-                                                            MinLength = ramlType.Value.Scalar.MinLength,
-                                                            MaxLength = ramlType.Value.Scalar.MaxLength,
-                                                            OriginalName = ramlType.Key
-                                                        } 
+                Properties = new List<Property>
+                {
+                    new Property
+                    {
+                        Name = "Value",
+                        Type =
+                            !string.IsNullOrWhiteSpace(type)
+                                ? type
+                                : NetNamingMapper.GetObjectName(ramlType.Value.Scalar.Type),
+                        Minimum = (double?) ramlType.Value.Scalar.Minimum,
+                        Maximum = (double?) ramlType.Value.Scalar.Maximum,
+                        MinLength = ramlType.Value.Scalar.MinLength,
+                        MaxLength = ramlType.Value.Scalar.MaxLength,
+                        OriginalName = ramlType.Key
+                    }
                 },
                 IsScalar = true,
             };
+        }
+
+        private static List<string> GetEnumValues(Parameter scalar)
+        {
+            return scalar.Enum.Select(ConvertToString).ToList();
+        }
+
+        private static string ConvertToString(string v)
+        {
+            return StartsWithNumber(v) ? "N" + v : v;
+        }
+
+        private static bool StartsWithNumber(string v)
+        {
+            int num;
+            return int.TryParse(v.Substring(0, 1), out num);
         }
 
         private ApiObject ParseExternal(KeyValuePair<string,RamlType> ramlType)
@@ -239,6 +270,9 @@ namespace Raml.Tools
             }
 
             type = RamlTypesHelper.DecodeRaml1Type(type);
+
+            if (NetTypeMapper.Map(type) != null)
+                type = NetTypeMapper.Map(type);
 
             return new ApiObject
             {
@@ -326,7 +360,7 @@ namespace Raml.Tools
                     {
                         Name = NetNamingMapper.GetPropertyName(kv.Key),
                         Description = kv.Value.Description,
-                        Values = kv.Value.Scalar.Enum.ToList()
+                        Values = GetEnumValues(kv.Value.Scalar)
                     };
                     enums.Add(kv.Key, apiEnum);
                 }
