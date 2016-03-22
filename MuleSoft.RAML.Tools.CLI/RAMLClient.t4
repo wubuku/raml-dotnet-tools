@@ -3,7 +3,7 @@
 <#@ assembly name="$(binDir)EdgeJs.dll" #>
 <#@ assembly name="$(binDir)Raml.Tools.dll" #>
 <#@ assembly name="$(binDir)RAML.Api.Core.dll" #>
-<#@ assembly name="System.Runtime" #>
+<#@ assembly name="System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" #>
 <#@ assembly name="System.Core" #>
 <#@ assembly name="System" #>
 <#@ import namespace="Raml.Common" #>
@@ -126,9 +126,8 @@ namespace $(namespace)
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
 <#
-			        if (((model.Security.Headers == null || !model.Security.Headers.Count > 0)
-			            && (model.Security.QueryParameters == null || !model.Security.QueryParameters.Count > 0))
-                        || (model.Security.Headers != null && model.Security.Headers.Count > 0))
+			        if (model.Security.HeadersCount == 0 && model.Security.QueryParametersCount == 0
+                        || model.Security.HeadersCount > 0)
 			        {
 #>
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
@@ -152,7 +151,7 @@ namespace $(namespace)
 	                }
 	                else
 	                {
-                        if(method.RequestContentTypes.Any(c => c.Contains("xml")) && !method.RequestContentTypes.Any(c => c.Contains("json"))){
+                        if(method.RequestIsXml){
 #>
 
             var stringWriter = new StringWriter();
@@ -235,7 +234,7 @@ namespace $(namespace)
 
             var url = "<#= method.Url ?? string.Empty #>";
 <#
-			    if (method.UriParameters != null && method.UriParameters.Count > 0)
+			    if (method.UriParametersCount > 0)
 			    {
 #>
 			if(request.UriParameters == null)
@@ -247,10 +246,10 @@ namespace $(namespace)
 	            {
 #>
 
-			if(request.UriParameters.<#= NetNamingMapper.Capitalize(p.Name) #> == null)
-				throw new InvalidOperationException("Uri Parameter <#= NetNamingMapper.Capitalize(p.Name) #> cannot be null");
+			if(request.UriParameters.<#= p.Name.Substring(0,1).ToUpper() + p.Name.Substring(1) #> == null)
+				throw new InvalidOperationException("Uri Parameter <#= p.Name.Substring(0,1).ToUpper() + p.Name.Substring(1) #> cannot be null");
 
-            url = url.Replace("{<#= p.Name #>}", request.UriParameters.<#= NetNamingMapper.Capitalize(p.Name) #>.ToString());
+            url = url.Replace("{<#= p.Name #>}", request.UriParameters.<#= p.Name.Substring(0,1).ToUpper() + p.Name.Substring(1) #>.ToString());
 <#
 	            }
 
@@ -295,9 +294,8 @@ namespace $(namespace)
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
 <#
-			        if (((model.Security.Headers == null || !model.Security.Headers.Count > 0)
-			            && (model.Security.QueryParameters == null || !model.Security.QueryParameters.Count > 0))
-                        || (model.Security.Headers != null && model.Security.Headers.Count > 0))
+			        if (model.Security.HeadersCount == 0 && model.Security.QueryParametersCount == 0
+                        || model.Security.HeadersCount > 0)
 			        {
 #>
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
@@ -346,7 +344,7 @@ namespace $(namespace)
 	                }
 	                else
 	                {
-                        if(method.RequestContentTypes.Any(c => c.Contains("xml")) && !method.RequestContentTypes.Any(c => c.Contains("json"))){
+                        if(method.RequestIsXml){
 #>
             var stringWriter = new StringWriter();
         	new XmlSerializer(typeof (Models.<#= method.Parameter.Type #>)).Serialize(stringWriter, request.Content);
@@ -932,7 +930,7 @@ foreach (var apiObject in model.ApiResponseObjects)
 <#
 	}
 
-	var body = apiObject.Properties.FirstOrDefault(p => p.Name == "Content");
+	var body = apiObject.GetContentOrDefault();
 	if (body != null)
 	{
 		if (body.Type.StartsWith("Multiple"))

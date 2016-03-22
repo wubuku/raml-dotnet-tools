@@ -1,14 +1,9 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.Shell;
 using Raml.Common;
 using Raml.Parser;
 using Raml.Parser.Expressions;
-using Raml.Tools;
-using Raml.Tools.WebApiGenerator;
 using Task = System.Threading.Tasks.Task;
 
 namespace MuleSoft.RAML.Tools.CLI
@@ -34,8 +29,10 @@ namespace MuleSoft.RAML.Tools.CLI
         {
             var result = new RamlIncludesManager().Manage(opts.Source, destinationFolder, targetFileName, opts.Overwrite);
 
+            var path = Path.Combine(destinationFolder, targetFileName);
+            File.WriteAllText(path, result.ModifiedContents);
             var parser = new RamlParser();
-            var ramlDoc = await parser.LoadRamlAsync(result.ModifiedContents, destinationFolder);
+            var ramlDoc = await parser.LoadAsync(path);
             return ramlDoc;
         }
 

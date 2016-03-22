@@ -18,6 +18,12 @@ namespace Raml.Tools
         public string Description { get; set; }
         public string Example { get; set; }
         public IList<Property> Properties { get; set; }
+
+        public Property GetContentOrDefault()
+        {
+            return Properties.FirstOrDefault(p => p.Name == "Content"); 
+        }
+
         public bool IsArray { get; set; }
         public bool IsMap { get; set; }
         public bool IsMultiple { get; set; }
