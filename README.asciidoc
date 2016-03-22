@@ -35,7 +35,7 @@ As a convenience, a local endpoint is registered to provides a browser-accessibl
 
 * Visual Studio 2013 Update 3
 * .NET Framework 4.5 or higher
-* RAML 0.8 compatible endpoint
+* RAML 1.0 or 0.8 compatible endpoint
 * Supported languages: C# (other languages indirectly)
 
 == Installation
@@ -180,7 +180,7 @@ image::./docimages/RAML_NET_NewASPProject.png[align="center", width="550"]
 +
 image::./docimages/RAML_NETAddRAMLContract.png[align="center", width="550"]
 +
-. The dialog lets you create a RAML definition or import an existing one. If you import an existing one, click  the *Go* button to download the RAML definition from an URL, or browse to use a local copy from your file system. Optionally change the filename or namespace for the generated code.
+. The dialog lets you create a RAML definition or import an existing one. If you import an existing one, click  the *Go* button to download the RAML definition from an URL, or browse to use a local copy from your file system. Optionally change the filename, namespace or choose asynchronous methods.
 +
 image::./docimages/RAML_NETAddRAMLContractScreen.png[align="center", width="550"]
 +
@@ -398,7 +398,7 @@ You can navigate by clicking the buttons, you can see the request and responses,
 
 === Viewing the Raw RAML
 
-If you wish to view the RAML that is generated from your API, run your web app and navigate to `/raml/raw`.
+If you wish to view the RAML that is generated from your API, run your web app and navigate to `/raml/raw`. This will generate RAML 1 output, if you need the 0.8 version type '/raml/raw?version=0.8' instead.
 
 image::./docimages/RAML_NET_RAML.png[align="center"]
 
@@ -555,154 +555,33 @@ You can also modify the Body or the Responses using the same strategy.
 
 == XML Schemas
 
-When using XML shcemas please note that there is no root type. So you need to specify the schema to be used exactly as it appears on the XML.
-
+When using XML shcemas please note that there is no root type. You need to create all the types that you will reference in your RAML 1 spec as they external types, with the same name that appears on the XSD.
+For example for the following RAML we will need *PurchaseOrderType* and *ElementType*, note you can specify the same XML Schema in both cases.
 
 ----
-#%RAML 0.8
+#%RAML 1.0
 title: XML Schemas API
 version: v1
 baseUri: /
 mediaType: application/xml
 schemas:
-  - xmlschema: |
-        <xsd:schema targetNamespace="http://www.example.com/IPO"
-                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-                xmlns:ipo="http://www.example.com/IPO">
-
-         <xsd:element name="purchaseOrder" type="ipo:PurchaseOrderType"/>
-
-         <xsd:element name="comment" type="xsd:string"/>
-         <xsd:element name="shipComment" type="xsd:string"
-          substitutionGroup="ipo:comment"/>
-         <xsd:element name="customerComment" type="xsd:string"
-          substitutionGroup="ipo:comment"/>
-
-         <xsd:complexType name="PurchaseOrderType">
-          <xsd:sequence>
-           <xsd:choice>
-            <xsd:group   ref="ipo:shipAndBill"/>
-            <xsd:element name="singleAddress" type="ipo:AddressType"/>
-           </xsd:choice>
-           <xsd:element ref="ipo:comment" minOccurs="0"/>
-           <xsd:element name="items"      type="ipo:ItemsType"/>
-          </xsd:sequence>
-          <xsd:attribute name="orderDate" type="xsd:date"/>
-         </xsd:complexType>
-
-         <xsd:group name="shipAndBill">
-          <xsd:sequence>
-           <xsd:element name="shipTo"     type="ipo:AddressType"/>
-           <xsd:element name="billTo"     type="ipo:AddressType"/>
-          </xsd:sequence>
-         </xsd:group>
-
-
-         <xsd:complexType name="AddressType">
-          <xsd:sequence>
-           <xsd:element name="name"   type="xsd:string"/>
-           <xsd:element name="street" type="xsd:string"/>
-           <xsd:element name="city"   type="xsd:string"/>
-          </xsd:sequence>
-         </xsd:complexType>
-
-         <xsd:complexType name="USAddress">
-          <xsd:complexContent>
-           <xsd:extension base="ipo:AddressType">
-            <xsd:sequence>
-             <xsd:element name="state" type="ipo:USState"/>
-             <xsd:element name="zip"   type="xsd:positiveInteger"/>
-            </xsd:sequence>
-           </xsd:extension>
-          </xsd:complexContent>
-         </xsd:complexType>
-
-         <xsd:complexType name="UKAddress">
-          <xsd:complexContent>
-           <xsd:extension base="ipo:AddressType">
-            <xsd:sequence>
-             <xsd:element name="postcode" type="ipo:UKPostcode"/>
-            </xsd:sequence>
-            <xsd:attribute name="exportCode" type="xsd:positiveInteger" fixed="1"/>
-           </xsd:extension>
-          </xsd:complexContent>
-         </xsd:complexType>
-
-         <!-- other Address derivations for more countries --> 
-         <xsd:simpleType name="USState">
-          <xsd:restriction base="xsd:string">
-           <xsd:enumeration value="AK"/>
-           <xsd:enumeration value="AL"/>
-           <xsd:enumeration value="AR"/>
-           <xsd:enumeration value="CA"/>
-           <!-- and so on ... -->
-           <xsd:enumeration value="PA"/>
-          </xsd:restriction>
-         </xsd:simpleType>
-
-         <!-- simple type definition for UKPostcode -->
-         <xsd:simpleType name="UKPostcode">
-          <xsd:restriction base="xsd:string">
-           <xsd:pattern value="[A-Z]{2}\d\s\d[A-Z]{2}"/>
-          </xsd:restriction>
-         </xsd:simpleType>
-
-        <xsd:complexType name="ItemsType" mixed="true">
-         <xsd:sequence>
-         <xsd:element name="item" minOccurs="0" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:sequence>
-              <xsd:element name="productName" type="xsd:string"/>
-              <xsd:element name="quantity">
-                <xsd:simpleType>
-                  <xsd:restriction base="xsd:positiveInteger">
-                    <xsd:maxExclusive value="100"/>
-                  </xsd:restriction>
-                </xsd:simpleType>
-              </xsd:element>
-              <xsd:element name="USPrice"  type="xsd:decimal"/>
-              <xsd:element ref="ipo:comment"   minOccurs="0" maxOccurs="2"/>
-              <xsd:element name="shipDate" type="xsd:date" minOccurs="0"/>
-            </xsd:sequence>
-            <!-- attributeGroup replaces individual declarations -->
-            <xsd:attributeGroup ref="ipo:ItemDelivery"/>
-          </xsd:complexType>
-         </xsd:element>
-         </xsd:sequence>
-        </xsd:complexType>
-
-        <xsd:attributeGroup name="ItemDelivery">
-          <xsd:attribute name="partNum"  type="ipo:SKU" use="required"/>
-          <xsd:attribute name="weightKg" type="xsd:decimal"/>
-          <xsd:attribute name="shipBy">
-            <xsd:simpleType>
-              <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="air"/>
-                <xsd:enumeration value="land"/>
-                <xsd:enumeration value="any"/>
-              </xsd:restriction>
-            </xsd:simpleType>
-          </xsd:attribute>
-        </xsd:attributeGroup>
-
-         <xsd:simpleType name="SKU">
-          <xsd:restriction base="xsd:string">
-           <xsd:pattern value="\d{3}-[A-Z]{2}"/>
-          </xsd:restriction>
-         </xsd:simpleType>
-
-        </xsd:schema>
-/contacts:
-  displayName: Contacts
+  PurchaseOrderType: !include ipo.xsd
+  ElementType: !include ipo.xsd
+/orders:
+  displayName: Orders
   get:
     responses:
       200:
         body:
-          schema: PurchaseOrderType
+          type: PurchaseOrderType
+  /{id}:
+    get:
+      responses:
+        200:
+          body:
+            type: ElementType
 ----
 
-
-Note that the schema does not use the key on the schemas section ("xmlschema") but "PurchaseOrderType" which is the name of a type as it appears on the XML.
 
 
 
