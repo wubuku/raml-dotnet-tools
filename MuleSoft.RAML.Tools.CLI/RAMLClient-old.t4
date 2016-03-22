@@ -1,15 +1,16 @@
-﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System" #>
+<#@ assembly name="System.Runtime" #>
+<#@ assembly name="System.Core" #>
 <#@ assembly name="$(binDir)RAML.Parser.dll" #>
 <#@ assembly name="$(binDir)EdgeJs.dll" #>
 <#@ assembly name="$(binDir)Raml.Tools.dll" #>
 <#@ assembly name="$(binDir)RAML.Api.Core.dll" #>
-<#@ assembly name="System.Runtime" #>
-<#@ assembly name="System.Core" #>
-<#@ assembly name="System" #>
 <#@ import namespace="Raml.Common" #>
 <#@ import namespace="Raml.Tools" #>
 <#@ import namespace="Raml.Tools.ClientGenerator" #>
 <#@ import namespace="System" #>
+<#@ import namespace="System.Linq" #>
 <#@ parameter name="model" type="Raml.Tools.ClientGenerator.ClientGeneratorModel" #>
 <#@ output extension=".cs" #>
 
@@ -126,9 +127,9 @@ namespace $(namespace)
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
 <#
-			        if (((model.Security.Headers == null || !model.Security.Headers.Count > 0)
-			            && (model.Security.QueryParameters == null || !model.Security.QueryParameters.Count > 0))
-                        || (model.Security.Headers != null && model.Security.Headers.Count > 0))
+			        if (((model.Security.Headers == null || !model.Security.Headers.Any())
+			            && (model.Security.QueryParameters == null || !model.Security.QueryParameters.Any()))
+                        || (model.Security.Headers != null && model.Security.Headers.Any()))
 			        {
 #>
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
@@ -215,7 +216,7 @@ namespace $(namespace)
             return new <#= method.ResponseType #>  
                                             {
                                                 RawContent = response.Content,
-<#                  if (method.ResponseHeaders != null && method.ResponseHeaders.Count > 0) { #>
+<#                  if (method.ResponseHeaders != null && method.ResponseHeaders.Any()) { #>
                                                 Headers = headers, 
 <#                  } #>
                                                 RawHeaders = response.Headers, 
@@ -235,7 +236,7 @@ namespace $(namespace)
 
             var url = "<#= method.Url ?? string.Empty #>";
 <#
-			    if (method.UriParameters != null && method.UriParameters.Count > 0)
+			    if (method.UriParameters != null && method.UriParameters.Any())
 			    {
 #>
 			if(request.UriParameters == null)
@@ -295,9 +296,9 @@ namespace $(namespace)
 	        if (string.IsNullOrEmpty(proxy.OAuthAccessToken))
 				throw new InvalidOperationException("This API call is secured with OAuth, you must provide an access token (set OAuthAccessToken before calling this method)");
 <#
-			        if (((model.Security.Headers == null || !model.Security.Headers.Count > 0)
-			            && (model.Security.QueryParameters == null || !model.Security.QueryParameters.Count > 0))
-                        || (model.Security.Headers != null && model.Security.Headers.Count > 0))
+			        if (((model.Security.Headers == null || !model.Security.Headers.Any())
+			            && (model.Security.QueryParameters == null || !model.Security.QueryParameters.Any()))
+                        || (model.Security.Headers != null && model.Security.Headers.Any()))
 			        {
 #>
             req.Headers.Add("Authorization", "Bearer " + proxy.OAuthAccessToken);
@@ -396,7 +397,7 @@ namespace $(namespace)
             return new <#= method.ResponseType #>  
                                             {
                                                 RawContent = response.Content,
-<#                  if (method.ResponseHeaders != null && method.ResponseHeaders.Count > 0) { #>
+<#                  if (method.ResponseHeaders != null && method.ResponseHeaders.Any()) { #>
                                                 Headers = headers, 
 <#                  }  #>
                                                 RawHeaders = response.Headers,
@@ -528,11 +529,8 @@ namespace $(namespace)
 
 <#
 var hasXmlSchemas = false;
-foreach (var apiObject in model.Objects)
+foreach (var apiObject in model.Objects.Where(o => !string.IsNullOrWhiteSpace(o.GeneratedCode)))
 {
-    if(string.IsNullOrWhiteSpace(apiObject.GeneratedCode))
-        continue;
-
     hasXmlSchemas = true;
 #>
 
@@ -550,12 +548,9 @@ foreach (var apiObject in model.Objects)
 namespace $(namespace).Models
 {
 <#
-foreach (var apiObject in model.Objects)
+foreach (var apiObject in model.Objects.Where(o => string.IsNullOrWhiteSpace(o.GeneratedCode)))
 {
-    if(string.IsNullOrWhiteSpace(apiObject.GeneratedCode))
-        continue;
-
-    if(hasXmlSchemas && apiObject.Properties.Count == 0)
+    if(hasXmlSchemas && !apiObject.Properties.Any())
         continue;
 
     if(apiObject.IsArray && apiObject.Type != null)
@@ -580,7 +575,7 @@ foreach (var apiObject in model.Objects)
 	else 
 	{
 #>
-    public <#= (apiObject.Properties.Count > 0) ? "partial class " : "abstract class " #> <#= apiObject.Name #> <#= apiObject.IsMultiple ? ": ApiMultipleResponse" : string.Empty #>
+    public <#= (apiObject.Properties.Any()) ? "partial class " : "abstract class " #> <#= apiObject.Name #> <#= apiObject.IsMultiple ? ": ApiMultipleResponse" : string.Empty #>
     {
 <#
 	} 
@@ -591,10 +586,8 @@ foreach (var apiObject in model.Objects)
         static readonly Dictionary<HttpStatusCode, string> schemas = new Dictionary<HttpStatusCode, string>
         {
 <#
-		foreach (var property in apiObject.Properties)
+		foreach (var property in apiObject.Properties.Where(p => p.Type != null && p.Name != null && p.JSONSchema != null).ToArray())
 		{
-            if(property == null && property.Type == null || property.Name == null || property.JSONSchema == null)
-                continue;
 #>
 			{ (HttpStatusCode)<#= (int)property.StatusCode #>, "<#= property.JSONSchema #>"},
 <#
@@ -610,10 +603,8 @@ foreach (var apiObject in model.Objects)
         public <#= apiObject.Name #>()
         {
 <#
-		foreach (var property in apiObject.Properties)
+		foreach (var property in apiObject.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 		{
-            if(property == null && property.Type == null || property.Name == null || property.JSONSchema == null)
-                continue;
 #>
             names.Add((HttpStatusCode)<#= (int)property.StatusCode #>, "<#= property.Name #>");
             types.Add((HttpStatusCode)<#= (int)property.StatusCode #>, typeof(<#= property.Type #>));
@@ -624,10 +615,8 @@ foreach (var apiObject in model.Objects)
 <#
 	}
 
-	foreach (var property in apiObject.Properties)
+	foreach (var property in apiObject.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 	{
-        if(property == null && property.Type == null || property.Name == null || property.JSONSchema == null)
-                continue;
     // this if a whitespace line to separate properties, do not delete !
 #>
 
@@ -669,11 +658,8 @@ foreach (var apiObject in model.Objects)
 <#
 }
 
-foreach (var header in model.HeaderObjects.Values)
+foreach (var header in model.HeaderObjects.Values.Where(o => o.Properties.Any()))
 {
-    if(header.Properties.Count == 0)
-        continue;
-
 	if (!string.IsNullOrWhiteSpace(header.Description))
 	{
 #>
@@ -687,10 +673,8 @@ foreach (var header in model.HeaderObjects.Values)
     {
 
 <#
-	foreach (var property in header.Properties)
+	foreach (var property in header.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 	{
-        if(property == null && property.Type == null || property.Name == null || property.JSONSchema == null)
-            continue;
     // this if a whitespace line to separate properties, do not delete !
 #>
 
@@ -731,11 +715,8 @@ foreach (var header in model.HeaderObjects.Values)
 <#
 }
 
-foreach (var respHeader in model.ResponseHeaderObjects.Values)
+foreach (var respHeader in model.ResponseHeaderObjects.Values.Where(o => o.Properties.Any()))
 {
-    if(respHeader.Properties.Count == 0)
-        continue;
-
 	if (!string.IsNullOrWhiteSpace(respHeader.Description))
 	{
 #>
@@ -754,10 +735,8 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values)
         public <#= respHeader.Name #>()
         {
 <#
-		foreach (var property in respHeader.Properties)
+		foreach (var property in respHeader.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 		{
-            if(property == null && property.Type == null || property.Name == null || property.JSONSchema == null)
-                continue;
 #>
             names.Add((HttpStatusCode)<#= (int)property.StatusCode #>, "<#= property.Name #>");
             types.Add((HttpStatusCode)<#= (int)property.StatusCode #>, typeof(<#= property.Type #>));
@@ -769,10 +748,8 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values)
 		public void SetProperties(HttpResponseHeaders headers, HttpStatusCode statusCode)
 	    {
 <#
-		foreach (var property in respHeader.Properties)
+		foreach (var property in respHeader.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 		{
-            if(property == null && property.Type == null || property.Name == null || property.JSONSchema == null)
-                continue;
 #>
 		    if (statusCode == (HttpStatusCode)<#= (int)property.StatusCode #>)
 		    {
@@ -793,10 +770,8 @@ foreach (var respHeader in model.ResponseHeaderObjects.Values)
 <#
 	}
 
-	foreach (var property in respHeader.Properties)
+	foreach (var property in respHeader.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 	{
-        if(property == null && property.Type == null || property.Name == null || property.JSONSchema == null)
-            continue;
     // this if a whitespace line to separate properties, do not delete !
 #>
 
@@ -853,10 +828,8 @@ foreach (var apiObject in model.ApiRequestObjects)
         public <#= apiObject.Name #>(<#= apiObject.ConstructorParams #>)
         {
 <#
-        foreach (var property in apiObject.Properties)
+        foreach (var property in apiObject.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
         {
-            if(property == null && property.Type == null || property.Name == null || property.JSONSchema == null)
-                continue;
 #>
             this.<#= property.Name #> = <#= property.Name #>;
 <#
@@ -865,10 +838,8 @@ foreach (var apiObject in model.ApiRequestObjects)
         }
 
 <#
-	foreach (var property in apiObject.Properties)
+	foreach (var property in apiObject.Properties.Where(p => p != null && p.Type != null && p.Name != null).ToArray())
 	{
-        if(property == null && property.Type == null || property.Name == null || property.JSONSchema == null)
-            continue;
     // this if a whitespace line to separate properties, do not delete !
 #>
 
@@ -910,11 +881,8 @@ foreach (var apiObject in model.ApiResponseObjects)
     {
 
 <#
-	foreach (var property in apiObject.Properties)
+	foreach (var property in apiObject.Properties.Where(p => p != null && p.Type != null && p.Name != null && p.Name != "Content").ToArray())
 	{
-        if(property == null && property.Type == null || property.Name == null || property.JSONSchema == null || property.Name == "Content")
-            continue;
-
     // this if a whitespace line to separate properties, do not delete !
 #>
 
@@ -1057,7 +1025,7 @@ foreach (var apiEnum in model.Enums)
 }
 
 
-	if (model.Warnings.Count > 0){
+	if (model.Warnings.Any()){
 #>
     // Unable to parse the following Schemas. Please note that JSON Schema version 4 is not supported
 <#
