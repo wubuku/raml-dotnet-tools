@@ -55,7 +55,7 @@ namespace MuleSoft.RAML.Tools.CLI
                 : opts.Namespace;
         }
 
-        public async Task HandleContract(ContractOptions opts)
+        public async Task HandleContract(ServerOptions opts)
         {
             string destinationFolder;
             string targetFileName;

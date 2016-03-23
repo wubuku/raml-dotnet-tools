@@ -99,7 +99,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContractOptions.cs" />
+    <Compile Include="ServerOptions.cs" />
     <Compile Include="CustomCmdLineHost.cs" />
     <Compile Include="GenerationResult.cs" />
     <Compile Include="Options.cs" />
@@ -108,7 +108,7 @@
     <Compile Include="RamlClientGenerator.cs" />
     <Compile Include="RamlGenerator.cs" />
     <Compile Include="RamlServerGenerator.cs" />
-    <Compile Include="ReferenceOptions.cs" />
+    <Compile Include="ClientOptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Templates\WebApi2\ApiControllerBase.t4">
