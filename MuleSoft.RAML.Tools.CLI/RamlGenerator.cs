@@ -13,21 +13,23 @@ namespace MuleSoft.RAML.Tools.CLI
         public async Task HandleReference(Options opts)
         {
             string destinationFolder;
-            string templatesFolder;
             string targetFileName;
             string targetNamespace;
-            HandleParameters(opts, out destinationFolder, out templatesFolder, out targetFileName, out targetNamespace);
+            HandleParameters(opts, out destinationFolder, out targetFileName, out targetNamespace);
 
             var ramlDoc = await GetRamlDocument(opts, destinationFolder, targetFileName);
 
             var generator = new RamlClientGenerator();
-            generator.Generate(ramlDoc, targetFileName, targetNamespace, templatesFolder, destinationFolder);
+            generator.Generate(ramlDoc, targetFileName, targetNamespace, opts.TemplatesFolder, destinationFolder);
         }
 
 
         private static async Task<RamlDocument> GetRamlDocument(Options opts, string destinationFolder, string targetFileName)
         {
             var result = new RamlIncludesManager().Manage(opts.Source, destinationFolder, targetFileName, opts.Overwrite);
+
+            if (!Directory.Exists(destinationFolder))
+                Directory.CreateDirectory(destinationFolder);
 
             var path = Path.Combine(destinationFolder, targetFileName);
             File.WriteAllText(path, result.ModifiedContents);
@@ -36,13 +38,10 @@ namespace MuleSoft.RAML.Tools.CLI
             return ramlDoc;
         }
 
-        private void HandleParameters(Options opts, out string destinationFolder, out string templatesFolder,
+        private void HandleParameters(Options opts, out string destinationFolder, 
             out string targetFileName, out string targetNamespace)
         {
             destinationFolder = opts.DestinationFolder ?? "generated";
-            templatesFolder = string.IsNullOrWhiteSpace(opts.TemplatesFolder)
-                ? Path.GetDirectoryName(Assembly.GetAssembly(typeof (Program)).Location)
-                : opts.TemplatesFolder;
 
             targetFileName = Path.GetFileName(opts.Source);
             if (string.IsNullOrWhiteSpace(targetFileName))
@@ -59,14 +58,15 @@ namespace MuleSoft.RAML.Tools.CLI
         public async Task HandleContract(ContractOptions opts)
         {
             string destinationFolder;
-            string templatesFolder;
             string targetFileName;
             string targetNamespace;
-            HandleParameters(opts, out destinationFolder, out templatesFolder, out targetFileName, out targetNamespace);
+            HandleParameters(opts, out destinationFolder, out targetFileName, out targetNamespace);
 
             var ramlDoc = await GetRamlDocument(opts, destinationFolder, targetFileName);
 
-            var generator = new RamlWebApiGenerator(ramlDoc, targetNamespace, templatesFolder, targetFileName, destinationFolder, opts.UseAsyncMethods);
+            var generator = new RamlServerGenerator(ramlDoc, targetNamespace, opts.TemplatesFolder, targetFileName,
+                destinationFolder, opts.UseAsyncMethods, opts.WebApi);
+
             generator.Generate();
         }
 

@@ -7,10 +7,12 @@ using Microsoft.VisualStudio.TextTemplating;
 using Raml.Parser.Expressions;
 using Raml.Tools;
 using Raml.Tools.WebApiGenerator;
+using System.Reflection;
+
 
 namespace MuleSoft.RAML.Tools.CLI
 {
-    public class RamlWebApiGenerator
+    public class RamlServerGenerator
     {
         private readonly string modelT4Template = "ApiModel.t4";
         private readonly string enumT4Template = "ApiEnum.t4";
@@ -28,8 +30,8 @@ namespace MuleSoft.RAML.Tools.CLI
         private readonly bool useAsyncMethods;
         private bool hasModels;
 
-        public RamlWebApiGenerator(RamlDocument ramlDoc, string targetNamespace, string templatesFolder, 
-            string targetFileName, string destinationFolder, bool useAsyncMethods)
+        public RamlServerGenerator(RamlDocument ramlDoc, string targetNamespace, string templatesFolder, 
+            string targetFileName, string destinationFolder, bool useAsyncMethods, bool targetWebApi)
         {
             this.ramlDoc = ramlDoc;
             this.targetNamespace = targetNamespace;
@@ -37,8 +39,19 @@ namespace MuleSoft.RAML.Tools.CLI
             this.targetFileName = targetFileName;
             this.destinationFolder = destinationFolder;
             this.useAsyncMethods = useAsyncMethods;
+
+            this.templatesFolder = string.IsNullOrWhiteSpace(templatesFolder)
+                ? GetDefaultTemplateFolder(targetWebApi)
+                : templatesFolder;
+
             host = new CustomCmdLineHost();
             engine = new Engine();
+        }
+
+        private static string GetDefaultTemplateFolder(bool targetWebApi)
+        {
+            return Path.GetDirectoryName(Assembly.GetAssembly(typeof (Program)).Location) + Path.DirectorySeparatorChar +
+                   "Templates" + Path.DirectorySeparatorChar + (targetWebApi ? "WebApi2" : "AspNet5");
         }
 
         public void Generate()

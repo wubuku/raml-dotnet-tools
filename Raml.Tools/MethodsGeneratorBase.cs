@@ -16,7 +16,6 @@ namespace Raml.Tools
         protected readonly IDictionary<string, ApiObject> schemaObjects;
         protected readonly IDictionary<string, ApiObject> schemaResponseObjects;
 
-        private readonly RamlTypesHelper ramlTypesHelper;
         private ResponseTypesService responseTypesService;
         private RequestTypesService requestTypesService;
 
