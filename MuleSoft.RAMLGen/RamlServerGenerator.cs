@@ -10,7 +10,7 @@ using Raml.Tools.WebApiGenerator;
 using System.Reflection;
 
 
-namespace MuleSoft.RAML.Tools.CLI
+namespace MuleSoft.RAMLGen
 {
     public class RamlServerGenerator
     {

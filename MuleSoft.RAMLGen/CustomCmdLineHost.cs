@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 using Microsoft.VisualStudio.TextTemplating;
 
-namespace MuleSoft.RAML.Tools.CLI
+namespace MuleSoft.RAMLGen
 {
     //The text template transformation engine is responsible for running 
     //the transformation process.

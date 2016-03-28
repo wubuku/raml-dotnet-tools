@@ -6,7 +6,7 @@ using Raml.Parser;
 using Raml.Parser.Expressions;
 using Task = System.Threading.Tasks.Task;
 
-namespace MuleSoft.RAML.Tools.CLI
+namespace MuleSoft.RAMLGen
 {
     public class RamlGenerator
     {

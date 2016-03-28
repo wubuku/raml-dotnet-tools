@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace MuleSoft.RAML.Tools.CLI
+namespace MuleSoft.RAMLGen
 {
     public abstract class Options
     {

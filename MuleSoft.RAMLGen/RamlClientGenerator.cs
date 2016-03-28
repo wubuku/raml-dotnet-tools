@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TextTemplating;
 using Raml.Parser.Expressions;
 using Raml.Tools.ClientGenerator;
 
-namespace MuleSoft.RAML.Tools.CLI
+namespace MuleSoft.RAMLGen
 {
     public class RamlClientGenerator
     {

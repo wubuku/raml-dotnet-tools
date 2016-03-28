@@ -2,12 +2,12 @@
 using CommandLine;
 using CommandLine.Text;
 
-namespace MuleSoft.RAML.Tools.CLI
+namespace MuleSoft.RAMLGen
 {
     [Verb("server", HelpText = "ASP.MVC 6 or WebApi 2 scaffold generation, type 'RAMLGen help server' for more info")]
     public class ServerOptions : Options
     {
-        [Option('w', "webapi", Required = false, HelpText = "target WebApi 2 (defaults to ASP.NET 5)")]
+        [Option('w', "webapi", Required = false, HelpText = "target WebApi 2 (defaults to ASP.NET MVC 6)")]
         public bool WebApi { get; set; }
 
         [Option('a', "async", Required = false, HelpText = "Use async methods (defaults to not use async)")]

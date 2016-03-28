@@ -9,7 +9,7 @@ using Raml.Parser;
 using Raml.Tools.ClientGenerator;
 
 
-namespace MuleSoft.RAML.Tools.CLI
+namespace MuleSoft.RAMLGen
 {
     class Program
     {
@@ -21,6 +21,7 @@ namespace MuleSoft.RAML.Tools.CLI
                     (ServerOptions opts) => RunContractAndReturnExitCode(opts),
                     errors => HandleError(errors, args));
 
+            Console.WriteLine("The code was generated successfully");
             return 0;
         }
 
