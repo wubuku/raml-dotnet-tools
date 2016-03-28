@@ -8,6 +8,15 @@ The RAML Generator allows developers to easily generate a client proxy to consum
 
 This is provided as a command line tool.
 
+== Prerequisites
+
+* .NET Framework 4.5 or higher
+* Supported languages: C# (other languages indirectly)
+
+== Installation
+
+. Unzip the file and use from command line.
+
 == Supported Scenarios
 
 === API Client Code from a RAML Definition
@@ -21,7 +30,7 @@ RAMLGen client -s c:\path\to\source.raml;
 
 This will create a "generated" folder under the current directory with a single C# (.cs) file containing all the code for a client proxy that is ready to consume the specified API.
 
-These are all the the modifiers you can use:
+These are all the modifiers you can use:
 
   -s, --source         Required. RAML source URL or file.
 
@@ -33,9 +42,9 @@ These are all the the modifiers you can use:
 
   -o, --overwrite      Overwrite files (defaults to not overwrite)
 
-Or type *RAMLGen client help* to get the the options and usage examples.
+Or type *RAMLGen client help* to get the options and usage examples.
 
-==== USAGE scenarios
+==== Usage scenarios
 
 Minimal:
 [source, bash]
@@ -86,7 +95,7 @@ This example will create a "generated" folder where base controllers, their inte
 
 For more info on how to use the generated code refer to https://github.com/mulesoft-labs/raml-dotnet-tools#implementing-a-controller-in-aspnet-web-api
 
-These are all the the modifiers you can use:
+These are all the modifiers you can use:
 
   -w, --webapi         target WebApi 2 (defaults to ASP.NET MVC 6)
 
@@ -104,7 +113,7 @@ These are all the the modifiers you can use:
 
 Or type *RAMLGen server help* to get a list of options and usage examples.
 
-==== USAGE scenarios
+==== Usage scenarios
 
 Minimal:
 [source, bash]
@@ -144,12 +153,3 @@ RAMLGen server -w -s c:\path\to\source.raml;
 
 This generates the same files as the previous options but the code implementes a WebAPI 2 solution instead.
 
-
-== Prerequisites
-
-* .NET Framework 4.5 or higher
-* Supported languages: C# (other languages indirectly)
-
-== Installation
-
-. Unzip the file and use from command line.
