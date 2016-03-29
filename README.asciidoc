@@ -420,7 +420,7 @@ You can navigate by clicking the buttons, you can see the request and responses,
 
 If you wish to view the RAML that is generated from your API, run your web app and navigate to `/raml/raw`. This will generate RAML 1 output, if you need the 0.8 version type '/raml/raw?version=0.8' instead.
 
-image::./docimages/RAML_NET_RAML.png[align="center"]
+image::./docimages/RAML_NET_RAML-v1.png[align="center"]
 
 
 === Downloading the RAML
