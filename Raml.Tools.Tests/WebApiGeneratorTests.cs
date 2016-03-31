@@ -213,7 +213,7 @@ namespace Raml.Tools.Tests
             }
         }
 
-        [Test]
+        [Test, Ignore]
         public async Task Should_Link_Response_And_Request_With_Types_When_Orders_XML()
         {
             var model = await GetOrdersXmlGeneratedModel();

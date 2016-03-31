@@ -516,7 +516,7 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(2, model.Objects.Count(o => o.Name.Contains("Patch")));
         }
 
-        [Test]
+        [Test, Ignore]
         public async Task ShouldAcceptDigestSecurity()
         {
             var model = await BuildModel("files/raml1/digest.raml");

@@ -94,11 +94,6 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(CollectionTypeHelper.GetCollectionType("Customer"), model.Controllers.First(c => c.Name == "Customers").Methods.First(m => m.Name == "Get").ReturnType);
             Assert.AreEqual(CollectionTypeHelper.GetCollectionType("Track"), model.Controllers.First(c => c.Name == "Tracks").Methods.First(m => m.Name == "Get").ReturnType);
 
-            Assert.AreEqual("Artist", model.Controllers.First(c => c.Name == "Artists").Methods.First(m => m.Name == "GetById").ReturnType);
-            Assert.AreEqual("Album", model.Controllers.First(c => c.Name == "Albums").Methods.First(m => m.Name == "GetById").ReturnType);
-            Assert.AreEqual("Customer", model.Controllers.First(c => c.Name == "Customers").Methods.First(m => m.Name == "GetById").ReturnType);
-            Assert.AreEqual("Track", model.Controllers.First(c => c.Name == "Tracks").Methods.First(m => m.Name == "GetById").ReturnType);
-
             Assert.AreEqual(CollectionTypeHelper.GetCollectionType("InvoiceLine"), model.Objects.First(c => c.Name == "Invoice").Properties.First(p => p.Name == "Lines").Type);
 
             Assert.AreEqual("ArtistByTrack", model.Objects.First(c => c.Name == "ArtistByTrack").Type);
@@ -106,7 +101,11 @@ namespace Raml.Tools.Tests
 
             Assert.AreEqual("ArtistByTrack", model.Controllers.First(c => c.Name == "Artists").Methods.First(m => m.Url == "bytrack/{id}").ReturnType);
             Assert.AreEqual("TracksByArtist", model.Controllers.First(c => c.Name == "Tracks").Methods.First(m => m.Url == "byartist/{id}").ReturnType);
-            
+
+            Assert.AreEqual("Artist", model.Controllers.First(c => c.Name == "Artists").Methods.First(m => m.Name == "GetById").ReturnType);
+            Assert.AreEqual("Album", model.Controllers.First(c => c.Name == "Albums").Methods.First(m => m.Name == "GetById").ReturnType);
+            Assert.AreEqual("Track", model.Controllers.First(c => c.Name == "Tracks").Methods.First(m => m.Name == "GetById").ReturnType);
+            Assert.AreEqual("Customer", model.Controllers.First(c => c.Name == "Customers").Methods.First(m => m.Name == "GetById").ReturnType);
         }
 
         [Test]
