@@ -380,14 +380,24 @@ namespace Raml.Tools
             };
         }
 
-        private static string GetPropertyType(RamlType prop, KeyValuePair<string, RamlType> kv)
+        private string GetPropertyType(RamlType prop, KeyValuePair<string, RamlType> kv)
         {
             if (string.IsNullOrWhiteSpace(prop.Type))
                 return "string";
 
-            return prop.Type == "object" || (prop.Scalar.Enum != null && prop.Scalar.Enum.Any()) 
-                ? NetNamingMapper.GetPropertyName(kv.Key) 
-                : NetTypeMapper.Map(prop.Scalar.Type);
+            if (prop.Type == "object" || (prop.Scalar.Enum != null && prop.Scalar.Enum.Any()))
+                return NetNamingMapper.GetPropertyName(kv.Key);
+
+            if (NetTypeMapper.Map(prop.Type) != null) 
+                return NetTypeMapper.Map(prop.Type);
+
+            if (schemaObjects.ContainsKey(prop.Type))
+            {
+                var obj = schemaObjects[prop.Type];
+                return obj.Type;
+            }
+
+            return "object";
         }
 
         private double? ToDouble(decimal? value)
