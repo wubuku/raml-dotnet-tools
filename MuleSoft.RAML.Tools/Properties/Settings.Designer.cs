@@ -25,7 +25,7 @@ namespace MuleSoft.RAML.Tools.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://www.nuget.org/api/v2/")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://ec2-52-88-151-198.us-west-2.compute.amazonaws.com:9003/nuget/")]
         public string NugetPackagesSource {
             get {
                 return ((string)(this["NugetPackagesSource"]));
@@ -245,6 +245,42 @@ namespace MuleSoft.RAML.Tools.Properties {
         public string MicrosoftNetHttpPackageVersion {
             get {
                 return ((string)(this["MicrosoftNetHttpPackageVersion"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.nuget.org/api/v2/")]
+        public string NugetExternalPackagesSource {
+            get {
+                return ((string)(this["NugetExternalPackagesSource"]));
+            }
+            set {
+                this["NugetExternalPackagesSource"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Edge.js")]
+        public string EdgePackageId {
+            get {
+                return ((string)(this["EdgePackageId"]));
+            }
+            set {
+                this["EdgePackageId"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("4.0.0")]
+        public string EdgePackageVersion {
+            get {
+                return ((string)(this["EdgePackageVersion"]));
+            }
+            set {
+                this["EdgePackageVersion"] = value;
             }
         }
     }
