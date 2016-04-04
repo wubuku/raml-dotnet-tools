@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Raml.Parser.Expressions;
@@ -44,7 +45,7 @@ namespace Raml.Tools.Tests
                     && x.Description == headerOne.Description 
                     && x.Example == headerOne.Example 
                     && x.Required == headerOne.Required 
-                    && x.Name == headers.First().Key),
+                    && x.Name.Equals(headers.First().Key, StringComparison.InvariantCultureIgnoreCase)),
                 "There should be one header with all the same properties as the original header");
 
             Assert.DoesNotThrow(
@@ -52,7 +53,7 @@ namespace Raml.Tools.Tests
                     && x.Description == headerTwo.Description 
                     && x.Example == headerTwo.Example 
                     && x.Required == headerTwo.Required 
-                    && x.Name == headers.Last().Key),
+                    && x.Name.Equals(headers.Last().Key, StringComparison.InvariantCultureIgnoreCase)),
                 "There should be one header with all the same properties as the original header");
         }
 
