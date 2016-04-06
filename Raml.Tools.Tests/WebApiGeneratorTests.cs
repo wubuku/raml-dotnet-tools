@@ -233,7 +233,7 @@ namespace Raml.Tools.Tests
         public async Task ShouldParseSchemas_Issue13()
         {
             var model = await GetIssue13GeneratedModel();
-            Assert.AreEqual(20, model.Objects.Count());
+            Assert.AreEqual(23, model.Objects.Count());
         }
 
         [Test]
@@ -256,6 +256,22 @@ namespace Raml.Tools.Tests
         {
             var model = await GetAdditionalPropertiesGeneratedModel();
             Assert.IsTrue(model.Objects.Any(o => o.Properties.Any(p => p.IsAdditionalProperties)));
+        }
+
+        [Test]
+        public async Task NestedAdditionalProperties()
+        {
+            var raml = await new RamlParser().LoadAsync("files/additionalprops-nested.raml");
+            var model = new WebApiGeneratorService(raml, "TargetNamespace").BuildModel();
+            Assert.AreEqual(2, model.Objects.Count());
+        }
+
+        [Test]
+        public async Task NestedAdditionalProperties_v4Schema()
+        {
+            var raml = await new RamlParser().LoadAsync("files/additionalprops-nested-v4.raml");
+            var model = new WebApiGeneratorService(raml, "TargetNamespace").BuildModel();
+            Assert.AreEqual(2, model.Objects.Count());
         }
 
         [Test]
@@ -296,6 +312,24 @@ namespace Raml.Tools.Tests
             var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
             Assert.AreEqual(4, model.Objects.Count());
         }
+
+        [Test]
+        public async Task ShouldAcceptReferenceToRAMLSchemaKey()
+        {
+            var raml = await new RamlParser().LoadAsync("files/issue59.raml");
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
+            Assert.AreEqual(20, model.Objects.Count());
+        }
+
+        [Test]
+        public async Task ShouldAcceptReferenceToRAMLSchemaKey_issue64()
+        {
+            var raml = await new RamlParser().LoadAsync("files/issue64.raml");
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
+            Assert.AreEqual(4, model.Objects.Count());
+            Assert.AreNotEqual("string", model.Controllers.First().Methods.First().Parameter.Type);
+        }
+
 
         private static string GetXml(string comment)
         {
