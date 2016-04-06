@@ -39,12 +39,14 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(2, model.Controllers.Count());
         }
 
+
         [Test, Ignore]
         public async void Should_Generate_Controller_Objects_When_GitHub()
         {
             var model = await GetGitHubGeneratedModel();
             Assert.AreEqual(17, model.Controllers.Count());
         }
+
 
         [Test, Ignore]
         public async void Should_Generate_Controller_Objects_When_Instagram()
@@ -60,6 +62,7 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(10, model.Controllers.Count());
         }
 
+
         [Test, Ignore]
         public async void Should_Generate_Controller_Objects_When_Regression()
         {
@@ -74,6 +77,7 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(2, model.Controllers.Count());
         }
 
+
         [Test, Ignore]
         public async void Should_Generate_Controller_Objects_When_Twitter()
         {
@@ -87,6 +91,7 @@ namespace Raml.Tools.Tests
             var model = await GetDarsGeneratedModel();
             Assert.AreEqual(2, model.Objects.Count());
         }
+
 
         [Test, Ignore]
         public async void Should_Not_Remove_Used_Objects_Twitter()
@@ -135,12 +140,14 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(3, model.Objects.Sum(c => c.Properties.Count));
         }
 
+
         [Test, Ignore]
         public async void Should_Generate_Properties_When_GitHub()
         {
             var model = await GetGitHubGeneratedModel();
             Assert.AreEqual(692, model.Objects.Sum(c => c.Properties.Count));
         }
+
 
         [Test, Ignore]
         public async void Should_Generate_Properties_When_Instagram()
@@ -156,12 +163,14 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(24, model.Objects.Sum(c => c.Properties.Count));
         }
 
+
         [Test, Ignore]
         public async void Should_Generate_Properties_When_Regression()
         {
             var model = await GetRegressionGeneratedModel();
             Assert.AreEqual(130, model.Objects.Sum(c => c.Properties.Count));
         }
+
 
         [Test, Ignore]
         public async void Should_Generate_Properties_When_Test()
@@ -170,12 +179,14 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(36, model.Objects.Sum(c => c.Properties.Count));
         }
 
+
         [Test, Ignore]
         public async void Should_Generate_Properties_When_Twitter()
         {
             var model = await GetTwitterGeneratedModel();
             Assert.AreEqual(348, model.Objects.Sum(c => c.Properties.Count));
         }
+
 
         [Test, Ignore]
         public async Task Should_Generate_Valid_XML_Comments_WhenGithub()
@@ -188,6 +199,7 @@ namespace Raml.Tools.Tests
                 Assert.DoesNotThrow(() => xmlDoc.LoadXml(xmlComment));
             }
         }
+
 
         [Test, Ignore]
         public async Task Should_Generate_Valid_XML_Comments_WhenTwitter()
@@ -213,6 +225,7 @@ namespace Raml.Tools.Tests
             }
         }
 
+
         [Test, Ignore]
         public async Task Should_Link_Response_And_Request_With_Types_When_Orders_XML()
         {
@@ -234,6 +247,7 @@ namespace Raml.Tools.Tests
         public async Task ShouldParseSchemas_Issue13()
         {
             var model = await GetIssue13GeneratedModel();
+
             Assert.AreEqual(15, model.Objects.Count());
         }
 
@@ -241,6 +255,7 @@ namespace Raml.Tools.Tests
         public async Task ShouldNotReuseModelIfDifferent_Issue25()
         {
             var model = await GetIssue25GeneratedModel();
+
             Assert.AreEqual(2, model.Objects.Count());
         }
 
@@ -295,6 +310,7 @@ namespace Raml.Tools.Tests
         {
             var raml = await new RamlParser().LoadAsync("files/level3nest.raml");
             var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
+
             Assert.AreEqual(3, model.Objects.Count());
         }
 
@@ -303,14 +319,17 @@ namespace Raml.Tools.Tests
         {
             var raml = await new RamlParser().LoadAsync("files/level3nest-array.raml");
             var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
+
             Assert.AreEqual(3, model.Objects.Count());
         }
 
         [Test]
+
         public async Task ShouldAccept3LevelNestingVersion3Schema()
         {
             var raml = await new RamlParser().LoadAsync("files/level3nest-v3.raml");
             var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
+
             Assert.AreEqual(3, model.Objects.Count());
         }
 
@@ -319,9 +338,18 @@ namespace Raml.Tools.Tests
         {
             var raml = await new RamlParser().LoadAsync("files/issue59.raml");
             var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
+
             Assert.AreEqual(17, model.Objects.Count());
         }
 
+        [Test]
+        public async Task ShouldAcceptReferenceToRAMLSchemaKey_issue64()
+        {
+            var raml = await new RamlParser().LoadAsync("files/issue64.raml");
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
+            Assert.AreEqual(4, model.Objects.Count());
+            Assert.AreNotEqual("string", model.Controllers.First().Methods.First().Parameter.Type);
+        }
 
 
         private static string GetXml(string comment)
