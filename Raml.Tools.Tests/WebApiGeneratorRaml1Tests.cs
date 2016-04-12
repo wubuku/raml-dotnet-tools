@@ -148,6 +148,15 @@ namespace Raml.Tools.Tests
             Assert.AreEqual("Person", model.Objects.First(c => c.Name == "Customer").BaseClass);
         }
 
+        [Test]
+        public async Task ShouldDiffientiateBetweenTypesAndBaseTypes()
+        {
+            var model = await BuildModel("files/raml1/underscore.raml");
+            Assert.AreEqual(3, model.Objects.Count());
+            Assert.AreEqual("Links", model.Objects.First(o => o.Name == "Example").Properties.First(c => c.Name == "Links").Type);
+            Assert.AreEqual("Link", model.Objects.First(o => o.Name == "Links").Properties.First(c => c.Name == "Self").Type);
+        }
+
         private static async Task<WebApiGeneratorModel> GetAnnotationTargetsModel()
         {
             return await BuildModel("files/raml1/annotations-targets.raml");
