@@ -347,7 +347,7 @@ namespace Raml.Tools.Tests
         {
             var raml = await new RamlParser().LoadAsync("files/issue64.raml");
             var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
-            Assert.AreEqual(4, model.Objects.Count());
+            Assert.AreEqual(3, model.Objects.Count());
             Assert.AreNotEqual("string", model.Controllers.First().Methods.First().Parameter.Type);
         }
 
