@@ -138,6 +138,16 @@ namespace Raml.Tools.Tests
             Assert.AreEqual(11, model.Objects.Count());
         }
 
+        [Test]
+        public async Task ShouldHandleCasing()
+        {
+            var model = await BuildModel("files/raml1/case.raml");
+
+            Assert.IsNotNull(model.Objects.First(c => c.Name == "Person"));
+            Assert.IsNotNull(model.Objects.First(c => c.Name == "Customer"));
+            Assert.AreEqual("Person", model.Objects.First(c => c.Name == "Customer").BaseClass);
+        }
+
         private static async Task<WebApiGeneratorModel> GetAnnotationTargetsModel()
         {
             return await BuildModel("files/raml1/annotations-targets.raml");

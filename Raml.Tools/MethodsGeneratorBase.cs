@@ -10,7 +10,7 @@ namespace Raml.Tools
     public abstract class MethodsGeneratorBase
     {
         protected readonly string[] suffixes = { "A", "B", "C", "D", "E", "F", "G" };
-        protected readonly UriParametersGenerator uriParametersGenerator = new UriParametersGenerator();
+        protected readonly UriParametersGenerator uriParametersGenerator;
 
         protected readonly RamlDocument raml;
         protected readonly IDictionary<string, ApiObject> schemaObjects;
@@ -27,6 +27,7 @@ namespace Raml.Tools
             this.schemaObjects = schemaObjects;
             responseTypesService = new ResponseTypesService(schemaObjects, schemaResponseObjects, linkKeysWithObjectNames, raml.ResourceTypes);
             requestTypesService = new RequestTypesService(schemaObjects, schemaRequestObjects, linkKeysWithObjectNames, raml.ResourceTypes);
+            uriParametersGenerator = new UriParametersGenerator(schemaObjects);
         }
 
         protected string GetReturnType(string key, Method method, Resource resource, string fullUrl)

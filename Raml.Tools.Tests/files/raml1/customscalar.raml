@@ -8,3 +8,12 @@ types:
   customDate:
     type: mydate
     format: 'dd.mm.yyyy'
+  id:
+    type: integer
+    format: int64
+    minimum: 1
+/{exampleId}:
+    uriParameters:
+        exampleId:
+            type: id
+    get:

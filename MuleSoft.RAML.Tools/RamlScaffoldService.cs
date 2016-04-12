@@ -341,6 +341,7 @@ namespace MuleSoft.RAML.Tools
                 models = model.Objects.Where(o => o.Properties.Any() || !string.IsNullOrWhiteSpace(o.GeneratedCode));
 
             models = models.Where(o => !o.IsArray || o.Type == null); // skip array of primitives
+            models = models.Where(o => !o.IsScalar); // skip scalar types
 
             var targetFolderPath = GetTargetFolderPath(generatedFolderPath, ramlItem.FileNames[0], folderItem.ContainingProject);
 

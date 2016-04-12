@@ -34,6 +34,15 @@ namespace Raml.Tools.Tests
         }
 
         [Test]
+        public async Task ShouldBuildUriParameter_WhenCustomScalar()
+        {
+            var model = await GetCustomScalarModel();
+            Assert.IsNotNull(model.Objects.First(o => o.Name == "Id"));
+            Assert.IsTrue(model.Objects.First(o => o.Name == "Id").IsScalar);
+            Assert.AreEqual("int", model.Root.Methods.First().UriParameters.First().Type);
+        }
+
+        [Test]
         public async Task ShouldBuild_WhenMovieType()
         {
             var model = await GetMovieTypeModel();

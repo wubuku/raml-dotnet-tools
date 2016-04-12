@@ -16,7 +16,7 @@ namespace Raml.Tools
 
         protected readonly string[] suffixes = { "A", "B", "C", "D", "E", "F", "G" };
 
-        protected readonly UriParametersGenerator uriParametersGenerator = new UriParametersGenerator();
+        protected readonly UriParametersGenerator uriParametersGenerator;
         protected readonly SchemaParameterParser schemaParameterParser = new SchemaParameterParser(new EnglishPluralizationService());
         protected IDictionary<string, ApiObject> schemaObjects = new Dictionary<string, ApiObject>();
         protected IDictionary<string, ApiObject> schemaRequestObjects = new Dictionary<string, ApiObject>();
@@ -44,8 +44,9 @@ namespace Raml.Tools
 			this.raml = raml;
 		    this.targetNamespace = targetNamespace;
 		    apiObjectsCleaner = new ApiObjectsCleaner(schemaRequestObjects, schemaResponseObjects, schemaObjects);
+		    uriParametersGenerator = new UriParametersGenerator(schemaObjects);
 		    ApplyResourceTypesAndTraits(raml.Resources);
-            raml1TypesParser = new RamlTypeParser(schemaObjects, targetNamespace, enums, warnings);
+            raml1TypesParser = new RamlTypeParser(raml.Types, schemaObjects, targetNamespace, enums, warnings);
 		}
 
         private void ApplyResourceTypesAndTraits(ICollection<Resource> resources)
@@ -209,7 +210,7 @@ namespace Raml.Tools
                             if (schemaRequestObjects.ContainsKey(key))
                                 continue;
 
-                            raml1TypesParser = new RamlTypeParser(schemaObjects, targetNamespace, enums, warnings);
+                            raml1TypesParser = new RamlTypeParser(raml.Types, schemaObjects, targetNamespace, enums, warnings);
                             var obj = raml1TypesParser.ParseInline(key, kv.Value.InlineType, schemaRequestObjects);
 
                             AddObjectToObjectCollectionOrLink(obj, key, schemaRequestObjects, schemaObjects);

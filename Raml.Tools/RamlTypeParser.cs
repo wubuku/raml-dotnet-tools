@@ -10,21 +10,24 @@ namespace Raml.Tools
 {
     public class RamlTypeParser
     {
+        private readonly RamlTypesOrderedDictionary ramlTypes;
         private readonly IDictionary<string, ApiObject> schemaObjects;
         private readonly string targetNamespace;
 
         private readonly IDictionary<string, string> warnings;
         private readonly IDictionary<string, ApiEnum> enums;
 
-        public RamlTypeParser(IDictionary<string, ApiObject> schemaObjects, string targetNamespace, IDictionary<string, ApiEnum> enums, IDictionary<string, string> warnings)
+        public RamlTypeParser(RamlTypesOrderedDictionary ramlTypes, IDictionary<string, ApiObject> schemaObjects, 
+            string targetNamespace, IDictionary<string, ApiEnum> enums, IDictionary<string, string> warnings)
         {
+            this.ramlTypes = ramlTypes;
             this.schemaObjects = schemaObjects;
             this.targetNamespace = targetNamespace;
             this.enums = enums;
             this.warnings = warnings;
         }
 
-        public void Parse(RamlTypesOrderedDictionary ramlTypes)
+        public void Parse()
         {
             foreach (var key in ramlTypes.Keys)
             {
@@ -178,7 +181,7 @@ namespace Raml.Tools
                 return null;
             }
 
-            var type = NetTypeMapper.Map(ramlType.Scalar.Type);
+            var type = GetScalarType(ramlType);
 
             return new ApiObject
             {
@@ -192,9 +195,7 @@ namespace Raml.Tools
                     {
                         Name = "Value",
                         Type =
-                            !string.IsNullOrWhiteSpace(type)
-                                ? type
-                                : NetNamingMapper.GetObjectName(ramlType.Scalar.Type),
+                            type,
                         Minimum = (double?) ramlType.Scalar.Minimum,
                         Maximum = (double?) ramlType.Scalar.Maximum,
                         MinLength = ramlType.Scalar.MinLength,
@@ -204,6 +205,27 @@ namespace Raml.Tools
                 },
                 IsScalar = true,
             };
+        }
+
+        private string GetScalarType(RamlType ramlType)
+        {
+            var type = NetTypeMapper.Map(ramlType.Scalar.Type);
+
+            if (type != null)
+                return type;
+
+            if (!ramlTypes.ContainsKey(ramlType.Scalar.Type))
+                return "object";
+
+            var subRamlType = ramlTypes[ramlType.Scalar.Type];
+            if (subRamlType.Scalar == null) 
+                return NetNamingMapper.GetObjectName(ramlType.Scalar.Type);
+
+            type = GetScalarType(subRamlType);
+            if (type != null)
+                return type;
+
+            throw new InvalidOperationException("Cannot determine type of scalar " + ramlType.Name);
         }
 
         private static List<string> GetEnumValues(Parameter scalar)
@@ -295,7 +317,7 @@ namespace Raml.Tools
             {
                 Type = NetNamingMapper.GetObjectName(name),
                 Name = NetNamingMapper.GetObjectName(name),
-                BaseClass = ramlType.Type != "object" ? ramlType.Type : string.Empty,
+                BaseClass = ramlType.Type != "object" ? NetNamingMapper.GetObjectName(ramlType.Type) : string.Empty,
                 Description = ramlType.Description,
                 Example = GetExample(ramlType.Example, ramlType.Examples),
                 Properties = GetProperties(ramlType.Object.Properties)

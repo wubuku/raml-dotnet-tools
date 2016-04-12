@@ -64,7 +64,7 @@ namespace MuleSoft.RAMLGen
                 models = models.Where(o => o.Properties.Any() || !string.IsNullOrWhiteSpace(o.GeneratedCode));
 
             models = models.Where(o => !o.IsArray || o.Type == null); // skip array of primitives
-
+            models = models.Where(o => !o.IsScalar); // skip scalars
             hasModels = models.Any();
 
             GenerateModels(model.Objects);
