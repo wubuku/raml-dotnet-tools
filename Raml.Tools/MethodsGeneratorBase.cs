@@ -90,9 +90,13 @@ namespace Raml.Tools
             if (string.IsNullOrWhiteSpace(type))
                 return;
 
+            var name = CollectionTypeHelper.GetBaseType(type);
+            if (properties.Any(p => p.Name == name))
+                name = name + response.Code;
+
             var property = new Property
                            {
-                               Name = CollectionTypeHelper.GetBaseType(type),
+                               Name = name,
                                Description = response.Description + " " + mimeType.Description,
                                Example = mimeType.Example,
                                Type = type,
