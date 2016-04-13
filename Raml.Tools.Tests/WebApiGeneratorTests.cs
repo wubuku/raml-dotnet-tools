@@ -351,6 +351,13 @@ namespace Raml.Tools.Tests
             Assert.AreNotEqual("string", model.Controllers.First().Methods.First().Parameter.Type);
         }
 
+        [Test]
+        public async Task ShouldWorkIncludeWithIncludes()
+        {
+            var raml = await new RamlParser().LoadAsync("files/included-files.raml");
+            var model = new WebApiGeneratorService(raml, "TestNs").BuildModel();
+            Assert.AreEqual(2, model.Objects.Count());
+        }
 
         private static string GetXml(string comment)
         {

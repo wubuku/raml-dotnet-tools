@@ -61,7 +61,7 @@ namespace Raml.Common
             if (lines.Any(l => l.Contains(IncludeDirective)) && !Directory.Exists(destinationFolder))
                 Directory.CreateDirectory(destinationFolder);
 
-            ManageNestedFiles(lines, destinationFolder, includedFiles, path, path, destinationFilePath, confirmOverrite, rootRamlPath);
+            ManageNestedFiles(lines, destinationFolder, includedFiles, path, path, destinationFilePath, confirmOverrite, rootRamlPath, true);
 
             return new RamlIncludesManagerResult(string.Join(Environment.NewLine, lines), includedFiles);
         }
@@ -97,12 +97,12 @@ namespace Raml.Common
             return uri;
         }
 
-        private void ManageNestedFiles(IList<string> lines, string destinationFolder, ICollection<string> includedFiles, string path, string relativePath, string writeToFilePath, bool confirmOvewrite, string rootRamlPath)
+        private void ManageNestedFiles(IList<string> lines, string destinationFolder, ICollection<string> includedFiles, string path, string relativePath, string writeToFilePath, bool confirmOvewrite, string rootRamlPath, bool isRootFile)
         {
             var scopeIncludedFiles = new Collection<string>();
             for (var i = 0; i < lines.Count; i++)
             {
-                ManageInclude(lines, destinationFolder, includedFiles, path, relativePath, confirmOvewrite, i, scopeIncludedFiles, rootRamlPath);
+                ManageInclude(lines, destinationFolder, includedFiles, path, relativePath, confirmOvewrite, i, scopeIncludedFiles, rootRamlPath, isRootFile);
             }
 
             File.WriteAllText(writeToFilePath, string.Join(Environment.NewLine, lines).Trim());
@@ -111,7 +111,7 @@ namespace Raml.Common
         }
 
         private void ManageInclude(IList<string> lines, string destinationFolder, ICollection<string> includedFiles, string path,
-            string relativePath, bool confirmOvewrite, int i, Collection<string> scopeIncludedFiles, string rootRamlPath)
+            string relativePath, bool confirmOvewrite, int i, Collection<string> scopeIncludedFiles, string rootRamlPath, bool isRootFile)
         {
             var line = lines[i];
             if (!line.Contains(IncludeDirective))
@@ -143,7 +143,15 @@ namespace Raml.Common
             }
 
             // replace old include for new include
-            var relativeInclude = GetRelativeInclude(destinationFilePath, rootRamlPath);
+            string relativeInclude;
+            if (isRootFile)
+            {
+                relativeInclude = GetRelativeInclude(destinationFilePath, rootRamlPath);
+            }
+            else
+            {
+                relativeInclude = Path.GetFileName(destinationFilePath);
+            }
             lines[i] = lines[i].Replace(includeSource, relativeInclude);
         }
 
@@ -213,7 +221,7 @@ namespace Raml.Common
 
                 var nestedFileLines = File.ReadAllLines(includedFile);
 
-                ManageNestedFiles(nestedFileLines, destinationFolder, includedFiles, path, relativePath, includedFile, confirmOvewrite, rootRamlPath);
+                ManageNestedFiles(nestedFileLines, destinationFolder, includedFiles, path, relativePath, includedFile, confirmOvewrite, rootRamlPath, false);
             }
         }
 
