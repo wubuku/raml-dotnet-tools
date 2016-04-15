@@ -154,6 +154,9 @@ namespace Raml.Tools.Tests
             Assert.IsNotNull(model.Objects.First(c => c.Name == "Person"));
             Assert.IsNotNull(model.Objects.First(c => c.Name == "Customer"));
             Assert.AreEqual("Person", model.Objects.First(c => c.Name == "Customer").BaseClass);
+
+            Assert.AreEqual(CollectionTypeHelper.GetCollectionType("Person"), model.Controllers.First(c => c.Name == "Persons").Methods.First(m => m.Verb == "Post").Parameter.Type);
+            Assert.AreEqual(CollectionTypeHelper.GetCollectionType("Person"), model.Controllers.First(c => c.Name == "Persons").Methods.First(m => m.Verb == "Get").ReturnType);
         }
 
         [Test]

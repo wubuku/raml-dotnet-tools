@@ -58,6 +58,9 @@ namespace Raml.Tools
                 if (string.IsNullOrWhiteSpace(apiObject.Type))
                     return CollectionTypeHelper.GetCollectionType(apiObject.Name);
 
+                if (CollectionTypeHelper.IsCollection(apiObject.Type))
+                    return apiObject.Type;
+
                 return CollectionTypeHelper.GetCollectionType(apiObject.Type);
             }
             if (apiObject.IsMap)
