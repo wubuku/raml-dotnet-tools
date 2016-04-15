@@ -1,7 +1,7 @@
 #%RAML 1.0
 title: Chinook RAML 1 Api
 types:
-  Person:
+  person:
     properties:
         Id: 
             type: integer
@@ -24,20 +24,20 @@ types:
         Email?:
         Picture?:
             type: file
-  Employee:
-    type: Person
+  employee:
+    type: person
     properties:
         HireDate?:
   SupportRepresentant:
-    type: Employee
+    type: employee
     properties:
         ReportsTo:
-            type: Employee
-  Customer:
-        type: Person
+            type: employee
+  customer:
+        type: person
         properties:
           Company:
-  Artist:
+  artist:
     properties:
           Id: 
             type: integer
@@ -49,20 +49,20 @@ types:
       - content:
           Id: 2
           Name: Pearl Jam
-  Album:
+  album:
     properties:
-        Artist:
-          type: Artist
+        artist:
+          type: artist
         Id: 
             type: integer
         Title:
-  Track:
+  track:
         properties:
           Id: 
             type: integer
           Name:
-          Album:
-            type: Album
+          album:
+            type: album
           MediaType:
               properties:
                 Id: 
@@ -80,22 +80,22 @@ types:
             type: integer
           UnitPrice: 
             type: number     
-  InvoiceLine:
+  invoiceLine:
     properties: 
         Id: 
             type: integer
-        Track:
-            type: Track
+        track:
+            type: track
         UnitPrice: 
             type: number
             minimum: 0
         Quantity: 
             type: integer
             minimum: 1
-  Invoice:
+  invoice:
         properties:
-          Customer:
-              type: Customer
+          customer:
+              type: customer
           InvoiceDate:
           BillingAddress:
           BillingCity:
@@ -103,28 +103,28 @@ types:
           BillingCountry:
           BillingPostalCode:
           Lines:
-              type: InvoiceLine[]
-  ArtistByTrack:
+              type: invoiceLine[]
+  artistByTrack:
       type: object
       properties:
           []:
-              type: Artist
-  TracksByArtist:
+              type: artist
+  tracksByArtist:
       type: object
       properties:
           []:
-              type: Track[]
+              type: track[]
 /customers:
   get:
     responses:
       200:   
         body:
           application/json:
-            type: Customer[]
+            type: customer[]
   post:
     body:
       application/json:
-        type: Customer
+        type: customer
   /{id}:
     uriParameters:
       id:
@@ -134,11 +134,11 @@ types:
           200:   
               body:
                 application/json:
-                  type: Customer
+                  type: customer
     put:
       body:
         application/json:
-          type: Customer
+          type: customer
     delete:
 /tracks:
   get:
@@ -146,11 +146,11 @@ types:
       200:   
           body:
             application/json:
-              type: Track[]
+              type: track[]
   post:
     body:
       application/json:
-        type: Track
+        type: track
   /{id}:
     uriParameters:
       id:
@@ -160,11 +160,11 @@ types:
           200:   
               body:
                 application/json:
-                  type: Track
+                  type: track
     put:
       body:
         application/json:
-          type: Track
+          type: track
     delete:
   /byartist:
     /{id}:
@@ -173,18 +173,18 @@ types:
           200:
             body:
               application/json:
-                type: TracksByArtist
+                type: tracksByArtist
 /artists:
   get:
     responses:
         200:   
           body:
             application/json:
-              type: Artist[]
+              type: artist[]
   post:
     body:
       application/json:
-        type: Artist
+        type: artist
   /{id}:
     uriParameters:
       id:
@@ -194,11 +194,11 @@ types:
             200:   
               body:
                 application/json:
-                  type: Artist
+                  type: artist
     put:
       body:
         application/json:
-          type: Artist
+          type: artist
     delete:
   /bytrack:
     /{id}:
@@ -207,18 +207,18 @@ types:
           200:
             body:
               application/json:
-                type: ArtistByTrack
+                type: artistByTrack
 /albums:
   get:
     responses:
       200:   
         body:
           application/json:
-            type: Album[]
+            type: album[]
   post:
     body:
       application/json:
-        type: Album
+        type: album
   /{id}:
     uriParameters:
       id:
@@ -228,11 +228,11 @@ types:
           200:   
             body:
               application/json:
-                type: Album
+                type: album
     put:
       body:
         application/json:
-          type: Album
+          type: album
     delete:
 /invoices:
   get:
@@ -240,11 +240,11 @@ types:
       200:
         body:
           application/json:
-            type: Invoice[]
+            type: invoice[]
   post:
     body:
       application/json:
-        type: Invoice
+        type: invoice
   /{id}:
     uriParameters:
       id:
@@ -254,9 +254,9 @@ types:
           200:
             body:
               application/json:
-                type: Invoice
+                type: invoice
     put:
       body:
         application/json:
-          type: Invoice
+          type: invoice
     delete:

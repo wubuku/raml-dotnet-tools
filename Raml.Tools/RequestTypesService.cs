@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Raml.Common;
 using Raml.Parser.Expressions;
 using Raml.Tools.Pluralization;
 
@@ -104,10 +105,22 @@ namespace Raml.Tools
                 return "string";
 
             if (type.EndsWith("[][]")) // array of arrays
-                return CollectionTypeHelper.GetCollectionType(CollectionTypeHelper.GetCollectionType(type.Substring(0, type.Length - 4)));
+            {
+                var subtype = type.Substring(0, type.Length - 4);
+                if (NetTypeMapper.Map(subtype) == null)
+                    subtype = NetNamingMapper.GetObjectName(subtype);
+
+                return CollectionTypeHelper.GetCollectionType(CollectionTypeHelper.GetCollectionType(subtype));
+            }
 
             if (type.EndsWith("[]")) // array
-                return CollectionTypeHelper.GetCollectionType(type.Substring(0, type.Length - 2));
+            {
+                var subtype = type.Substring(0, type.Length - 2);
+                if (NetTypeMapper.Map(subtype) == null)
+                    subtype = NetNamingMapper.GetObjectName(subtype);
+
+                return CollectionTypeHelper.GetCollectionType(subtype);
+            }
 
             if (type.EndsWith("{}")) // Map
             {
@@ -123,7 +136,10 @@ namespace Raml.Tools
                 return "IDictionary<string, object>";
             }
 
-            return type;
+            if (CollectionTypeHelper.IsCollection(type))
+                return type;
+
+            return NetNamingMapper.GetObjectName(type);
         }
 
         private ApiObject GetRequestApiObjectByKey(string key)

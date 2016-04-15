@@ -62,14 +62,21 @@ namespace Raml.Tools.Tests
         public async Task ShouldBuildArrayTypes()
         {
             var model = await GetArraysModel();
-            Assert.AreEqual(5, model.Objects.Count());
+            Assert.AreEqual(6, model.Objects.Count());
             Assert.IsTrue(model.Objects.Any(o => o.Name == "ArrayOfObjectItem"));
             Assert.IsTrue(model.Objects.Any(o => o.Name == "ArrayOfPerson"));
-            Assert.AreEqual(CollectionTypeHelper.GetCollectionType("Person"), model.Objects.First(o => o.Name == "ArrayOfPerson").Type);
             Assert.IsTrue(model.Objects.Any(o => o.Name == "ArrayOfInt"));
             Assert.AreEqual(CollectionTypeHelper.GetCollectionType("int"), model.Objects.First(o => o.Name == "ArrayOfInt").Type);
             Assert.IsTrue(model.Objects.Any(o => o.Name == "ArrayOfObject"));
             Assert.AreEqual(CollectionTypeHelper.GetCollectionType("ArrayOfObjectItem"), model.Objects.First(o => o.Name == "ArrayOfObject").Type);
+            Assert.AreEqual(CollectionTypeHelper.GetCollectionType("Person"), model.Objects.First(o => o.Name == "ArrayOfPerson").Type);
+
+            Assert.AreEqual(CollectionTypeHelper.GetCollectionType("Person"), model.Objects
+                .First(o => o.Name == "TypeThatHasArrayProperty")
+                .Properties
+                .First(p => p.Name == "Persons").Type);
+
+            
         }
 
         [Test]

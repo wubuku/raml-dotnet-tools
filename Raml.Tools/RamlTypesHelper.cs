@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Raml.Common;
 using Raml.Parser.Expressions;
 
 namespace Raml.Tools
@@ -14,22 +15,40 @@ namespace Raml.Tools
                 return "object";
 
             if (type.EndsWith("[][]")) // array of arrays
-                return CollectionTypeHelper.GetCollectionType(CollectionTypeHelper.GetCollectionType(type.Substring(0, type.Length - 4)));
+            {
+                var strippedType = type.Substring(0, type.Length - 4);
+                if (NetTypeMapper.Map(strippedType) == null)
+                    strippedType = NetNamingMapper.GetObjectName(strippedType);
+
+                var decodeRaml1Type = CollectionTypeHelper.GetCollectionType(CollectionTypeHelper.GetCollectionType(strippedType));
+                return decodeRaml1Type;
+            }
 
             if (type.EndsWith("[]")) // array
-                return CollectionTypeHelper.GetCollectionType(type.Substring(0, type.Length - 2));
+            {
+                var strippedType = type.Substring(0, type.Length - 2);
+
+                if (NetTypeMapper.Map(strippedType) == null)
+                    strippedType = NetNamingMapper.GetObjectName(strippedType);
+
+                var decodeRaml1Type = CollectionTypeHelper.GetCollectionType(strippedType);
+                return decodeRaml1Type;
+            }
 
             if (type.EndsWith("{}")) // Map
             {
                 var subtype = type.Substring(0, type.Length - 2);
                 var netType = NetTypeMapper.Map(subtype);
-                if (!string.IsNullOrWhiteSpace(netType))
+                if (netType != null)
                     return "IDictionary<string, " + netType + ">";
 
-               return "IDictionary<string, " + subtype + ">";
+               return "IDictionary<string, " + NetNamingMapper.GetObjectName(subtype) + ">";
             }
 
-            return type;
+            if (CollectionTypeHelper.IsCollection(type))
+                return type;
+
+            return NetNamingMapper.GetObjectName(type);
         }
 
         public static string GetTypeFromApiObject(ApiObject apiObject)

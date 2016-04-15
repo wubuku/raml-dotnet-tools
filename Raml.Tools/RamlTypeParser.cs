@@ -94,7 +94,9 @@ namespace Raml.Tools
               apiObject.Properties.Add(new Property
               {
                   Name = NetNamingMapper.GetPropertyName(type.Trim()),
-                  Type = isArray ? CollectionTypeHelper.GetCollectionType(RamlTypesHelper.DecodeRaml1Type(type.Trim())) : RamlTypesHelper.DecodeRaml1Type(type.Trim())
+                  Type = isArray 
+                        ? CollectionTypeHelper.GetCollectionType(RamlTypesHelper.DecodeRaml1Type(type.Trim())) 
+                        : RamlTypesHelper.DecodeRaml1Type(type.Trim())
               });
             }
             return apiObject;
@@ -111,11 +113,13 @@ namespace Raml.Tools
             var typeOfArray = GetTypeOfArray(key, ramlType);
 
             var baseType = CollectionTypeHelper.GetBaseType(typeOfArray);
-            if (!NetTypeMapper.IsPrimitiveType(baseType) &&
+            if (NetTypeMapper.Map(baseType) == null &&
                 ramlType.Array.Items != null && ramlType.Array.Items.Type == "object")
             {
                 if (baseType == typeOfArray)
                     baseType = typeOfArray + "Item";
+
+                baseType = NetNamingMapper.GetObjectName(baseType);
 
                 var itemType = ParseNestedType(ramlType.Array.Items, baseType);
                 schemaObjects.Add(baseType, itemType);
@@ -142,6 +146,8 @@ namespace Raml.Tools
                 {
                     if (NetTypeMapper.Map(pureType) != null)
                         pureType = NetTypeMapper.Map(pureType);
+                    else
+                        pureType = NetNamingMapper.GetObjectName(pureType);
 
                     return CollectionTypeHelper.GetCollectionType(pureType);
                 }
@@ -153,15 +159,17 @@ namespace Raml.Tools
                     var netType = ramlType.Array.Items.Type;
                     if (NetTypeMapper.Map(netType) != null)
                         netType = NetTypeMapper.Map(netType);
+                    else
+                        netType = NetNamingMapper.GetObjectName(netType);
 
                     return CollectionTypeHelper.GetCollectionType(netType);
                 }
             }
 
             if(!string.IsNullOrWhiteSpace(ramlType.Array.Items.Name))
-                return CollectionTypeHelper.GetCollectionType(ramlType.Array.Items.Name);
+                return CollectionTypeHelper.GetCollectionType(NetNamingMapper.GetObjectName(ramlType.Array.Items.Name));
 
-            return key;
+            return NetNamingMapper.GetObjectName(key);
         }
 
         private ApiObject ParseScalar(string key, RamlType ramlType)
@@ -194,8 +202,7 @@ namespace Raml.Tools
                     new Property
                     {
                         Name = "Value",
-                        Type =
-                            type,
+                        Type = type,
                         Minimum = (double?) ramlType.Scalar.Minimum,
                         Maximum = (double?) ramlType.Scalar.Maximum,
                         MinLength = ramlType.Scalar.MinLength,
@@ -365,17 +372,19 @@ namespace Raml.Tools
                     if (kv.Value.Array.Items != null)
                     {
                         var obj = ParseArray(kv.Key, kv.Value);
+
                         type = CollectionTypeHelper.GetCollectionType(obj.Type);
                     }
                     if (type.EndsWith("[]"))
                     {
                         type = type.Substring(0, type.Length - 2);
+                        if (NetTypeMapper.Map(type) == null)
+                            type = NetNamingMapper.GetObjectName(type);
+
                         type = CollectionTypeHelper.GetCollectionType(type);
                     }
 
                     props.Add(new Property { Name = name, Type = type, Required = prop.Required, OriginalName = kv.Key.TrimEnd('?') });
-
-                    continue;
                 }
             }
             return props;
