@@ -207,9 +207,9 @@ image::./docimages/RAML_NETAddRAMLContractScreen.png[align="center", width="550"
 . A Contracts folder is added to the project containing the generated assets. These assets include a local copy of the RAML definition, the generated model classes (inferred from the JSON schemas in the RAML definition), and .NET interfaces representing the contracts for the ASP.NET Web API Controllers. The controllers are generated in the Controllers folder, and implement the contract interfaces.
 
 
-== Updating the ASP.NET MVC 6 or Web API
+== Updating your RAML specification
 
-The tool also supports updating the generated ASP.NET MVC 6 or Web API when a change is made to the RAML definition. This lets you keep the contract definition in a RAML file with the implementation, so that both stay in sync. Right-click  the RAML contract file under Contracts, and select the option *Implement RAML Contract*. This command  only affects the existing .NET contract interfaces and adds ASP.NET MVC 6 or Web API controller implementations for any new resource in the RAML definition. The existing controller implementations  remain untouched.
+The tool also supports updating the generated ASP.NET MVC 6 or Web API when a change is made to the RAML definition. This lets you keep the contract definition in a RAML file with the implementation, so that both stay in sync. The classes get re-generated when you save changes made to any the RAML files in your project. This only affects the existing .NET contract interfaces and adds ASP.NET MVC 6 or Web API controller implementations for any new resource in the RAML definition. The existing controller implementations remain untouched.
 
 
 == Implementing a Controller in ASP.NET Web API
