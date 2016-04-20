@@ -161,6 +161,7 @@ namespace Raml.Common
                 rootRamlPath += Path.DirectorySeparatorChar;
 
             rootRamlPath = rootRamlPath.Replace(
+
                 Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture) +
                 Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture),
                 Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture));
@@ -169,7 +170,7 @@ namespace Raml.Common
             if(destinationFilePath.StartsWith(rootRamlPath))
                 relativeInclude = destinationFilePath.Substring(rootRamlPath.Length);
 
-            return relativeInclude;
+            return relativeInclude.Replace(Path.DirectorySeparatorChar.ToString(), "/"); // use forward slash as default
         }
 
         private void ManageLocalFile(string path, string relativePath, bool confirmOvewrite, string includeSource,

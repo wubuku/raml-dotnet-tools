@@ -356,7 +356,7 @@ namespace MuleSoft.RAML.Tools
 
         private void UpdateRAMLCommandOnBeforeQueryStatus(object sender, EventArgs e)
         {
-            ShowOrHideCommandContract(sender);
+            ShowOrHideUpdateRamlCommandContract(sender);
         }
 
         private void ExtractRAMLCommandOnBeforeQueryStatus(object sender, EventArgs e)
@@ -604,7 +604,7 @@ namespace MuleSoft.RAML.Tools
             ShowAndEnableCommand(menuCommand, true);
         }
 
-        private static void ShowOrHideCommandContract(object sender)
+        private static void ShowOrHideUpdateRamlCommandContract(object sender)
         {
             // get the menu that fired the event
             var menuCommand = sender as OleMenuCommand;
@@ -644,6 +644,11 @@ namespace MuleSoft.RAML.Tools
                 return;
 
             if (!IsAspNet5OrWebApiCoreInstalled())
+                return;
+
+            var refFile = InstallerServices.GetRefFilePath(itemFullPath);
+            var source = RamlReferenceReader.GetRamlSource(refFile);
+            if(string.IsNullOrWhiteSpace(source))
                 return;
 
             ShowAndEnableCommand(menuCommand, true);

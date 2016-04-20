@@ -378,6 +378,9 @@ namespace MuleSoft.RAML.Tools
             var refFilePath = InstallerServices.GetRefFilePath(ramlFilePath);
             var includesFolderPath = generatedFolderPath + Path.DirectorySeparatorChar + InstallerServices.IncludesFolderName;
             var ramlSource = RamlReferenceReader.GetRamlSource(refFilePath);
+            if (string.IsNullOrWhiteSpace(ramlSource))
+                ramlSource = ramlFilePath;
+
             var includesManager = new RamlIncludesManager();
             var result = includesManager.Manage(ramlSource, includesFolderPath, generatedFolderPath + Path.DirectorySeparatorChar);
             if (result.IsSuccess)
