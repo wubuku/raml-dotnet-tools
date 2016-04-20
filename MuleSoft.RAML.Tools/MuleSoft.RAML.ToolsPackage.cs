@@ -478,7 +478,7 @@ namespace MuleSoft.RAML.Tools
 
         private void UpdateRamlRefCommand_BeforeQueryStatus(object sender, EventArgs e)
         {
-            ShowOrHideCommand(sender, RamlReferenceService.ApiReferencesFolderName);
+            ShowOrHideUpdateRamlRefCommand(sender, RamlReferenceService.ApiReferencesFolderName);
         }
 
         private void ChangeCommandStatus(CommandID commandId, bool enable)
@@ -557,7 +557,7 @@ namespace MuleSoft.RAML.Tools
         }
 
 
-        private static void ShowOrHideCommand(object sender, string containingFolderName)
+        private static void ShowOrHideUpdateRamlRefCommand(object sender, string containingFolderName)
         {
             // get the menu that fired the event
             var menuCommand = sender as OleMenuCommand;
@@ -599,6 +599,11 @@ namespace MuleSoft.RAML.Tools
 
             var folder = Path.GetDirectoryName(itemFullPath);
             if (folder.EndsWith(InstallerServices.IncludesFolderName))
+                return;
+
+            var refFile = InstallerServices.GetRefFilePath(itemFullPath);
+            var source = RamlReferenceReader.GetRamlSource(refFile);
+            if (string.IsNullOrWhiteSpace(source))
                 return;
 
             ShowAndEnableCommand(menuCommand, true);
