@@ -169,13 +169,16 @@ namespace Raml.Tools
         private string GetNamedReturnType(Method method, Resource resource, MimeType mimeType, string fullUrl)
         {
             if (mimeType.Schema != null && mimeType.Schema.Contains("<<") && mimeType.Schema.Contains(">>"))
-                return GetReturnTypeFromParameter(method, resource, mimeType, fullUrl);
+                return GetReturnTypeFromParameter(method, resource, fullUrl, mimeType.Schema);
 
             if (mimeType.Schema != null && !mimeType.Schema.Contains("<") && !mimeType.Schema.Contains("{"))
                 return GetReturnTypeFromName(mimeType.Schema);
 
             if (!string.IsNullOrWhiteSpace(mimeType.Type))
             {
+                if (mimeType.Type.Contains("<<") && mimeType.Type.Contains(">>"))
+                    return GetReturnTypeFromParameter(method, resource, fullUrl, mimeType.Type);
+
                 var type = GetReturnTypeFromName(mimeType.Type);
                 if (!string.IsNullOrWhiteSpace(type))
                     return type;
@@ -205,9 +208,9 @@ namespace Raml.Tools
             return string.Empty;
         }
 
-        private string GetReturnTypeFromParameter(Method method, Resource resource, MimeType mimeType, string fullUrl)
+        private string GetReturnTypeFromParameter(Method method, Resource resource, string fullUrl, string schema)
         {
-            var type = schemaParameterParser.Parse(mimeType.Schema, resource, method, fullUrl);
+            var type = schemaParameterParser.Parse(schema, resource, method, fullUrl);
 
             if (schemaObjects.Values.Any(o => o.Name.ToLowerInvariant() == type.ToLowerInvariant()))
             {
