@@ -436,6 +436,9 @@ namespace Raml.Tools
             if (schemaObjects.ContainsKey(prop.Type))
             {
                 var obj = schemaObjects[prop.Type];
+                if (obj.IsScalar)
+                    return obj.Properties.First().Type;
+
                 return obj.Type;
             }
 
