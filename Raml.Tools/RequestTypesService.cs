@@ -31,7 +31,17 @@ namespace Raml.Tools
             {
                 if (mimeType.Type != "object" && !string.IsNullOrWhiteSpace(mimeType.Type))
                 {
-                    return new GeneratorParameter { Name = "content", Type = DecodeRequestRaml1Type(mimeType.Type) };
+                    var apiObject = GetRequestApiObjectWhenNamed(method, resource, mimeType.Type, fullUrl);
+                    if (apiObject != null)
+                    {
+                        var generatorParameter = new GeneratorParameter
+                        {
+                            Name = apiObject.Name.ToLower(),
+                            Type = DecodeRequestRaml1Type(RamlTypesHelper.GetTypeFromApiObject(apiObject)),
+                            Description = apiObject.Description
+                        };
+                        return generatorParameter;
+                    }
                 }
                 if (!string.IsNullOrWhiteSpace(mimeType.Schema))
                 {
@@ -54,6 +64,18 @@ namespace Raml.Tools
 
                 if (verb != null && verb.Body != null && !string.IsNullOrWhiteSpace(verb.Body.Type))
                 {
+                    var apiObject = GetRequestApiObjectWhenNamed(method, resource,  verb.Body.Type, fullUrl);
+                    if (apiObject != null)
+                    {
+                        var generatorParameter = new GeneratorParameter
+                        {
+                            Name = apiObject.Name.ToLower(),
+                            Type = DecodeRequestRaml1Type(RamlTypesHelper.GetTypeFromApiObject(apiObject)),
+                            Description = apiObject.Description
+                        };
+                        return generatorParameter;
+                    }
+
                     return new GeneratorParameter { Name = "content", Type = DecodeRequestRaml1Type(verb.Body.Type) };
                 }
             }
