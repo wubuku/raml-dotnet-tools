@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Raml.Parser.Expressions;
 
 namespace Raml.Tools
 {
